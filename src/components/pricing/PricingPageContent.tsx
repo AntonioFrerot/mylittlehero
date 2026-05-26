@@ -1,0 +1,61 @@
+import { FreeTrialBanner } from "@/components/pricing/FreeTrialBanner";
+import { PricingCard } from "@/components/pricing/PricingCard";
+import { getServerTranslator } from "@/lib/i18n/server";
+import { getPricingPlans } from "@/lib/pricing";
+import { getSession } from "@/lib/auth/get-session";
+import { getCreerSonFilmHref } from "@/lib/navigation/creer-film";
+import Link from "next/link";
+
+export async function PricingPageContent() {
+  const { locale, t } = await getServerTranslator();
+  const session = await getSession();
+  const offerCtaHref = getCreerSonFilmHref(!!session);
+  const pricingPlans = getPricingPlans(locale);
+
+  return (
+    <div className="relative min-h-screen bg-cinema-black pb-20 safe-top-offset md:pb-28">
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-cinema-night to-transparent"
+        aria-hidden
+      />
+
+      <div className="relative mx-auto max-w-[90rem] px-4 md:px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          <Link
+            href="/"
+            className="text-sm text-cream/50 transition-colors hover:text-gold-light"
+          >
+            {t("pricing.backHome")}
+          </Link>
+          <h1 className="font-display mt-6 text-3xl font-bold text-cream md:text-4xl lg:text-5xl">
+            {t("pricing.title")}
+          </h1>
+          <p className="mt-4 text-base text-cream/60 md:text-lg">
+            {t("pricing.subtitle")}
+          </p>
+        </div>
+
+        <div className="mt-8 md:mt-10">
+          <FreeTrialBanner />
+        </div>
+
+        <section id="offres" className="mt-10 md:mt-12 lg:mt-14">
+          <div className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-4 lg:items-stretch lg:gap-4 xl:gap-5">
+            {pricingPlans.map((plan) => (
+              <PricingCard
+                key={plan.id}
+                plan={plan}
+                ctaHref={offerCtaHref}
+                locale={locale}
+              />
+            ))}
+          </div>
+        </section>
+
+        <p className="mt-12 text-center text-xs text-cream/40 md:text-sm">
+          {t("pricing.paymentNotice")}
+        </p>
+      </div>
+    </div>
+  );
+}

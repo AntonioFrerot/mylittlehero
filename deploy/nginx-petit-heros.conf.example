@@ -1,0 +1,26 @@
+# Copier vers /etc/nginx/sites-available/petit-heros
+# puis : sudo ln -s .../sites-available/petit-heros .../sites-enabled/
+# sudo nginx -t && sudo systemctl reload nginx
+
+server {
+    listen 80;
+    server_name votredomaine.fr www.votredomaine.fr;
+
+    # Limite upload photos personnages (~5 Mo côté app)
+    client_max_body_size 10M;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# HTTPS avec Certbot :
+#   sudo apt install certbot python3-certbot-nginx
+#   sudo certbot --nginx -d votredomaine.fr -d www.votredomaine.fr

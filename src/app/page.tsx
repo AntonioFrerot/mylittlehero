@@ -1,0 +1,23 @@
+import { CTAFooter } from "@/components/CTAFooter";
+import { Header } from "@/components/Header";
+import { Hero } from "@/components/Hero";
+import { HowItWorks } from "@/components/HowItWorks";
+import { MoviePosterGrid } from "@/components/MoviePosterGrid";
+import { ParentTrustSection } from "@/components/ParentTrustSection";
+import { ThemeSection } from "@/components/ThemeSection";
+
+export default function Home() {
+  return (
+    <>
+      <Header />
+      <main>
+        <Hero />
+        <MoviePosterGrid />
+        <HowItWorks />
+        <ThemeSection />
+        <ParentTrustSection />
+      </main>
+      <CTAFooter />
+    </>
+  );
+}
