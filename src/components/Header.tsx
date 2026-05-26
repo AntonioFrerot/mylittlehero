@@ -4,6 +4,8 @@
 
 import Link from "next/link";
 
+import { HashLink } from "@/components/ui/HashLink";
+
 import { useEffect, useState } from "react";
 
 import { HeaderAuth, MobileAuthLinks } from "@/components/auth/HeaderAuth";
@@ -120,9 +122,10 @@ export function Header() {
 
         >
 
-          {navLinkKeys.map((link) => (
-
-            <Link
+          {navLinkKeys.map((link) => {
+            const NavLink = link.href.includes("#") ? HashLink : Link;
+            return (
+            <NavLink
 
               key={link.href}
 
@@ -134,9 +137,9 @@ export function Header() {
 
               {t(link.key)}
 
-            </Link>
-
-          ))}
+            </NavLink>
+            );
+          })}
 
         </nav>
 
@@ -194,9 +197,10 @@ export function Header() {
 
           <nav className="flex flex-col gap-1" aria-label="Navigation mobile">
 
-            {navLinkKeys.map((link) => (
-
-              <Link
+            {navLinkKeys.map((link) => {
+              const NavLink = link.href.includes("#") ? HashLink : Link;
+              return (
+              <NavLink
 
                 key={link.href}
 
@@ -210,9 +214,9 @@ export function Header() {
 
                 {t(link.key)}
 
-              </Link>
-
-            ))}
+              </NavLink>
+              );
+            })}
 
             <MobileAuthLinks onNavigate={() => setMenuOpen(false)} />
 

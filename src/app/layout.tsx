@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { HashScrollHandler } from "@/components/HashScrollHandler";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { SupportChatWidget } from "@/components/support/SupportChatWidget";
 import { BRAND_NAME } from "@/lib/brand";
@@ -46,6 +47,7 @@ export default async function RootLayout({
     >
       <body className="min-h-screen bg-cinema-black font-sans text-cream antialiased">
         <LocaleProvider locale={locale}>
+          <HashScrollHandler />
           {children}
           <SupportChatWidget />
         </LocaleProvider>

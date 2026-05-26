@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HashLink } from "@/components/ui/HashLink";
 import { type ComponentPropsWithoutRef } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "ghost";
@@ -38,10 +39,11 @@ export function Button({
 
   if ("href" in props && props.href) {
     const { href, ...linkProps } = props;
+    const LinkComponent = href.includes("#") ? HashLink : Link;
     return (
-      <Link href={href} className={classes} {...linkProps}>
+      <LinkComponent href={href} className={classes} {...linkProps}>
         {children}
-      </Link>
+      </LinkComponent>
     );
   }
 

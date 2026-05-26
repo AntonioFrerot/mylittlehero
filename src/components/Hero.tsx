@@ -57,7 +57,7 @@ export async function Hero() {
         <div className="mt-9 flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4">
           <CreerSonFilmButton variant="primary" className="w-full sm:w-auto" />
           <Button
-            href="#catalogue"
+            href="/#catalogue"
             variant="secondary"
             className="w-full border-white/20 bg-black/40 sm:w-auto"
           >

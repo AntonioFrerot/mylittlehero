@@ -9,10 +9,10 @@ Informations officielles :
 - Livraison annoncée : film prêt en 8 heures maximum après commande.
 - Essai : bouton « Essayer gratuitement » mène à la création de film (connexion requise).
 - Tarifs (/creer) :
-  • Essentiel Mois : 29,99 €/mois — 15 films/mois, 2 à 5 min.
-  • Essentiel Année : 249,99 €/an — même quota, économie vs mensuel.
-  • Premium Mois : 54,99 €/mois — 30 films/mois, 2 à 10 min, priorité.
-  • Premium Année : 399,99 €/an — même quota Premium, économie vs mensuel.
+  • Essentiel Mois : 59,99 €/mois — 15 films/mois, 2 à 5 min.
+  • Essentiel Année : 549,99 €/an — même quota, économie vs mensuel.
+  • Premium Mois : 119,99 €/mois — 30 films/mois, 2 à 10 min, priorité.
+  • Premium Année : 999,99 €/an — même quota Premium, économie vs mensuel.
 - Paiement en ligne : à venir (boutons pas encore connectés).
 - Contact : page /contact ou e-mail contact@petitheros.fr
 - Exemple vidéo : Léo et Nala sur /films/leo-et-nala
@@ -43,7 +43,7 @@ export const SUPPORT_FAQ: FaqEntry[] = [
       "euro",
     ],
     answer:
-      "Nous proposons quatre formules sur la page Tarifs : Essentiel Mois (29,99 €, 15 films/mois de 2 à 5 min), Essentiel Année (249,99 €/an), Premium Mois (54,99 €, 30 films/mois de 2 à 10 min) et Premium Année (399,99 €/an). Les offres annuelles affichent l’économie par rapport au mensuel.",
+      "Nous proposons quatre formules sur la page Tarifs : Essentiel Mois (59,99 €, 15 films/mois de 2 à 5 min), Essentiel Année (549,99 €/an), Premium Mois (119,99 €, 30 films/mois de 2 à 10 min) et Premium Année (999,99 €/an). Les offres annuelles affichent l’économie par rapport au mensuel.",
   },
   {
     id: "delivery",

@@ -48,6 +48,13 @@ body {
   padding-top: max(5.5rem, calc(4.5rem + env(safe-area-inset-top, 0px)));
 }
 
+/* Ancres de page — évite que le header fixe masque le titre de section */
+#catalogue,
+#comment-ca-marche,
+#themes {
+  scroll-margin-top: max(5.5rem, calc(4.5rem + env(safe-area-inset-top, 0px)));
+}
+
 .cinema-gradient {
   background:
     radial-gradient(ellipse 80% 50% at 50% -10%, rgba(30, 58, 120, 0.35), transparent),

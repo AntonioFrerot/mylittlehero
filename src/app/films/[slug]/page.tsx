@@ -1,6 +1,7 @@
 import { Header } from "@/components/Header";
 import { ExampleFilmHeroSpotlight } from "@/components/films/ExampleFilmHeroSpotlight";
 import { ExampleFilmMedia } from "@/components/films/ExampleFilmMedia";
+import { HashLink } from "@/components/ui/HashLink";
 import { Button } from "@/components/ui/Button";
 import { getExampleFilm } from "@/lib/example-films";
 import {
@@ -17,7 +18,6 @@ import { getServerLocale, getServerTranslator } from "@/lib/i18n/server";
 import { BRAND_NAME } from "@/lib/brand";
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 type PageProps = {
@@ -55,12 +55,12 @@ export default async function ExampleFilmPage({ params }: PageProps) {
       <Header />
       <main className="min-h-screen bg-cinema-black pb-16 safe-top-offset">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
-          <Link
+          <HashLink
             href="/#catalogue"
             className="text-sm text-cream/50 transition-colors hover:text-gold-light"
           >
             {t("examples.backToCatalogue")}
-          </Link>
+          </HashLink>
 
           <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-gold-light/90">
             {t("examples.eyebrow")}
