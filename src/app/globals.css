@@ -155,7 +155,8 @@ body {
   --themes-visible: 1;
   --themes-slide-w: min(82vw, 18.5rem);
   --themes-gap: 0.75rem;
-  --themes-portal-fade: 2.5rem;
+  /* Longueur du fondu (téléporteur invisible) */
+  --themes-portal-fade: 4.25rem;
   --themes-frame-w: min(96vw, 100%);
   width: 100%;
 }
@@ -234,6 +235,34 @@ body {
     var(--cinema-black) 25%,
     transparent 100%
   );
+}
+
+/* Mobile: téléporteur "invisible" via masque (disparition progressive) */
+@media (max-width: 639px) {
+  .themes-portal__veil {
+    display: none;
+  }
+
+  .themes-portal__viewport {
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      #000 var(--themes-portal-fade),
+      #000 calc(100% - var(--themes-portal-fade)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      #000 var(--themes-portal-fade),
+      #000 calc(100% - var(--themes-portal-fade)),
+      transparent 100%
+    );
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
 }
 
 .themes-portal__slide {
