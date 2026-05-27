@@ -39,7 +39,7 @@ export const fr = {
     heroLead:
       "Offrez à votre enfant son propre film personnalisé !",
     heroSub:
-      "Configurez votre film en quelques clics ou personnalisez entièrement l'histoire selon vos envies, jusque dans les moindres détails.",
+      "Configurez un film en quelques clics ou personnalisez entièrement l'histoire selon vos envies, jusque dans les moindres détails.",
     heroExamples: "Voir les exemples",
     catalogueEyebrow: "Le petit héros",
     catalogueTitleBefore: "Films d'exemple du",

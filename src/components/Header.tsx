@@ -37,6 +37,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrollLockY, setScrollLockY] = useState(0);
 
 
 
@@ -56,15 +57,38 @@ export function Header() {
 
   useEffect(() => {
 
-    document.body.style.overflow = menuOpen ? "hidden" : "";
+    if (menuOpen) {
+      const y = window.scrollY;
+      setScrollLockY(y);
+      // iOS: overflow hidden sur body n'est pas suffisant → on fige le body.
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${y}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      document.documentElement.style.overflow = "";
+      if (scrollLockY) window.scrollTo(0, scrollLockY);
+    }
 
     return () => {
 
-      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      document.documentElement.style.overflow = "";
 
     };
 
-  }, [menuOpen]);
+  }, [menuOpen, scrollLockY]);
 
 
 
@@ -74,9 +98,9 @@ export function Header() {
 
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
 
-        scrolled
+        scrolled || menuOpen
 
-          ? "border-b border-white/5 bg-cinema-night/95 shadow-lg shadow-black/30 backdrop-blur-xl"
+          ? `border-b border-white/5 ${menuOpen ? "bg-cinema-night" : "bg-cinema-night/95"} shadow-lg shadow-black/30 ${menuOpen ? "" : "backdrop-blur-xl"}`
 
           : "bg-gradient-to-b from-black/70 via-black/30 to-transparent backdrop-blur-[2px]"
 
@@ -192,38 +216,41 @@ export function Header() {
 
 
       {menuOpen && (
+        <div className="fixed inset-0 z-[60] md:hidden">
+          <div
+            className="absolute inset-0 bg-black/30"
+            role="presentation"
+            aria-label={t("nav.closeMenu")}
+            onPointerDown={() => setMenuOpen(false)}
+            onTouchMove={() => setMenuOpen(false)}
+            onWheel={() => setMenuOpen(false)}
+          />
 
-        <div className="max-h-[calc(100dvh-3.5rem-env(safe-area-inset-top))] overflow-y-auto border-t border-white/5 bg-cinema-night/98 px-4 py-4 backdrop-blur-xl md:hidden">
+          <div
+            className="absolute inset-x-0 top-[calc(3.5rem+env(safe-area-inset-top,0px))] max-h-[calc(100dvh-3.5rem-env(safe-area-inset-top))] overflow-y-auto border-t border-white/5 bg-cinema-night px-4 py-4"
+            onPointerDown={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+            onWheel={(e) => e.stopPropagation()}
+          >
+            <nav className="flex flex-col gap-1" aria-label="Navigation mobile">
+              {navLinkKeys.map((link) => {
+                const NavLink = link.href.includes("#") ? HashLink : Link;
+                return (
+                  <NavLink
+                    key={link.href}
+                    href={link.href}
+                    className="rounded-xl px-4 py-3.5 text-base text-cream/85 active:bg-white/5 hover:bg-white/5 hover:text-gold-light"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {t(link.key)}
+                  </NavLink>
+                );
+              })}
 
-          <nav className="flex flex-col gap-1" aria-label="Navigation mobile">
-
-            {navLinkKeys.map((link) => {
-              const NavLink = link.href.includes("#") ? HashLink : Link;
-              return (
-              <NavLink
-
-                key={link.href}
-
-                href={link.href}
-
-                className="rounded-xl px-4 py-3.5 text-base text-cream/85 active:bg-white/5 hover:bg-white/5 hover:text-gold-light"
-
-                onClick={() => setMenuOpen(false)}
-
-              >
-
-                {t(link.key)}
-
-              </NavLink>
-              );
-            })}
-
-            <MobileAuthLinks onNavigate={() => setMenuOpen(false)} />
-
-          </nav>
-
+              <MobileAuthLinks onNavigate={() => setMenuOpen(false)} />
+            </nav>
+          </div>
         </div>
-
       )}
 
     </header>
