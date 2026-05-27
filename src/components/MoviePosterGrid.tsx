@@ -32,7 +32,6 @@ function PosterCard({
           sizes="(max-width: 640px) 32vw, (max-width: 1024px) 28vw, 220px"
           className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-cinema-black via-cinema-black/20 to-transparent opacity-85" />
         {durationLabel && (
           <span className="absolute left-3 top-3 z-[1] rounded-md border border-white/10 bg-black/55 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm backdrop-blur-sm">
             {durationLabel}

@@ -7,12 +7,15 @@ import Link from "next/link";
 import { HashLink } from "@/components/ui/HashLink";
 
 import { useEffect, useState } from "react";
+import type React from "react";
 
 import { HeaderAuth, MobileAuthLinks } from "@/components/auth/HeaderAuth";
 
 import { useLocale } from "@/components/LocaleProvider";
 
 import { BRAND_NAME } from "@/lib/brand";
+import { scrollToSection } from "@/lib/scroll-to-section";
+import { usePathname } from "next/navigation";
 
 
 
@@ -33,11 +36,32 @@ const navLinkKeys = [
 export function Header() {
 
   const { t } = useLocale();
+  const pathname = usePathname();
 
   const [scrolled, setScrolled] = useState(false);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrollLockY, setScrollLockY] = useState(0);
+
+  const handleMobileNavigate = (href: string) => (event: React.MouseEvent) => {
+    // Ferme d'abord le menu (important: body est figé quand menuOpen=true).
+    setMenuOpen(false);
+
+    const hashIndex = href.indexOf("#");
+    if (hashIndex === -1) return;
+
+    const targetPath = href.slice(0, hashIndex) || "/";
+    const targetId = href.slice(hashIndex + 1);
+    if (!targetId) return;
+
+    // Si on est déjà sur la home, on scroll après fermeture du menu.
+    if ((pathname || "/") === "/" && (targetPath === "" || targetPath === "/")) {
+      event.preventDefault();
+      // Laisser React appliquer le changement d'état + restaurer le scroll du body,
+      // puis déclencher le scroll vers l'ancre.
+      setTimeout(() => scrollToSection(targetId, "smooth"), 0);
+    }
+  };
 
 
 
@@ -112,7 +136,19 @@ export function Header() {
 
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-3 px-4 md:grid md:h-16 md:grid-cols-[auto_1fr_auto] md:items-center md:gap-4 md:px-8 lg:px-10">
 
-        <Link href="/" className="group flex min-w-0 shrink-0 items-center gap-2">
+        <Link
+          href="/"
+          className="group flex min-w-0 shrink-0 items-center gap-2"
+          onClick={(event) => {
+            if (!menuOpen) return;
+            if ((pathname || "/") === "/") {
+              event.preventDefault();
+              setMenuOpen(false);
+              return;
+            }
+            setMenuOpen(false);
+          }}
+        >
 
           <span
 
@@ -216,9 +252,9 @@ export function Header() {
 
 
       {menuOpen && (
-        <div className="fixed inset-0 z-[60] md:hidden">
+        <div className="fixed inset-0 z-[60] pointer-events-none md:hidden">
           <div
-            className="absolute inset-x-0 bottom-0 top-[calc(3.5rem+env(safe-area-inset-top,0px))] bg-black/30"
+            className="pointer-events-auto absolute inset-x-0 bottom-0 top-[calc(3.5rem+env(safe-area-inset-top,0px))] bg-black/30"
             role="presentation"
             aria-label={t("nav.closeMenu")}
             onPointerDown={() => setMenuOpen(false)}
@@ -227,7 +263,7 @@ export function Header() {
           />
 
           <div
-            className="absolute inset-x-0 top-[calc(3.5rem+env(safe-area-inset-top,0px))] max-h-[calc(100dvh-3.5rem-env(safe-area-inset-top))] overflow-y-auto border-t border-white/5 bg-cinema-night px-4 py-4"
+            className="pointer-events-auto absolute inset-x-0 top-[calc(3.5rem+env(safe-area-inset-top,0px))] max-h-[calc(100dvh-3.5rem-env(safe-area-inset-top))] overflow-y-auto border-t border-white/5 bg-cinema-night px-4 py-4"
             onPointerDown={(e) => e.stopPropagation()}
             onTouchMove={(e) => e.stopPropagation()}
             onWheel={(e) => e.stopPropagation()}
@@ -240,7 +276,7 @@ export function Header() {
                     key={link.href}
                     href={link.href}
                     className="rounded-xl px-4 py-3.5 text-base text-cream/85 active:bg-white/5 hover:bg-white/5 hover:text-gold-light"
-                    onClick={() => setMenuOpen(false)}
+                    onClick={handleMobileNavigate(link.href)}
                   >
                     {t(link.key)}
                   </NavLink>
