@@ -209,6 +209,12 @@ export const en = {
     mostPopular: "Most popular",
     billingYearly: "Yearly",
     billingMonthly: "Monthly",
+    viewYearly: "See annual price",
+    viewMonthly: "See monthly price",
+    tierEssential: "Essential",
+    tierPremium: "Premium",
+    billingMonthlyShort: "Mo",
+    billingYearlyShort: "Year",
     paymentNotice:
       "Secure payment coming soon — buttons will be connected to subscription shortly.",
     periodMonthly: "/ month",

@@ -1,7 +1,8 @@
 import { FreeTrialBanner } from "@/components/pricing/FreeTrialBanner";
 import { PricingCard } from "@/components/pricing/PricingCard";
+import { PricingMobileTierCard } from "@/components/pricing/PricingMobileTierCard";
 import { getServerTranslator } from "@/lib/i18n/server";
-import { getPricingPlans } from "@/lib/pricing";
+import { findPricingPlanById, getPricingPlans } from "@/lib/pricing";
 import { getSession } from "@/lib/auth/get-session";
 import { getCreerSonFilmHref } from "@/lib/navigation/creer-film";
 import Link from "next/link";
@@ -11,6 +12,10 @@ export async function PricingPageContent() {
   const session = await getSession();
   const offerCtaHref = getCreerSonFilmHref(!!session);
   const pricingPlans = getPricingPlans(locale);
+  const standardMonthly = findPricingPlanById("standard-monthly", locale)!;
+  const standardYearly = findPricingPlanById("standard-yearly", locale)!;
+  const premiumMonthly = findPricingPlanById("unlimited-monthly", locale)!;
+  const premiumYearly = findPricingPlanById("unlimited-yearly", locale)!;
 
   return (
     <div className="relative min-h-screen bg-cinema-black pb-20 safe-top-offset md:pb-28">
@@ -40,7 +45,25 @@ export async function PricingPageContent() {
         </div>
 
         <section id="offres" className="mt-10 md:mt-12 lg:mt-14">
-          <div className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-4 lg:items-stretch lg:gap-4 xl:gap-5">
+          <div className="grid grid-cols-2 gap-3 pt-1 lg:hidden">
+            <PricingMobileTierCard
+              monthlyPlan={standardMonthly}
+              yearlyPlan={standardYearly}
+              tierLabel={t("pricing.tierEssential")}
+              ctaHref={offerCtaHref}
+              locale={locale}
+            />
+            <PricingMobileTierCard
+              monthlyPlan={premiumMonthly}
+              yearlyPlan={premiumYearly}
+              tierLabel={t("pricing.tierPremium")}
+              ctaHref={offerCtaHref}
+              locale={locale}
+              highlighted
+            />
+          </div>
+
+          <div className="hidden grid-cols-1 gap-5 sm:gap-6 lg:grid lg:grid-cols-4 lg:items-stretch lg:gap-4 xl:gap-5">
             {pricingPlans.map((plan) => (
               <PricingCard
                 key={plan.id}
