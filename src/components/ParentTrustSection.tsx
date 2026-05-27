@@ -38,7 +38,7 @@ export async function ParentTrustSection() {
             <h2 className="font-display mt-2 text-2xl font-bold text-cream md:text-3xl lg:text-4xl">
               {t("home.trustTitle")}
             </h2>
-            <p className="mt-4 leading-relaxed text-cream/60">
+            <p className="mt-4 hidden leading-relaxed text-cream/60 md:block">
               {t("home.trustText")}
             </p>
 
