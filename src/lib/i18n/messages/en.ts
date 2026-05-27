@@ -440,7 +440,7 @@ export const en = {
       },
       leoPirates: {
         title: "Candy Signal",
-        durationLabel: "10 MIN",
+        durationLabel: "9 MIN",
         tagline: "A ten-dollar bill, a red robot, and a very sweet mission",
         synopsis:
           "Summary: In a quiet little town, Leo, a lonely 9-year-old boy, believes he's living the perfect day after finding ten dollars to buy plenty of candy. But that night, a mysterious robot from space appears near his home with a strange mission: find candy. An unexpected adventure is about to change Leo's life.",

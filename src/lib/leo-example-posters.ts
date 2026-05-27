@@ -41,7 +41,7 @@ export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
     seed: "leo-carte-pirates",
     src: "/posters/candy-signal.png",
     href: "/films/leo-carte-pirates",
-    durationLabel: "10 MIN",
+    durationLabel: "9 MIN",
     featured: true,
   },
   {

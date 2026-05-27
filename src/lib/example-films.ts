@@ -60,7 +60,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "realistic",
     theme: "scifi",
-    durationLabel: "10 MIN",
+    durationLabel: "9 MIN",
   },
   "leo-lost-plane": {
     slug: "leo-lost-plane",
