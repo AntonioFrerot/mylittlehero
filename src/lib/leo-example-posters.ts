@@ -39,7 +39,7 @@ export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
     id: "leo-pirates",
     title: "Candy Signal",
     seed: "leo-carte-pirates",
-    src: "/posters/leo-carte-pirates.png",
+    src: "/posters/candy-signal.png",
     href: "/films/leo-carte-pirates",
     durationLabel: "10 MIN",
     featured: true,

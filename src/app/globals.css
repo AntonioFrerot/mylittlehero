@@ -243,6 +243,13 @@ body {
     display: none;
   }
 
+  .themes-portal {
+    /* Plus “full bleed” sur mobile pour voir plus de cartes */
+    --themes-frame-w: 100vw;
+    /* Téléporteur plus proche des bords = moins de fondu qui mange l’écran */
+    --themes-portal-fade: 2.25rem;
+  }
+
   .themes-portal__viewport {
     -webkit-mask-image: linear-gradient(
       90deg,
