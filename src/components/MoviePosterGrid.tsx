@@ -29,7 +29,7 @@ function PosterCard({
           src={src}
           alt={posterAlt}
           fill
-          sizes="(max-width: 640px) 42vw, (max-width: 1024px) 28vw, 220px"
+          sizes="(max-width: 640px) 32vw, (max-width: 1024px) 28vw, 220px"
           className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-cinema-black via-cinema-black/20 to-transparent opacity-85" />
@@ -43,7 +43,7 @@ function PosterCard({
   );
 
   return (
-    <article className="group relative w-[11.5rem] shrink-0 snap-center sm:w-auto sm:min-w-0 sm:shrink sm:snap-none">
+    <article className="group relative w-[9.5rem] shrink-0 snap-center sm:w-auto sm:min-w-0 sm:shrink sm:snap-none">
       {href ? (
         <Link href={href} className="block">
           {poster}
