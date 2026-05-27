@@ -20,8 +20,8 @@ export type PricingPlan = {
   savingsLabel?: string;
 };
 
-const STANDARD_MONTHLY = 49.99;
-const STANDARD_YEARLY = 449.99;
+const STANDARD_MONTHLY = 59.99;
+const STANDARD_YEARLY = 549.99;
 const UNLIMITED_MONTHLY = 119.99;
 const UNLIMITED_YEARLY = 999.99;
 

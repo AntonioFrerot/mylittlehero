@@ -31,7 +31,7 @@ function intentBody(intent: SupportIntent, analysis: QuestionAnalysis): string {
     case "thanks":
       return "Avec plaisir. Si une autre question vous vient — tarifs, personnages, délai de livraison — je suis là.";
     case "pricing":
-      return "Nos formules sont sur /creer : Essentiel Mois (49,99 €, 15 films/mois, 2–5 min), Essentiel Année (449,99 €/an), Premium Mois (119,99 €, 30 films/mois, 2–10 min) et Premium Année (999,99 €/an). Les offres annuelles indiquent l’économie par rapport au mensuel.";
+      return "Nos formules sont sur /creer : Essentiel Mois (59,99 €, 15 films/mois, 2–5 min), Essentiel Année (549,99 €/an), Premium Mois (119,99 €, 30 films/mois, 2–10 min) et Premium Année (999,99 €/an). Les offres annuelles indiquent l’économie par rapport au mensuel.";
     case "delivery":
       return "Une fois votre film commandé, il est en préparation puis disponible dans Mon espace → Mes films. Le délai annoncé est de 8 heures maximum ; vous serez notifié quand il est prêt.";
     case "howto":
