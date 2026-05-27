@@ -218,7 +218,7 @@ export function Header() {
       {menuOpen && (
         <div className="fixed inset-0 z-[60] md:hidden">
           <div
-            className="absolute inset-0 bg-black/30"
+            className="absolute inset-x-0 bottom-0 top-[calc(3.5rem+env(safe-area-inset-top,0px))] bg-black/30"
             role="presentation"
             aria-label={t("nav.closeMenu")}
             onPointerDown={() => setMenuOpen(false)}
