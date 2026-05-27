@@ -49,7 +49,7 @@ export async function Hero() {
 
         <div className="mt-5 max-w-2xl space-y-3 text-base leading-relaxed text-cream/85 drop-shadow-[0_1px_12px_rgba(0,0,0,0.9)] md:mt-6 md:text-lg lg:text-xl">
           <p>{t("home.heroLead")}</p>
-          <p className="hidden text-cream/75 md:block md:text-base lg:text-lg">
+          <p className="text-cream/75 md:text-base lg:text-lg">
             {t("home.heroSub")}
           </p>
         </div>
