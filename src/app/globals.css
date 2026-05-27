@@ -153,7 +153,7 @@ body {
 /* Carrousel thèmes — portails gauche/droite, défilement continu */
 .themes-portal {
   --themes-visible: 1;
-  --themes-slide-w: min(82vw, 18.5rem);
+  --themes-slide-w: min(68vw, 16rem);
   --themes-gap: 0.75rem;
   /* Longueur du fondu (téléporteur invisible) */
   --themes-portal-fade: 4.25rem;
@@ -248,6 +248,18 @@ body {
     --themes-frame-w: 100vw;
     /* Téléporteur plus proche des bords = moins de fondu qui mange l’écran */
     --themes-portal-fade: 2.25rem;
+    /* Évite le centrage qui crée un vide à gauche */
+    justify-content: flex-start;
+  }
+
+  .themes-portal__frame {
+    justify-content: flex-start;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .themes-portal__stage {
+    width: 100%;
   }
 
   .themes-portal__viewport {

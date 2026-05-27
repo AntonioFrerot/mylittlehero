@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CatalogueBackgroundVideo } from "@/components/CatalogueBackgroundVideo";
+import { MoviePosterCarousel } from "@/components/MoviePosterCarousel";
 import { leoExampleFilms } from "@/lib/data";
 import {
   translateExamplePosterDuration,
@@ -99,7 +100,35 @@ export async function MoviePosterGrid() {
           </p>
         </div>
 
-        <div className="mt-8 -mx-4 flex gap-4 overflow-x-auto overscroll-x-contain px-4 pb-2 snap-x snap-mandatory scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:pb-0 sm:snap-none md:mt-14 md:grid-cols-3 md:gap-6 lg:grid-cols-5">
+        <MoviePosterCarousel itemCount={leoExampleFilms.length}>
+          {leoExampleFilms.map((movie) => {
+            const title = translateExamplePosterTitle(
+              movie.id,
+              movie.title,
+              locale
+            );
+            return (
+              <PosterCard
+                key={movie.id}
+                title={title}
+                src={movie.src}
+                durationLabel={
+                  movie.durationLabel
+                    ? translateExamplePosterDuration(
+                        movie.id,
+                        movie.durationLabel,
+                        locale
+                      )
+                    : undefined
+                }
+                href={movie.href}
+                posterAlt={t("home.posterAlt", { title })}
+              />
+            );
+          })}
+        </MoviePosterCarousel>
+
+        <div className="mt-8 hidden gap-4 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:pb-0 md:mt-14 md:grid-cols-3 md:gap-6 lg:grid-cols-5">
           {leoExampleFilms.map((movie) => {
             const title = translateExamplePosterTitle(
               movie.id,

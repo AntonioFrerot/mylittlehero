@@ -52,7 +52,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     slug: "leo-carte-pirates",
     title: "Candy Signal",
     tagline: "Un billet de 10 dollars, un robot rouge et une mission très sucrée",
-    posterSrc: "/posters/leo-carte-pirates.png",
+    posterSrc: "/posters/candy-signal.png",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "realistic",
     theme: "scifi",
