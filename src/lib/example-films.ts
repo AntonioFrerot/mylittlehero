@@ -55,7 +55,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     title: "Candy Signal",
     tagline: "Un billet de 10 dollars, un robot rouge et une mission très sucrée",
     posterSrc: "/posters/candy-signal.png",
-    videoPosterSrc: "/posters/candy-signal-play-thumb.png",
+    videoPosterSrc: "/posters/candy-signal-video-poster.png",
     videoSrc: "https://www.youtube.com/watch?v=2tCE_kQNM68",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "realistic",
