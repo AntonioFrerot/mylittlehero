@@ -24,6 +24,8 @@
 /data/users.json
 /data/characters/*.json
 /data/films/*.json
+/data/stories/**
+!/data/stories/.gitkeep
 /data/contact-messages.json
 /data/film-drafts/*.json
 /public/videos/*.mp4

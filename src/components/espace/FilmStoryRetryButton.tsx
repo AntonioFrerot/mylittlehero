@@ -1,0 +1,59 @@
+"use client";
+
+import { useActionState } from "react";
+import { useLocale } from "@/components/LocaleProvider";
+import {
+  retryStoryGeneration,
+  type StoryRetryState,
+} from "@/lib/story-generation/actions";
+import type { StoryGenerationStatus } from "@/lib/story-generation/types";
+
+type FilmStoryRetryButtonProps = {
+  filmId: string;
+  storyStatus?: StoryGenerationStatus;
+};
+
+const initialState: StoryRetryState = {};
+
+export function FilmStoryRetryButton({
+  filmId,
+  storyStatus,
+}: FilmStoryRetryButtonProps) {
+  const { t } = useLocale();
+  const [state, formAction, pending] = useActionState(
+    retryStoryGeneration,
+    initialState
+  );
+
+  if (storyStatus === "completed" || storyStatus === "generating") {
+    return null;
+  }
+
+  const label =
+    storyStatus === "failed" || storyStatus === "awaiting_generation"
+      ? t("space.storyRetry.retryButton")
+      : t("space.storyRetry.button");
+
+  return (
+    <form action={formAction} className="mt-4 flex flex-col gap-2">
+      <input type="hidden" name="filmId" value={filmId} />
+      <button
+        type="submit"
+        disabled={pending}
+        className="inline-flex w-fit items-center justify-center rounded-full border border-gold/40 bg-gold/10 px-4 py-2 text-sm font-medium text-gold-light transition-colors hover:bg-gold/20 disabled:opacity-50"
+      >
+        {pending ? t("space.storyRetry.pending") : label}
+      </button>
+      {state.error && (
+        <p className="text-sm text-red-300/90" role="alert">
+          {state.error}
+        </p>
+      )}
+      {state.success && (
+        <p className="text-sm text-emerald-300/90" role="status">
+          {state.success}
+        </p>
+      )}
+    </form>
+  );
+}

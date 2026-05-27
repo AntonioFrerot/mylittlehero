@@ -1,13 +1,22 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { ExampleFilmYouTubePlayer } from "@/components/films/ExampleFilmYouTubePlayer";
+import { isYouTubeUrl, parseYouTubeVideoId } from "@/lib/youtube";
 
 type ExampleFilmVideoProps = {
   src: string;
   title: string;
+  posterSrc: string;
+  posterAlt: string;
 };
 
-export function ExampleFilmVideo({ src, title }: ExampleFilmVideoProps) {
+type ExampleFilmMp4PlayerProps = {
+  src: string;
+  title: string;
+};
+
+function ExampleFilmMp4Player({ src, title }: ExampleFilmMp4PlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const capturedRef = useRef(false);
   const [posterUrl, setPosterUrl] = useState<string | null>(null);
@@ -68,4 +77,26 @@ export function ExampleFilmVideo({ src, title }: ExampleFilmVideoProps) {
       </video>
     </div>
   );
+}
+
+export function ExampleFilmVideo({
+  src,
+  title,
+  posterSrc,
+  posterAlt,
+}: ExampleFilmVideoProps) {
+  const youtubeId = isYouTubeUrl(src) ? parseYouTubeVideoId(src) : null;
+
+  if (youtubeId) {
+    return (
+      <ExampleFilmYouTubePlayer
+        videoId={youtubeId}
+        title={title}
+        posterSrc={posterSrc}
+        posterAlt={posterAlt}
+      />
+    );
+  }
+
+  return <ExampleFilmMp4Player src={src} title={title} />;
 }

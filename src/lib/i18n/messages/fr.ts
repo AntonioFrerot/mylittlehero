@@ -170,6 +170,23 @@ export const fr = {
     accountLoadError: "Impossible de charger votre compte.",
     charactersLabel: "Personnages :",
     createdOn: "Créé le {date}",
+    storyStatusAwaiting: "Histoire : en attente de génération",
+    storyStatusGenerating: "Histoire : génération en cours…",
+    storyStatusCompleted: "Histoire : scénario prêt",
+    storyStatusCompletedMock: "Histoire : scénario démo prêt (sans OpenAI)",
+    storyStatusFailed: "Histoire : génération échouée",
+    storyRetry: {
+      button: "Générer l'histoire",
+      retryButton: "Relancer la génération",
+      pending: "Lancement…",
+      started:
+        "La génération de l'histoire a démarré. Rechargez cette page dans quelques minutes.",
+      alreadyDone: "L'histoire est déjà générée pour ce film.",
+      alreadyRunning: "Une génération est déjà en cours pour ce film.",
+      filmNotFound: "Film introuvable.",
+      noApiKey:
+        "Clé OpenAI manquante. Ajoutez OPENAI_API_KEY dans .env.local à la racine du projet, puis redémarrez npm run dev.",
+    },
     navLabel: "Sections de Mon espace",
     confirmCancelSubscription:
       "Confirmer la résiliation de votre abonnement ?",
@@ -358,6 +375,8 @@ export const fr = {
     },
     success:
       "Votre film est en cours de création. Vous recevrez une notification lorsqu'il sera disponible dans votre espace.",
+    successNoStoryAi:
+      "Votre film est enregistré. La génération automatique de l'histoire nécessite OPENAI_API_KEY dans .env.local — configurez-la puis utilisez « Relancer la génération » dans Mes films.",
   },
   characters: {
     listTitle: "Vos personnages",
@@ -398,6 +417,12 @@ export const fr = {
     eyebrow: "Film d'exemple",
     tryFree: "Essayer gratuitement",
     posterAlt: "Affiche — {title}",
+    playVideo: "Lire la vidéo — {title}",
+    qualityHint: {
+      title: "Meilleure qualité",
+      message: "Pour une meilleure qualité, cliquez sur l’icône ⚙️",
+      dismiss: "J'ai compris",
+    },
     leoPhotoAlt: "Léo, l'enfant qui a inspiré ce film",
     leoPhotoLabel: "Léo",
     leoExampleIntro: "Voici un exemple de film d'animation pour Léo :",

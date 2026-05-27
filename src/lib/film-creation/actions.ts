@@ -13,6 +13,10 @@ import {
 } from "@/lib/i18n/film-labels";
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "node:crypto";
+import { provisionStoryWorkspace } from "@/lib/story-generation/provision";
+import { scheduleStoryGeneration } from "@/lib/story-generation/schedule";
+import { readStoryManifest } from "@/lib/story-generation/manifest";
+import type { StoryGenerationStatus } from "@/lib/story-generation/types";
 import { addUserFilm, listUserFilms } from "./store";
 import type { FilmCharacterRef, FilmStyle, FilmTheme, UserFilm } from "./types";
 import {
@@ -22,6 +26,14 @@ import {
 export type FilmCreationFormState = {
   error?: string;
   success?: string;
+};
+
+export type UserFilmWithStory = UserFilm & {
+  storyGeneration?: {
+    status: StoryGenerationStatus;
+    mode?: "openai" | "mock";
+    error?: string;
+  };
 };
 
 function parseStyle(value: unknown): FilmStyle | null {
@@ -58,6 +70,31 @@ export async function getMyFilms(): Promise<UserFilm[]> {
   const session = await getSession();
   if (!session) return [];
   return listUserFilms(session.email);
+}
+
+export async function getMyFilmsWithStory(): Promise<UserFilmWithStory[]> {
+  const session = await getSession();
+  if (!session) return [];
+
+  const films = await listUserFilms(session.email);
+  return Promise.all(
+    films.map(async (film) => {
+      const manifest = await readStoryManifest(session.email, film.id);
+      if (!manifest) return film;
+      return {
+        ...film,
+        storyGeneration: {
+          status: manifest.status,
+          ...(manifest.generationMode
+            ? { mode: manifest.generationMode }
+            : {}),
+          ...(manifest.generationError
+            ? { error: manifest.generationError }
+            : {}),
+        },
+      };
+    })
+  );
 }
 
 export async function saveFilmCreation(
@@ -138,6 +175,18 @@ export async function saveFilmCreation(
   };
 
   await addUserFilm(session.email, film);
+
+  try {
+    await provisionStoryWorkspace(session.email, film);
+    scheduleStoryGeneration(session.email, film);
+  } catch (error) {
+    console.error("Story workspace provisioning failed", {
+      email: session.email,
+      filmId: film.id,
+      error,
+    });
+  }
+
   revalidatePath("/mon-espace");
   revalidatePath("/creer-film");
 

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "story:retry": "npx --yes tsx scripts/retry-story.mjs"
   },
   "dependencies": {
     "jose": "^6.2.3",

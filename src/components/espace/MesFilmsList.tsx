@@ -6,7 +6,9 @@ import {
   getFilmDurationSeconds,
   formatFilmDurationSeconds,
 } from "@/lib/film-creation/duration";
-import type { UserFilm } from "@/lib/film-creation/types";
+import type { UserFilmWithStory } from "@/lib/film-creation/actions";
+import type { StoryGenerationStatus } from "@/lib/story-generation/types";
+import { FilmStoryRetryButton } from "@/components/espace/FilmStoryRetryButton";
 import {
   filmDurationBadgeClassName,
   filmStyleBadgeClassName,
@@ -20,6 +22,7 @@ import {
   type FilmStatusId,
 } from "@/lib/i18n/film-labels";
 import type { LocaleCode } from "@/lib/i18n/locales";
+import type { TranslationKey } from "@/lib/i18n/translator";
 
 const statusStyles: Record<FilmStatusId, string> = {
   preparing: "border-amber-500/30 bg-amber-950/30 text-amber-200",
@@ -51,8 +54,27 @@ function getStatusStyle(status: string): string {
   return statusStyles[id];
 }
 
+function storyStatusLabel(
+  status: StoryGenerationStatus,
+  mode: "openai" | "mock" | undefined,
+  t: (key: TranslationKey) => string
+): string {
+  switch (status) {
+    case "generating":
+      return t("space.storyStatusGenerating");
+    case "completed":
+      return mode === "mock"
+        ? t("space.storyStatusCompletedMock")
+        : t("space.storyStatusCompleted");
+    case "failed":
+      return t("space.storyStatusFailed");
+    default:
+      return t("space.storyStatusAwaiting");
+  }
+}
+
 type MesFilmsListProps = {
-  films: UserFilm[];
+  films: UserFilmWithStory[];
 };
 
 export function MesFilmsList({ films }: MesFilmsListProps) {
@@ -142,6 +164,32 @@ export function MesFilmsList({ films }: MesFilmsListProps) {
                   {film.additionalInfo}
                 </p>
               )}
+              {film.storyGeneration && (
+                <p
+                  className={`mt-3 text-sm ${
+                    film.storyGeneration.status === "failed"
+                      ? "text-red-300/80"
+                      : film.storyGeneration.status === "completed"
+                        ? "text-emerald-300/80"
+                        : "text-cream/55"
+                  }`}
+                >
+                  {storyStatusLabel(
+                    film.storyGeneration.status,
+                    film.storyGeneration.mode,
+                    t
+                  )}
+                  {film.storyGeneration.error && (
+                    <span className="mt-1 block text-xs text-red-300/70">
+                      {film.storyGeneration.error}
+                    </span>
+                  )}
+                </p>
+              )}
+              <FilmStoryRetryButton
+                filmId={film.id}
+                storyStatus={film.storyGeneration?.status}
+              />
             </div>
           </div>
         </li>

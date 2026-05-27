@@ -19,6 +19,8 @@ export type ExampleFilm = {
   title: string;
   tagline: string;
   posterSrc: string;
+  /** Miniature 16:9 avant lecture vidéo (sinon posterSrc). */
+  videoPosterSrc?: string;
   videoSrc?: string;
   heroPhotoSrc: string;
   theme: FilmThemeId;
@@ -53,6 +55,8 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     title: "Candy Signal",
     tagline: "Un billet de 10 dollars, un robot rouge et une mission très sucrée",
     posterSrc: "/posters/candy-signal.png",
+    videoPosterSrc: "/posters/candy-signal-video-thumb.png",
+    videoSrc: "https://www.youtube.com/watch?v=2tCE_kQNM68",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "realistic",
     theme: "scifi",

@@ -44,3 +44,25 @@ export async function addUserFilm(email: string, film: UserFilm): Promise<UserFi
   await writeFilms(email, films);
   return listUserFilms(email);
 }
+
+export async function getUserFilmById(
+  email: string,
+  filmId: string
+): Promise<UserFilm | null> {
+  const films = await readFilms(email);
+  return films.find((film) => film.id === filmId) ?? null;
+}
+
+export async function updateUserFilm(
+  email: string,
+  filmId: string,
+  patch: Partial<Pick<UserFilm, "title" | "status">>
+): Promise<UserFilm | null> {
+  const films = await readFilms(email);
+  const index = films.findIndex((film) => film.id === filmId);
+  if (index < 0) return null;
+
+  films[index] = { ...films[index], ...patch };
+  await writeFilms(email, films);
+  return films[index];
+}

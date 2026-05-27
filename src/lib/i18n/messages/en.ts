@@ -168,6 +168,23 @@ export const en = {
     accountLoadError: "Unable to load your account.",
     charactersLabel: "Characters:",
     createdOn: "Created on {date}",
+    storyStatusAwaiting: "Story: waiting to generate",
+    storyStatusGenerating: "Story: generating…",
+    storyStatusCompleted: "Story: script ready",
+    storyStatusCompletedMock: "Story: demo script ready (no OpenAI)",
+    storyStatusFailed: "Story: generation failed",
+    storyRetry: {
+      button: "Generate story",
+      retryButton: "Retry generation",
+      pending: "Starting…",
+      started:
+        "Story generation has started. Refresh this page in a few minutes.",
+      alreadyDone: "The story has already been generated for this film.",
+      alreadyRunning: "Generation is already running for this film.",
+      filmNotFound: "Film not found.",
+      noApiKey:
+        "Missing OpenAI key. Add OPENAI_API_KEY to .env.local at the project root, then restart npm run dev.",
+    },
     navLabel: "My account sections",
     confirmCancelSubscription: "Confirm cancellation of your subscription?",
   },
@@ -354,6 +371,8 @@ export const en = {
     },
     success:
       "Your film is being created. You'll receive a notification when it's available in your account.",
+    successNoStoryAi:
+      "Your film has been saved. Automatic story generation needs OPENAI_API_KEY in .env.local — set it up, then use « Retry generation » in My films.",
   },
   characters: {
     listTitle: "Your characters",
@@ -394,6 +413,12 @@ export const en = {
     eyebrow: "Example film",
     tryFree: "Try for free",
     posterAlt: "Poster — {title}",
+    playVideo: "Play video — {title}",
+    qualityHint: {
+      title: "Better quality",
+      message: "For better quality, click on the logo ⚙️",
+      dismiss: "Got it",
+    },
     leoPhotoAlt: "Leo, the child this film was made for",
     leoPhotoLabel: "Leo",
     leoExampleIntro: "Here is an example of an animated film for Leo:",

@@ -6,7 +6,7 @@ import { MonEspaceNav } from "@/components/espace/MonEspaceNav";
 import { Button } from "@/components/ui/Button";
 import { getMyAccountDetails } from "@/lib/auth/account-actions";
 import { getMyCharacters } from "@/lib/characters/actions";
-import { getMyFilms } from "@/lib/film-creation/actions";
+import { getMyFilmsWithStory } from "@/lib/film-creation/actions";
 import { getSession } from "@/lib/auth/get-session";
 import { parseEspaceSection } from "@/lib/espace/sections";
 import { BRAND_NAME } from "@/lib/brand";
@@ -42,7 +42,7 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
     section === "profil" ? await getMyAccountDetails() : null;
   const characters =
     section === "personnages" ? await getMyCharacters() : [];
-  const films = section === "films" ? await getMyFilms() : [];
+  const films = section === "films" ? await getMyFilmsWithStory() : [];
 
   return (
     <>

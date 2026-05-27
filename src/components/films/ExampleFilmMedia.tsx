@@ -10,7 +10,14 @@ type ExampleFilmMediaProps = {
 
 export function ExampleFilmMedia({ film, posterAlt, title }: ExampleFilmMediaProps) {
   if (film.videoSrc) {
-    return <ExampleFilmVideo src={film.videoSrc} title={title} />;
+    return (
+      <ExampleFilmVideo
+        src={film.videoSrc}
+        title={title}
+        posterSrc={film.videoPosterSrc ?? film.posterSrc}
+        posterAlt={posterAlt}
+      />
+    );
   }
 
   return (
