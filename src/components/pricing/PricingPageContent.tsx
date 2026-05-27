@@ -44,8 +44,8 @@ export async function PricingPageContent() {
           <FreeTrialBanner />
         </div>
 
-        <section id="offres" className="mt-10 md:mt-12 lg:mt-14">
-          <div className="flex w-full flex-col gap-4 pt-1 lg:hidden">
+        <section id="offres" className="mt-6 md:mt-12 lg:mt-14">
+          <div className="flex w-full flex-col gap-8 pt-1 lg:hidden">
             <PricingMobileTierCard
               monthlyPlan={standardMonthly}
               yearlyPlan={standardYearly}
