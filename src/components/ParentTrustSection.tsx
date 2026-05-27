@@ -38,9 +38,11 @@ export async function ParentTrustSection() {
             <h2 className="font-display mt-2 text-2xl font-bold text-cream md:text-3xl lg:text-4xl">
               {t("home.trustTitle")}
             </h2>
-            <p className="mt-4 leading-relaxed text-cream/60">{t("home.trustText")}</p>
+            <p className="mt-4 leading-relaxed text-cream/60">
+              {t("home.trustText")}
+            </p>
 
-            <ul className="mt-8 flex flex-wrap gap-3">
+            <ul className="mt-8 hidden flex-wrap gap-3 md:flex">
               {BADGE_KEYS.map((key) => (
                 <li
                   key={key}
