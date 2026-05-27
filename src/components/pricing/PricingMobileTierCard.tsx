@@ -30,14 +30,7 @@ function BillingPeriodSwitch({
   yearlyLabel,
 }: BillingPeriodSwitchProps) {
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={yearly}
-      aria-label={yearly ? yearlyLabel : monthlyLabel}
-      onClick={() => onChange(!yearly)}
-      className="group flex shrink-0 items-center gap-1 rounded-full p-0.5"
-    >
+    <div className="flex shrink-0 items-center gap-1">
       <span
         className={`text-[9px] font-medium leading-none transition-colors ${
           !yearly ? "text-gold-light" : "text-cream/40"
@@ -45,16 +38,20 @@ function BillingPeriodSwitch({
       >
         {monthlyLabel}
       </span>
-      <span
-        className="relative h-4 w-8 rounded-full border border-white/15 bg-white/10 transition-colors group-hover:border-gold/30"
-        aria-hidden
+      <button
+        type="button"
+        role="switch"
+        aria-checked={yearly}
+        aria-label={yearly ? yearlyLabel : monthlyLabel}
+        onClick={() => onChange(!yearly)}
+        className="flex h-5 w-10 shrink-0 items-center rounded-full border border-white/15 bg-white/10 p-0.5 transition-colors hover:border-gold/30"
       >
         <span
-          className={`absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-gold-light shadow-sm transition-transform duration-200 ${
-            yearly ? "translate-x-[18px]" : "translate-x-0.5"
+          className={`block size-3.5 shrink-0 rounded-full bg-gold-light shadow-sm transition-[margin] duration-200 ease-out ${
+            yearly ? "ml-auto" : "ml-0"
           }`}
         />
-      </span>
+      </button>
       <span
         className={`text-[9px] font-medium leading-none transition-colors ${
           yearly ? "text-gold-light" : "text-cream/40"
@@ -62,7 +59,7 @@ function BillingPeriodSwitch({
       >
         {yearlyLabel}
       </span>
-    </button>
+    </div>
   );
 }
 
@@ -75,7 +72,7 @@ export function PricingMobileTierCard({
   highlighted = false,
 }: PricingMobileTierCardProps) {
   const t = createTranslator(locale);
-  const [yearly, setYearly] = useState(false);
+  const [yearly, setYearly] = useState(() => false);
   const plan = yearly ? yearlyPlan : monthlyPlan;
 
   return (
