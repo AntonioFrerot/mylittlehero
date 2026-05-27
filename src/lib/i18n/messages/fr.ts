@@ -45,7 +45,7 @@ export const fr = {
     catalogueTitleBefore: "Films d'exemple du",
     catalogueTitleHighlight: "petit Léo",
     catalogueSubtitle:
-      "Cinq films dans des univers différents, créés à partir d'une simple photo de Léo",
+      "Cinq films d'univers différents toujours avec Léo qui est devenu le personnage emblématique de sa famille.",
     posterAlt: "Affiche — {title}",
     howEyebrow: "Simple comme un rêve",
     howTitle: "Comment ça marche ?",
@@ -68,7 +68,7 @@ export const fr = {
       "Chaque univers est pensé pour émerveiller, avec élégance et émotion, sans excès.",
     themesPrev: "Thèmes précédents",
     themesNext: "Thèmes suivants",
-    trustEyebrow: "Pour les parents",
+    trustEyebrow: "POUR LA FAMILLE",
     trustTitle: "Des moments merveilleux à vivre ensemble",
     trustText:
       "Imaginez sa surprise en se découvrant héros à l'écran, son rire, ce regard qui vous cherche pour partager la fierté. Chaque film est une nouvelle aventure à vivre ensemble, aujourd'hui, ce week-end ou quand l'envie vous prend, sans attendre une grande occasion.",

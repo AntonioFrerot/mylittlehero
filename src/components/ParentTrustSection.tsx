@@ -30,7 +30,7 @@ export async function ParentTrustSection() {
       />
 
       <div className="relative mx-auto max-w-7xl px-4 md:px-8 lg:px-10">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        <div className="grid items-center gap-8 md:gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
             <p className="text-sm font-medium uppercase tracking-widest text-gold/80">
               {t("home.trustEyebrow")}
