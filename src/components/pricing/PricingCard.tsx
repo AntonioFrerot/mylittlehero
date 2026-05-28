@@ -1,3 +1,4 @@
+import React from "react";
 import type { PricingPlan } from "@/lib/pricing";
 import { getTierQuotaLabel } from "@/lib/pricing";
 import { Button } from "@/components/ui/Button";
@@ -11,7 +12,7 @@ function renderPricingFeature(feature: string) {
   const matches = [...feature.matchAll(PRICING_GOLD_TOKENS_RE)];
   if (matches.length === 0) return feature;
 
-  const nodes: Array<string | JSX.Element> = [];
+  const nodes: Array<string | React.ReactElement> = [];
   let cursor = 0;
 
   matches.forEach((match, index) => {
