@@ -5,35 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 
-const PRICING_GOLD_TOKENS_RE =
-  /\b(15 films|180 films|30 films|360 films|5 minutes|10 minutes)\b/g;
-
 function renderPricingFeature(feature: string) {
-  const matches = [...feature.matchAll(PRICING_GOLD_TOKENS_RE)];
-  if (matches.length === 0) return feature;
-
-  const nodes: Array<string | React.ReactElement> = [];
-  let cursor = 0;
-
-  matches.forEach((match, index) => {
-    const start = match.index ?? 0;
-    const token = match[1] ?? match[0];
-    const end = start + token.length;
-
-    if (start > cursor) nodes.push(feature.slice(cursor, start));
-    nodes.push(
-      <span
-        key={`${token}-${index}`}
-        className="text-gold-light"
-      >
-        {token}
-      </span>
-    );
-    cursor = end;
-  });
-
-  if (cursor < feature.length) nodes.push(feature.slice(cursor));
-  return nodes;
+  return feature;
 }
 
 type PricingCardProps = {
