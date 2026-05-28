@@ -134,7 +134,7 @@ export function getPricingPlans(locale: LocaleCode): PricingPlan[] {
       billing: config.billing,
       tier: config.tier,
       highlighted: config.highlighted,
-      features: config.features.map((key) => t(key)),
+      features: [...config.features.map((key) => t(key)), t("pricing.processingTime")],
       ...(monthlyPair
         ? {
             savingsLabel: buildYearlySavings(

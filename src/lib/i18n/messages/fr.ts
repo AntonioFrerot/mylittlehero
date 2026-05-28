@@ -244,6 +244,7 @@ export const fr = {
     tierStandardYearly: "180 films / an",
     tierUnlimitedYearly: "360 films / an",
     savingsLabel: "Économisez {amount} par an (−{percent} %)",
+    processingTime: "1min = 1h de traitement",
     plans: {
       standardMonthly: {
         name: "Essentiel Mois",
