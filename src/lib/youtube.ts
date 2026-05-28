@@ -33,6 +33,7 @@ export function isYouTubeUrl(url: string): boolean {
 export type YouTubeEmbedOptions = {
   autoplay?: boolean;
   origin?: string;
+  muted?: boolean;
 };
 
 export function getYouTubeEmbedUrl(
@@ -50,6 +51,8 @@ export function getYouTubeEmbedUrl(
 
   if (options.autoplay) {
     params.set("autoplay", "1");
+    // iOS Safari bloque souvent l'autoplay avec son : on force mute.
+    params.set("mute", options.muted === false ? "0" : "1");
   }
   if (options.origin) {
     params.set("origin", options.origin);

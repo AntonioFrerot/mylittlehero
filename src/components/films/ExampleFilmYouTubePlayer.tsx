@@ -33,7 +33,7 @@ export function ExampleFilmYouTubePlayer({
       <div className="relative aspect-video w-full overflow-hidden bg-black">
         <iframe
           className="absolute inset-0 h-full w-full border-0"
-          src={getYouTubeEmbedUrl(videoId, { autoplay: true })}
+          src={getYouTubeEmbedUrl(videoId, { autoplay: true, muted: true })}
           title={`Vidéo — ${title}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           referrerPolicy="strict-origin-when-cross-origin"
