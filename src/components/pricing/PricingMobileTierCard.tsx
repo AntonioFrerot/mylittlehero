@@ -7,31 +7,32 @@ import { Button } from "@/components/ui/Button";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 
-const PRICING_GOLD_HIGHLIGHTS = new Set([
-  "15 films",
-  "180 films",
-  "30 films",
-  "360 films",
-  "5 minutes",
-  "10 minutes",
-] as const);
-
-const PRICING_GOLD_HIGHLIGHTS_RE =
-  /(15 films|180 films|30 films|360 films|5 minutes|10 minutes)/g;
+const PRICING_GOLD_NUMBERS_RE =
+  /\b(15|180|30|360)(?=\sfilms\b)|\b(5|10)(?=\sminutes\b)/g;
 
 function renderPricingFeature(feature: string) {
-  const parts = feature.split(PRICING_GOLD_HIGHLIGHTS_RE);
-  if (parts.length <= 1) return feature;
+  const matches = [...feature.matchAll(PRICING_GOLD_NUMBERS_RE)];
+  if (matches.length === 0) return feature;
 
-  return parts.map((part, index) =>
-    PRICING_GOLD_HIGHLIGHTS.has(part as never) ? (
-      <span key={`${part}-${index}`} className="text-gold-light">
-        {part}
+  const nodes: Array<string | JSX.Element> = [];
+  let cursor = 0;
+
+  matches.forEach((match, index) => {
+    const start = match.index ?? 0;
+    const token = match[1] ?? match[2] ?? match[0];
+    const end = start + token.length;
+
+    if (start > cursor) nodes.push(feature.slice(cursor, start));
+    nodes.push(
+      <span key={`${token}-${index}`} className="text-gold-light">
+        {token}
       </span>
-    ) : (
-      part
-    )
-  );
+    );
+    cursor = end;
+  });
+
+  if (cursor < feature.length) nodes.push(feature.slice(cursor));
+  return nodes;
 }
 
 type PricingMobileTierCardProps = {
