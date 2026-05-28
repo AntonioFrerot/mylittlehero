@@ -26,7 +26,7 @@ function renderPricingFeature(feature: string) {
         {part}
       </span>
     ) : (
-      <span key={`${part}-${index}`}>{part}</span>
+      part
     )
   );
 }
