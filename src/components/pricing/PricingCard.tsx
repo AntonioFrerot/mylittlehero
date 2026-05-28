@@ -87,11 +87,15 @@ export function PricingCard({ plan, ctaHref, locale }: PricingCardProps) {
             </span>
             <span className="text-sm text-cream/50">{plan.period}</span>
           </div>
-          {plan.savingsLabel && (
-            <p className="mt-3 rounded-lg border border-gold/35 bg-gold/10 px-3 py-2 text-xs font-semibold leading-snug text-gold-light xl:text-sm">
-              {plan.savingsLabel}
-            </p>
-          )}
+          <div className="mt-3 min-h-[2.5rem]">
+            {plan.savingsLabel ? (
+              <p className="rounded-lg border border-gold/35 bg-gold/10 px-3 py-2 text-xs font-semibold leading-snug text-gold-light xl:text-sm">
+                {plan.savingsLabel}
+              </p>
+            ) : (
+              <div aria-hidden />
+            )}
+          </div>
         </div>
       </div>
 
