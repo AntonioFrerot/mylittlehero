@@ -4,6 +4,15 @@ import { Button } from "@/components/ui/Button";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 
+const PRICING_GOLD_HIGHLIGHTS = new Set([
+  "15 films",
+  "180 films",
+  "30 films",
+  "360 films",
+  "5 minutes",
+  "10 minutes",
+] as const);
+
 const PRICING_GOLD_HIGHLIGHTS_RE =
   /(15 films|180 films|30 films|360 films|5 minutes|10 minutes)/g;
 
@@ -12,8 +21,8 @@ function renderPricingFeature(feature: string) {
   if (parts.length <= 1) return feature;
 
   return parts.map((part, index) =>
-    PRICING_GOLD_HIGHLIGHTS_RE.test(part) ? (
-      <span key={`${part}-${index}`} className="font-semibold text-gold-light">
+    PRICING_GOLD_HIGHLIGHTS.has(part as never) ? (
+      <span key={`${part}-${index}`} className="text-gold-light">
         {part}
       </span>
     ) : (
