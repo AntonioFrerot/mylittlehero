@@ -41,8 +41,11 @@ body {
 
 .text-yellow {
   color: #ffd700;
-  margin: 0;
   padding: 0;
+  display: inline-block;
+  line-height: inherit;
+  /* Resserre légèrement l'espace perçu autour du texte coloré (desktop). */
+  margin-inline: -1px;
 }
 
 /* Zones fixes (header, chat) — encoches et barre d’accueil iOS/Android */
