@@ -268,7 +268,6 @@ export const fr = {
           films: "30 films par mois",
           duration: "Durée : 2 à 10 minutes (au choix)",
           custom: "Personnalisation complète",
-          priority: "Priorité de traitement",
         },
       },
       unlimitedYearly: {
@@ -277,7 +276,6 @@ export const fr = {
           films: "360 films par an",
           duration: "Durée : 2 à 10 minutes (au choix)",
           custom: "Personnalisation complète",
-          priority: "Priorité de traitement",
         },
       },
     },
