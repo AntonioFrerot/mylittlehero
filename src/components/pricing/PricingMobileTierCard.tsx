@@ -7,6 +7,24 @@ import { Button } from "@/components/ui/Button";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 
+const PRICING_GOLD_HIGHLIGHTS_RE =
+  /(15 films|180 films|30 films|360 films|5 minutes|10 minutes)/g;
+
+function renderPricingFeature(feature: string) {
+  const parts = feature.split(PRICING_GOLD_HIGHLIGHTS_RE);
+  if (parts.length <= 1) return feature;
+
+  return parts.map((part, index) =>
+    PRICING_GOLD_HIGHLIGHTS_RE.test(part) ? (
+      <span key={`${part}-${index}`} className="font-semibold text-gold-light">
+        {part}
+      </span>
+    ) : (
+      <span key={`${part}-${index}`}>{part}</span>
+    )
+  );
+}
+
 type PricingMobileTierCardProps = {
   monthlyPlan: PricingPlan;
   yearlyPlan: PricingPlan;
@@ -133,7 +151,7 @@ export function PricingMobileTierCard({
               >
                 ✓
               </span>
-              <span>{feature}</span>
+              <span>{renderPricingFeature(feature)}</span>
             </li>
           ))}
         </ul>
