@@ -41,6 +41,7 @@ const PLAN_KEYS: Record<
     features: [
       "pricing.plans.standardMonthly.features.films",
       "pricing.plans.standardMonthly.features.duration",
+      "pricing.processingTime",
       "pricing.plans.standardMonthly.features.custom",
     ],
     tier: "standard",
@@ -52,6 +53,7 @@ const PLAN_KEYS: Record<
     features: [
       "pricing.plans.standardYearly.features.films",
       "pricing.plans.standardYearly.features.duration",
+      "pricing.processingTime",
       "pricing.plans.standardYearly.features.custom",
     ],
     tier: "standard",
@@ -63,6 +65,7 @@ const PLAN_KEYS: Record<
     features: [
       "pricing.plans.unlimitedMonthly.features.films",
       "pricing.plans.unlimitedMonthly.features.duration",
+      "pricing.processingTime",
       "pricing.plans.unlimitedMonthly.features.custom",
       "pricing.plans.unlimitedMonthly.features.priority",
     ],
@@ -76,6 +79,7 @@ const PLAN_KEYS: Record<
     features: [
       "pricing.plans.unlimitedYearly.features.films",
       "pricing.plans.unlimitedYearly.features.duration",
+      "pricing.processingTime",
       "pricing.plans.unlimitedYearly.features.custom",
       "pricing.plans.unlimitedYearly.features.priority",
     ],
@@ -134,7 +138,7 @@ export function getPricingPlans(locale: LocaleCode): PricingPlan[] {
       billing: config.billing,
       tier: config.tier,
       highlighted: config.highlighted,
-      features: [...config.features.map((key) => t(key)), t("pricing.processingTime")],
+      features: config.features.map((key) => t(key)),
       ...(monthlyPair
         ? {
             savingsLabel: buildYearlySavings(
