@@ -21,7 +21,10 @@ function renderPricingFeature(feature: string) {
 
     if (start > cursor) nodes.push(feature.slice(cursor, start));
     nodes.push(
-      <span key={`${token}-${index}`} className="text-gold-light">
+      <span
+        key={`${token}-${index}`}
+        className="inline-block -mx-px text-gold-light"
+      >
         {token}
       </span>
     );
