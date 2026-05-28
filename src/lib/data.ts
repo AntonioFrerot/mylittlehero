@@ -40,7 +40,7 @@ export const howItWorksSteps = [
     step: 3,
     title: "Réception du film",
     description:
-      "Votre film est livré en 8 heures maximum, prêt à regarder en famille.",
+      "Le film arrive dans votre espace dans un délai maximum de 12 heures, prêt à être regarder.",
   },
 ] as const;
 
