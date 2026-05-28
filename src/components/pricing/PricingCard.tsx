@@ -29,7 +29,7 @@ function renderPricingFeature(feature: string) {
 
     if (spanStart > cursor) nodes.push(feature.slice(cursor, spanStart));
     nodes.push(
-      <span key={`${token}-${index}`} className="text-yellow-400">
+      <span key={`${token}-${index}`} className="text-yellow">
         {feature.slice(spanStart, spanEnd)}
       </span>
     );

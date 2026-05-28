@@ -39,6 +39,12 @@ body {
   overflow-x: clip;
 }
 
+.text-yellow {
+  color: #ffd700;
+  margin: 0;
+  padding: 0;
+}
+
 /* Zones fixes (header, chat) — encoches et barre d’accueil iOS/Android */
 .safe-bottom {
   bottom: max(1rem, env(safe-area-inset-bottom, 0px));
