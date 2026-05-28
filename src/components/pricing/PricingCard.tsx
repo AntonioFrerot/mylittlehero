@@ -111,7 +111,7 @@ export function PricingCard({ plan, ctaHref, locale }: PricingCardProps) {
             >
               ✓
             </span>
-            {renderPricingFeature(feature)}
+            <span>{renderPricingFeature(feature)}</span>
           </li>
         ))}
       </ul>
