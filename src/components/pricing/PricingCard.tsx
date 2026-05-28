@@ -20,13 +20,20 @@ function renderPricingFeature(feature: string) {
     const token = match[1] ?? match[0];
     const end = start + token.length;
 
-    if (start > cursor) nodes.push(feature.slice(cursor, start));
+    // Inclure les espaces adjacents dans le span jaune pour éviter
+    // l'effet "trou" visible entre texte jaune et texte normal sur desktop.
+    let spanStart = start;
+    let spanEnd = end;
+    if (spanStart > 0 && feature[spanStart - 1] === " ") spanStart -= 1;
+    if (spanEnd < feature.length && feature[spanEnd] === " ") spanEnd += 1;
+
+    if (spanStart > cursor) nodes.push(feature.slice(cursor, spanStart));
     nodes.push(
       <span key={`${token}-${index}`} className="text-yellow-400">
-        {token}
+        {feature.slice(spanStart, spanEnd)}
       </span>
     );
-    cursor = end;
+    cursor = spanEnd;
   });
 
   if (cursor < feature.length) nodes.push(feature.slice(cursor));
