@@ -30,7 +30,7 @@ function renderPricingFeature(feature: string) {
     nodes.push(
       <span
         key={`${token}-${index}`}
-        className="text-gold-light"
+        className="text-gold-light -mx-0.5"
       >
         {feature.slice(spanStart, spanEnd)}
       </span>
