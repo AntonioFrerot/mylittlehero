@@ -241,7 +241,7 @@ export const en = {
     tierStandardYearly: "180 films / year",
     tierUnlimitedYearly: "360 films / year",
     savingsLabel: "Save {amount} per year (−{percent} %)",
-    processingTime: "Processing: 1 min = 1 hour processing",
+    processingTime: "1 min = 1 hour processing",
     plans: {
       standardMonthly: {
         name: "Essential Monthly",
