@@ -23,7 +23,7 @@ function renderPricingFeature(feature: string) {
     nodes.push(
       <span
         key={`${token}-${index}`}
-        className="inline-block -mx-px text-gold-light"
+        className="inline-block -mx-[2px] text-gold-light"
       >
         {token}
       </span>
