@@ -18,7 +18,7 @@ type ThemesCarouselProps = {
 };
 
 /** Secondes pour défiler tous les thèmes une fois (boucle = moitié du bandeau dupliqué). */
-const SCROLL_DURATION_S = 78;
+const SCROLL_DURATION_S = 52;
 
 export function ThemesCarousel({ themes }: ThemesCarouselProps) {
   const { t } = useLocale();
