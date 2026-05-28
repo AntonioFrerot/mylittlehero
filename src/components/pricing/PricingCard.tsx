@@ -100,8 +100,8 @@ export function PricingCard({ plan, ctaHref, locale }: PricingCardProps) {
 
       <Button
         href={ctaHref}
-        variant={plan.highlighted ? "primary" : "secondary"}
-        className={`mt-6 w-full !rounded-xl !px-4 !py-2.5 !text-sm lg:mt-auto lg:!py-3 ${!plan.highlighted ? "border-white/15" : ""}`}
+        variant="primary"
+        className="mt-6 w-full !rounded-xl !px-4 !py-2.5 !text-sm lg:mt-auto lg:!py-3"
       >
         {t("pricing.choosePlan")}
       </Button>

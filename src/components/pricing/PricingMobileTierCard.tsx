@@ -159,8 +159,8 @@ export function PricingMobileTierCard({
 
       <Button
         href={ctaHref}
-        variant={highlighted ? "primary" : "secondary"}
-        className={`mt-6 w-full !rounded-xl ${!highlighted ? "border-white/15" : ""}`}
+        variant="primary"
+        className="mt-6 w-full !rounded-xl"
       >
         {t("pricing.choosePlan")}
       </Button>
