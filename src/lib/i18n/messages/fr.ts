@@ -334,7 +334,8 @@ export const fr = {
       avoidQuestion: "Souhaitez-vous éviter quelque chose dans ce film ?",
       avoidPlaceholder: "Ex. pas d'araignées, pas de scènes trop effrayantes…",
       avoidHint: "Monstres, araignées, situations stressantes, etc.",
-      storyQuestion: "Souhaitez-vous écrire une partie de l'histoire ?",
+      storyQuestion:
+        "Souhaitez-vous écrire une partie de l'histoire ? (Merci d’éviter les contenus sensibles, dangereux ou non adaptés afin de garantir la création du film)",
       storyPlaceholder: "Ex. une plage au coucher du soleil, une rencontre avec un lionceau…",
       storyHint: "Environnements, rencontres, moments clés que vous imaginez.",
       submit: "Créer le film",
