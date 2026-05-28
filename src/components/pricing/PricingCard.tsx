@@ -50,7 +50,7 @@ export function PricingCard({ plan, ctaHref, locale }: PricingCardProps) {
     <article
       className={`relative flex flex-col rounded-2xl border p-5 transition-all duration-300 sm:min-h-[440px] sm:p-6 lg:min-h-[540px] lg:rounded-3xl lg:p-6 xl:p-7 ${
         plan.highlighted
-          ? "border-gold/50 bg-gradient-to-b from-cinema-surface to-cinema-night shadow-glow-gold-subtle hover:border-gold/70 lg:z-10"
+          ? "border-gold/50 bg-gradient-to-b from-cinema-surface to-cinema-night shadow-glow-gold-subtle hover:border-gold/70 lg:z-10 lg:shadow-none"
           : "border-white/10 bg-cinema-surface/80 hover:border-gold/25 hover:shadow-poster"
       }`}
     >
