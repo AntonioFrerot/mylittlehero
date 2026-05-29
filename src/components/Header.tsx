@@ -29,6 +29,8 @@ const navLinkKeys = [
 
   { href: "/creer", key: "nav.pricing" as const },
 
+  { href: "/achat", key: "nav.purchase" as const },
+
 ];
 
 

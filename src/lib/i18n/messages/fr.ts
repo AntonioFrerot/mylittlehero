@@ -11,6 +11,9 @@ export const fr = {
     creerTitle: "Créer son film — Offres",
     creerDescription:
       "Choisissez votre formule ou essayez gratuitement un film personnalisé de 2 minutes.",
+    achatTitle: "Achat — Offres test",
+    achatDescription:
+      "Offres à l'unité pour tester de nouvelles formules de films personnalisés.",
     contactTitle: "Contact",
     contactDescription:
       "Une question sur votre film personnalisé ? Contactez l'équipe MyLittleHero.",
@@ -23,6 +26,7 @@ export const fr = {
     themes: "Thèmes",
     contact: "Contact",
     pricing: "Tarifs",
+    purchase: "Achat",
     login: "Connexion",
     signup: "Créer un compte",
     mySpace: "Mon espace",
@@ -276,6 +280,64 @@ export const fr = {
           films: "360 films par an",
           duration: "Durée : 2 à 10 minutes (au choix)",
           custom: "Personnalisation complète",
+        },
+      },
+    },
+  },
+  purchase: {
+    backHome: "← Retour à l'accueil",
+    title: "Achat",
+    subtitle:
+      "Un film personnalisé, livré dans votre espace — choisissez la formule qui convient à votre enfant.",
+    heroBadge: "À l'unité · sans abonnement",
+    chooseOffer: "Commander",
+    chooseOfferFeatured: "Choisir le pack",
+    mostPopular: "Meilleure offre",
+    perFilm: "soit {price} / film",
+    filmWord: "film",
+    filmsWord: "films",
+    filmsIncluded: "{count} films",
+    oneFilm: "1 film",
+    mobileOfDuration: "de {duration}",
+    viewSubscriptions: "Voir les abonnements →",
+    paymentNotice:
+      "Paiement sécurisé à venir — les boutons seront connectés prochainement.",
+    plans: {
+      film5min: {
+        name: "Découverte",
+        subtitle: "Parfait pour une première aventure",
+        eyebrow: "Entrée en douceur",
+        durationShort: "5 min",
+        durationPeek: "5 minutes",
+        features: {
+          duration: "5 minutes de film",
+          custom: "Personnalisation complète",
+          delivery: "Réception sous 48 h",
+        },
+      },
+      film10min: {
+        name: "Aventure",
+        subtitle: "Une histoire plus riche et immersive",
+        eyebrow: "Le choix équilibré",
+        durationShort: "10 min",
+        durationPeek: "10 minutes",
+        features: {
+          duration: "10 minutes de film",
+          custom: "Personnalisation complète",
+          delivery: "Réception sous 48 h",
+        },
+      },
+      pack3films: {
+        name: "Famille",
+        subtitle: "Trois films pour multiplier les moments magiques",
+        eyebrow: "Meilleure valeur",
+        durationShort: "10 min",
+        durationPeek: "10 minutes",
+        promoLabel: "2 achetés + 1 OFFERT",
+        features: {
+          duration: "10 minutes par film",
+          custom: "Personnalisation complète",
+          delivery: "Réception sous 48 h",
         },
       },
     },
