@@ -24,11 +24,13 @@ export async function Hero() {
         </p>
 
         <h1 className="hero-title">
-          {t("home.heroTitleBefore")}{" "}
-          <span className="hero-title-highlight">
-            {t("home.heroTitleHighlight")}
-          </span>{" "}
-          {t("home.heroTitleAfter")}
+          <span className="hero-title-line">{t("home.heroTitleBefore")}</span>
+          <span className="hero-title-line">
+            <span className="hero-title-highlight">
+              {t("home.heroTitleHighlight")}
+            </span>{" "}
+            {t("home.heroTitleAfter")}
+          </span>
         </h1>
 
         <div className="hero-lead">

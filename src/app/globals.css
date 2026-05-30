@@ -605,27 +605,30 @@ body {
 
 .hero-title {
   font-family: var(--font-display), serif;
-  font-size: clamp(1.85rem, 5.2vw, 3.75rem);
+  font-size: clamp(1.25rem, 6.2vw, 3.75rem);
   font-weight: 700;
   line-height: 1.08;
   letter-spacing: -0.02em;
   color: var(--cream);
-  text-wrap: balance;
   text-shadow: 0 2px 28px rgba(0, 0, 0, 0.75);
+}
+
+.hero-title-line {
+  display: block;
+}
+
+.hero-title-line:first-child {
+  white-space: nowrap;
+}
+
+.hero-title-line:last-child {
+  white-space: nowrap;
 }
 
 .hero-title-highlight {
   font-style: italic;
-  background: linear-gradient(
-    115deg,
-    var(--gold-light) 0%,
-    var(--gold) 45%,
-    var(--gold-dark) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 0 18px rgba(201, 162, 39, 0.25));
+  padding-inline-end: 0.04em;
+  color: #e5b73b;
 }
 
 .hero-lead {
