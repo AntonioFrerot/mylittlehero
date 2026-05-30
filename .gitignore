@@ -29,6 +29,7 @@
 /data/contact-messages.json
 /data/film-drafts/*.json
 /public/videos/*.mp4
+!/public/videos/leo-et-nala.mp4
 /public/uploads/characters/**
 !/public/uploads/characters/.gitkeep
 
