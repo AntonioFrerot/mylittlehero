@@ -51,7 +51,7 @@ export function HeroPosterMosaic() {
                   alt={title}
                   fill
                   quality={90}
-                  sizes="(max-width: 767px) 14vw, 490px"
+                  sizes="(max-width: 767px) 17vw, 490px"
                   className="object-cover object-center"
                   priority={tile.rowStart <= 2}
                 />
