@@ -9,7 +9,7 @@ export async function Hero() {
   return (
     <section
       id="accueil"
-      className="relative flex min-h-screen flex-col justify-center overflow-hidden"
+      className="relative flex min-h-0 flex-col justify-start overflow-hidden md:min-h-screen md:justify-center"
     >
       <HeroPosterMosaic />
 
@@ -18,7 +18,7 @@ export async function Hero() {
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-cinema-night/20 to-cinema-black"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-cinema-night/20 to-cinema-black max-md:to-[var(--catalogue-bg)]"
         aria-hidden
       />
       <div
@@ -26,12 +26,12 @@ export async function Hero() {
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-cinema-black via-cinema-black/80 to-transparent"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-cinema-black via-cinema-black/80 to-transparent max-md:from-[var(--catalogue-bg)] max-md:via-[color-mix(in_srgb,var(--catalogue-bg)_55%,var(--cinema-black))] max-md:h-28"
         aria-hidden
       />
 
       <div
-        className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-4 pb-14 text-center safe-top-offset md:px-8 md:pb-24"
+        className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-4 pb-0 text-center safe-top-offset md:px-8 md:pb-24"
         style={{ paddingTop: "max(6rem, calc(5rem + env(safe-area-inset-top, 0px)))" }}
       >
         <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-black/40 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-gold-light backdrop-blur-md md:text-sm">

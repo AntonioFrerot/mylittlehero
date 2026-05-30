@@ -72,7 +72,7 @@ export function MoviePosterCarousel({
     <div className="sm:hidden">
       <div
         ref={scrollRef}
-        className="mt-8 -mx-4 flex gap-3 overflow-x-auto overscroll-x-contain px-4 pb-2 snap-x snap-mandatory scrollbar-hide"
+        className="mt-1 -mx-4 flex gap-3 overflow-x-auto overscroll-x-contain px-4 pb-2 snap-x snap-mandatory scrollbar-hide"
       >
         {children}
       </div>

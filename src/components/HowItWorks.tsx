@@ -7,7 +7,7 @@ export async function HowItWorks() {
   return (
     <section
       id="comment-ca-marche"
-      className="relative border-y border-white/5 bg-cinema-surface/50 py-16 md:py-24"
+      className="relative border-b border-white/5 bg-cinema-surface/50 py-16 md:py-24"
     >
       <div className="mx-auto max-w-7xl px-4 md:px-8 lg:px-10">
         <div className="mx-auto max-w-2xl text-center">

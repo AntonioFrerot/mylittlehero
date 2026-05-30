@@ -69,36 +69,43 @@ export async function MoviePosterGrid() {
   return (
     <section
       id="catalogue"
-      className="relative -mt-6 overflow-hidden border-t border-white/5 py-14 md:py-20"
+      className="relative overflow-hidden bg-[var(--catalogue-bg)] pb-14 pt-0 max-md:-mt-[var(--catalogue-handoff-overlap)] md:-mt-6 md:py-20"
     >
-      <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
-        <CatalogueBackgroundVideo />
-        <div className="absolute inset-0 bg-cinema-black/30" />
-        <div className="absolute inset-0 bg-gradient-to-b from-cinema-black/75 via-cinema-black/25 to-cinema-black/80" />
-        <div className="absolute inset-0 bg-gradient-to-r from-cinema-black/50 via-transparent to-cinema-black/50" />
-      </div>
-
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-48 bg-gradient-to-b from-gold/5 to-transparent"
+        className="catalogue-handoff-bridge pointer-events-none absolute inset-x-0 top-0 z-[3] md:hidden"
         aria-hidden
       />
+      <div
+        className="catalogue-handoff-bridge-bottom pointer-events-none absolute inset-x-0 z-[3]"
+        aria-hidden
+      />
+      <div
+        className="catalogue-video-backdrop pointer-events-none absolute inset-x-0 z-0 overflow-hidden bg-[var(--catalogue-bg)]"
+        aria-hidden
+      >
+        <CatalogueBackgroundVideo />
+        <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--catalogue-bg)_30%,transparent)]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[color-mix(in_srgb,var(--catalogue-bg)_50%,transparent)] via-transparent to-[color-mix(in_srgb,var(--catalogue-bg)_50%,transparent)]" />
+        <div className="catalogue-video-fade-top pointer-events-none absolute inset-x-0 top-0 z-[1]" aria-hidden />
+        <div className="catalogue-video-fade-bottom pointer-events-none absolute inset-x-0 bottom-0 z-[1]" aria-hidden />
+      </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-8 lg:px-10">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-light/80">
-            {t("home.catalogueEyebrow")}
-          </p>
-          <h2 className="font-display mt-3 text-2xl font-bold text-cream md:text-3xl lg:text-4xl">
-            {t("home.catalogueTitleBefore")}{" "}
-            <span className="bg-gradient-to-r from-gold-light via-gold to-gold-dark bg-clip-text text-transparent">
-              {t("home.catalogueTitleHighlight")}
-            </span>
-          </h2>
-          <p className="mt-3 text-sm text-cream/55 md:text-base">
-            {t("home.catalogueSubtitle")}
-          </p>
-        </div>
+      <div className="catalogue-video-intro mx-auto max-w-2xl px-4 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-light/80">
+          {t("home.catalogueEyebrow")}
+        </p>
+        <h2 className="font-display mt-3 text-2xl font-bold text-cream md:text-3xl lg:text-4xl">
+          {t("home.catalogueTitleBefore")}{" "}
+          <span className="bg-gradient-to-r from-gold-light via-gold to-gold-dark bg-clip-text text-transparent">
+            {t("home.catalogueTitleHighlight")}
+          </span>
+        </h2>
+        <p className="mt-3 text-sm text-cream/55 md:text-base">
+          {t("home.catalogueSubtitle")}
+        </p>
+      </div>
 
+      <div className="catalogue-video-content relative z-10 mx-auto max-w-7xl px-4 md:px-8 lg:px-10">
         <MoviePosterCarousel itemCount={leoExampleFilms.length}>
           {leoExampleFilms.map((movie) => {
             const title = translateExamplePosterTitle(
