@@ -837,6 +837,11 @@ body {
   background: linear-gradient(to top, var(--catalogue-bg) 0%, transparent 100%);
 }
 
+.catalogue-video-overlay {
+  display: none;
+  background-color: color-mix(in srgb, #0b0e1a 58%, transparent);
+}
+
 @media (min-width: 768px) {
   :root {
     --catalogue-handoff-overlap: 2.75rem;
@@ -874,6 +879,10 @@ body {
 
   #catalogue .catalogue-video-backdrop > .hero-overlay-tint {
     display: none;
+  }
+
+  #catalogue .catalogue-video-overlay {
+    display: block;
   }
 
   #catalogue .catalogue-video-backdrop > video {

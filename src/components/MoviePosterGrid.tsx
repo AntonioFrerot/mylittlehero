@@ -84,7 +84,8 @@ export async function MoviePosterGrid() {
         aria-hidden
       >
         <CatalogueBackgroundVideo />
-        <div className="hero-overlay-tint pointer-events-none absolute inset-0 z-[1]" aria-hidden />
+        <div className="hero-overlay-tint pointer-events-none absolute inset-0 z-[1] md:hidden" aria-hidden />
+        <div className="catalogue-video-overlay pointer-events-none absolute inset-0 z-[1]" aria-hidden />
         <div className="catalogue-video-fade-top pointer-events-none absolute inset-x-0 top-0 z-[2]" aria-hidden />
         <div className="catalogue-video-fade-bottom pointer-events-none absolute inset-x-0 bottom-0 z-[1]" aria-hidden />
       </div>
