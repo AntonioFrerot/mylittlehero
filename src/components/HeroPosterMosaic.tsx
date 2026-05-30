@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useLocale } from "@/components/LocaleProvider";
 import {
   getHeroPosterSrc,
@@ -39,13 +38,6 @@ export function HeroPosterMosaic() {
           return (
             <div key={tile.id} className="hero-mosaic-tile">
               <div className="hero-mosaic-poster relative overflow-hidden rounded-md bg-cinema-surface">
-                {asset.href ? (
-                  <Link
-                    href={asset.href}
-                    className="absolute inset-0 z-[1]"
-                    aria-label={`Voir l'exemple — ${title}`}
-                  />
-                ) : null}
                 <Image
                   src={getHeroPosterSrc(asset)}
                   alt={title}

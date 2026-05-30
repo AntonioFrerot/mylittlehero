@@ -11,6 +11,13 @@ export async function Hero() {
       id="accueil"
       className="hero-section relative flex min-h-0 flex-col justify-start overflow-hidden md:min-h-[100svh] md:justify-center"
     >
+      <svg className="pointer-events-none absolute h-0 w-0" aria-hidden>
+        <defs>
+          <clipPath id="hero-wave-clip-desktop" clipPathUnits="objectBoundingBox">
+            <path d="M0,0 H1 V0.93 C0.75,1 0.25,1 0,0.93 V0 Z" />
+          </clipPath>
+        </defs>
+      </svg>
       <HeroPosterMosaic />
 
       <div className="hero-overlay-tint" aria-hidden />
