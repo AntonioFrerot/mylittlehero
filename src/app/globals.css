@@ -669,13 +669,13 @@ body {
     --catalogue-hero-overlap: 1.5rem;
     --catalogue-edge-fade-top: 2.24rem;
     --catalogue-edge-fade-bottom: 2.24rem;
-    --catalogue-video-offset-top: var(--catalogue-hero-overlap);
+    --catalogue-video-offset-top: calc(var(--catalogue-hero-overlap) + 0.7cm);
     --catalogue-video-height: min(32vh, 16rem);
     --catalogue-video-crop: 1cm;
     --catalogue-video-visible-height: calc(
       var(--catalogue-video-height) - 2 * var(--catalogue-video-crop)
     );
-    --catalogue-posters-gap: 0.375rem;
+    --catalogue-posters-gap: calc(0.375rem + 0.4cm);
   }
 
   .hero-section {
