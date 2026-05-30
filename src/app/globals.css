@@ -1002,6 +1002,7 @@ body {
   .hero-mosaic-grid {
     --mosaic-gap: 3px;
     --mosaic-scale: 1.224;
+    --mosaic-shift-y: calc(1cm - 1.4cm);
   }
 
   .hero-overlay-bottom {
