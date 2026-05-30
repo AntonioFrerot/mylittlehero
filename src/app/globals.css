@@ -671,6 +671,11 @@ body {
     --catalogue-edge-fade-bottom: 2.24rem;
     --catalogue-video-offset-top: var(--catalogue-hero-overlap);
     --catalogue-video-height: min(32vh, 16rem);
+    --catalogue-video-crop: 1cm;
+    --catalogue-video-visible-height: calc(
+      var(--catalogue-video-height) - 2 * var(--catalogue-video-crop)
+    );
+    --catalogue-posters-gap: 0.375rem;
   }
 
   .hero-section {
@@ -691,7 +696,8 @@ body {
 
   #catalogue .catalogue-video-backdrop {
     top: var(--catalogue-video-offset-top);
-    overflow: visible;
+    height: var(--catalogue-video-visible-height);
+    overflow: hidden;
     background: transparent;
   }
 
@@ -705,13 +711,17 @@ body {
 
   #catalogue .catalogue-handoff-bridge-bottom {
     top: calc(
-      var(--catalogue-video-offset-top) + var(--catalogue-video-height) -
+      var(--catalogue-video-offset-top) + var(--catalogue-video-visible-height) -
         var(--catalogue-edge-fade-bottom)
     );
     height: var(--catalogue-edge-fade-bottom);
   }
 
   #catalogue .catalogue-video-backdrop > video {
+    top: calc(-1 * var(--catalogue-video-crop));
+    bottom: auto;
+    height: calc(100% + 2 * var(--catalogue-video-crop));
+    width: 100%;
     object-position: 50% 22%;
     -webkit-mask-image: linear-gradient(
       to bottom,
@@ -768,14 +778,6 @@ body {
       transparent 100%
     );
   }
-
-  .catalogue-video-intro {
-    top: var(--catalogue-video-offset-top);
-  }
-
-  .catalogue-video-content {
-    padding-top: calc(var(--catalogue-video-offset-top) + var(--catalogue-video-height));
-  }
 }
 
 .catalogue-video-backdrop {
@@ -798,8 +800,26 @@ body {
   justify-content: center;
 }
 
+@media (max-width: 767px) {
+  .catalogue-video-intro {
+    height: var(--catalogue-video-visible-height);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+}
+
 .catalogue-video-content {
   padding-top: calc(var(--catalogue-video-offset-top) + var(--catalogue-video-height));
+}
+
+@media (max-width: 767px) {
+  .catalogue-video-content {
+    padding-top: calc(
+      var(--catalogue-video-offset-top) + var(--catalogue-video-visible-height) +
+        var(--catalogue-posters-gap)
+    );
+  }
 }
 
 @media (min-width: 768px) {
