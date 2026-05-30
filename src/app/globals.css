@@ -675,7 +675,7 @@ body {
     --catalogue-video-visible-height: calc(
       var(--catalogue-video-height) - 2 * var(--catalogue-video-crop)
     );
-    --catalogue-posters-gap: calc(0.375rem + 0.4cm);
+    --catalogue-posters-gap: calc(0.375rem - 0.6cm);
   }
 
   .hero-section {
