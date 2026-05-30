@@ -571,38 +571,6 @@ body {
   }
 }
 
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1.25rem;
-  padding: 0.45rem 1rem 0.45rem 0.85rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(232, 197, 71, 0.35);
-  background: rgba(0, 0, 0, 0.35);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--gold-light);
-  backdrop-filter: blur(8px);
-}
-
-@media (min-width: 768px) {
-  .hero-badge {
-    margin-bottom: 1.5rem;
-    font-size: 0.75rem;
-  }
-}
-
-.hero-badge-dot {
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 9999px;
-  background: var(--gold-light);
-  box-shadow: 0 0 12px rgba(232, 197, 71, 0.75);
-}
-
 .hero-title {
   font-family: var(--font-display), serif;
   font-size: clamp(1.25rem, 6.2vw, 3.75rem);
@@ -977,8 +945,17 @@ body {
 }
 
 @media (max-width: 767px) {
+  .hero-title {
+    font-size: clamp(1.4rem, 7.1vw, 1.82rem);
+    letter-spacing: -0.028em;
+  }
+
   .hero-mosaic-grid {
     --mosaic-gap: 3px;
+  }
+
+  .hero-overlay-bottom {
+    height: 7rem;
   }
 }
 
@@ -986,6 +963,10 @@ body {
   .hero-mosaic-grid {
     --mosaic-gap: 6px;
     --mosaic-shift-y: calc(-3% + 1cm);
+  }
+
+  .hero-mosaic-tile:nth-child(n + 33) {
+    display: none;
   }
 }
 

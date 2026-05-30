@@ -18,8 +18,11 @@ export async function Hero() {
       <div className="hero-overlay-bottom" aria-hidden />
 
       <div className="hero-content safe-top-offset">
-        <p className="hero-badge">
-          <span className="hero-badge-dot" aria-hidden />
+        <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-black/40 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-gold-light backdrop-blur-md md:text-sm">
+          <span
+            className="h-1.5 w-1.5 rounded-full bg-gold-light shadow-glow-gold"
+            aria-hidden
+          />
           {t("home.heroBadge")}
         </p>
 

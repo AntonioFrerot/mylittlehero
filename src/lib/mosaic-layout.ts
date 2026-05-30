@@ -4,6 +4,8 @@ import type { HeroPosterAsset } from "@/lib/hero-posters";
 /** Grille hero — 8 affiches par rangée, alignées sans décalage. */
 export const MOSAIC_GRID_COLS = 8;
 export const MOSAIC_POSTER_COL_SPAN = 1;
+export const MOSAIC_ROWS_DESKTOP = 4;
+export const MOSAIC_ROWS_MOBILE = 9;
 
 export type MosaicPlacement = {
   id: string;
@@ -13,7 +15,7 @@ export type MosaicPlacement = {
   rowStart: number;
 };
 
-const MOSAIC_ROWS = 4;
+const MOSAIC_ROWS = MOSAIC_ROWS_MOBILE;
 
 function buildUniformMosaic(): MosaicPlacement[] {
   const placements: MosaicPlacement[] = [];
