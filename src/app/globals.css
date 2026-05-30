@@ -848,12 +848,14 @@ body {
     /* Pas de chevauchement hero : la vidéo catalogue reste hors écran au chargement. */
     --catalogue-handoff-overlap: 0px;
     --catalogue-video-offset-top: 0px;
-    --catalogue-edge-fade-top: 3.25rem;
+    --catalogue-edge-fade-top: 0px;
     --catalogue-edge-fade-bottom: 4.5rem;
-    --catalogue-handoff-fade: calc(
-      var(--catalogue-handoff-overlap) + var(--catalogue-edge-fade-top)
-    );
-    --catalogue-video-mask-soft: calc(var(--catalogue-handoff-fade) * 1.85);
+    --catalogue-handoff-fade: 0px;
+    --catalogue-video-mask-soft: 0px;
+  }
+
+  .hero-overlay-bottom {
+    display: none;
   }
 
   .hero-section {
@@ -899,32 +901,8 @@ body {
 
   #catalogue .catalogue-video-backdrop > video {
     transform-origin: top center;
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      transparent 0,
-      rgba(0, 0, 0, 0.06) calc(var(--catalogue-video-mask-soft) * 0.06),
-      rgba(0, 0, 0, 0.14) calc(var(--catalogue-video-mask-soft) * 0.14),
-      rgba(0, 0, 0, 0.26) calc(var(--catalogue-video-mask-soft) * 0.24),
-      rgba(0, 0, 0, 0.4) calc(var(--catalogue-video-mask-soft) * 0.36),
-      rgba(0, 0, 0, 0.56) calc(var(--catalogue-video-mask-soft) * 0.48),
-      rgba(0, 0, 0, 0.72) calc(var(--catalogue-video-mask-soft) * 0.62),
-      rgba(0, 0, 0, 0.86) calc(var(--catalogue-video-mask-soft) * 0.78),
-      #000 var(--catalogue-video-mask-soft),
-      #000 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      transparent 0,
-      rgba(0, 0, 0, 0.06) calc(var(--catalogue-video-mask-soft) * 0.06),
-      rgba(0, 0, 0, 0.14) calc(var(--catalogue-video-mask-soft) * 0.14),
-      rgba(0, 0, 0, 0.26) calc(var(--catalogue-video-mask-soft) * 0.24),
-      rgba(0, 0, 0, 0.4) calc(var(--catalogue-video-mask-soft) * 0.36),
-      rgba(0, 0, 0, 0.56) calc(var(--catalogue-video-mask-soft) * 0.48),
-      rgba(0, 0, 0, 0.72) calc(var(--catalogue-video-mask-soft) * 0.62),
-      rgba(0, 0, 0, 0.86) calc(var(--catalogue-video-mask-soft) * 0.78),
-      #000 var(--catalogue-video-mask-soft),
-      #000 100%
-    );
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .catalogue-video-intro {
@@ -939,20 +917,7 @@ body {
   }
 
   #catalogue .catalogue-video-fade-top {
-    display: block;
-    height: var(--catalogue-handoff-fade);
-    background: linear-gradient(
-      to bottom,
-      var(--catalogue-bg) 0%,
-      rgba(11, 14, 20, 0.94) 8%,
-      rgba(11, 14, 20, 0.82) 18%,
-      rgba(11, 14, 20, 0.68) 30%,
-      rgba(11, 14, 20, 0.52) 44%,
-      rgba(11, 14, 20, 0.36) 58%,
-      rgba(11, 14, 20, 0.22) 72%,
-      rgba(11, 14, 20, 0.1) 86%,
-      transparent 100%
-    );
+    display: none;
   }
 
   #catalogue .catalogue-handoff-bridge-bottom,
