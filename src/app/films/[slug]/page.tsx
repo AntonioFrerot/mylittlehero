@@ -4,6 +4,7 @@ import { ExampleFilmMedia } from "@/components/films/ExampleFilmMedia";
 import { HashLink } from "@/components/ui/HashLink";
 import { Button } from "@/components/ui/Button";
 import { getExampleFilm } from "@/lib/example-films";
+import { POSTER_DIMENSIONS } from "@/lib/hero-posters";
 import {
   translateExampleFilmDuration,
   translateExampleFilmIntro,
@@ -97,14 +98,15 @@ export default async function ExampleFilmPage({ params }: PageProps) {
             />
 
             <aside className="order-1 mx-auto w-full max-w-[220px] shrink-0 sm:max-w-[260px] lg:absolute lg:bottom-0 lg:right-0 lg:order-2 lg:mx-0 lg:w-[280px] xl:w-[300px]">
-              <div className="poster-card relative aspect-[2/3] w-full overflow-hidden rounded-xl shadow-poster ring-1 ring-gold/30">
+              <div className="poster-card relative poster-aspect-box w-full overflow-hidden rounded-xl shadow-poster ring-1 ring-gold/30">
                 <Image
                   src={film.posterSrc}
                   alt={t("examples.posterAlt", { title: filmTitle })}
-                  fill
+                  width={POSTER_DIMENSIONS.width}
+                  height={POSTER_DIMENSIONS.height}
                   sizes="(max-width: 1024px) 280px, 300px"
                   quality={90}
-                  className="object-cover"
+                  className="object-cover object-center"
                   priority
                 />
               </div>

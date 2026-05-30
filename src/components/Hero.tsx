@@ -9,57 +9,39 @@ export async function Hero() {
   return (
     <section
       id="accueil"
-      className="relative flex min-h-0 flex-col justify-start overflow-hidden md:min-h-screen md:justify-center"
+      className="hero-section relative flex min-h-0 flex-col justify-start overflow-hidden md:min-h-[100svh] md:justify-center"
     >
       <HeroPosterMosaic />
 
-      <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(5,7,15,0.15)_0%,rgba(5,7,15,0.72)_58%,rgba(5,7,15,0.95)_100%)]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-cinema-night/20 to-cinema-black max-md:to-[var(--catalogue-bg)]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-cinema-night/90 to-transparent"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-cinema-black via-cinema-black/80 to-transparent max-md:from-[var(--catalogue-bg)] max-md:via-[color-mix(in_srgb,var(--catalogue-bg)_55%,var(--cinema-black))] max-md:h-28"
-        aria-hidden
-      />
+      <div className="hero-overlay-tint" aria-hidden />
+      <div className="hero-overlay-top" aria-hidden />
+      <div className="hero-overlay-bottom" aria-hidden />
 
-      <div
-        className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-4 pb-0 text-center safe-top-offset md:px-8 md:pb-24"
-        style={{ paddingTop: "max(6rem, calc(5rem + env(safe-area-inset-top, 0px)))" }}
-      >
-        <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-black/40 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-gold-light backdrop-blur-md md:text-sm">
-          <span className="h-1.5 w-1.5 rounded-full bg-gold-light shadow-glow-gold" />
+      <div className="hero-content safe-top-offset">
+        <p className="hero-badge">
+          <span className="hero-badge-dot" aria-hidden />
           {t("home.heroBadge")}
         </p>
 
-        <h1 className="font-display text-[1.65rem] font-bold leading-[1.15] tracking-tight text-cream drop-shadow-[0_2px_24px_rgba(0,0,0,0.8)] min-[380px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
+        <h1 className="hero-title">
           {t("home.heroTitleBefore")}{" "}
-          <span className="bg-gradient-to-r from-gold-light via-gold to-gold-dark bg-clip-text text-transparent">
+          <span className="hero-title-highlight">
             {t("home.heroTitleHighlight")}
           </span>{" "}
           {t("home.heroTitleAfter")}
         </h1>
 
-        <div className="mt-5 max-w-2xl space-y-3 text-base leading-relaxed text-cream/85 drop-shadow-[0_1px_12px_rgba(0,0,0,0.9)] md:mt-6 md:text-lg lg:text-xl">
-          <p>{t("home.heroLead")}</p>
-          <p className="text-cream/75 md:text-base lg:text-lg">
-            {t("home.heroSub")}
-          </p>
+        <div className="hero-lead">
+          <p className="hero-lead-primary">{t("home.heroLead")}</p>
+          <p className="hero-lead-secondary">{t("home.heroSub")}</p>
         </div>
 
-        <div className="mt-9 flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4">
+        <div className="hero-actions">
           <CreerSonFilmButton variant="primary" className="w-full sm:w-auto" />
           <Button
             href="/#catalogue"
             variant="secondary"
-            className="w-full border-white/20 bg-black/40 sm:w-auto"
+            className="w-full border-white/25 bg-transparent sm:w-auto"
           >
             {t("home.heroExamples")}
           </Button>

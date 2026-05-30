@@ -21,7 +21,11 @@ export function HeroPosterMosaic() {
       <div
         className="hero-mosaic-grid"
         style={
-          { "--mosaic-cols": String(MOSAIC_GRID_COLS) } as React.CSSProperties
+          {
+            "--mosaic-cols": String(MOSAIC_GRID_COLS),
+            "--poster-width": String(POSTER_DIMENSIONS.width),
+            "--poster-height": String(POSTER_DIMENSIONS.height),
+          } as React.CSSProperties
         }
       >
         {heroMosaicPlacements.map((tile) => {
@@ -33,14 +37,7 @@ export function HeroPosterMosaic() {
           );
 
           return (
-            <div
-              key={tile.id}
-              className="hero-mosaic-tile"
-              style={{
-                gridColumn: `${tile.colStart} / span ${tile.colSpan}`,
-                gridRow: `${tile.rowStart} / span ${tile.rowSpan}`,
-              }}
-            >
+            <div key={tile.id} className="hero-mosaic-tile">
               <div className="hero-mosaic-poster relative overflow-hidden rounded-md bg-cinema-surface">
                 {asset.href ? (
                   <Link
@@ -52,18 +49,12 @@ export function HeroPosterMosaic() {
                 <Image
                   src={getHeroPosterSrc(asset)}
                   alt={title}
-                  width={POSTER_DIMENSIONS.width}
-                  height={POSTER_DIMENSIONS.height}
-                  className="h-full w-full object-cover"
-                  priority={asset.featured}
+                  fill
+                  quality={90}
+                  sizes="(max-width: 767px) 13vw, 480px"
+                  className="object-cover object-center"
+                  priority={tile.rowStart <= 2}
                 />
-                {asset.featured && title && (
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-1.5 pt-5 md:p-2 md:pt-7">
-                    <span className="line-clamp-2 text-[9px] font-semibold leading-tight text-cream/90 md:text-[11px]">
-                      {title}
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
           );

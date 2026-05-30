@@ -69,7 +69,7 @@ export async function MoviePosterGrid() {
   return (
     <section
       id="catalogue"
-      className="relative overflow-hidden bg-[var(--catalogue-bg)] pb-14 pt-0 max-md:-mt-[var(--catalogue-handoff-overlap)] md:-mt-6 md:py-20"
+      className="relative max-md:overflow-visible overflow-hidden bg-[var(--catalogue-bg)] pb-14 pt-0 max-md:mt-0 md:-mt-[var(--catalogue-handoff-overlap)] md:overflow-visible md:bg-transparent md:py-20"
     >
       <div
         className="catalogue-handoff-bridge pointer-events-none absolute inset-x-0 top-0 z-[3] md:hidden"
@@ -80,13 +80,12 @@ export async function MoviePosterGrid() {
         aria-hidden
       />
       <div
-        className="catalogue-video-backdrop pointer-events-none absolute inset-x-0 z-0 overflow-hidden bg-[var(--catalogue-bg)]"
+        className="catalogue-video-backdrop pointer-events-none absolute inset-x-0 z-0 max-md:overflow-visible overflow-hidden max-md:bg-transparent bg-[var(--catalogue-bg)]"
         aria-hidden
       >
         <CatalogueBackgroundVideo />
-        <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--catalogue-bg)_30%,transparent)]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[color-mix(in_srgb,var(--catalogue-bg)_50%,transparent)] via-transparent to-[color-mix(in_srgb,var(--catalogue-bg)_50%,transparent)]" />
-        <div className="catalogue-video-fade-top pointer-events-none absolute inset-x-0 top-0 z-[1]" aria-hidden />
+        <div className="hero-overlay-tint pointer-events-none absolute inset-0 z-[1]" aria-hidden />
+        <div className="catalogue-video-fade-top pointer-events-none absolute inset-x-0 top-0 z-[2]" aria-hidden />
         <div className="catalogue-video-fade-bottom pointer-events-none absolute inset-x-0 bottom-0 z-[1]" aria-hidden />
       </div>
 

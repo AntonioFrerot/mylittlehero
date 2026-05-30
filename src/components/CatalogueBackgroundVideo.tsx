@@ -38,7 +38,7 @@ export function CatalogueBackgroundVideo() {
   return (
     <video
       ref={videoRef}
-      className="absolute inset-0 h-full w-full scale-105 object-cover"
+      className="absolute inset-0 h-full w-full object-cover md:scale-105"
       autoPlay
       muted
       loop
