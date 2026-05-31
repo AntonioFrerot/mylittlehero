@@ -1,5 +1,10 @@
 import { themes } from "@/lib/data";
-import type { FilmThemeId } from "@/lib/i18n/film-labels";
+import type { UserFilm } from "@/lib/film-creation/types";
+import {
+  normalizeFilmStatus,
+  normalizeFilmTheme,
+  type FilmThemeId,
+} from "@/lib/i18n/film-labels";
 
 export type BrowseThemeRow = {
   themeId: FilmThemeId;
@@ -11,4 +16,35 @@ export function getBrowseThemeRows(): BrowseThemeRow[] {
     themeId: theme.id as FilmThemeId,
     gradient: theme.gradient,
   }));
+}
+
+export function filmHasCatalogTheme(
+  film: UserFilm,
+  themeId: FilmThemeId
+): boolean {
+  return film.themes.some(
+    (theme) => normalizeFilmTheme(String(theme)) === themeId
+  );
+}
+
+export function getFilmDisplayPosterSrc(film: UserFilm): string | undefined {
+  if (film.posterSrc) return film.posterSrc;
+  const main = film.characters.find((character) => character.isMain);
+  return main?.photoSrc ?? film.characters[0]?.photoSrc;
+}
+
+export function isFilmVisibleInCatalog(film: UserFilm): boolean {
+  return (
+    normalizeFilmStatus(String(film.status)) === "ready" &&
+    Boolean(getFilmDisplayPosterSrc(film))
+  );
+}
+
+export function getBrowseFilmsForTheme(
+  films: UserFilm[],
+  themeId: FilmThemeId
+): UserFilm[] {
+  return films.filter(
+    (film) => filmHasCatalogTheme(film, themeId) && isFilmVisibleInCatalog(film)
+  );
 }

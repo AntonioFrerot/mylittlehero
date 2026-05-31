@@ -1,5 +1,6 @@
 import { BrowseCatalogHero } from "@/components/browse/BrowseCatalogHero";
-import { BrowseThemeCreatePanel } from "@/components/browse/BrowseThemeCreatePanel";
+import { BrowseThemeSection } from "@/components/browse/BrowseThemeSection";
+import { getCatalogFilmsForSession } from "@/lib/film-creation/catalog-films";
 import { getBrowseThemeRows } from "@/lib/browse-catalog";
 import { getSession } from "@/lib/auth/get-session";
 import { getServerTranslator } from "@/lib/i18n/server";
@@ -7,10 +8,12 @@ import { getCreerSonFilmHref } from "@/lib/navigation/creer-film";
 import { themeNameKey } from "@/lib/theme-labels";
 
 export async function BrowseCatalogContent() {
-  const { t } = await getServerTranslator();
+  const { t, locale } = await getServerTranslator();
   const session = await getSession();
   const createHref = getCreerSonFilmHref(!!session);
   const rows = getBrowseThemeRows();
+  const userFilms = await getCatalogFilmsForSession();
+  const durationLocale = locale === "fr" ? "fr" : "en";
 
   return (
     <div className="browse-catalog">
@@ -55,13 +58,16 @@ export async function BrowseCatalogContent() {
                   <span className="browse-row__title-text">{themeLabel}</span>
                   <span className="browse-row__title-mark" aria-hidden />
                 </h2>
-                <BrowseThemeCreatePanel
-                  gradient={row.gradient}
+                <BrowseThemeSection
+                  themeId={row.themeId}
                   themeLabel={themeLabel}
-                  emptyTitle={t("browse.themeEmptyTitle", { theme: themeLabel })}
-                  emptyHint={t("browse.themeEmptyHint", { theme: themeLabel })}
+                  gradient={row.gradient}
+                  films={userFilms}
                   createHref={createHref}
                   createLabel={t("browse.createFilm")}
+                  emptyTitle={t("browse.themeEmptyTitle", { theme: themeLabel })}
+                  emptyHint={t("browse.themeEmptyHint", { theme: themeLabel })}
+                  durationLocale={durationLocale}
                 />
               </section>
             );

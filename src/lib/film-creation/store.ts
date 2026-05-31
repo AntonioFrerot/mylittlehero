@@ -1,6 +1,11 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import type { UserFilm } from "./types";
+import {
+  normalizeFilmStatus,
+  normalizeFilmTheme,
+  type FilmThemeId,
+} from "@/lib/i18n/film-labels";
+import type { UserFilm, UserFilmUpdatePatch } from "./types";
 
 const DATA_DIR = path.join(process.cwd(), "data", "films");
 
@@ -10,8 +15,15 @@ function userFilePath(email: string): string {
 }
 
 function normalizeFilm(raw: UserFilm & { characters?: UserFilm["characters"] }): UserFilm {
+  const themes = (Array.isArray(raw.themes) ? raw.themes : [])
+    .map((theme) => normalizeFilmTheme(String(theme)))
+    .filter((theme): theme is FilmThemeId => theme != null);
+  const uniqueThemes = [...new Set(themes)];
+
   return {
     ...raw,
+    themes: uniqueThemes.length > 0 ? uniqueThemes : raw.themes,
+    status: normalizeFilmStatus(String(raw.status)) ?? raw.status,
     characters: Array.isArray(raw.characters) ? raw.characters : [],
   };
 }
@@ -56,13 +68,23 @@ export async function getUserFilmById(
 export async function updateUserFilm(
   email: string,
   filmId: string,
-  patch: Partial<Pick<UserFilm, "title" | "status">>
+  patch: UserFilmUpdatePatch
 ): Promise<UserFilm | null> {
   const films = await readFilms(email);
   const index = films.findIndex((film) => film.id === filmId);
   if (index < 0) return null;
 
-  films[index] = { ...films[index], ...patch };
+  const nextThemes = patch.themes
+    ? patch.themes
+        .map((theme) => normalizeFilmTheme(String(theme)))
+        .filter((theme): theme is FilmThemeId => theme != null)
+    : undefined;
+
+  films[index] = {
+    ...films[index],
+    ...patch,
+    ...(nextThemes && nextThemes.length > 0 ? { themes: nextThemes } : {}),
+  };
   await writeFilms(email, films);
   return films[index];
 }

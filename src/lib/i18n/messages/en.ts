@@ -141,6 +141,7 @@ export const en = {
       "Enter the first name, age, height and preferences for each character in your stories.",
     filmsTitle: "My films",
     filmsDesc: "Find all the films you have created here.",
+    browseCatalog: "Browse the catalogue",
     createFilm: "Create your film",
     noFilms: "No films yet",
     noFilmsHint:
@@ -176,6 +177,34 @@ export const en = {
     accountLoadError: "Unable to load your account.",
     charactersLabel: "Characters:",
     createdOn: "Created on {date}",
+    backToFilms: "← My films",
+    filmReadyEyebrow: "Your film is ready",
+    filmPosterAlt: "Poster for {title}",
+    filmStyleLabel: "Visual style:",
+    watchFilm: "Watch",
+    shareFilm: "Share",
+    shareFilmCopied: "Link copied",
+    shareFilmPrompt: "Copy the film link:",
+    filmIntro: "Here is {name}'s film, created especially for your little hero:",
+    filmLead:
+      "{name} is the hero of this adventure, with their face and first name at the heart of the story.",
+    filmSynopsisPrefix: "Summary:",
+    filmSynopsisHeading: "Summary:",
+    filmSynopsisFallback:
+      "Your personalised film is ready — press play below to enjoy the adventure.",
+    filmHeroPhotoAlt: "Photo of {name}, hero of the film",
+    filmHeroFallbackName: "your little hero",
+    filmThemeIntro: {
+      aventure: "Here is an adventure film for {name}:",
+      comedie: "Here is a comedy film for {name}:",
+      fantastique: "Here is a fantasy film for {name}:",
+      scifi: "Here is a science-fiction film for {name}:",
+      educatif: "Here is an educational film for {name}:",
+      morale: "Here is a film for {name}:",
+      mystere: "Here is a mystery film for {name}:",
+      musical: "Here is a musical film for {name}:",
+      enquete: "Here is a detective film for {name}:",
+    },
     storyStatusAwaiting: "Story: waiting to generate",
     storyStatusGenerating: "Story: generating…",
     storyStatusCompleted: "Story: script ready",
@@ -518,6 +547,7 @@ export const en = {
     films: {
       leoNala: {
         title: "Leo and Nala",
+        durationLabel: "5 min",
         tagline: "A magical friendship on a desert island",
         synopsis:
           "Summary: On a sun-drenched desert island, Leo meets Nala, a lioness with a big heart. Together they share a magical friendship and discover that the best adventures begin when you share your dreams.",

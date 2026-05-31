@@ -11,7 +11,6 @@ import {
   translateExampleFilmLead,
   translateExampleFilmSynopsis,
   translateExampleFilmTagline,
-  translateExampleFilmTheme,
   translateExampleFilmTitle,
 } from "@/lib/i18n/example-film-labels";
 import { FilmMetaBadges } from "@/components/films/FilmMetaBadges";
@@ -49,7 +48,7 @@ export default async function ExampleFilmPage({ params }: PageProps) {
 
   const filmTitle = translateExampleFilmTitle(slug, film.title, locale);
   const filmTagline = translateExampleFilmTagline(slug, film.tagline, locale);
-  const filmTheme = translateExampleFilmTheme(film.theme, locale);
+  const primaryTheme = film.themes[0];
 
   return (
     <>
@@ -76,8 +75,7 @@ export default async function ExampleFilmPage({ params }: PageProps) {
           <FilmMetaBadges
             className="mt-4"
             style={film.style}
-            theme={film.theme}
-            themeLabel={filmTheme}
+            themes={film.themes}
             durationLabel={translateExampleFilmDuration(
               slug,
               film.durationLabel,
@@ -92,7 +90,7 @@ export default async function ExampleFilmPage({ params }: PageProps) {
               photoSrc={film.heroPhotoSrc}
               photoAlt={t("examples.leoPhotoAlt")}
               label={t("examples.leoPhotoLabel")}
-              intro={translateExampleFilmIntro(slug, film.theme, locale)}
+              intro={translateExampleFilmIntro(slug, primaryTheme, locale)}
               lead={translateExampleFilmLead(locale)}
               synopsis={translateExampleFilmSynopsis(slug, locale)}
             />

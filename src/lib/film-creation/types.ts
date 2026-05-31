@@ -16,6 +16,7 @@ export {
   buildLocalizedFilmTitle,
 } from "@/lib/i18n/film-labels";
 
+import type { StoryGenerationStatus } from "@/lib/story-generation/types";
 import type { FilmLanguageCode } from "@/lib/film-languages";
 import type { FilmStyleId, FilmThemeId, FilmStatusId } from "@/lib/i18n/film-labels";
 
@@ -70,6 +71,35 @@ export type UserFilm = {
   additionalInfo?: string;
   status: FilmStatus | string;
   createdAt: string;
+  /** Affiche 2:3 (Mon espace, catalogue) */
+  posterSrc?: string;
+  /** Miniature 16:9 avant lecture */
+  videoPosterSrc?: string;
+  /** URL vidéo ou YouTube */
+  videoSrc?: string;
+  /** Accroche courte sous le titre (page visionnage) */
+  tagline?: string;
 };
+
+export type UserFilmWithStory = UserFilm & {
+  storyGeneration?: {
+    status: StoryGenerationStatus;
+    mode?: "openai" | "mock";
+    error?: string;
+  };
+};
+
+export type UserFilmUpdatePatch = Partial<
+  Pick<
+    UserFilm,
+    | "title"
+    | "status"
+    | "themes"
+    | "posterSrc"
+    | "videoPosterSrc"
+    | "videoSrc"
+    | "tagline"
+  >
+>;
 
 export { buildLocalizedFilmTitle as buildFilmTitle } from "@/lib/i18n/film-labels";

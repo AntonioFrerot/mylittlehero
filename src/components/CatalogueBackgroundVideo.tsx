@@ -1,9 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { exampleFilms } from "@/lib/example-films";
 
-const leoNala = exampleFilms["leo-et-nala"];
+const LEO_NALA_BACKGROUND_VIDEO_SRC = "/videos/leo-et-nala.mp4";
 
 export function CatalogueBackgroundVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -49,7 +48,7 @@ export function CatalogueBackgroundVideo() {
       onCanPlay={tryPlay}
       aria-hidden
     >
-      <source src={`${leoNala.videoSrc}?v=2`} type="video/mp4" />
+      <source src={`${LEO_NALA_BACKGROUND_VIDEO_SRC}?v=2`} type="video/mp4" />
     </video>
   );
 }

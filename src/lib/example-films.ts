@@ -1,3 +1,4 @@
+import { LEO_ET_NALA_POSTER_SRC } from "@/lib/leo-example-posters";
 import type { FilmThemeId } from "@/lib/i18n/film-labels";
 
 export const EXAMPLE_FILM_SLUGS = [
@@ -23,7 +24,7 @@ export type ExampleFilm = {
   videoPosterSrc?: string;
   videoSrc?: string;
   heroPhotoSrc: string;
-  theme: FilmThemeId;
+  themes: FilmThemeId[];
   style: ExampleFilmStyle;
   durationLabel: string;
 };
@@ -33,12 +34,13 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     slug: "leo-et-nala",
     title: "Léo et Nala",
     tagline: "Une amitié magique sur une île déserte",
-    posterSrc: "/posters/leo-et-nala.png",
-    videoSrc: "/videos/leo-et-nala.mp4",
+    posterSrc: LEO_ET_NALA_POSTER_SRC,
+    videoPosterSrc: "/posters/leo-et-nala-video-poster.png",
+    videoSrc: "https://youtu.be/pK7nOfIM0Gc",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "animation",
-    theme: "aventure",
-    durationLabel: "16 MIN",
+    themes: ["aventure", "fantastique"],
+    durationLabel: "5 MIN",
   },
   "leo-temple-perdu": {
     slug: "leo-temple-perdu",
@@ -47,7 +49,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     posterSrc: "/posters/leo-temple-perdu.png",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "animation",
-    theme: "aventure",
+    themes: ["aventure"],
     durationLabel: "14 MIN",
   },
   "leo-carte-pirates": {
@@ -59,7 +61,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     videoSrc: "https://www.youtube.com/watch?v=2tCE_kQNM68",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "realistic",
-    theme: "scifi",
+    themes: ["scifi"],
     durationLabel: "9 MIN",
   },
   "leo-lost-plane": {
@@ -70,7 +72,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     videoSrc: "/videos/leo-lost-plane.mp4",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "animation",
-    theme: "aventure",
+    themes: ["aventure"],
     durationLabel: "5 MIN",
   },
   "leo-planete-etoiles": {
@@ -80,7 +82,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     posterSrc: "/posters/leo-planete-etoiles.png",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "manga",
-    theme: "aventure",
+    themes: ["aventure"],
     durationLabel: "29 MIN",
   },
 };

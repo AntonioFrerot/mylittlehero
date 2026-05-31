@@ -143,6 +143,7 @@ export const fr = {
       "Renseignez le prénom, l'âge, la taille et vos préférences pour chaque personnage de vos histoires.",
     filmsTitle: "Mes films",
     filmsDesc: "Retrouvez ici tous les films que vous avez créés.",
+    browseCatalog: "Accéder au catalogue",
     createFilm: "Créer son film",
     noFilms: "Aucun film pour l'instant",
     noFilmsHint:
@@ -178,6 +179,34 @@ export const fr = {
     accountLoadError: "Impossible de charger votre compte.",
     charactersLabel: "Personnages :",
     createdOn: "Créé le {date}",
+    backToFilms: "← Mes films",
+    filmReadyEyebrow: "Votre film est prêt",
+    filmPosterAlt: "Affiche du film {title}",
+    filmStyleLabel: "Style graphique :",
+    watchFilm: "Regarder",
+    shareFilm: "Partager",
+    shareFilmCopied: "Lien copié",
+    shareFilmPrompt: "Copiez le lien du film :",
+    filmIntro: "Voici le film de {name}, créé spécialement pour votre petit héros :",
+    filmLead:
+      "{name} est le héros de cette aventure, avec son visage et son prénom au cœur de l'histoire.",
+    filmSynopsisPrefix: "Résumé :",
+    filmSynopsisHeading: "Résumé :",
+    filmSynopsisFallback:
+      "Votre film personnalisé est prêt : lancez la vidéo ci-dessous pour vivre l'aventure.",
+    filmHeroPhotoAlt: "Photo de {name}, héros du film",
+    filmHeroFallbackName: "votre petit héros",
+    filmThemeIntro: {
+      aventure: "Voici un film d'aventure pour {name} :",
+      comedie: "Voici un film de comédie pour {name} :",
+      fantastique: "Voici un film fantastique pour {name} :",
+      scifi: "Voici un film de science-fiction pour {name} :",
+      educatif: "Voici un film éducatif pour {name} :",
+      morale: "Voici un film pour {name} :",
+      mystere: "Voici un film de mystère pour {name} :",
+      musical: "Voici un film musical pour {name} :",
+      enquete: "Voici un film d'enquête pour {name} :",
+    },
     storyStatusAwaiting: "Histoire : en attente de génération",
     storyStatusGenerating: "Histoire : génération en cours…",
     storyStatusCompleted: "Histoire : scénario prêt",
@@ -232,12 +261,12 @@ export const fr = {
     heroStep1Title: "Choisissez un univers",
     heroStep1Text:
       "Parcourez les rangées par thème et repérez l'ambiance qui correspond à votre enfant.",
-    heroStep2Title: "Créez votre film",
+    heroStep2Title: "Créez son film",
     heroStep2Text:
       "Style, personnages, durée et préférences : tout se configure depuis la création guidée.",
     heroStep3Title: "Retrouvez-le ici",
     heroStep3Text:
-      "Une fois prêt, votre film apparaît dans la rangée du thème choisi, prêt à être visionné.",
+      "Une fois prêt, votre film apparaît dans les catégories correspondant aux thèmes choisis, prêt à être visionné.",
     createFilm: "Créer son film",
     themeEmptyTitle: "Aucun film {theme} pour l'instant",
     themeEmptyHint:
@@ -523,6 +552,7 @@ export const fr = {
     films: {
       leoNala: {
         title: "Léo et Nala",
+        durationLabel: "5 min",
         tagline: "Une amitié magique sur une île déserte",
         synopsis:
           "Résumé : Sur une île déserte baignée de soleil, Léo rencontre Nala, une lionne au grand cœur. Ensemble, ils vivent une amitié magique et découvrent que les plus belles aventures naissent quand on partage ses rêves.",

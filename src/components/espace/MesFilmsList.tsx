@@ -23,6 +23,10 @@ import {
 } from "@/lib/i18n/film-labels";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import type { TranslationKey } from "@/lib/i18n/translator";
+import { POSTER_DIMENSIONS } from "@/lib/hero-posters";
+import { ShareFilmButton } from "@/components/espace/ShareFilmButton";
+import Image from "next/image";
+import Link from "next/link";
 
 const statusStyles: Record<FilmStatusId, string> = {
   preparing: "border-amber-500/30 bg-amber-950/30 text-amber-200",
@@ -87,7 +91,10 @@ export function MesFilmsList({ films }: MesFilmsListProps) {
         <p className="mx-auto mt-2 max-w-md text-sm text-cream/50">
           {t("space.noFilmsHint")}
         </p>
-        <div className="mt-8">
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Button href="/catalogue" variant="secondary" className="!text-sm">
+            {t("space.browseCatalog")}
+          </Button>
           <Button href="/creer-film" variant="primary" className="!text-sm">
             {t("space.createFilm")}
           </Button>
@@ -98,7 +105,11 @@ export function MesFilmsList({ films }: MesFilmsListProps) {
 
   return (
     <ul className="flex flex-col gap-4">
-      {films.map((film) => (
+      {films.map((film) => {
+        const isReady = normalizeFilmStatus(film.status) === "ready";
+        const filmHref = `/mon-espace/films/${film.id}`;
+
+        return (
         <li
           key={film.id}
           className="rounded-2xl border border-white/10 bg-cinema-surface/80 p-5 transition-colors hover:border-white/15 md:p-6"
@@ -190,10 +201,39 @@ export function MesFilmsList({ films }: MesFilmsListProps) {
                 filmId={film.id}
                 storyStatus={film.storyGeneration?.status}
               />
+              {isReady && film.posterSrc && (
+                <div className="mt-4 flex flex-wrap items-center justify-start gap-3">
+                  <Button href={filmHref} variant="primary" className="!text-sm">
+                    {t("space.watchFilm")}
+                  </Button>
+                  <ShareFilmButton path={filmHref} title={film.title} />
+                </div>
+              )}
             </div>
+            {film.posterSrc && isReady && (
+              <Link
+                href={filmHref}
+                className="mx-auto shrink-0 sm:ml-4 sm:mr-0"
+                aria-label={t("space.filmPosterAlt", { title: film.title })}
+              >
+                <div className="poster-card relative w-[7.5rem] overflow-hidden rounded-xl shadow-poster ring-1 ring-gold/30 transition-transform hover:-translate-y-0.5 sm:w-[8.5rem]">
+                  <div className="relative aspect-[2/3] w-full">
+                    <Image
+                      src={film.posterSrc}
+                      alt={t("space.filmPosterAlt", { title: film.title })}
+                      width={POSTER_DIMENSIONS.width}
+                      height={POSTER_DIMENSIONS.height}
+                      sizes="136px"
+                      className="object-cover object-center"
+                    />
+                  </div>
+                </div>
+              </Link>
+            )}
           </div>
         </li>
-      ))}
+        );
+      })}
     </ul>
   );
 }

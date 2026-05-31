@@ -368,6 +368,16 @@ body {
   box-shadow: 0 0 14px rgba(232, 197, 71, 0.35);
 }
 
+.browse-row__films {
+  padding-inline: 1rem;
+}
+
+@media (min-width: 768px) {
+  .browse-row__films {
+    padding-inline: 2.5rem;
+  }
+}
+
 .browse-theme-cta {
   margin-inline: 1rem;
   overflow: hidden;

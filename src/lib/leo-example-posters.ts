@@ -15,15 +15,18 @@ export type HeroPosterAsset = {
 
 export type LeoExamplePoster = HeroPosterAsset;
 
+/** Bump ?v= when replacing a poster file (cache navigateur / Next.js Image). */
+export const LEO_ET_NALA_POSTER_SRC = "/posters/leo-et-nala.png?v=2";
+
 /** Affiches réalistes des cinq films d'exemple du petit Léo (accueil + hero). */
 export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
   {
     id: "leo-nala",
     title: "Léo et Nala",
     seed: "leo-et-nala",
-    src: "/posters/leo-et-nala.png",
+    src: LEO_ET_NALA_POSTER_SRC,
     href: "/films/leo-et-nala",
-    durationLabel: "16 MIN",
+    durationLabel: "5 MIN",
     featured: true,
   },
   {

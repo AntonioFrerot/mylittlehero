@@ -132,13 +132,22 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
                         {t("space.filmsDesc")}
                       </p>
                     </div>
-                    <Button
-                      href="/creer-film"
-                      variant="primary"
-                      className="w-full !text-sm shrink-0 sm:w-auto"
-                    >
-                      {t("space.createFilm")}
-                    </Button>
+                    <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                      <Button
+                        href="/catalogue"
+                        variant="secondary"
+                        className="w-full !text-sm shrink-0 sm:w-auto"
+                      >
+                        {t("space.browseCatalog")}
+                      </Button>
+                      <Button
+                        href="/creer-film"
+                        variant="primary"
+                        className="w-full !text-sm shrink-0 sm:w-auto"
+                      >
+                        {t("space.createFilm")}
+                      </Button>
+                    </div>
                   </div>
                   <div className="mt-8">
                     <MesFilmsList films={films} />

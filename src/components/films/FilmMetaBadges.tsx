@@ -5,15 +5,14 @@ import {
   filmThemeBadgeClassName,
 } from "@/lib/film-meta-badges";
 import type { FilmThemeId } from "@/lib/i18n/film-labels";
-import { translateFilmStyle } from "@/lib/i18n/film-labels";
+import { translateFilmStyle, translateFilmTheme } from "@/lib/i18n/film-labels";
 import type { LocaleCode } from "@/lib/i18n/locales";
 
 type FilmMetaBadgesProps = {
   className?: string;
   style: ExampleFilmStyle;
   styleLabel?: string;
-  theme: FilmThemeId;
-  themeLabel: string;
+  themes: FilmThemeId[];
   durationLabel: string;
   locale: LocaleCode;
 };
@@ -22,8 +21,7 @@ export function FilmMetaBadges({
   className = "",
   style,
   styleLabel,
-  theme,
-  themeLabel,
+  themes,
   durationLabel,
   locale,
 }: FilmMetaBadgesProps) {
@@ -32,7 +30,11 @@ export function FilmMetaBadges({
   return (
     <div className={`flex flex-wrap gap-2 ${className}`.trim()}>
       <span className={filmStyleBadgeClassName(style)}>{styleText}</span>
-      <span className={filmThemeBadgeClassName(theme)}>{themeLabel}</span>
+      {themes.map((theme) => (
+        <span key={theme} className={filmThemeBadgeClassName(theme)}>
+          {translateFilmTheme(theme, locale)}
+        </span>
+      ))}
       <span className={filmDurationBadgeClassName()}>{durationLabel}</span>
     </div>
   );

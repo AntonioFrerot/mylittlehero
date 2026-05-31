@@ -1,5 +1,4 @@
-import Image from "next/image";
-import { ExampleFilmVideo } from "@/components/films/ExampleFilmVideo";
+import { FilmVideoMedia } from "@/components/films/FilmVideoMedia";
 import type { ExampleFilm } from "@/lib/example-films";
 
 type ExampleFilmMediaProps = {
@@ -9,28 +8,13 @@ type ExampleFilmMediaProps = {
 };
 
 export function ExampleFilmMedia({ film, posterAlt, title }: ExampleFilmMediaProps) {
-  if (film.videoSrc) {
-    return (
-      <ExampleFilmVideo
-        src={film.videoSrc}
-        title={title}
-        posterSrc={film.videoPosterSrc ?? film.posterSrc}
-        posterAlt={posterAlt}
-      />
-    );
-  }
-
   return (
-    <div className="relative aspect-video w-full overflow-hidden bg-cinema-night">
-      <Image
-        src={film.posterSrc}
-        alt={posterAlt}
-        fill
-        className="object-cover object-[center_20%]"
-        sizes="(max-width: 1024px) 100vw, 896px"
-        priority
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/80 via-cinema-black/20 to-cinema-black/10" />
-    </div>
+    <FilmVideoMedia
+      videoSrc={film.videoSrc}
+      posterSrc={film.posterSrc}
+      videoPosterSrc={film.videoPosterSrc}
+      title={title}
+      posterAlt={posterAlt}
+    />
   );
 }

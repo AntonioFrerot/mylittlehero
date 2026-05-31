@@ -20,6 +20,38 @@ export async function readStoryManifest(
   }
 }
 
+export async function readStoryResume(
+  email: string,
+  filmId: string
+): Promise<string | null> {
+  try {
+    const raw = await readFile(
+      path.join(getFilmStoryDir(email, filmId), "resume.txt"),
+      "utf8"
+    );
+    const trimmed = raw.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function readStoryTagline(
+  email: string,
+  filmId: string
+): Promise<string | null> {
+  try {
+    const raw = await readFile(
+      path.join(getFilmStoryDir(email, filmId), "tagline.txt"),
+      "utf8"
+    );
+    const trimmed = raw.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function writeStoryManifest(
   email: string,
   filmId: string,

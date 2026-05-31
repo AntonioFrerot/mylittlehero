@@ -10,31 +10,44 @@ import {
   isFilmStyleId,
   isFilmThemeId,
   buildLocalizedFilmTitle,
+  normalizeFilmTheme,
+  type FilmThemeId,
 } from "@/lib/i18n/film-labels";
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "node:crypto";
 import { provisionStoryWorkspace } from "@/lib/story-generation/provision";
 import { scheduleStoryGeneration } from "@/lib/story-generation/schedule";
+import { attachStoryToFilms } from "@/lib/film-creation/catalog-films";
 import { readStoryManifest } from "@/lib/story-generation/manifest";
-import type { StoryGenerationStatus } from "@/lib/story-generation/types";
-import { addUserFilm, listUserFilms } from "./store";
-import type { FilmCharacterRef, FilmStyle, FilmTheme, UserFilm } from "./types";
+import { addUserFilm, getUserFilmById, listUserFilms, updateUserFilm } from "./store";
+import type {
+  FilmCharacterRef,
+  FilmStyle,
+  FilmTheme,
+  UserFilm,
+  UserFilmUpdatePatch,
+  UserFilmWithStory,
+} from "./types";
 import {
   isValidFilmDurationSeconds,
 } from "./duration";
+
+export type { UserFilmWithStory } from "./types";
 
 export type FilmCreationFormState = {
   error?: string;
   success?: string;
 };
 
-export type UserFilmWithStory = UserFilm & {
-  storyGeneration?: {
-    status: StoryGenerationStatus;
-    mode?: "openai" | "mock";
-    error?: string;
-  };
-};
+function normalizeSelectedThemes(themes: FilmTheme[]): FilmThemeId[] {
+  return [
+    ...new Set(
+      themes
+        .map((theme) => normalizeFilmTheme(String(theme)))
+        .filter((theme): theme is FilmThemeId => theme != null)
+    ),
+  ];
+}
 
 function parseStyle(value: unknown): FilmStyle | null {
   if (typeof value !== "string") return null;
@@ -77,24 +90,27 @@ export async function getMyFilmsWithStory(): Promise<UserFilmWithStory[]> {
   if (!session) return [];
 
   const films = await listUserFilms(session.email);
-  return Promise.all(
-    films.map(async (film) => {
-      const manifest = await readStoryManifest(session.email, film.id);
-      if (!manifest) return film;
-      return {
-        ...film,
-        storyGeneration: {
-          status: manifest.status,
-          ...(manifest.generationMode
-            ? { mode: manifest.generationMode }
-            : {}),
-          ...(manifest.generationError
-            ? { error: manifest.generationError }
-            : {}),
-        },
-      };
-    })
-  );
+  return attachStoryToFilms(session.email, films);
+}
+
+export async function getMyFilmById(filmId: string): Promise<UserFilmWithStory | null> {
+  const session = await getSession();
+  if (!session) return null;
+
+  const film = await getUserFilmById(session.email, filmId);
+  if (!film) return null;
+
+  const manifest = await readStoryManifest(session.email, film.id);
+  if (!manifest) return film;
+
+  return {
+    ...film,
+    storyGeneration: {
+      status: manifest.status,
+      ...(manifest.generationMode ? { mode: manifest.generationMode } : {}),
+      ...(manifest.generationError ? { error: manifest.generationError } : {}),
+    },
+  };
 }
 
 export async function saveFilmCreation(
@@ -109,7 +125,7 @@ export async function saveFilmCreation(
 
   const style = parseStyle(formData.get("style"));
   const durationSeconds = parseDuration(formData.get("duration"));
-  const themes = parseThemes(formData);
+  const themes = normalizeSelectedThemes(parseThemes(formData));
   const characterIds = formData
     .getAll("characters")
     .filter((id): id is string => typeof id === "string" && id.length > 0);
@@ -189,8 +205,28 @@ export async function saveFilmCreation(
 
   revalidatePath("/mon-espace");
   revalidatePath("/creer-film");
+  revalidatePath("/catalogue");
 
   return { success: t("filmCreation.success") };
+}
+
+/** Livraison d'un film terminé (affiche, vidéo, thèmes) → visible dans le catalogue. */
+export async function deliverUserFilm(
+  email: string,
+  filmId: string,
+  delivery: UserFilmUpdatePatch
+): Promise<UserFilm | null> {
+  const film = await updateUserFilm(email, filmId, {
+    ...delivery,
+    status: "ready",
+  });
+  if (!film) return null;
+
+  revalidatePath("/catalogue");
+  revalidatePath("/mon-espace");
+  revalidatePath(`/mon-espace/films/${filmId}`);
+
+  return film;
 }
 
 function resolveFilmCharacters(

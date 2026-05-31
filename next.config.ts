@@ -17,6 +17,11 @@ const nextConfig: NextConfig = {
         hostname: "picsum.photos",
       },
     ],
+    localPatterns: [
+      { pathname: "/posters/**" },
+      { pathname: "/examples/**" },
+      { pathname: "/uploads/**" },
+    ],
   },
 };
 
