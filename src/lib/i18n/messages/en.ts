@@ -548,6 +548,7 @@ export const en = {
       leoNala: {
         title: "Leo and Nala",
         durationLabel: "5 min",
+        intro: "Here is an example of a fantasy film for Leo:",
         tagline: "A magical friendship on a desert island",
         synopsis:
           "Summary: On a sun-drenched desert island, Leo meets Nala, a lioness with a big heart. Together they share a magical friendship and discover that the best adventures begin when you share your dreams.",

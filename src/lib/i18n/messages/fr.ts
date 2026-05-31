@@ -553,6 +553,7 @@ export const fr = {
       leoNala: {
         title: "Léo et Nala",
         durationLabel: "5 min",
+        intro: "Voici un exemple de film fantastique pour Léo :",
         tagline: "Une amitié magique sur une île déserte",
         synopsis:
           "Résumé : Sur une île déserte baignée de soleil, Léo rencontre Nala, une lionne au grand cœur. Ensemble, ils vivent une amitié magique et découvrent que les plus belles aventures naissent quand on partage ses rêves.",
