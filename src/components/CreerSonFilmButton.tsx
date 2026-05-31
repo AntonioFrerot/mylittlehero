@@ -5,11 +5,13 @@ import { getCreerSonFilmHref } from "@/lib/navigation/creer-film";
 
 type CreerSonFilmButtonProps = {
   variant?: "primary" | "secondary" | "ghost";
+  glow?: "soft" | "full" | false;
   className?: string;
 };
 
 export async function CreerSonFilmButton({
   variant = "primary",
+  glow = "soft",
   className = "",
 }: CreerSonFilmButtonProps) {
   const session = await getSession();
@@ -17,7 +19,7 @@ export async function CreerSonFilmButton({
   const { t } = await getServerTranslator();
 
   return (
-    <Button href={href} variant={variant} className={className}>
+    <Button href={href} variant={variant} glow={glow} className={className}>
       {t("nav.createFilm")}
     </Button>
   );

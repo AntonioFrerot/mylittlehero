@@ -1,4 +1,5 @@
 import { getServerTranslator } from "@/lib/i18n/server";
+import { BTN_3D_TRUST_BADGE, SURFACE_3D_ICON_MD, SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
 import type { TranslationKey } from "@/lib/i18n/translator";
 
 const TRUST_POINT_KEYS = [
@@ -46,7 +47,7 @@ export async function ParentTrustSection() {
               {BADGE_KEYS.map((key) => (
                 <li
                   key={key}
-                  className="rounded-full border border-gold/25 bg-gold/5 px-4 py-1.5 text-sm text-gold-light"
+                  className={BTN_3D_TRUST_BADGE}
                 >
                   {t(key)}
                 </li>
@@ -58,10 +59,10 @@ export async function ParentTrustSection() {
             {TRUST_POINT_KEYS.map((point) => (
               <li
                 key={point.title}
-                className="flex gap-4 rounded-2xl border border-white/5 bg-cinema-surface/80 p-5 transition-colors hover:border-gold/15 md:p-6"
+                className={`${SURFACE_3D_PANEL_LG} flex gap-4 p-5 md:p-6`}
               >
                 <span
-                  className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold/15 text-gold-light"
+                  className={SURFACE_3D_ICON_MD}
                   aria-hidden
                 >
                   ✓

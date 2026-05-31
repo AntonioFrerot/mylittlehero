@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import {
+  SURFACE_3D_BROWSE_STEP,
+  SURFACE_3D_BROWSE_STEP_INDEX,
+} from "@/lib/ui/button-3d-classes";
 
 type BrowseCatalogHeroStepsProps = {
   stepsTitle: string;
@@ -53,8 +57,8 @@ export function BrowseCatalogHeroSteps({ stepsTitle, steps }: BrowseCatalogHeroS
         className={`browse-hero__steps-list${open ? " browse-hero__steps-list--open" : ""}`}
       >
         {steps.map((step, index) => (
-          <li key={step.title} className="browse-hero__step">
-            <span className="browse-hero__step-index">{index + 1}</span>
+          <li key={step.title} className={`browse-hero__step ${SURFACE_3D_BROWSE_STEP}`}>
+            <span className={SURFACE_3D_BROWSE_STEP_INDEX}>{index + 1}</span>
             <div>
               <p className="browse-hero__step-title">{step.title}</p>
               <p className="browse-hero__step-text">{step.text}</p>

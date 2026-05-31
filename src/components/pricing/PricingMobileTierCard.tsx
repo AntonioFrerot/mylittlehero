@@ -4,6 +4,12 @@ import React from "react";
 import { useState } from "react";
 import type { PricingPlan } from "@/lib/pricing";
 import { getTierQuotaLabel } from "@/lib/pricing";
+import {
+  BTN_3D_BADGE,
+  SURFACE_3D_CHIP_CALLOUT,
+  SURFACE_3D_ICON_SM,
+  SURFACE_3D_TOGGLE,
+} from "@/lib/ui/button-3d-classes";
 import { Button } from "@/components/ui/Button";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
@@ -76,7 +82,7 @@ function BillingPeriodSwitch({
         aria-checked={yearly}
         aria-label={yearly ? yearlyLabel : monthlyLabel}
         onClick={() => onChange(!yearly)}
-        className="flex h-6 w-11 shrink-0 items-center rounded-full border border-white/15 bg-white/10 p-0.5 transition-colors hover:border-gold/30"
+        className={SURFACE_3D_TOGGLE}
       >
         <span
           className={`block size-4 shrink-0 rounded-full bg-gold-light shadow-sm transition-[margin] duration-200 ease-out ${
@@ -116,7 +122,7 @@ export function PricingMobileTierCard({
       }`}
     >
       {highlighted && (
-        <span className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-3 py-1 text-[10px] font-semibold text-cinema-black">
+        <span className={`${BTN_3D_BADGE} z-10`}>
           {t("pricing.mostPopular")}
         </span>
       )}
@@ -147,7 +153,7 @@ export function PricingMobileTierCard({
             {plan.period}
           </span>
           {plan.savingsLabel && (
-            <p className="mt-3 rounded-lg border border-gold/35 bg-gold/10 px-3 py-2 text-xs font-semibold leading-snug text-gold-light">
+            <p className={`mt-3 ${SURFACE_3D_CHIP_CALLOUT}`}>
               {plan.savingsLabel}
             </p>
           )}
@@ -159,10 +165,7 @@ export function PricingMobileTierCard({
               key={feature}
               className="flex gap-2.5 text-sm leading-snug text-cream/75"
             >
-              <span
-                className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gold/15 text-xs text-gold-light"
-                aria-hidden
-              >
+              <span className={`${SURFACE_3D_ICON_SM} !h-5 !w-5`} aria-hidden>
                 ✓
               </span>
               <span>{renderPricingFeature(feature)}</span>

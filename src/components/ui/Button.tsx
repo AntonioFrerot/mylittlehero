@@ -1,19 +1,34 @@
 import Link from "next/link";
 import { HashLink } from "@/components/ui/HashLink";
+import {
+  BTN_3D_GHOST,
+  BTN_3D_PRIMARY,
+  BTN_3D_PRIMARY_FLAT,
+  BTN_3D_PRIMARY_FULL_GLOW,
+  BTN_3D_SECONDARY,
+} from "@/lib/ui/button-3d-classes";
 import { type ComponentPropsWithoutRef } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "ghost";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary:
-    "bg-gradient-to-r from-gold-dark via-gold to-gold-light text-cinema-black font-semibold shadow-glow-gold hover:brightness-110 hover:scale-[1.02] active:scale-[0.98]",
-  secondary:
-    "border border-gold/40 bg-white/5 text-cream backdrop-blur-sm hover:border-gold/70 hover:bg-white/10",
-  ghost: "text-cream/80 hover:text-gold-light",
+  primary: BTN_3D_PRIMARY,
+  secondary: BTN_3D_SECONDARY,
+  ghost: BTN_3D_GHOST,
 };
+
+type ButtonGlow = "soft" | "full" | false;
+
+function primaryClasses(glow: ButtonGlow): string {
+  if (glow === false) return BTN_3D_PRIMARY_FLAT;
+  if (glow === "full") return BTN_3D_PRIMARY_FULL_GLOW;
+  return BTN_3D_PRIMARY;
+}
 
 type BaseProps = {
   variant?: ButtonVariant;
+  /** Halo doré : léger (défaut), fort ou désactivé. */
+  glow?: ButtonGlow;
   className?: string;
   children: React.ReactNode;
 };
@@ -31,11 +46,14 @@ const baseClasses =
 
 export function Button({
   variant = "primary",
+  glow = "soft",
   className = "",
   children,
   ...props
 }: ButtonProps) {
-  const classes = `${baseClasses} ${variantClasses[variant]} ${className}`;
+  const resolvedClasses =
+    variant === "primary" ? primaryClasses(glow) : variantClasses[variant];
+  const classes = `${baseClasses} ${resolvedClasses} ${className}`;
 
   if ("href" in props && props.href) {
     const { href, ...linkProps } = props;

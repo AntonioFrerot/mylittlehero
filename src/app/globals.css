@@ -24,6 +24,7 @@
   --shadow-poster: 0 8px 32px rgba(0, 0, 0, 0.45);
   --shadow-poster-hover: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 24px rgba(201, 162, 39, 0.12);
   --shadow-glow-gold: 0 0 24px rgba(232, 197, 71, 0.35);
+  --shadow-glow-gold-soft: 0 0 20px rgba(232, 197, 71, 0.16);
   --shadow-glow-gold-subtle: 0 0 32px rgba(201, 162, 39, 0.08);
 }
 
@@ -44,6 +45,164 @@ body {
   color: #e8c547;
   margin: 0;
   padding: 0;
+}
+
+/* Boutons — effet 3D (pastilles thème) + lueur optionnelle */
+.btn-3d {
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+}
+
+.btn-3d--primary {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background-color: var(--gold);
+  background-image:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.14) 0%,
+      rgba(255, 255, 255, 0.04) 45%,
+      rgba(0, 0, 0, 0.15) 100%
+    ),
+    linear-gradient(to right, var(--gold-dark), var(--gold), var(--gold-light));
+  color: var(--cinema-black);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.btn-3d--primary.btn-3d--glow-full {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    var(--shadow-glow-gold);
+}
+
+.btn-3d--primary.btn-3d--glow-subtle {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    var(--shadow-glow-gold-subtle);
+}
+
+.btn-3d--primary.btn-3d--glow-soft {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    var(--shadow-glow-gold-soft);
+}
+
+.btn-3d--secondary {
+  border: 1px solid rgba(201, 162, 39, 0.45);
+  background-color: rgba(255, 255, 255, 0.06);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.04) 45%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+  color: var(--cream);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.btn-3d--secondary.btn-3d--glow-soft {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    var(--shadow-glow-gold-soft);
+}
+
+.btn-3d--secondary.btn-3d--glow-subtle {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    var(--shadow-glow-gold-subtle);
+}
+
+.btn-3d--soft {
+  border: 1px solid rgba(201, 162, 39, 0.42);
+  background-color: rgba(201, 162, 39, 0.14);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.04) 45%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+  color: var(--gold-light);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.btn-3d--hero-badge {
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  background-color: rgba(0, 0, 0, 0.4);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.03) 45%,
+    rgba(0, 0, 0, 0.22) 100%
+  );
+  color: var(--gold-light);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Pastilles statut film */
+.surface-3d--status {
+  border-width: 1px;
+  border-style: solid;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.surface-3d--status--preparing {
+  border-color: rgba(245, 158, 11, 0.35);
+  background-color: rgba(69, 26, 3, 0.45);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.03) 45%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+  color: rgb(253, 230, 138);
+}
+
+.surface-3d--status--generating {
+  border-color: rgba(56, 189, 248, 0.35);
+  background-color: rgba(8, 47, 73, 0.45);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.03) 45%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+  color: rgb(186, 230, 253);
+}
+
+.surface-3d--status--ready {
+  border-color: rgba(52, 211, 153, 0.35);
+  background-color: rgba(6, 44, 34, 0.45);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.03) 45%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+  color: rgb(167, 243, 208);
 }
 
 /* Page Achat — style billet cinéma, distinct des abonnements */
@@ -192,14 +351,23 @@ body {
   padding: 1.05rem 0.9rem;
   min-height: 3.25rem;
   border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(201, 162, 39, 0.45);
   border-left: 3px solid rgba(232, 197, 71, 0.55);
-  background:
+  background-color: rgba(255, 255, 255, 0.06);
+  background-image:
     linear-gradient(135deg, rgba(232, 197, 71, 0.08), rgba(5, 7, 15, 0.72) 42%),
-    rgba(5, 7, 15, 0.55);
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.03) 45%,
+      rgba(0, 0, 0, 0.18) 100%
+    );
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 10px 28px rgba(0, 0, 0, 0.22);
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
   text-align: center;
   cursor: pointer;
   transition:
@@ -209,10 +377,11 @@ body {
 }
 
 .browse-hero__steps-toggle:hover {
-  border-color: rgba(232, 197, 71, 0.28);
+  border-color: rgba(232, 197, 71, 0.55);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 12px 32px rgba(0, 0, 0, 0.28);
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 8px 22px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 .browse-hero__steps-toggle-copy {
@@ -238,8 +407,20 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(201, 162, 39, 0.45);
+  background-color: rgba(255, 255, 255, 0.06);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.03) 45%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 4px 12px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .browse-hero__steps-chevron {
@@ -282,23 +463,6 @@ body {
   gap: 0.85rem;
   align-items: start;
   padding: 0.95rem 1rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(5, 7, 15, 0.42);
-}
-
-.browse-hero__step-index {
-  display: inline-flex;
-  height: 1.85rem;
-  width: 1.85rem;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9999px;
-  border: 1px solid rgba(232, 197, 71, 0.28);
-  background: rgba(232, 197, 71, 0.08);
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: rgba(232, 197, 71, 0.92);
 }
 
 .browse-hero__step-title {
@@ -726,7 +890,18 @@ body {
   flex-shrink: 0;
   width: 100%;
   border-bottom: 1px solid rgba(232, 197, 71, 0.35);
-  background: linear-gradient(90deg, #7a6218 0%, #e8c547 50%, #7a6218 100%);
+  background-color: var(--gold);
+  background-image:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0.04) 45%,
+      rgba(0, 0, 0, 0.12) 100%
+    ),
+    linear-gradient(90deg, #7a6218 0%, #e8c547 50%, #7a6218 100%);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
   padding: 0.55rem 1rem;
   text-align: center;
   font-size: 0.7rem;
@@ -861,7 +1036,17 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 0.55rem;
-  background: rgba(var(--purchase-accent), 0.12);
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  background-color: rgba(201, 162, 39, 0.12);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.03) 45%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   font-size: 0.72rem;
 }
 

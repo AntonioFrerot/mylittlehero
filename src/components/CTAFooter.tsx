@@ -24,7 +24,10 @@ export async function CTAFooter() {
             {t("home.ctaText")}
           </p>
           <div className="mt-10 flex justify-center md:mt-14">
-            <CreerSonFilmButton variant="primary" className="w-full max-w-sm sm:w-auto" />
+            <CreerSonFilmButton
+              variant="primary"
+              className="w-full max-w-sm sm:w-auto"
+            />
           </div>
         </div>
       </section>

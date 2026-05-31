@@ -3,6 +3,12 @@
 import Image from "next/image";
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  BTN_3D_COMPACT_SECONDARY,
+  BTN_3D_PRIMARY_ACTION,
+  SURFACE_3D_PANEL,
+  SURFACE_3D_PANEL_LG,
+} from "@/lib/ui/button-3d-classes";
 import { useLocale } from "@/components/LocaleProvider";
 import { CharacterPhotoUpload } from "@/components/espace/CharacterPhotoUpload";
 import {
@@ -88,10 +94,8 @@ export function CharacterManager({ initialCharacters }: CharacterManagerProps) {
               return (
                 <li
                   key={character.id}
-                  className={`rounded-xl border p-4 transition-colors ${
-                    editing?.id === character.id
-                      ? "border-gold/40 bg-gold/5"
-                      : "border-white/10 bg-cinema-night/60 hover:border-white/20"
+                  className={`${SURFACE_3D_PANEL_LG} p-4 ${
+                    editing?.id === character.id ? "!border-gold/45" : ""
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -136,7 +140,7 @@ export function CharacterManager({ initialCharacters }: CharacterManagerProps) {
                           <button
                             type="button"
                             onClick={() => startEdit(character)}
-                            className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-cream/80 hover:bg-white/5"
+                            className={BTN_3D_COMPACT_SECONDARY}
                           >
                             {t("characters.edit")}
                           </button>
@@ -158,7 +162,7 @@ export function CharacterManager({ initialCharacters }: CharacterManagerProps) {
         )}
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-cinema-surface/80 p-6 md:p-8">
+      <div className={`${SURFACE_3D_PANEL} rounded-2xl p-6 md:p-8`}>
         <h2 className="font-display text-xl font-semibold text-cream">
           {editing ? t("characters.formEditTitle") : t("characters.formAddTitle")}
         </h2>
@@ -235,7 +239,7 @@ export function CharacterManager({ initialCharacters }: CharacterManagerProps) {
           <button
             type="submit"
             disabled={pending}
-            className="mt-2 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-6 py-3 text-sm font-semibold text-cinema-black shadow-glow-gold transition-all hover:brightness-110 disabled:opacity-60"
+            className={`mt-2 ${BTN_3D_PRIMARY_ACTION}`}
           >
             {pending
               ? t("common.saving")

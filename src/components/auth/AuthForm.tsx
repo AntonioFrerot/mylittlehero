@@ -8,6 +8,12 @@ import {
   type AuthFormState,
 } from "@/lib/auth/actions";
 
+import {
+  BTN_3D_PRIMARY_ACTION,
+  BTN_3D_TAB_ACTIVE,
+  SURFACE_3D_TAB_SHELL,
+} from "@/lib/ui/button-3d-classes";
+
 type AuthMode = "login" | "signup";
 
 const initialState: AuthFormState = {};
@@ -31,9 +37,9 @@ export function AuthForm({ redirectTo, initialMode = "login" }: AuthFormProps) {
   const pending = isLogin ? loginPending : signupPending;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-cinema-surface/80 p-6 shadow-glow-gold-subtle md:p-8">
+    <div className="btn-3d btn-3d--secondary rounded-2xl p-6 shadow-glow-gold-subtle md:p-8">
       <div
-        className="mb-6 flex rounded-full border border-white/10 bg-cinema-black/50 p-1"
+        className={SURFACE_3D_TAB_SHELL}
         role="tablist"
         aria-label={t("auth.tabsLabel")}
       >
@@ -41,11 +47,7 @@ export function AuthForm({ redirectTo, initialMode = "login" }: AuthFormProps) {
           type="button"
           role="tab"
           aria-selected={isLogin}
-          className={`flex-1 rounded-full py-2.5 text-sm font-medium transition-all ${
-            isLogin
-              ? "bg-gradient-to-r from-gold-dark via-gold to-gold-light text-cinema-black"
-              : "text-cream/60 hover:text-cream"
-          }`}
+          className={`${isLogin ? BTN_3D_TAB_ACTIVE : "flex-1 rounded-full py-2.5 text-sm font-medium text-cream/60 transition-all hover:text-cream"}`}
           onClick={() => setMode("login")}
         >
           {t("auth.tabLogin")}
@@ -54,11 +56,7 @@ export function AuthForm({ redirectTo, initialMode = "login" }: AuthFormProps) {
           type="button"
           role="tab"
           aria-selected={!isLogin}
-          className={`flex-1 rounded-full py-2.5 text-sm font-medium transition-all ${
-            !isLogin
-              ? "bg-gradient-to-r from-gold-dark via-gold to-gold-light text-cinema-black"
-              : "text-cream/60 hover:text-cream"
-          }`}
+          className={`${!isLogin ? BTN_3D_TAB_ACTIVE : "flex-1 rounded-full py-2.5 text-sm font-medium text-cream/60 transition-all hover:text-cream"}`}
           onClick={() => setMode("signup")}
         >
           {t("auth.tabSignup")}
@@ -138,7 +136,7 @@ export function AuthForm({ redirectTo, initialMode = "login" }: AuthFormProps) {
         <button
           type="submit"
           disabled={pending}
-          className="mt-2 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-6 py-3 text-sm font-semibold text-cinema-black shadow-glow-gold transition-all hover:brightness-110 disabled:opacity-60"
+          className={`mt-2 ${BTN_3D_PRIMARY_ACTION}`}
         >
           {pending
             ? t("auth.loading")

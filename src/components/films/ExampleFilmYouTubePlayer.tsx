@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { ExampleFilmQualityHint } from "@/components/films/ExampleFilmQualityHint";
+import { BTN_3D_PLAY } from "@/lib/ui/button-3d-classes";
 import { getYouTubeEmbedUrl } from "@/lib/youtube";
 
 type ExampleFilmYouTubePlayerProps = {
@@ -68,7 +69,7 @@ export function ExampleFilmYouTubePlayer({
         aria-label={t("examples.playVideo", { title })}
       >
         <span
-          className="flex size-16 shrink-0 items-center justify-center rounded-full border border-gold/45 bg-cinema-black/55 text-gold-light shadow-[0_0_28px_rgba(201,162,39,0.32)] backdrop-blur-sm transition-transform duration-200 ease-out group-hover:scale-[1.04] sm:size-20"
+          className={BTN_3D_PLAY}
           aria-hidden
         >
           <svg

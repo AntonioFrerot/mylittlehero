@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
+import { BTN_3D_PRIMARY_ACTION_LG } from "@/lib/ui/button-3d-classes";
 import {
   submitContactMessage,
   type ContactFormState,
@@ -78,7 +79,7 @@ export function ContactForm({ defaultEmail }: ContactFormProps) {
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-8 py-3.5 text-sm font-semibold text-cinema-black shadow-glow-gold transition-all hover:brightness-110 disabled:opacity-60"
+        className={`mt-2 ${BTN_3D_PRIMARY_ACTION_LG}`}
       >
         {pending ? t("contact.form.sending") : t("contact.form.submit")}
       </button>

@@ -2,6 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import {
+  BTN_3D_CHAT_SEND,
+  BTN_3D_FAB,
+  BTN_3D_ICON,
+  SURFACE_3D_PANEL_LG,
+} from "@/lib/ui/button-3d-classes";
 import { SUPPORT_WELCOME_MESSAGE } from "@/lib/support-chat/knowledge";
 
 type UiMessage = {
@@ -136,7 +142,7 @@ export function SupportChatWidget() {
     <div className="fixed right-4 z-[60] flex flex-col items-end gap-3 safe-bottom sm:right-6">
       {open && (
         <div
-          className="flex w-[min(100vw-2rem,24rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-cinema-night/98 shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl sm:w-[22rem]"
+          className={`${SURFACE_3D_PANEL_LG} flex w-[min(100vw-2rem,24rem)] flex-col overflow-hidden sm:w-[22rem]`}
           role="dialog"
           aria-label="Assistant MyLittleHero"
         >
@@ -152,7 +158,7 @@ export function SupportChatWidget() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/10 text-cream/70 transition-colors hover:bg-white/5 hover:text-cream"
+              className={`${BTN_3D_ICON} h-8 w-8 text-cream/70 hover:text-cream`}
               aria-label="Fermer le chat"
             >
               <CloseIcon className="h-4 w-4" />
@@ -208,7 +214,7 @@ export function SupportChatWidget() {
                 type="button"
                 onClick={() => void sendMessage()}
                 disabled={pending || !input.trim()}
-                className="shrink-0 self-end rounded-xl bg-gradient-to-r from-gold-dark via-gold to-gold-light px-3 py-2.5 text-xs font-semibold text-cinema-black transition-all hover:brightness-110 disabled:opacity-50"
+                className={BTN_3D_CHAT_SEND}
               >
                 Envoyer
               </button>
@@ -228,8 +234,8 @@ export function SupportChatWidget() {
         onClick={() => setOpen((value) => !value)}
         className={`flex h-14 w-14 items-center justify-center rounded-full border shadow-lg transition-all ${
           open
-            ? "border-white/15 bg-cinema-night text-cream hover:bg-cinema-surface"
-            : "border-gold/40 bg-gradient-to-br from-gold-dark via-gold to-gold-light text-cinema-black shadow-glow-gold hover:scale-105"
+            ? `${BTN_3D_ICON} h-14 w-14 rounded-full text-cream`
+            : BTN_3D_FAB
         }`}
         aria-label={open ? "Fermer l'assistant" : "Ouvrir l'assistant"}
         aria-expanded={open}

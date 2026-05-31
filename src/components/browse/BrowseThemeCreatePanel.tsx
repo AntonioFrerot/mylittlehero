@@ -1,4 +1,7 @@
-import { Button } from "@/components/ui/Button";
+import Link from "next/link";
+
+const createFilmButtonClassName =
+  "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 active:scale-[0.98] bg-gradient-to-r from-gold-dark via-gold to-gold-light text-cinema-black shadow-glow-gold hover:brightness-110 hover:scale-[1.02] !text-sm";
 
 type BrowseThemeCreatePanelProps = {
   gradient: string;
@@ -23,9 +26,9 @@ export function BrowseThemeCreatePanel({
         <p className="browse-theme-cta__title">{emptyTitle}</p>
         <p className="browse-theme-cta__hint">{emptyHint}</p>
         <div className="browse-theme-cta__action">
-          <Button href={createHref} variant="primary" className="!text-sm">
+          <Link href={createHref} className={createFilmButtonClassName}>
             {createLabel}
-          </Button>
+          </Link>
         </div>
         <p className="sr-only">{themeLabel}</p>
       </div>

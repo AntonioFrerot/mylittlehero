@@ -11,6 +11,12 @@ import { FILM_THEMES } from "@/lib/film-creation/types";
 import { CharacterFacePicker } from "@/components/film-creation/CharacterFacePicker";
 import { FilmDurationPicker } from "@/components/film-creation/FilmDurationPicker";
 import { YesNoTextField } from "@/components/film-creation/YesNoTextField";
+import {
+  BTN_3D_PRIMARY_ACTION,
+  BTN_3D_PRIMARY_ACTION_LG,
+  BTN_3D_SECONDARY_ACTION_LG,
+  SURFACE_3D_CARD,
+} from "@/lib/ui/button-3d-classes";
 import type { Character } from "@/lib/characters/types";
 import type { TranslationKey } from "@/lib/i18n/translator";
 
@@ -44,13 +50,13 @@ export function FilmCreationForm({ characters }: FilmCreationFormProps) {
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
             href="/mon-espace?section=films"
-            className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-6 py-3 text-sm font-semibold text-cinema-black shadow-glow-gold"
+            className={BTN_3D_PRIMARY_ACTION}
           >
             {t("filmCreation.form.viewFilms")}
           </Link>
           <Link
             href="/mon-espace?section=personnages"
-            className="inline-flex items-center justify-center rounded-full border border-gold/40 bg-white/5 px-6 py-3 text-sm text-cream hover:border-gold/70"
+            className={BTN_3D_SECONDARY_ACTION_LG}
           >
             {t("filmCreation.manageCharacters")}
           </Link>
@@ -70,7 +76,7 @@ export function FilmCreationForm({ characters }: FilmCreationFormProps) {
           {FILM_THEMES.map((theme) => (
             <label
               key={theme}
-              className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-cinema-night/60 px-3 py-3 transition-all has-checked:border-gold/40 has-checked:bg-gold/10 hover:border-white/20"
+              className={SURFACE_3D_CARD}
             >
               <input
                 type="checkbox"
@@ -150,7 +156,7 @@ export function FilmCreationForm({ characters }: FilmCreationFormProps) {
       <button
         type="submit"
         disabled={pending || eligibleCharacters.length === 0}
-        className="inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-8 py-3.5 text-sm font-semibold text-cinema-black shadow-glow-gold transition-all hover:brightness-110 disabled:opacity-60 sm:w-auto"
+        className={BTN_3D_PRIMARY_ACTION_LG}
       >
         {pending ? t("filmCreation.form.pending") : t("filmCreation.form.submit")}
       </button>

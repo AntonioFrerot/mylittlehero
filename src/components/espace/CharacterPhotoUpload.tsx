@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { BTN_3D_SECONDARY_ACTION } from "@/lib/ui/button-3d-classes";
 import { useLocale } from "@/components/LocaleProvider";
 
 type CharacterPhotoUploadProps = {
@@ -55,7 +56,7 @@ export function CharacterPhotoUpload({
         </div>
 
         <label className="flex flex-1 cursor-pointer flex-col gap-1">
-          <span className="inline-flex w-fit rounded-full border border-gold/40 bg-white/5 px-4 py-2 text-sm text-cream transition-colors hover:border-gold/70 hover:bg-white/10">
+          <span className={BTN_3D_SECONDARY_ACTION}>
             {t("characters.choosePhoto")}
           </span>
           <input

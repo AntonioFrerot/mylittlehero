@@ -7,6 +7,7 @@ import {
   translateExamplePosterDuration,
   translateExamplePosterTitle,
 } from "@/lib/i18n/example-film-labels";
+import { filmDurationPosterBadgeClassName } from "@/lib/film-meta-badges";
 import { getServerTranslator } from "@/lib/i18n/server";
 
 function PosterCard({
@@ -33,7 +34,7 @@ function PosterCard({
           className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         />
         {durationLabel && (
-          <span className="absolute left-3 top-3 z-[1] rounded-md border border-white/10 bg-black/55 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm backdrop-blur-sm">
+          <span className={filmDurationPosterBadgeClassName()}>
             {durationLabel}
           </span>
         )}

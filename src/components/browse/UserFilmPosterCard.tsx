@@ -5,6 +5,7 @@ import {
   getFilmDurationSeconds,
 } from "@/lib/film-creation/duration";
 import { getFilmDisplayPosterSrc } from "@/lib/browse-catalog";
+import { filmDurationPosterBadgeClassName } from "@/lib/film-meta-badges";
 import type { UserFilm } from "@/lib/film-creation/types";
 
 type UserFilmPosterCardProps = {
@@ -44,7 +45,7 @@ export function UserFilmPosterCard({
               className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
             />
             {durationLabel && (
-              <span className="film-duration-surface absolute left-3 top-3 z-[1] rounded-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide">
+              <span className={filmDurationPosterBadgeClassName()}>
                 {durationLabel}
               </span>
             )}

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BTN_3D_NAV_ACTIVE, BTN_3D_NAV_INACTIVE } from "@/lib/ui/button-3d-classes";
 import { useLocale } from "@/components/LocaleProvider";
 import { ESPACE_SECTIONS, type EspaceSection } from "@/lib/espace/sections";
 import type { TranslationKey } from "@/lib/i18n/translator";
@@ -30,11 +31,7 @@ export function MonEspaceNav({ active }: MonEspaceNavProps) {
           <Link
             key={section}
             href={`/mon-espace?section=${section}`}
-            className={`shrink-0 snap-start rounded-xl px-4 py-3 text-sm font-medium transition-all lg:shrink lg:text-base ${
-              isActive
-                ? "bg-gradient-to-r from-gold-dark/90 via-gold/80 to-gold-light/90 text-cinema-black shadow-glow-gold-subtle"
-                : "border border-white/10 bg-cinema-night/50 text-cream/70 hover:border-white/20 hover:text-cream"
-            }`}
+            className={`transition-all ${isActive ? BTN_3D_NAV_ACTIVE : BTN_3D_NAV_INACTIVE}`}
             aria-current={isActive ? "page" : undefined}
           >
             {t(SECTION_KEYS[section])}

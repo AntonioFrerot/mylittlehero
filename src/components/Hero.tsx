@@ -3,6 +3,7 @@ import { HeroMobilePosterFadeBand } from "@/components/HeroMobilePosterFadeBand"
 import { Button } from "@/components/ui/Button";
 import { HeroPosterMosaic } from "@/components/HeroPosterMosaic";
 import { getServerTranslator } from "@/lib/i18n/server";
+import { BTN_3D_HERO_BADGE } from "@/lib/ui/button-3d-classes";
 
 export async function Hero() {
   const { t } = await getServerTranslator();
@@ -26,9 +27,9 @@ export async function Hero() {
       <div className="hero-overlay-top" aria-hidden />
 
       <div className="hero-content safe-top-offset">
-        <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-black/40 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-gold-light backdrop-blur-md md:text-sm">
+        <p className={`mb-4 ${BTN_3D_HERO_BADGE}`}>
           <span
-            className="h-1.5 w-1.5 rounded-full bg-gold-light shadow-glow-gold"
+            className="h-1.5 w-1.5 rounded-full bg-gold-light"
             aria-hidden
           />
           {t("home.heroBadge")}
@@ -50,7 +51,7 @@ export async function Hero() {
         </div>
 
         <div className="hero-actions">
-          <CreerSonFilmButton variant="primary" className="w-full sm:w-auto" />
+          <CreerSonFilmButton variant="primary" glow="full" className="w-full sm:w-auto" />
           <Button
             href="/#catalogue"
             variant="secondary"

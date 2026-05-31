@@ -8,6 +8,7 @@ import {
   CREER_FILM_CONNEXION_REDIRECT,
   CREER_FILM_PATH,
 } from "@/lib/navigation/creer-film";
+import { SURFACE_3D_ICON_LG, SURFACE_3D_STEP_CARD } from "@/lib/ui/button-3d-classes";
 import type { TranslationKey } from "@/lib/i18n/translator";
 
 const STEPS = [1, 2, 3] as const;
@@ -95,7 +96,7 @@ function StepCard({
     <>
       <div className="flex items-start justify-between">
         <span
-          className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold/10 transition-colors group-hover:bg-gold/15"
+          className={`${SURFACE_3D_ICON_LG} items-start`}
           aria-hidden
         >
           <StepIcon step={step} />
@@ -118,8 +119,7 @@ function StepCard({
     </>
   );
 
-  const className =
-    "step-card group relative block rounded-2xl border border-white/5 bg-cinema-night/60 p-5 transition-all duration-300 hover:border-gold/20 hover:shadow-glow-gold-subtle sm:p-6 md:p-8";
+  const className = `${SURFACE_3D_STEP_CARD} cursor-pointer`;
 
   if (href) {
     return (

@@ -6,6 +6,7 @@ import {
   FILM_DURATION_OPTIONS,
   formatFilmDurationSeconds,
 } from "@/lib/film-creation/duration";
+import { SURFACE_3D_DURATION_VALUE, SURFACE_3D_PANEL } from "@/lib/ui/button-3d-classes";
 
 export function FilmDurationPicker() {
   const { locale, t } = useLocale();
@@ -31,12 +32,12 @@ export function FilmDurationPicker() {
 
       <input type="hidden" name="duration" value={selectedSeconds} />
 
-      <div className="rounded-xl border border-white/10 bg-cinema-night/60 px-3 py-3 sm:px-4">
+      <div className={`${SURFACE_3D_PANEL} px-3 py-3 sm:px-4`}>
         <div className="flex items-baseline justify-between gap-3">
           <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gold/75">
             {t("filmCreation.form.durationLabel")}
           </span>
-          <span className="font-display text-lg font-semibold tabular-nums text-gold-light">
+          <span className={SURFACE_3D_DURATION_VALUE}>
             {formatFilmDurationSeconds(selectedSeconds, displayLocale)}
           </span>
         </div>

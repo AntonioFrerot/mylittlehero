@@ -1,5 +1,6 @@
 import {
   FILM_THEME_IDS,
+  normalizeFilmStatus,
   normalizeFilmTheme,
   type FilmThemeId,
 } from "@/lib/i18n/film-labels";
@@ -18,4 +19,17 @@ export function filmThemeBadgeClassName(theme?: FilmThemeId | string): string {
 /** Pastille durée — mêmes dimensions que les thèmes, couleurs noir/blanc. */
 export function filmDurationBadgeClassName(): string {
   return `${BADGE_BASE} ${BADGE_BASE}--theme ${BADGE_BASE}--duration`;
+}
+
+/** Pastille durée sur affiche (accueil, catalogue) — coins arrondis, texte compact. */
+export function filmDurationPosterBadgeClassName(): string {
+  return "film-duration-surface absolute left-3 top-3 z-[1] rounded-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide";
+}
+
+const STATUS_BADGE_BASE = "surface-3d--status";
+
+/** Pastille statut film (Mon espace). */
+export function filmStatusBadgeClassName(status: string): string {
+  const id = normalizeFilmStatus(status) ?? "preparing";
+  return `btn-3d ${STATUS_BADGE_BASE} ${STATUS_BADGE_BASE}--${id}`;
 }

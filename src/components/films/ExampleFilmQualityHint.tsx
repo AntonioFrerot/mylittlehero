@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale } from "@/components/LocaleProvider";
+import { SURFACE_3D_CALLOUT } from "@/lib/ui/button-3d-classes";
 
 type ExampleFilmQualityHintProps = {
   onDismiss: () => void;
@@ -23,7 +24,7 @@ export function ExampleFilmQualityHint({ onDismiss }: ExampleFilmQualityHintProp
         className="pointer-events-none absolute right-2 top-[22%] z-10 w-[min(7.75rem,68vw)] -translate-x-0.5 sm:right-6 sm:top-[9%] sm:w-48 sm:-translate-x-px"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="pointer-events-auto relative rounded-lg border border-gold/45 bg-cinema-night/95 px-2.5 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.55)] backdrop-blur-md sm:rounded-xl sm:px-3.5 sm:py-2.5">
+        <div className={`${SURFACE_3D_CALLOUT} shadow-[0_8px_32px_rgba(0,0,0,0.55)] backdrop-blur-md`}>
           <span
             className="absolute right-2 top-1.5 text-gold-light sm:right-3 sm:top-2"
             aria-hidden

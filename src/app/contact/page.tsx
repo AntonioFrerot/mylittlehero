@@ -4,6 +4,7 @@ import { CONTACT_EMAIL } from "@/lib/contact/constants";
 import { getSession } from "@/lib/auth/get-session";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
+import { SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -46,7 +47,7 @@ export default async function ContactPage() {
             </a>
           </p>
 
-          <div className="mt-10 rounded-2xl border border-white/10 bg-cinema-surface/80 p-6 md:p-8">
+          <div className={`mt-10 ${SURFACE_3D_PANEL_LG} p-6 md:p-8`}>
             <ContactForm defaultEmail={session?.email} />
           </div>
         </div>

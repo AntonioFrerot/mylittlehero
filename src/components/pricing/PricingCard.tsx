@@ -1,6 +1,7 @@
 import React from "react";
 import type { PricingPlan } from "@/lib/pricing";
 import { getTierQuotaLabel } from "@/lib/pricing";
+import { BTN_3D_BADGE, SURFACE_3D_CHIP, SURFACE_3D_CHIP_CALLOUT, SURFACE_3D_CHIP_MUTED, SURFACE_3D_ICON_SM } from "@/lib/ui/button-3d-classes";
 import { Button } from "@/components/ui/Button";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
@@ -59,19 +60,13 @@ export function PricingCard({ plan, ctaHref, locale }: PricingCardProps) {
       }`}
     >
       {plan.highlighted && (
-        <span className="absolute -top-3 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-3 py-1 text-[10px] font-semibold text-cinema-black xl:text-xs">
+        <span className={BTN_3D_BADGE}>
           {t("pricing.mostPopular")}
         </span>
       )}
 
       <div className="flex flex-col gap-4 lg:gap-5">
-        <span
-          className={`w-fit rounded-lg px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide ${
-            isYearly
-              ? "border border-gold/30 bg-gold/10 text-gold-light"
-              : "border border-white/10 bg-white/5 text-cream/60"
-          }`}
-        >
+        <span className={isYearly ? SURFACE_3D_CHIP : SURFACE_3D_CHIP_MUTED}>
           {isYearly ? t("pricing.billingYearly") : t("pricing.billingMonthly")}
         </span>
 
@@ -92,7 +87,7 @@ export function PricingCard({ plan, ctaHref, locale }: PricingCardProps) {
             <span className="text-sm text-cream/50">{plan.period}</span>
           </div>
           {plan.savingsLabel && (
-            <p className="mt-3 rounded-lg border border-gold/35 bg-gold/10 px-3 py-2 text-xs font-semibold leading-snug text-gold-light xl:text-sm">
+            <p className={`mt-3 ${SURFACE_3D_CHIP_CALLOUT}`}>
               {plan.savingsLabel}
             </p>
           )}
@@ -105,10 +100,7 @@ export function PricingCard({ plan, ctaHref, locale }: PricingCardProps) {
             key={feature}
             className="flex gap-2.5 text-xs leading-snug text-cream/75 xl:text-sm xl:leading-relaxed"
           >
-            <span
-              className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-gold/15 text-[10px] text-gold-light xl:h-5 xl:w-5 xl:text-xs"
-              aria-hidden
-            >
+            <span className={SURFACE_3D_ICON_SM} aria-hidden>
               ✓
             </span>
             <span>{renderPricingFeature(feature)}</span>

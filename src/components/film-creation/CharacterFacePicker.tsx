@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
+import { BTN_3D_BADGE_INLINE, SURFACE_3D_CARD_SELECTABLE, SURFACE_3D_CHECK_BADGE } from "@/lib/ui/button-3d-classes";
 import { formatCharacterAge } from "@/lib/characters/format";
 import type { Character } from "@/lib/characters/types";
 
@@ -60,7 +61,7 @@ export function CharacterFacePicker({
           return (
             <label
               key={character.id}
-              className={`group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-white/10 bg-cinema-night/60 transition-all duration-200 ease-out has-checked:border-gold/50 has-checked:bg-gold/10 has-checked:shadow-glow-gold-subtle hover:border-white/20 ${
+              className={`${SURFACE_3D_CARD_SELECTABLE} has-checked:shadow-glow-gold-subtle ${
                 hasSelection ? "" : "items-center p-4"
               }`}
             >
@@ -78,7 +79,7 @@ export function CharacterFacePicker({
                 <div className="px-3 pt-2.5">
                   <div className="h-5 w-full shrink-0">
                     {isMain ? (
-                      <span className="flex h-full w-full items-center justify-center rounded-md border border-gold/30 bg-gradient-to-r from-gold-dark via-gold to-gold-light text-[10px] font-bold uppercase tracking-[0.14em] text-cinema-black">
+                      <span className={BTN_3D_BADGE_INLINE}>
                         {t("filmCreation.form.mainCharacterBadge")}
                       </span>
                     ) : null}
@@ -99,7 +100,7 @@ export function CharacterFacePicker({
                     sizes="(max-width: 640px) 80px, 96px"
                   />
                   <span
-                    className="absolute right-0 top-0 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-xs font-bold text-cinema-black opacity-0 shadow-md transition-opacity peer-checked:opacity-100"
+                    className={SURFACE_3D_CHECK_BADGE}
                     aria-hidden
                   >
                     ✓
@@ -118,7 +119,7 @@ export function CharacterFacePicker({
 
         <Link
           href="/mon-espace?section=personnages"
-          className={`group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-cinema-night/60 transition-all duration-200 ease-out hover:border-gold/40 hover:bg-gold/5 ${
+          className={`${SURFACE_3D_CARD_SELECTABLE} hover:border-gold/40 hover:bg-gold/5 ${
             hasSelection ? "" : "items-center p-4"
           }`}
           aria-label={t("filmCreation.form.addCharacterAria")}

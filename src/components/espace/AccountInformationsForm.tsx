@@ -1,5 +1,12 @@
 "use client";
 
+import {
+  BTN_3D_PRIMARY_COMPACT,
+  BTN_3D_SOFT_COMPACT,
+  SURFACE_3D_PANEL_LG,
+  SURFACE_3D_SUBSCRIPTION,
+} from "@/lib/ui/button-3d-classes";
+
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
@@ -60,7 +67,7 @@ function SectionCard({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-white/10 bg-cinema-surface/80 p-6 md:p-8">
+    <section className={`${SURFACE_3D_PANEL_LG} p-6 md:p-8`}>
       <h3 className="font-display text-lg font-semibold text-cream md:text-xl">
         {title}
       </h3>
@@ -152,7 +159,7 @@ export function AccountInformationsForm({
           <button
             type="submit"
             disabled={namePending}
-            className="w-fit rounded-xl bg-gradient-to-r from-gold-dark via-gold to-gold-light px-5 py-2.5 text-sm font-semibold text-cinema-black transition-opacity hover:opacity-90 disabled:opacity-50"
+            className={`w-fit ${BTN_3D_PRIMARY_COMPACT}`}
           >
             {namePending ? t("space.savingName") : t("space.saveName")}
           </button>
@@ -199,7 +206,7 @@ export function AccountInformationsForm({
           <button
             type="submit"
             disabled={languagePending}
-            className="w-fit rounded-xl bg-gradient-to-r from-gold-dark via-gold to-gold-light px-5 py-2.5 text-sm font-semibold text-cinema-black transition-opacity hover:opacity-90 disabled:opacity-50"
+            className={`w-fit ${BTN_3D_PRIMARY_COMPACT}`}
           >
             {languagePending
               ? saveLanguageT("space.savingLanguage")
@@ -272,7 +279,7 @@ export function AccountInformationsForm({
           <button
             type="submit"
             disabled={passwordPending}
-            className="w-fit rounded-xl border border-gold/40 bg-gold/10 px-5 py-2.5 text-sm font-semibold text-gold-light transition-colors hover:bg-gold/15 disabled:opacity-50"
+            className={`w-fit ${BTN_3D_SOFT_COMPACT}`}
           >
             {passwordPending
               ? t("space.updatingPassword")
@@ -287,7 +294,7 @@ export function AccountInformationsForm({
       >
         {currentPlan ? (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-            <p className="min-w-0 flex-1 rounded-xl border border-gold/25 bg-gold/5 px-4 py-3 text-sm text-cream/80">
+            <p className={SURFACE_3D_SUBSCRIPTION}>
               <span className="font-semibold text-gold-light">
                 {currentPlan.name}
               </span>

@@ -14,6 +14,7 @@ import { HeaderAuth, MobileAuthLinks } from "@/components/auth/HeaderAuth";
 import { useLocale } from "@/components/LocaleProvider";
 
 import { BRAND_NAME } from "@/lib/brand";
+import { BTN_3D_ICON, BTN_3D_LOGO } from "@/lib/ui/button-3d-classes";
 import { scrollToSection } from "@/lib/scroll-to-section";
 import { usePathname } from "next/navigation";
 
@@ -154,7 +155,7 @@ export function Header() {
 
           <span
 
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-gold-dark to-gold-light text-lg shadow-glow-gold"
+            className={BTN_3D_LOGO}
 
             aria-hidden
 
@@ -219,7 +220,7 @@ export function Header() {
 
           type="button"
 
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-white/10 text-cream md:hidden"
+          className={`${BTN_3D_ICON} h-11 w-11 rounded-lg text-cream md:hidden`}
 
           aria-expanded={menuOpen}
 

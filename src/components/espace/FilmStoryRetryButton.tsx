@@ -7,6 +7,7 @@ import {
   type StoryRetryState,
 } from "@/lib/story-generation/actions";
 import type { StoryGenerationStatus } from "@/lib/story-generation/types";
+import { BTN_3D_SOFT } from "@/lib/ui/button-3d-classes";
 
 type FilmStoryRetryButtonProps = {
   filmId: string;
@@ -40,7 +41,7 @@ export function FilmStoryRetryButton({
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex w-fit items-center justify-center rounded-full border border-gold/40 bg-gold/10 px-4 py-2 text-sm font-medium text-gold-light transition-colors hover:bg-gold/20 disabled:opacity-50"
+        className={BTN_3D_SOFT}
       >
         {pending ? t("space.storyRetry.pending") : label}
       </button>

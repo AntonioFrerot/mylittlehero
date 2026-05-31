@@ -4,6 +4,7 @@ import { getMyCharacters } from "@/lib/characters/actions";
 import { getSession } from "@/lib/auth/get-session";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
+import { SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
@@ -48,7 +49,7 @@ export default async function CreerFilmPage() {
             {t("filmCreation.greeting", { name: greeting })}
           </p>
 
-          <div className="mt-8 rounded-2xl border border-white/10 bg-cinema-surface/80 p-4 sm:mt-10 sm:p-6 md:p-8">
+          <div className={`mt-8 ${SURFACE_3D_PANEL_LG} p-4 sm:mt-10 sm:p-6 md:p-8`}>
             <FilmCreationForm characters={characters} />
           </div>
 

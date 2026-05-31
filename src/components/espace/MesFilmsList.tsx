@@ -11,26 +11,25 @@ import type { StoryGenerationStatus } from "@/lib/story-generation/types";
 import { FilmStoryRetryButton } from "@/components/espace/FilmStoryRetryButton";
 import {
   filmDurationBadgeClassName,
+  filmStatusBadgeClassName,
   filmThemeBadgeClassName,
 } from "@/lib/film-meta-badges";
 import {
   normalizeFilmStatus,
   translateFilmStatus,
   translateFilmTheme,
-  type FilmStatusId,
 } from "@/lib/i18n/film-labels";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import type { TranslationKey } from "@/lib/i18n/translator";
 import { POSTER_DIMENSIONS } from "@/lib/hero-posters";
 import { ShareFilmButton } from "@/components/espace/ShareFilmButton";
+import { SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
 import Image from "next/image";
 import Link from "next/link";
 
-const statusStyles: Record<FilmStatusId, string> = {
-  preparing: "border-amber-500/30 bg-amber-950/30 text-amber-200",
-  generating: "border-sky-500/30 bg-sky-950/30 text-sky-200",
-  ready: "border-emerald-500/30 bg-emerald-950/30 text-emerald-200",
-};
+function getStatusStyle(status: string): string {
+  return filmStatusBadgeClassName(status);
+}
 
 const dateLocale: Record<LocaleCode, string> = {
   fr: "fr-FR",
@@ -49,11 +48,6 @@ function formatDate(iso: string, locale: LocaleCode): string {
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date(iso));
-}
-
-function getStatusStyle(status: string): string {
-  const id = normalizeFilmStatus(status) ?? "preparing";
-  return statusStyles[id];
 }
 
 function storyStatusLabel(
@@ -110,7 +104,7 @@ export function MesFilmsList({ films }: MesFilmsListProps) {
         return (
         <li
           key={film.id}
-          className="rounded-2xl border border-white/10 bg-cinema-surface/80 p-5 transition-colors hover:border-white/15 md:p-6"
+          className={`${SURFACE_3D_PANEL_LG} p-5 md:p-6`}
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0 flex-1">
@@ -118,9 +112,7 @@ export function MesFilmsList({ films }: MesFilmsListProps) {
                 <h3 className="font-display text-lg font-semibold text-cream md:text-xl">
                   {film.title}
                 </h3>
-                <span
-                  className={`rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${getStatusStyle(film.status)}`}
-                >
+                <span className={getStatusStyle(film.status)}>
                   {translateFilmStatus(film.status, locale)}
                 </span>
               </div>
