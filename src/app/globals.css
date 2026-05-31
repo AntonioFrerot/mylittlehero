@@ -1952,9 +1952,21 @@ body {
 .film-badge--theme {
   --badge-rgb: 56, 189, 248;
   --badge-text-rgb: 186, 230, 253;
-  border-color: rgba(var(--badge-rgb), 0.42);
-  background-color: rgba(var(--badge-rgb), 0.14);
+  border-color: rgba(var(--badge-rgb), 0.48);
+  background-color: rgba(var(--badge-rgb), 0.16);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.04) 45%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
   color: rgb(var(--badge-text-rgb));
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
 }
 
 .film-badge--theme-aventure {
@@ -2003,40 +2015,40 @@ body {
 }
 
 .film-badge--theme.film-badge--duration {
-  border-color: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.12);
   background-color: rgba(0, 0, 0, 0.55);
   background-image: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0.03) 50%,
-    rgba(0, 0, 0, 0.1) 100%
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.04) 45%,
+    rgba(0, 0, 0, 0.15) 100%
   );
   color: rgb(255, 255, 255);
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.3),
-    0 3px 10px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
 }
 
-/* Pastille durée sur affiches (accueil, catalogue) — même rendu verre */
+/* Pastille durée sur affiches (accueil, catalogue) — même rendu 3D */
 .film-duration-surface {
-  border: 1px solid rgba(255, 255, 255, 0.11);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   background-color: rgba(0, 0, 0, 0.55);
   background-image: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0.03) 50%,
-    rgba(0, 0, 0, 0.1) 100%
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.04) 45%,
+    rgba(0, 0, 0, 0.15) 100%
   );
   color: rgb(255, 255, 255);
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.3),
-    0 3px 10px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
 }
 
 .duration-slider {
