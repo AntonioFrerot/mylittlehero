@@ -51,7 +51,10 @@ export async function BrowseCatalogContent() {
                 className="browse-row"
                 aria-label={t("browse.rowAria", { theme: themeLabel })}
               >
-                <h2 className="browse-row__title">{themeLabel}</h2>
+                <h2 className="browse-row__title">
+                  <span className="browse-row__title-text">{themeLabel}</span>
+                  <span className="browse-row__title-mark" aria-hidden />
+                </h2>
                 <BrowseThemeCreatePanel
                   gradient={row.gradient}
                   themeLabel={themeLabel}
