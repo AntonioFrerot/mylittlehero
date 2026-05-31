@@ -679,6 +679,7 @@ body {
     --hero-poster-extend: 0.5cm;
     --catalogue-mobile-shift-down: 0cm;
     --hero-poster-band-rise: 1cm;
+    --hero-poster-handoff-shift-up: 0.6cm;
     --hero-poster-fade-end-row: 7;
     --hero-poster-band-fade-zone: calc(var(--catalogue-edge-fade-bottom) + 0.6cm);
     --hero-poster-fade-band-extra: 0.5cm;
@@ -787,7 +788,8 @@ body {
     overflow: visible;
     margin-top: calc(
       -1 * var(--catalogue-hero-overlap) + var(--hero-poster-extend, 0.5cm) +
-        var(--catalogue-mobile-shift-down, 1cm)
+        var(--catalogue-mobile-shift-down, 1cm) -
+        var(--hero-poster-handoff-shift-up, 0cm)
     );
   }
 
@@ -1089,7 +1091,7 @@ body {
   .hero-overlay-bottom {
     top: calc(
       var(--hero-poster-fade-top, calc(100% - var(--hero-poster-fade-band, 2.24rem))) -
-        var(--hero-poster-band-rise, 1cm)
+        var(--hero-poster-band-rise, 1cm) - var(--hero-poster-handoff-shift-up, 0cm)
     );
     bottom: auto;
     z-index: 9;

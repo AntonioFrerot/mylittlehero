@@ -104,6 +104,11 @@ export function HeroMobilePosterFadeBand() {
         hero,
         getComputedStyle(root).getPropertyValue("--hero-poster-band-rise").trim() || "1cm",
       );
+      const handoffShiftUpPx = measureLength(
+        hero,
+        getComputedStyle(root).getPropertyValue("--hero-poster-handoff-shift-up").trim() ||
+          "0cm",
+      );
       const bandTopRel = wrapBottom - heroTop + shiftDownPx;
       hero.style.setProperty(
         "--hero-poster-fade-top",
@@ -113,7 +118,8 @@ export function HeroMobilePosterFadeBand() {
       const catalogue = document.getElementById("catalogue");
       if (catalogue) {
         const bandOverlapPx = measureLength(hero, "0.5cm");
-        const bandBottom = wrapBottom + shiftDownPx + bandHeightPx - bandRisePx;
+        const bandBottom =
+          wrapBottom + shiftDownPx + bandHeightPx - bandRisePx - handoffShiftUpPx;
         const catalogueTop = catalogue.getBoundingClientRect().top;
         const catalogueOffset = Math.max(
           0,
