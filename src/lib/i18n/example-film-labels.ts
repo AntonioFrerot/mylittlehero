@@ -56,7 +56,7 @@ const THEME_INTRO_FR: Partial<Record<FilmThemeId, string>> = {
   morale: "Voici un exemple de film pour Léo :",
   mystere: "Voici un exemple de film de mystère pour Léo :",
   musical: "Voici un exemple de film musical pour Léo :",
-  enquete: "Voici un exemple de film d'enquête pour Léo :",
+  animation: "Voici un exemple de film d'animation pour Léo :",
 };
 
 const THEME_INTRO_EN: Partial<Record<FilmThemeId, string>> = {
@@ -68,7 +68,7 @@ const THEME_INTRO_EN: Partial<Record<FilmThemeId, string>> = {
   morale: "Here is an example of a film for Leo:",
   mystere: "Here is an example of a mystery film for Leo:",
   musical: "Here is an example of a musical film for Leo:",
-  enquete: "Here is an example of a detective film for Leo:",
+  animation: "Here is an example of an animated film for Leo:",
 };
 
 function translateExampleFilmIntroByTheme(

@@ -7,7 +7,7 @@ import {
   saveFilmCreation,
   type FilmCreationFormState,
 } from "@/lib/film-creation/actions";
-import { FILM_STYLES, FILM_THEMES } from "@/lib/film-creation/types";
+import { FILM_THEMES } from "@/lib/film-creation/types";
 import { CharacterFacePicker } from "@/components/film-creation/CharacterFacePicker";
 import { FilmDurationPicker } from "@/components/film-creation/FilmDurationPicker";
 import { YesNoTextField } from "@/components/film-creation/YesNoTextField";
@@ -19,10 +19,6 @@ const initialState: FilmCreationFormState = {};
 type FilmCreationFormProps = {
   characters: Character[];
 };
-
-function styleLabelKey(style: (typeof FILM_STYLES)[number]): TranslationKey {
-  return `filmCreation.styles.${style}` as TranslationKey;
-}
 
 function themeLabelKey(theme: (typeof FILM_THEMES)[number]): TranslationKey {
   return `filmCreation.themes.${theme}` as TranslationKey;
@@ -65,32 +61,6 @@ export function FilmCreationForm({ characters }: FilmCreationFormProps) {
 
   return (
     <form action={formAction} className="flex flex-col gap-8 sm:gap-10">
-      <fieldset className="space-y-4">
-        <legend className="font-display text-lg font-semibold text-cream md:text-xl">
-          {t("filmCreation.form.styleLegend")}
-        </legend>
-        <p className="text-sm text-cream/50">{t("filmCreation.form.styleHint")}</p>
-        <div className="grid gap-3 sm:grid-cols-3">
-          {FILM_STYLES.map((style) => (
-            <label
-              key={style}
-              className="group relative flex cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-cinema-night/60 px-4 py-4 text-center transition-all has-checked:border-gold/50 has-checked:bg-gold/10 has-checked:shadow-glow-gold-subtle hover:border-white/20"
-            >
-              <input
-                type="radio"
-                name="style"
-                value={style}
-                required
-                className="peer sr-only"
-              />
-              <span className="text-sm font-medium text-cream/80 group-has-checked:text-gold-light">
-                {t(styleLabelKey(style))}
-              </span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
       <fieldset className="space-y-4">
         <legend className="font-display text-lg font-semibold text-cream md:text-xl">
           {t("filmCreation.form.themesLegend")}

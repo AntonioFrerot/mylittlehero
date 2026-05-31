@@ -74,7 +74,6 @@ export default async function ExampleFilmPage({ params }: PageProps) {
 
           <FilmMetaBadges
             className="mt-4"
-            style={film.style}
             themes={film.themes}
             durationLabel={translateExampleFilmDuration(
               slug,

@@ -1,18 +1,21 @@
-import type { FilmStyleId, FilmThemeId } from "@/lib/i18n/film-labels";
+import {
+  FILM_THEME_IDS,
+  normalizeFilmTheme,
+  type FilmThemeId,
+} from "@/lib/i18n/film-labels";
 
 const BADGE_BASE = "film-badge";
 
-/** Pastille style graphique (animation, réaliste, manga) — même famille de couleur. */
-export function filmStyleBadgeClassName(_style?: FilmStyleId | string): string {
-  return `${BADGE_BASE} ${BADGE_BASE}--style`;
-}
-
-/** Pastille thème — une seule couleur pour les 9 univers. */
-export function filmThemeBadgeClassName(_theme?: FilmThemeId | string): string {
+/** Pastille thème — couleur propre à chaque univers. */
+export function filmThemeBadgeClassName(theme?: FilmThemeId | string): string {
+  const id = theme ? normalizeFilmTheme(String(theme)) : null;
+  if (id && FILM_THEME_IDS.includes(id)) {
+    return `${BADGE_BASE} ${BADGE_BASE}--theme ${BADGE_BASE}--theme-${id}`;
+  }
   return `${BADGE_BASE} ${BADGE_BASE}--theme`;
 }
 
-/** Pastille durée — couleur dédiée. */
+/** Pastille durée — mêmes dimensions que les thèmes, couleurs noir/blanc. */
 export function filmDurationBadgeClassName(): string {
-  return `${BADGE_BASE} ${BADGE_BASE}--duration`;
+  return `${BADGE_BASE} ${BADGE_BASE}--theme ${BADGE_BASE}--duration`;
 }

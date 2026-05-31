@@ -74,6 +74,13 @@ export const themes = [
       "bg-gradient-to-br from-indigo-950/95 via-violet-900/55 to-cinema-night",
   },
   {
+    id: "animation",
+    name: "Animation",
+    description: "Univers colorés, aventures animées et personnages expressifs",
+    gradient:
+      "bg-gradient-to-br from-orange-950/95 via-amber-800/50 to-cinema-night",
+  },
+  {
     id: "educatif",
     name: "Éducatif",
     description: "Découvertes ludiques et curiosité éveillée",
@@ -100,13 +107,6 @@ export const themes = [
     description: "Indices à découvrir et suspense doux",
     gradient:
       "bg-gradient-to-br from-slate-950/95 via-purple-950/55 to-cinema-night",
-  },
-  {
-    id: "enquete",
-    name: "Enquête",
-    description: "Mystères à résoudre, indices et suspense doux",
-    gradient:
-      "bg-gradient-to-br from-stone-900/95 via-indigo-950/55 to-cinema-night",
   },
 ] as const;
 

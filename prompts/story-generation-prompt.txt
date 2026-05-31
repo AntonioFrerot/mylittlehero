@@ -107,11 +107,11 @@ Option A - Aventure
 Option B - Comédie
 Option C - Fantastique
 Option D - Science-fiction
-Option E - Éducatif
-Option F - Morale
-Option G - Mystère
-Option H - Musical
-Option I - Enquête
+Option E - Animation
+Option F - Éducatif
+Option G - Musical
+Option H - Morale
+Option I - Mystère
 
 Personnage principal : 
 

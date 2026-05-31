@@ -28,11 +28,11 @@ export const FILM_THEMES = [
   "comedie",
   "fantastique",
   "scifi",
+  "animation",
   "educatif",
+  "musical",
   "morale",
   "mystere",
-  "musical",
-  "enquete",
 ] as const;
 export type FilmTheme = FilmThemeId;
 

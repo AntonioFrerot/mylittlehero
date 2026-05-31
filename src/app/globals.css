@@ -1914,51 +1914,129 @@ body {
   --theme-glow-rgb: 129, 140, 248;
 }
 
-.theme-card[data-theme="enquete"] {
-  --theme-glow-rgb: 148, 163, 184;
+.theme-card[data-theme="animation"] {
+  --theme-glow-rgb: 251, 146, 60;
 }
 
-/* Pastilles film — style graphique, thème, durée */
+/* Pastilles film — thème, durée */
 .film-badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   border-radius: 9999px;
   border-width: 1px;
   border-style: solid;
+}
+
+.film-badge--theme,
+.film-badge--duration {
+  min-height: 1.75rem;
   padding: 0.25rem 0.75rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
   font-weight: 500;
 }
 
-.film-badge--compact {
-  border-radius: 0.375rem;
+.film-badge--compact.film-badge--theme,
+.film-badge--compact.film-badge--duration {
+  min-height: 1.25rem;
   padding: 0.25rem 0.625rem;
   font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.film-badge--style {
-  --badge-rgb: 56, 189, 248;
-  border-color: rgba(var(--badge-rgb), 0.4);
-  background-color: rgba(var(--badge-rgb), 0.14);
-  color: rgb(186, 230, 253);
-}
-
-.film-badge--duration {
-  --badge-rgb: 201, 162, 39;
-  border-color: rgba(var(--badge-rgb), 0.45);
-  background-color: rgba(var(--badge-rgb), 0.14);
-  color: var(--gold-light);
+  line-height: 1rem;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .film-badge--theme {
-  --badge-rgb: 168, 85, 247;
+  --badge-rgb: 56, 189, 248;
+  --badge-text-rgb: 186, 230, 253;
   border-color: rgba(var(--badge-rgb), 0.42);
   background-color: rgba(var(--badge-rgb), 0.14);
-  color: rgb(216, 180, 254);
+  color: rgb(var(--badge-text-rgb));
+}
+
+.film-badge--theme-aventure {
+  --badge-rgb: 217, 119, 6;
+  --badge-text-rgb: 253, 186, 116;
+}
+
+.film-badge--theme-comedie {
+  --badge-rgb: 225, 29, 72;
+  --badge-text-rgb: 251, 207, 232;
+}
+
+.film-badge--theme-fantastique {
+  --badge-rgb: 168, 85, 247;
+  --badge-text-rgb: 216, 180, 254;
+}
+
+.film-badge--theme-scifi {
+  --badge-rgb: 99, 102, 241;
+  --badge-text-rgb: 199, 210, 254;
+}
+
+.film-badge--theme-animation {
+  --badge-rgb: 251, 146, 60;
+  --badge-text-rgb: 253, 186, 116;
+}
+
+.film-badge--theme-educatif {
+  --badge-rgb: 14, 165, 233;
+  --badge-text-rgb: 186, 230, 253;
+}
+
+.film-badge--theme-musical {
+  --badge-rgb: 236, 72, 153;
+  --badge-text-rgb: 249, 168, 212;
+}
+
+.film-badge--theme-morale {
+  --badge-rgb: 16, 185, 129;
+  --badge-text-rgb: 110, 231, 183;
+}
+
+.film-badge--theme-mystere {
+  --badge-rgb: 129, 140, 248;
+  --badge-text-rgb: 199, 210, 254;
+}
+
+.film-badge--theme.film-badge--duration {
+  border-color: rgba(255, 255, 255, 0.11);
+  background-color: rgba(0, 0, 0, 0.55);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  color: rgb(255, 255, 255);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 3px 10px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px) saturate(115%);
+  -webkit-backdrop-filter: blur(6px) saturate(115%);
+}
+
+/* Pastille durée sur affiches (accueil, catalogue) — même rendu verre */
+.film-duration-surface {
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background-color: rgba(0, 0, 0, 0.55);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  color: rgb(255, 255, 255);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 3px 10px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px) saturate(115%);
+  -webkit-backdrop-filter: blur(6px) saturate(115%);
 }
 
 .duration-slider {

@@ -44,7 +44,7 @@ export function UserFilmPosterCard({
               className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
             />
             {durationLabel && (
-              <span className="absolute left-3 top-3 z-[1] rounded-md border border-white/10 bg-black/55 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm backdrop-blur-sm">
+              <span className="film-duration-surface absolute left-3 top-3 z-[1] rounded-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide">
                 {durationLabel}
               </span>
             )}

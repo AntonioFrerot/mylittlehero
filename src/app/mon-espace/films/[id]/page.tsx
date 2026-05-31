@@ -16,7 +16,6 @@ import { getSession } from "@/lib/auth/get-session";
 import { getUserLocale } from "@/lib/auth/users-store";
 import { BRAND_NAME } from "@/lib/brand";
 import {
-  normalizeFilmStyle,
   normalizeFilmTheme,
 } from "@/lib/i18n/film-labels";
 import { getServerTranslator } from "@/lib/i18n/server";
@@ -83,7 +82,6 @@ export default async function UserFilmPage({ params }: PageProps) {
           userLocale === "fr" ? "fr" : "en"
         )
       : undefined;
-  const filmStyle = normalizeFilmStyle(film.style);
   const badgeThemes = film.themes
     .map((theme) => normalizeFilmTheme(String(theme)))
     .filter((theme): theme is NonNullable<typeof theme> => theme != null);
@@ -112,10 +110,9 @@ export default async function UserFilmPage({ params }: PageProps) {
             </p>
           )}
 
-          {badgeThemes.length > 0 && filmStyle && durationLabel && (
+          {badgeThemes.length > 0 && durationLabel && (
             <FilmMetaBadges
               className="mt-4"
-              style={filmStyle}
               themes={badgeThemes}
               durationLabel={durationLabel}
               locale={userLocale}

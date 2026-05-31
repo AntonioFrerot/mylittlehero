@@ -10,11 +10,11 @@ export const FILM_THEME_IDS = [
   "comedie",
   "fantastique",
   "scifi",
+  "animation",
   "educatif",
+  "musical",
   "morale",
   "mystere",
-  "musical",
-  "enquete",
 ] as const;
 export type FilmThemeId = (typeof FILM_THEME_IDS)[number];
 
@@ -45,11 +45,12 @@ const LEGACY_THEME_TO_ID: Record<string, FilmThemeId> = {
   Educatif: "educatif",
   Educative: "educatif",
   Musical: "musical",
-  Enquête: "enquete",
-  Enquete: "enquete",
-  Enquêtes: "enquete",
-  Enquetes: "enquete",
-  Investigation: "enquete",
+  Animation: "animation",
+  Enquête: "animation",
+  Enquete: "animation",
+  Enquêtes: "animation",
+  Enquetes: "animation",
+  Investigation: "animation",
   Morale: "morale",
   Morals: "morale",
   Mystère: "mystere",
@@ -63,8 +64,9 @@ const LEGACY_THEME_TO_ID: Record<string, FilmThemeId> = {
   morale: "morale",
   mystere: "mystere",
   musical: "musical",
-  enquete: "enquete",
-  enquetes: "enquete",
+  animation: "animation",
+  enquete: "animation",
+  enquetes: "animation",
 };
 
 const LEGACY_STATUS_TO_ID: Record<string, FilmStatusId> = {
@@ -122,17 +124,25 @@ export function translateFilmStatus(value: string, locale: LocaleCode): string {
 }
 
 export function buildLocalizedFilmTitle(
+  themes: string[],
+  locale: LocaleCode
+): string {
+  const themeLabels = themes.map((theme) => translateFilmTheme(theme, locale));
+  if (themeLabels.length === 0) return "";
+  return themeLabels.length <= 2
+    ? themeLabels.join(", ")
+    : `${themeLabels.slice(0, 2).join(", ")} +${themeLabels.length - 2}`;
+}
+
+/** Anciens titres auto avec préfixe style graphique (ex. « Réaliste — Comédie »). */
+export function buildLegacyLocalizedFilmTitle(
   style: string,
   themes: string[],
   locale: LocaleCode
 ): string {
   const styleLabel = translateFilmStyle(style, locale);
-  const themeLabels = themes.map((theme) => translateFilmTheme(theme, locale));
-  const themePart =
-    themeLabels.length <= 2
-      ? themeLabels.join(", ")
-      : `${themeLabels.slice(0, 2).join(", ")} +${themeLabels.length - 2}`;
-  return `${styleLabel} — ${themePart}`;
+  const themePart = buildLocalizedFilmTitle(themes, locale);
+  return themePart ? `${styleLabel} — ${themePart}` : styleLabel;
 }
 
 export function isFilmStyleId(value: string): value is FilmStyleId {

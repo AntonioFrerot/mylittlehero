@@ -7,7 +7,6 @@ import { formatCharacterAge } from "@/lib/characters/format";
 import type { Character } from "@/lib/characters/types";
 import { getServerTranslator } from "@/lib/i18n/server";
 import {
-  isFilmStyleId,
   isFilmThemeId,
   buildLocalizedFilmTitle,
   normalizeFilmTheme,
@@ -39,6 +38,8 @@ export type FilmCreationFormState = {
   success?: string;
 };
 
+const DEFAULT_FILM_STYLE: FilmStyle = "realistic";
+
 function normalizeSelectedThemes(themes: FilmTheme[]): FilmThemeId[] {
   return [
     ...new Set(
@@ -47,11 +48,6 @@ function normalizeSelectedThemes(themes: FilmTheme[]): FilmThemeId[] {
         .filter((theme): theme is FilmThemeId => theme != null)
     ),
   ];
-}
-
-function parseStyle(value: unknown): FilmStyle | null {
-  if (typeof value !== "string") return null;
-  return isFilmStyleId(value) ? value : null;
 }
 
 function parseThemes(formData: FormData): FilmTheme[] {
@@ -123,7 +119,7 @@ export async function saveFilmCreation(
     return { error: t("filmCreation.errors.loginRequired") };
   }
 
-  const style = parseStyle(formData.get("style"));
+  const style = DEFAULT_FILM_STYLE;
   const durationSeconds = parseDuration(formData.get("duration"));
   const themes = normalizeSelectedThemes(parseThemes(formData));
   const characterIds = formData
@@ -164,9 +160,6 @@ export async function saveFilmCreation(
     };
   }
 
-  if (!style) {
-    return { error: t("filmCreation.errors.styleRequired") };
-  }
   if (themes.length === 0) {
     return { error: t("filmCreation.errors.themesRequired") };
   }
@@ -178,7 +171,7 @@ export async function saveFilmCreation(
 
   const film: UserFilm = {
     id: randomUUID(),
-    title: buildLocalizedFilmTitle(style, themes, locale),
+    title: buildLocalizedFilmTitle(themes, locale),
     style,
     themes,
     durationSeconds,

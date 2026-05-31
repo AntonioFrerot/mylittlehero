@@ -11,13 +11,11 @@ import type { StoryGenerationStatus } from "@/lib/story-generation/types";
 import { FilmStoryRetryButton } from "@/components/espace/FilmStoryRetryButton";
 import {
   filmDurationBadgeClassName,
-  filmStyleBadgeClassName,
   filmThemeBadgeClassName,
 } from "@/lib/film-meta-badges";
 import {
   normalizeFilmStatus,
   translateFilmStatus,
-  translateFilmStyle,
   translateFilmTheme,
   type FilmStatusId,
 } from "@/lib/i18n/film-labels";
@@ -144,11 +142,6 @@ export function MesFilmsList({ films }: MesFilmsListProps) {
                 </p>
               )}
               <div className="mt-3 flex flex-wrap gap-2">
-                <span
-                  className={`${filmStyleBadgeClassName(film.style)} film-badge--compact`}
-                >
-                  {translateFilmStyle(film.style, locale)}
-                </span>
                 {film.themes.map((theme) => (
                   <span
                     key={theme}
