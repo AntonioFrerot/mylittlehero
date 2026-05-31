@@ -1057,7 +1057,7 @@ body {
 .hero-mosaic-grid {
   --mosaic-cols: 8;
   --mosaic-gap: 4px;
-  --mosaic-scale: 1.02;
+  --mosaic-scale: calc(1.02 * 0.98);
   --mosaic-shift-y: 1cm;
 
   position: absolute;
@@ -1082,7 +1082,7 @@ body {
 
   .hero-mosaic-grid {
     --mosaic-gap: 3px;
-    --mosaic-scale: calc(1.224 * 1.1 * 1.2 * 0.85);
+    --mosaic-scale: calc(1.224 * 1.1 * 1.2 * 0.85 * 0.98);
     --mosaic-shift-y: calc(1cm - 1.4cm + 0.5cm + var(--hero-poster-extend, 0.5cm) + 1cm - 0.3cm);
   }
 
