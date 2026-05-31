@@ -1,4 +1,7 @@
-import { LEO_ET_NALA_POSTER_SRC } from "@/lib/leo-example-posters";
+import {
+  LEO_ET_NALA_POSTER_SRC,
+  LEO_ET_NALA_VIDEO_POSTER_SRC,
+} from "@/lib/leo-example-posters";
 import type { FilmThemeId } from "@/lib/i18n/film-labels";
 
 export const EXAMPLE_FILM_SLUGS = [
@@ -35,7 +38,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     title: "Léo et Nala",
     tagline: "Une amitié magique sur une île déserte",
     posterSrc: LEO_ET_NALA_POSTER_SRC,
-    videoPosterSrc: "/posters/leo-et-nala-video-poster.png",
+    videoPosterSrc: LEO_ET_NALA_VIDEO_POSTER_SRC,
     videoSrc: "https://youtu.be/pK7nOfIM0Gc",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "animation",
