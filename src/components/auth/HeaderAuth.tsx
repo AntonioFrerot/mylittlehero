@@ -45,33 +45,31 @@ export function HeaderAuth() {
 export function MobileAuthLinks({ onNavigate }: { onNavigate: () => void }) {
   const { t } = useLocale();
   const user = useAuthUser();
+  const mobileAuthButtonClass =
+    "w-full min-h-[44px] !px-6 !py-2.5 !text-sm";
 
   if (user) {
-    const label = user.name ?? user.email.split("@")[0];
     return (
-      <div className="mt-2 flex flex-col gap-2 border-t border-white/5 pt-3">
-        <p className="px-3 text-sm text-cream/60">
-          {t("nav.mySpace")} : <span className="text-cream">{label}</span>
-        </p>
+      <div className="flex flex-col gap-2">
         <Button
           href="/mon-espace"
           variant="primary"
-          className="w-full !py-2.5 !text-sm"
+          className={mobileAuthButtonClass}
           onClick={onNavigate}
         >
           {t("nav.mySpace")}
         </Button>
-        <LogoutButton fullWidth />
+        <LogoutButton fullWidth className={mobileAuthButtonClass} />
       </div>
     );
   }
 
   return (
-    <div className="mt-2 flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
       <Button
         href="/connexion"
         variant="secondary"
-        className="w-full !py-2.5 !text-sm"
+        className={mobileAuthButtonClass}
         onClick={onNavigate}
       >
         {t("nav.login")}
@@ -79,7 +77,7 @@ export function MobileAuthLinks({ onNavigate }: { onNavigate: () => void }) {
       <Button
         href="/connexion?mode=signup"
         variant="primary"
-        className="w-full !py-2.5 !text-sm"
+        className={mobileAuthButtonClass}
         onClick={onNavigate}
       >
         {t("nav.signup")}

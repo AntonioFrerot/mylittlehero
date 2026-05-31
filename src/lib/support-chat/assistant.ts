@@ -11,10 +11,12 @@ function buildAiMessages(messages: ChatMessage[]): {
   const lastUser = [...messages].reverse().find((m) => m.role === "user");
 
   const personalizationRules = `Règles de personnalisation (obligatoires) :
-- Lis la dernière question du client et réponds UNIQUEMENT à ce qu'il demande, pas avec un texte générique.
+- Lis la dernière question du client et réponds UNIQUEMENT à ce qu'il demande, en t'appuyant sur les faits du prompt système.
 - Commence par reformuler brièvement sa question ou son inquiétude pour montrer que vous l'avez comprise.
 - Adapte le ton : rassurant si inquiétude, enthousiaste si joie, factuel si question pratique.
 - Si la question est courte ou de suivi ("et le prix ?", "et la photo ?"), utilise l'historique de conversation.
+- Cite les bonnes pages : /creer (abonnements), /achat (à l'unité), /creer-film (formulaire), /catalogue, /mon-espace, /contact.
+- Ne mentionne jamais un délai de 8 h : le site indique 12 h max (parcours standard), 1 min = 1 h sur /creer, 48 h sur /achat.
 - Propose une seule suite utile à la fin (pas une liste de tous les sujets possibles).
 - Réponds en français, 2 à 6 phrases sauf besoin réel de plus de détails.`;
 

@@ -208,7 +208,7 @@ export function SupportChatWidget() {
                 rows={2}
                 placeholder="Votre question…"
                 disabled={pending}
-                className="min-h-[44px] flex-1 resize-none rounded-xl border border-white/10 bg-cinema-black/60 px-3 py-2 text-sm text-cream placeholder:text-cream/35 outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30 disabled:opacity-60"
+                className="support-chat-input min-h-[44px] flex-1 resize-none rounded-xl border border-white/10 bg-cinema-black/60 px-3 py-2 text-[16px] leading-snug text-cream placeholder:text-cream/35 outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30 disabled:opacity-60 sm:text-sm"
               />
               <button
                 type="button"

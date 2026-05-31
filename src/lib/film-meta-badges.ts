@@ -4,6 +4,7 @@ import {
   normalizeFilmTheme,
   type FilmThemeId,
 } from "@/lib/i18n/film-labels";
+import { SURFACE_3D_STATUS } from "@/lib/ui/button-3d-classes";
 
 const BADGE_BASE = "film-badge";
 
@@ -31,5 +32,5 @@ const STATUS_BADGE_BASE = "surface-3d--status";
 /** Pastille statut film (Mon espace). */
 export function filmStatusBadgeClassName(status: string): string {
   const id = normalizeFilmStatus(status) ?? "preparing";
-  return `btn-3d ${STATUS_BADGE_BASE} ${STATUS_BADGE_BASE}--${id}`;
+  return `${SURFACE_3D_STATUS} ${STATUS_BADGE_BASE}--${id}`;
 }

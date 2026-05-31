@@ -14,6 +14,8 @@ export type SupportIntent =
   | "quality"
   | "gift"
   | "age"
+  | "catalogue"
+  | "monEspace"
   | "unknown";
 
 export type QuestionTone = "worried" | "enthusiastic" | "neutral";
@@ -58,9 +60,12 @@ const INTENT_KEYWORDS: Record<Exclude<SupportIntent, "unknown" | "greeting" | "t
     "attendre",
     "combien de temps",
     "quand",
-    "8 heure",
-    "8h",
+    "12 heure",
+    "12h",
+    "48 heure",
+    "48h",
     "rapide",
+    "traitement",
   ],
   howto: [
     "comment",
@@ -111,6 +116,16 @@ const INTENT_KEYWORDS: Record<Exclude<SupportIntent, "unknown" | "greeting" | "t
   quality: ["qualité", "qualite", "rendu", "réaliste", "beau", "cinéma", "cinema", "résultat"],
   gift: ["cadeau", "offrir", "anniversaire", "noël", "noel", "fête", "fete"],
   age: ["bébé", "bebe", "nourrisson", "2 ans", "3 ans", "4 ans", "5 ans", "trop jeune", "petit"],
+  catalogue: ["catalogue", "univers", "thèmes", "themes", "parcourir", "browse"],
+  monEspace: [
+    "mon espace",
+    "mes films",
+    "mon profil",
+    "espace client",
+    "regarder mon film",
+    "où est mon film",
+    "ou est mon film",
+  ],
 };
 
 function normalize(text: string): string {

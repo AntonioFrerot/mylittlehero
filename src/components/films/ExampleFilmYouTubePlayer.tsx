@@ -68,10 +68,7 @@ export function ExampleFilmYouTubePlayer({
         className="group absolute inset-0 flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-light/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
         aria-label={t("examples.playVideo", { title })}
       >
-        <span
-          className={BTN_3D_PLAY}
-          aria-hidden
-        >
+        <span className={BTN_3D_PLAY} aria-hidden>
           <svg
             viewBox="0 0 24 24"
             className="block size-9 fill-current sm:size-11"

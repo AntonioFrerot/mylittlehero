@@ -67,10 +67,10 @@ export const BTN_3D_ICON =
   "btn-3d btn-3d--secondary flex shrink-0 items-center justify-center rounded-lg active:scale-[0.98]";
 
 export const BTN_3D_LOGO =
-  `btn-3d btn-3d--primary ${GLOW_SOFT} flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-lg`;
+  `btn-3d btn-3d--primary ${GLOW_SOFT} flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-lg !text-white`;
 
 export const BTN_3D_PLAY =
-  `btn-3d btn-3d--secondary ${GLOW_SOFT} flex size-16 shrink-0 items-center justify-center rounded-full text-gold-light transition-transform duration-200 ease-out group-hover:scale-[1.04] sm:size-20`;
+  "btn-3d btn-3d--play flex size-16 shrink-0 items-center justify-center rounded-full transition-transform duration-200 ease-out group-hover:scale-[1.04] sm:size-20";
 
 export const BTN_3D_HERO_BADGE =
   "btn-3d btn-3d--hero-badge inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium uppercase tracking-widest md:text-sm";

@@ -69,7 +69,7 @@ export const fr = {
     howStep2Cta: "Créer son film →",
     howStep3Title: "Réception du film",
     howStep3Desc:
-      "Le film est disponible dans votre espace après un délai maximum de 12 heures, prêt à être regarder.",
+      "Le film est disponible dans votre espace après un délai maximum de 12 heures, prêt à être regardé.",
     themesEyebrow: "Univers",
     themesTitle: "Thèmes disponibles",
     themesSubtitle:

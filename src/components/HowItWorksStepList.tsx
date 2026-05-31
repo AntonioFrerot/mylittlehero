@@ -60,7 +60,7 @@ function StepIcon({ step }: { step: number }) {
 
   return (
     <svg
-      className="h-6 w-6 text-gold-light"
+      className="block h-6 w-6 shrink-0 text-gold-light"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -95,10 +95,7 @@ function StepCard({
   const content = (
     <>
       <div className="flex items-start justify-between">
-        <span
-          className={`${SURFACE_3D_ICON_LG} items-start`}
-          aria-hidden
-        >
+        <span className={`${SURFACE_3D_ICON_LG} shrink-0`} aria-hidden>
           <StepIcon step={step} />
         </span>
         <span className="font-display text-4xl font-bold text-gold/20">
