@@ -11,9 +11,12 @@ export const fr = {
     creerTitle: "Créer son film — Offres",
     creerDescription:
       "Choisissez votre formule ou essayez gratuitement un film personnalisé de 2 minutes.",
-    achatTitle: "Achat — Offres test",
+    achatTitle: "Tarifs — Offres test",
     achatDescription:
       "Offres à l'unité pour tester de nouvelles formules de films personnalisés.",
+    browseTitle: "Catalogue",
+    browseDescription:
+      "Parcourez les univers disponibles et lancez la création du film de votre enfant.",
     contactTitle: "Contact",
     contactDescription:
       "Une question sur votre film personnalisé ? Contactez l'équipe MyLittleHero.",
@@ -24,9 +27,10 @@ export const fr = {
   nav: {
     howItWorks: "Comment ça marche",
     themes: "Thèmes",
+    catalog: "Catalogue",
     contact: "Contact",
     pricing: "Tarifs",
-    purchase: "Achat",
+    purchase: "Tarifs",
     login: "Connexion",
     signup: "Créer un compte",
     mySpace: "Mon espace",
@@ -215,6 +219,31 @@ export const fr = {
     mystere: "Mystère",
     mystereDesc: "Indices à découvrir et suspense doux",
   },
+  browse: {
+    backHome: "← Retour à l'accueil",
+    eyebrow: "Films personnalisés",
+    title: "Catalogue",
+    subtitle:
+      "Parcourez les univers et créez le film de votre enfant, rangé par thème.",
+    heroLead:
+      "Votre bibliothèque de films sur mesure, chaque rangée correspond à un univers narratif, prêt à accueillir vos créations.",
+    heroExamples: "Voir les films d'exemple",
+    heroStepsTitle: "Comment utiliser le catalogue\u00a0?",
+    heroStep1Title: "Choisissez un univers",
+    heroStep1Text:
+      "Parcourez les rangées par thème et repérez l'ambiance qui correspond à votre enfant.",
+    heroStep2Title: "Créez votre film",
+    heroStep2Text:
+      "Style, personnages, durée et préférences : tout se configure depuis la création guidée.",
+    heroStep3Title: "Retrouvez-le ici",
+    heroStep3Text:
+      "Une fois prêt, votre film apparaît dans la rangée du thème choisi, prêt à être visionné.",
+    createFilm: "Créer son film",
+    themeEmptyTitle: "Aucun film {theme} pour l'instant",
+    themeEmptyHint:
+      "Vos films créés dans l'univers {theme} apparaîtront ici. Lancez une création pour commencer.",
+    rowAria: "Univers {theme}",
+  },
   common: {
     thankYou: "Merci !",
     yes: "Oui",
@@ -286,7 +315,7 @@ export const fr = {
   },
   purchase: {
     backHome: "← Retour à l'accueil",
-    title: "Achat",
+    title: "Tarifs",
     subtitle:
       "Un film personnalisé, livré dans votre espace — choisissez la formule qui convient à votre enfant.",
     heroBadge: "À l'unité · sans abonnement",

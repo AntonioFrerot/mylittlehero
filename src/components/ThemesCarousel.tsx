@@ -2,11 +2,8 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
-import {
-  ThemeCard,
-  themeDescKey,
-  themeNameKey,
-} from "@/components/ThemeCard";
+import { ThemeCard } from "@/components/ThemeCard";
+import { themeDescKey, themeNameKey } from "@/lib/theme-labels";
 
 export type ThemeItem = {
   id: string;

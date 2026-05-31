@@ -1,7 +1,5 @@
 "use client";
 
-import type { TranslationKey } from "@/lib/i18n/translator";
-
 type ThemeCardProps = {
   id: string;
   gradient: string;
@@ -38,12 +36,4 @@ export function ThemeCard({
       </div>
     </article>
   );
-}
-
-export function themeNameKey(id: string): TranslationKey {
-  return `themes.${id}` as TranslationKey;
-}
-
-export function themeDescKey(id: string): TranslationKey {
-  return `themes.${id}Desc` as TranslationKey;
 }

@@ -25,9 +25,9 @@ const navLinkKeys = [
 
   { href: "/#themes", key: "nav.themes" as const },
 
-  { href: "/contact", key: "nav.contact" as const },
+  { href: "/catalogue", key: "nav.catalog" as const },
 
-  { href: "/creer", key: "nav.pricing" as const },
+  { href: "/contact", key: "nav.contact" as const },
 
   { href: "/achat", key: "nav.purchase" as const },
 

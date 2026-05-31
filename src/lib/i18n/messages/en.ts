@@ -14,6 +14,9 @@ export const en = {
     achatTitle: "Purchase — Test offers",
     achatDescription:
       "One-off offers to test new personalised film packages.",
+    browseTitle: "Catalogue",
+    browseDescription:
+      "Browse available universes and start creating your child's film.",
     contactTitle: "Contact",
     contactDescription:
       "Questions about your personalised film? Contact the MyLittleHero team.",
@@ -24,6 +27,7 @@ export const en = {
   nav: {
     howItWorks: "How it works",
     themes: "Themes",
+    catalog: "Catalogue",
     contact: "Contact",
     pricing: "Pricing",
     purchase: "Purchase",
@@ -211,6 +215,31 @@ export const en = {
     scifiDesc: "Spaceships, planets and futuristic inventions",
     mystere: "Mystery",
     mystereDesc: "Clues to uncover and gentle suspense",
+  },
+  browse: {
+    backHome: "← Back to home",
+    eyebrow: "Personalised films",
+    title: "Catalogue",
+    subtitle:
+      "Browse story universes and create your child's film, organised by theme.",
+    heroLead:
+      "Your library of bespoke films, organised like a streaming platform: each row is a story universe, ready to hold your creations.",
+    heroExamples: "See example films",
+    heroStepsTitle: "How to use the catalogue?",
+    heroStep1Title: "Choose a universe",
+    heroStep1Text:
+      "Browse rows by theme and find the mood that fits your child.",
+    heroStep2Title: "Create your film",
+    heroStep2Text:
+      "Style, characters, duration and preferences — all set in the guided flow.",
+    heroStep3Title: "Find it here",
+    heroStep3Text:
+      "When it's ready, your film appears in the chosen theme row, ready to watch.",
+    createFilm: "Create your film",
+    themeEmptyTitle: "No {theme} films yet",
+    themeEmptyHint:
+      "Films you create in the {theme} universe will appear here. Start a new creation to begin.",
+    rowAria: "{theme} universe",
   },
   common: {
     thankYou: "Thank you!",
