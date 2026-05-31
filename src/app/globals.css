@@ -666,21 +666,115 @@ body {
 @media (max-width: 767px) {
   :root {
     --catalogue-handoff-overlap: 0px;
-    --catalogue-hero-overlap: 1.5rem;
+    --hero-mobile-handoff-fade: 0.5cm;
+    --catalogue-hero-overlap: var(--hero-mobile-handoff-fade);
     --catalogue-edge-fade-top: 2.24rem;
     --catalogue-edge-fade-bottom: 2.24rem;
-    --catalogue-video-offset-top: calc(var(--catalogue-hero-overlap) + 0.7cm);
     --catalogue-video-height: min(32vh, 16rem);
     --catalogue-video-crop: 1cm;
     --catalogue-video-visible-height: calc(
       var(--catalogue-video-height) - 2 * var(--catalogue-video-crop)
     );
     --catalogue-posters-gap: calc(0.375rem + 0.2cm);
+    --hero-poster-extend: 0.5cm;
+    --catalogue-mobile-shift-down: 0cm;
+    --hero-poster-band-rise: 1cm;
+    --hero-poster-fade-end-row: 7;
+    --hero-poster-band-fade-zone: calc(var(--catalogue-edge-fade-bottom) + 0.6cm);
+    --hero-poster-fade-band-extra: 0.5cm;
+    --hero-poster-fade-band: calc(
+      var(--hero-poster-band-fade-zone) + var(--hero-poster-fade-band-extra)
+    );
+    --hero-poster-band-fade-in: linear-gradient(
+      to bottom,
+      transparent 0,
+      rgba(0, 0, 0, 0.1) calc(0.12 * var(--hero-poster-band-fade-zone)),
+      rgba(0, 0, 0, 0.28) calc(0.24 * var(--hero-poster-band-fade-zone)),
+      rgba(0, 0, 0, 0.48) calc(0.36 * var(--hero-poster-band-fade-zone)),
+      rgba(0, 0, 0, 0.68) calc(0.48 * var(--hero-poster-band-fade-zone)),
+      rgba(0, 0, 0, 0.84) calc(0.6 * var(--hero-poster-band-fade-zone)),
+      rgba(0, 0, 0, 0.94) calc(0.72 * var(--hero-poster-band-fade-zone)),
+      #000 calc(0.84 * var(--hero-poster-band-fade-zone)),
+      #000 100%
+    );
+    --catalogue-video-band-overlap: 0.5cm;
+    --catalogue-video-offset-top: calc(
+      var(--hero-poster-fade-band, var(--catalogue-edge-fade-bottom)) -
+        var(--catalogue-video-band-overlap, 0.5cm)
+    );
+    --catalogue-edge-fade-gradient-bottom: linear-gradient(
+      to top,
+      var(--catalogue-bg) 0%,
+      var(--catalogue-bg) 22%,
+      rgba(11, 14, 20, 0.95) 38%,
+      rgba(11, 14, 20, 0.78) 54%,
+      rgba(11, 14, 20, 0.5) 70%,
+      rgba(11, 14, 20, 0.22) 86%,
+      transparent 100%
+    );
+    --catalogue-edge-fade-gradient-top: linear-gradient(
+      to bottom,
+      var(--catalogue-bg) 0%,
+      var(--catalogue-bg) 22%,
+      rgba(11, 14, 20, 0.95) 38%,
+      rgba(11, 14, 20, 0.78) 54%,
+      rgba(11, 14, 20, 0.5) 70%,
+      rgba(11, 14, 20, 0.22) 86%,
+      transparent 100%
+    );
   }
 
   .hero-section {
     position: relative;
     z-index: 2;
+    padding-bottom: var(--hero-mobile-handoff-fade, 0.5cm);
+    overflow: visible;
+  }
+
+  .hero-mosaic-wrap {
+    z-index: 0;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-image: var(
+      --hero-handoff-mask-image,
+      linear-gradient(
+        to bottom,
+        #000 0,
+        #000 calc(100% - var(--hero-mobile-handoff-fade, 0.5cm)),
+        rgba(0, 0, 0, 0.92)
+          calc(100% - var(--hero-mobile-handoff-fade, 0.5cm) + 0.07 * var(--hero-mobile-handoff-fade, 0.5cm)),
+        rgba(0, 0, 0, 0.74)
+          calc(100% - var(--hero-mobile-handoff-fade, 0.5cm) + 0.24 * var(--hero-mobile-handoff-fade, 0.5cm)),
+        rgba(0, 0, 0, 0.5)
+          calc(100% - var(--hero-mobile-handoff-fade, 0.5cm) + 0.42 * var(--hero-mobile-handoff-fade, 0.5cm)),
+        rgba(0, 0, 0, 0.24)
+          calc(100% - var(--hero-mobile-handoff-fade, 0.5cm) + 0.66 * var(--hero-mobile-handoff-fade, 0.5cm)),
+        rgba(0, 0, 0, 0.08)
+          calc(100% - var(--hero-mobile-handoff-fade, 0.5cm) + 0.86 * var(--hero-mobile-handoff-fade, 0.5cm)),
+        transparent 100%
+      )
+    );
+    mask-image: var(
+      --hero-handoff-mask-image,
+      linear-gradient(
+        to bottom,
+        #000 0,
+        #000 calc(100% - var(--hero-mobile-handoff-fade, 0.5cm)),
+        rgba(0, 0, 0, 0.92)
+          calc(100% - var(--hero-mobile-handoff-fade, 0.5cm) + 0.07 * var(--hero-mobile-handoff-fade, 0.5cm)),
+        rgba(0, 0, 0, 0.74)
+          calc(100% - var(--hero-mobile-handoff-fade, 0.5cm) + 0.24 * var(--hero-mobile-handoff-fade, 0.5cm)),
+        rgba(0, 0, 0, 0.5)
+          calc(100% - var(--hero-mobile-handoff-fade, 0.5cm) + 0.42 * var(--hero-mobile-handoff-fade, 0.5cm)),
+        rgba(0, 0, 0, 0.24)
+          calc(100% - var(--hero-mobile-handoff-fade, 0.5cm) + 0.66 * var(--hero-mobile-handoff-fade, 0.5cm)),
+        rgba(0, 0, 0, 0.08)
+          calc(100% - var(--hero-mobile-handoff-fade, 0.5cm) + 0.86 * var(--hero-mobile-handoff-fade, 0.5cm)),
+        transparent 100%
+      )
+    );
   }
 
   .hero-content {
@@ -691,7 +785,10 @@ body {
     position: relative;
     z-index: 1;
     overflow: visible;
-    margin-top: calc(-1 * var(--catalogue-hero-overlap));
+    margin-top: calc(
+      -1 * var(--catalogue-hero-overlap) + var(--hero-poster-extend, 0.5cm) +
+        var(--catalogue-mobile-shift-down, 1cm)
+    );
   }
 
   #catalogue .catalogue-video-backdrop {
@@ -703,6 +800,8 @@ body {
 
   #catalogue .catalogue-video-backdrop > .hero-overlay-tint {
     opacity: 0.8;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   #catalogue .catalogue-handoff-bridge {
@@ -753,30 +852,12 @@ body {
 
   .catalogue-video-fade-top {
     display: block;
-    height: var(--catalogue-edge-fade-top);
-    background: linear-gradient(
-      to bottom,
-      var(--catalogue-bg) 0%,
-      var(--catalogue-bg) 22%,
-      rgba(11, 14, 20, 0.95) 38%,
-      rgba(11, 14, 20, 0.78) 54%,
-      rgba(11, 14, 20, 0.5) 70%,
-      rgba(11, 14, 20, 0.22) 86%,
-      transparent 100%
-    );
+    height: var(--catalogue-edge-fade-bottom);
+    background: var(--catalogue-edge-fade-gradient-top);
   }
 
   .catalogue-video-fade-bottom {
-    background: linear-gradient(
-      to top,
-      var(--catalogue-bg) 0%,
-      var(--catalogue-bg) 22%,
-      rgba(11, 14, 20, 0.95) 38%,
-      rgba(11, 14, 20, 0.78) 54%,
-      rgba(11, 14, 20, 0.5) 70%,
-      rgba(11, 14, 20, 0.22) 86%,
-      transparent 100%
-    );
+    background: var(--catalogue-edge-fade-gradient-bottom);
   }
 }
 
@@ -1002,21 +1083,43 @@ body {
   .hero-mosaic-grid {
     --mosaic-gap: 3px;
     --mosaic-scale: calc(1.224 * 1.1 * 1.2 * 0.85);
-    --mosaic-shift-y: calc(1cm - 1.4cm + 0.5cm);
+    --mosaic-shift-y: calc(1cm - 1.4cm + 0.5cm + var(--hero-poster-extend, 0.5cm) + 1cm - 0.3cm);
   }
 
   .hero-overlay-bottom {
-    height: 4.5rem;
-    background: linear-gradient(
-      to top,
-      var(--catalogue-bg) 0%,
-      rgba(11, 14, 20, 0.96) 24%,
-      rgba(11, 14, 20, 0.38) 52%,
-      transparent 72%
+    top: calc(
+      var(--hero-poster-fade-top, calc(100% - var(--hero-poster-fade-band, 2.24rem))) -
+        var(--hero-poster-band-rise, 1cm)
     );
+    bottom: auto;
+    z-index: 9;
+    height: var(--hero-poster-fade-band, var(--catalogue-edge-fade-bottom));
+    background: var(--catalogue-edge-fade-gradient-top);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-image: var(--hero-poster-band-fade-in);
+    mask-image: var(--hero-poster-band-fade-in);
   }
 
   .hero-section .hero-overlay-tint {
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0,
+      #000 var(--hero-poster-fade-top, calc(100% - var(--hero-poster-fade-band, 2.24rem))),
+      transparent var(--hero-poster-fade-top, calc(100% - var(--hero-poster-fade-band, 2.24rem)))
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0,
+      #000 var(--hero-poster-fade-top, calc(100% - var(--hero-poster-fade-band, 2.24rem))),
+      transparent var(--hero-poster-fade-top, calc(100% - var(--hero-poster-fade-band, 2.24rem)))
+    );
     background:
       radial-gradient(
         ellipse 115% 95% at 50% 36%,
@@ -1028,9 +1131,11 @@ body {
         to bottom,
         rgba(5, 7, 15, 0.58) 0%,
         rgba(5, 7, 15, 0.64) 52%,
-        rgba(5, 7, 15, 0.72) 84%,
-        rgba(5, 7, 15, 0.9) 96%,
-        var(--catalogue-bg) 100%
+        rgba(5, 7, 15, 0.64) var(--hero-handoff-fade-start, calc(100% - 0.5cm)),
+        rgba(5, 7, 15, 0.46) calc(100% - 0.34 * var(--hero-mobile-handoff-fade, 0.5cm)),
+        rgba(5, 7, 15, 0.2) calc(100% - 0.12 * var(--hero-mobile-handoff-fade, 0.5cm)),
+        transparent var(--hero-handoff-fade-end, calc(100% - 0.5cm)),
+        transparent var(--hero-poster-fade-top, calc(100% - var(--hero-poster-fade-band, 2.24rem)))
       );
   }
 }

@@ -1,4 +1,5 @@
 import { CreerSonFilmButton } from "@/components/CreerSonFilmButton";
+import { HeroMobilePosterFadeBand } from "@/components/HeroMobilePosterFadeBand";
 import { Button } from "@/components/ui/Button";
 import { HeroPosterMosaic } from "@/components/HeroPosterMosaic";
 import { getServerTranslator } from "@/lib/i18n/server";
@@ -9,7 +10,7 @@ export async function Hero() {
   return (
     <section
       id="accueil"
-      className="hero-section relative flex min-h-0 flex-col justify-start overflow-hidden md:min-h-[100svh] md:justify-center"
+      className="hero-section relative flex min-h-0 flex-col justify-start overflow-hidden max-md:overflow-visible md:min-h-[100svh] md:justify-center"
     >
       <svg className="pointer-events-none absolute h-0 w-0" aria-hidden>
         <defs>
@@ -19,10 +20,10 @@ export async function Hero() {
         </defs>
       </svg>
       <HeroPosterMosaic />
+      <HeroMobilePosterFadeBand />
 
       <div className="hero-overlay-tint" aria-hidden />
       <div className="hero-overlay-top" aria-hidden />
-      <div className="hero-overlay-bottom" aria-hidden />
 
       <div className="hero-content safe-top-offset">
         <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-black/40 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-gold-light backdrop-blur-md md:text-sm">
@@ -53,12 +54,14 @@ export async function Hero() {
           <Button
             href="/#catalogue"
             variant="secondary"
-            className="w-full border-white/25 bg-transparent sm:w-auto"
+            className="hero-examples-button w-full border-white/25 bg-transparent sm:w-auto"
           >
             {t("home.heroExamples")}
           </Button>
         </div>
       </div>
+
+      <div className="hero-overlay-bottom" aria-hidden />
     </section>
   );
 }

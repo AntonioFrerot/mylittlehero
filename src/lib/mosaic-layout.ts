@@ -6,6 +6,8 @@ export const MOSAIC_GRID_COLS = 8;
 export const MOSAIC_POSTER_COL_SPAN = 1;
 export const MOSAIC_ROWS_DESKTOP = 4;
 export const MOSAIC_ROWS_MOBILE = 9;
+/** Rangée (1-based) où le fondu affiches hero est totalement opaque → transparent (mobile). */
+export const MOSAIC_MOBILE_FADE_END_ROW = 7;
 
 export type MosaicPlacement = {
   id: string;
