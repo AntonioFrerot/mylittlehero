@@ -147,3 +147,19 @@ export const SURFACE_3D_SUBSCRIPTION =
 
 export const SURFACE_3D_DURATION_VALUE =
   "btn-3d btn-3d--soft inline-flex rounded-lg px-2.5 py-0.5 font-display text-lg font-semibold tabular-nums text-gold-light";
+
+/** Cartes offres — page tarifs (/achat) */
+export const SURFACE_3D_PURCHASE_INNER =
+  "btn-3d btn-3d--secondary purchase-offer__inner purchase-offer__inner--3d rounded-[1.75rem] transition-colors hover:border-white/15";
+
+export const SURFACE_3D_PURCHASE_INNER_FEATURED =
+  "btn-3d btn-3d--secondary btn-3d--glow-subtle purchase-offer__inner purchase-offer__inner--3d rounded-[1.75rem] transition-colors";
+
+export const SURFACE_3D_PURCHASE_MOBILE_SHELL =
+  "btn-3d btn-3d--secondary purchase-mobile-offer__shell purchase-mobile-offer__shell--3d rounded-[1.35rem] transition-colors hover:border-white/15";
+
+export const SURFACE_3D_PURCHASE_MOBILE_SHELL_FEATURED =
+  "btn-3d btn-3d--secondary btn-3d--glow-subtle purchase-mobile-offer__shell purchase-mobile-offer__shell--3d rounded-[1.35rem] transition-colors";
+
+export const SURFACE_3D_PURCHASE_BANNER =
+  "btn-3d btn-3d--primary purchase-offer__banner";
