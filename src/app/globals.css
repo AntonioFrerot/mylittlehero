@@ -1201,10 +1201,24 @@ body {
   }
 }
 
+/* Pas de transform sur le positionnement (iOS bloque le clic à travers sinon) */
+.quality-hint {
+  transform: none;
+}
+
+/* Conteneur sans transform — les taps traversent vers l’iframe (iOS / tactile) */
+.quality-hint__stack {
+  position: relative;
+  transform: none;
+}
+
+/* Animation PC (scale + halo) sur la bulle entière */
 .quality-hint__anim {
   position: relative;
   transform-origin: center center;
   animation: quality-hint-pulse 1.75s ease-in-out infinite;
+  pointer-events: none !important;
+  touch-action: none !important;
 }
 
 .quality-hint__anim::before {
@@ -1239,58 +1253,6 @@ body {
   pointer-events: auto;
   touch-action: manipulation;
   transform: translateZ(0);
-}
-
-/* iOS / tactile — pas de transform sur la bulle (bloque le clic à travers l’iframe) */
-@media (max-width: 639px), ((hover: none) and (pointer: coarse)) {
-  .quality-hint__anim {
-    animation: quality-hint-pulse-mobile 1.75s ease-in-out infinite;
-    transform: none;
-  }
-
-  .quality-hint__anim::before {
-    animation: quality-hint-ring-mobile 1.75s ease-in-out infinite;
-    transform: none;
-  }
-
-  .quality-hint__arrow {
-    animation: quality-hint-arrow-mobile 1s ease-in-out infinite;
-    transform: none;
-  }
-}
-
-@keyframes quality-hint-pulse-mobile {
-  0%,
-  100% {
-    filter: drop-shadow(0 0 6px rgba(232, 197, 71, 0.45));
-  }
-
-  50% {
-    filter: drop-shadow(0 0 20px rgba(232, 197, 71, 0.95))
-      drop-shadow(0 0 36px rgba(201, 162, 39, 0.55));
-  }
-}
-
-@keyframes quality-hint-ring-mobile {
-  0%,
-  100% {
-    opacity: 0.35;
-  }
-
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes quality-hint-arrow-mobile {
-  0%,
-  100% {
-    opacity: 0.7;
-  }
-
-  50% {
-    opacity: 1;
-  }
 }
 
 /* Zones fixes (header, chat) — encoches et barre d’accueil iOS/Android */
