@@ -3,7 +3,42 @@ import { PurchaseOfferCta } from "@/components/pricing/PurchaseOfferCta";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 
-const FEATURE_ICONS = ["⏱", "✦", "⚡"] as const;
+const FEATURE_ICONS = [
+  <svg
+    key="duration"
+    viewBox="0 0 24 24"
+    className="purchase-offer__feature-icon-svg"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.75" />
+    <path
+      d="M12 8v4.2l2.6 1.6"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+    />
+  </svg>,
+  <svg
+    key="spark"
+    viewBox="0 0 24 24"
+    className="purchase-offer__feature-icon-svg"
+    aria-hidden="true"
+  >
+    <path
+      d="M12 3.5 13.8 10l6.2 1.8-6.2 1.8L12 20.5 10.2 13.7 4 12l6.2-1.8L12 3.5Z"
+      fill="currentColor"
+    />
+  </svg>,
+  <svg
+    key="fast"
+    viewBox="0 0 24 24"
+    className="purchase-offer__feature-icon-svg"
+    aria-hidden="true"
+  >
+    <path d="M13 2 5 13.5h6.5L11 22l8-11.5H12.5L13 2Z" fill="currentColor" />
+  </svg>,
+] as const;
 
 type PurchaseOfferBodyProps = {
   plan: PurchasePlan;
@@ -62,9 +97,7 @@ export function PurchaseOfferBody({
       <ul className="purchase-offer__features">
         {plan.features.map((feature, index) => (
           <li key={feature} className="purchase-offer__feature">
-            <span className="purchase-offer__feature-icon" aria-hidden>
-              {FEATURE_ICONS[index] ?? "✓"}
-            </span>
+            <span className="purchase-offer__feature-icon" aria-hidden>{FEATURE_ICONS[index] ?? "✓"}</span>
             <span>{feature}</span>
           </li>
         ))}
