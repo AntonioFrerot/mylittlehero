@@ -12,7 +12,7 @@ export function ExampleFilmQualityHint() {
       aria-labelledby="quality-hint-title quality-hint-desc"
       className="quality-hint pointer-events-none absolute right-[calc(0.5rem+3px)] top-[22%] z-10 w-[min(9.25rem,84vw)] -translate-x-0.5 sm:right-[calc(1.5rem+3px)] sm:top-[9%] sm:w-48 sm:-translate-x-px"
     >
-      <div className="quality-hint__anim pointer-events-auto">
+      <div className="quality-hint__anim pointer-events-none">
         <div className={`${SURFACE_3D_CALLOUT} quality-hint__card backdrop-blur-md`}>
           <span
             className="quality-hint__arrow absolute right-2 top-1.5 text-gold-light sm:right-3 sm:top-2"
