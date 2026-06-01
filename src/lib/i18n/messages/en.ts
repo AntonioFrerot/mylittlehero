@@ -535,6 +535,8 @@ export const en = {
     playVideo: "Play video — {title}",
     qualityHint: {
       title: "Better quality",
+      titleLine1: "Better",
+      titleLine2: "quality",
       message: "For better quality, click on the logo ⚙️",
       dismiss: "Got it",
     },

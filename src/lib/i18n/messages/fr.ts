@@ -540,6 +540,8 @@ export const fr = {
     playVideo: "Lire la vidéo — {title}",
     qualityHint: {
       title: "Meilleure qualité",
+      titleLine1: "Meilleure",
+      titleLine2: "qualité",
       message: "Pour une meilleure qualité, cliquez sur l’icône ⚙️",
       dismiss: "J'ai compris",
     },
