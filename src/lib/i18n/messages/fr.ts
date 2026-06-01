@@ -158,7 +158,7 @@ export const fr = {
     profileSectionTitle: "Profil",
     profileSectionDesc:
       "Votre prénom s'affiche dans l'accueil de Mon espace. L'e-mail sert à vous connecter.",
-    saveName: "Enregistrer le prénom",
+    saveName: "Enregistrer",
     savingName: "Enregistrement…",
     nameUpdated: "Prénom mis à jour.",
     passwordTitle: "Mot de passe",
