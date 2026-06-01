@@ -128,7 +128,7 @@ export const SURFACE_3D_TAB_SHELL =
   "btn-3d btn-3d--secondary mb-6 flex rounded-full p-1";
 
 export const SURFACE_3D_CALLOUT =
-  "btn-3d btn-3d--secondary pointer-events-auto relative rounded-lg border-gold/45 px-2.5 py-2 sm:rounded-xl sm:px-3.5 sm:py-2.5";
+  "btn-3d btn-3d--secondary relative rounded-lg border-gold/45 px-2.5 py-2 sm:rounded-xl sm:px-3.5 sm:py-2.5";
 
 export const SURFACE_3D_STEP_CARD =
   "btn-3d btn-3d--secondary step-card group relative block rounded-2xl border border-white/5 p-5 transition-all duration-300 hover:border-gold/20 sm:p-6 md:p-8";

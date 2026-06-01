@@ -31,16 +31,16 @@ export function ExampleFilmYouTubePlayer({
 
   if (isPlaying) {
     return (
-      <div className="relative aspect-video w-full overflow-hidden bg-black">
+      <div className="example-youtube-player relative aspect-video w-full touch-manipulation overflow-hidden bg-black">
+        {showQualityHint && <ExampleFilmQualityHint />}
         <iframe
-          className="absolute inset-0 h-full w-full border-0"
+          className="absolute inset-0 z-0 h-full w-full border-0 pointer-events-auto touch-manipulation"
           src={getYouTubeEmbedUrl(videoId, { autoplay: true, muted: true })}
           title={`Vidéo — ${title}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         />
-        {showQualityHint && <ExampleFilmQualityHint />}
       </div>
     );
   }
