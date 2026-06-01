@@ -349,7 +349,7 @@ export const fr = {
       "Un film personnalisé, livré dans votre espace — choisissez la formule qui convient à votre enfant.",
     heroBadge: "À l'unité · sans abonnement",
     chooseOffer: "Commander",
-    chooseOfferFeatured: "Choisir le pack",
+    chooseOfferFeatured: "Commander le pack",
     mostPopular: "Meilleure offre",
     perFilm: "soit {price} / film",
     filmWord: "film",
