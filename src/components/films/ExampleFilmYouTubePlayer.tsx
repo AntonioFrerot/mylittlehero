@@ -40,9 +40,7 @@ export function ExampleFilmYouTubePlayer({
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         />
-        {showQualityHint && (
-          <ExampleFilmQualityHint onDismiss={() => setShowQualityHint(false)} />
-        )}
+        {showQualityHint && <ExampleFilmQualityHint />}
       </div>
     );
   }

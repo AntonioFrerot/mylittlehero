@@ -1160,6 +1160,72 @@ body {
   margin-top: 1.15rem;
 }
 
+/* Bulle qualité vidéo (films exemples) — pulsation en boucle */
+@keyframes quality-hint-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 6px rgba(232, 197, 71, 0.45));
+  }
+
+  50% {
+    transform: scale(1.09);
+    filter: drop-shadow(0 0 20px rgba(232, 197, 71, 0.95))
+      drop-shadow(0 0 36px rgba(201, 162, 39, 0.55));
+  }
+}
+
+@keyframes quality-hint-ring {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.14);
+  }
+}
+
+@keyframes quality-hint-arrow {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-6px);
+  }
+}
+
+.quality-hint__anim {
+  position: relative;
+  transform-origin: center center;
+  animation: quality-hint-pulse 1.75s ease-in-out infinite;
+}
+
+.quality-hint__anim::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 2px solid rgba(232, 197, 71, 0.55);
+  border-radius: 0.9rem;
+  pointer-events: none;
+  animation: quality-hint-ring 1.75s ease-in-out infinite;
+}
+
+.quality-hint__anim .quality-hint__card.btn-3d {
+  position: relative;
+  border-color: rgba(232, 197, 71, 0.55);
+}
+
+.quality-hint__arrow {
+  animation: quality-hint-arrow 1s ease-in-out infinite;
+}
+
 /* Zones fixes (header, chat) — encoches et barre d’accueil iOS/Android */
 .safe-bottom {
   bottom: max(1rem, env(safe-area-inset-bottom, 0px));
