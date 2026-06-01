@@ -1727,8 +1727,7 @@ body {
 
 @media (min-width: 768px) {
   :root {
-    /* Chevauchement vague hero → vidéo catalogue (hero au-dessus, affiches visibles). */
-    --catalogue-handoff-overlap: 2.5rem;
+    --catalogue-handoff-overlap: 0px;
     --catalogue-video-offset-top: 0px;
     --catalogue-edge-fade-top: 0px;
     --catalogue-edge-fade-bottom: 4.5rem;
@@ -1743,15 +1742,13 @@ body {
   }
 
   #accueil.hero-section {
-    min-height: calc(100svh + 3cm);
+    min-height: 100svh;
   }
 
   .hero-section {
     position: relative;
     z-index: 2;
     background-color: var(--catalogue-bg);
-    -webkit-clip-path: url(#hero-wave-clip-desktop);
-    clip-path: url(#hero-wave-clip-desktop);
   }
 
   .hero-mosaic-wrap {
