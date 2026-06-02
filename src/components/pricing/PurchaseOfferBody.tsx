@@ -84,11 +84,7 @@ export function PurchaseOfferBody({
 
             <div className="purchase-offer__price-block">
               <p className="purchase-offer__price">{plan.price}</p>
-              {plan.perFilmPrice && (
-                <p className="purchase-offer__per-film">
-                  {t("purchase.perFilm", { price: plan.perFilmPrice })}
-                </p>
-              )}
+              <p className="purchase-offer__per-film">{plan.perFilmPrice}</p>
             </div>
           </div>
         </>

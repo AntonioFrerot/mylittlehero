@@ -351,7 +351,6 @@ export const fr = {
     chooseOffer: "Commander",
     chooseOfferFeatured: "Commander le pack",
     mostPopular: "Meilleure offre",
-    perFilm: "soit {price} / film",
     filmWord: "film",
     filmsWord: "films",
     filmsIncluded: "{count} films",
@@ -365,6 +364,7 @@ export const fr = {
         name: "Découverte",
         subtitle: "Parfait pour une première aventure",
         eyebrow: "Entrée en douceur",
+        perMinuteRate: "1 min = 10 €",
         durationShort: "5 min",
         durationPeek: "5 minutes",
         features: {
@@ -377,6 +377,7 @@ export const fr = {
         name: "Aventure",
         subtitle: "Une histoire plus riche et immersive",
         eyebrow: "Le choix équilibré",
+        perMinuteRate: "1 min = 7,5 €",
         durationShort: "10 min",
         durationPeek: "10 minutes",
         features: {
@@ -389,6 +390,7 @@ export const fr = {
         name: "Famille",
         subtitle: "Trois films pour multiplier les moments magiques",
         eyebrow: "Meilleure valeur",
+        perMinuteRate: "1 min = 5 €",
         durationShort: "10 min",
         durationPeek: "10 minutes",
         promoLabel: "2 achetés + 1 OFFERT",

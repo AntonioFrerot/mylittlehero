@@ -16,7 +16,7 @@ export type PurchasePlan = {
   features: string[];
   highlighted?: boolean;
   promoLabel?: string;
-  perFilmPrice?: string;
+  perFilmPrice: string;
 };
 
 const PLAN_CONFIG: Record<
@@ -28,6 +28,7 @@ const PLAN_CONFIG: Record<
     durationShort: TranslationKey;
     filmCount: number;
     price: number;
+    perMinuteRate: TranslationKey;
     features: TranslationKey[];
     highlighted?: boolean;
     promoLabel?: TranslationKey;
@@ -39,7 +40,8 @@ const PLAN_CONFIG: Record<
     eyebrow: "purchase.plans.film5min.eyebrow",
     durationShort: "purchase.plans.film5min.durationShort",
     filmCount: 1,
-    price: 29.99,
+    price: 49.99,
+    perMinuteRate: "purchase.plans.film5min.perMinuteRate",
     features: [
       "purchase.plans.film5min.features.duration",
       "purchase.plans.film5min.features.custom",
@@ -52,7 +54,8 @@ const PLAN_CONFIG: Record<
     eyebrow: "purchase.plans.film10min.eyebrow",
     durationShort: "purchase.plans.film10min.durationShort",
     filmCount: 1,
-    price: 49.99,
+    price: 74.99,
+    perMinuteRate: "purchase.plans.film10min.perMinuteRate",
     features: [
       "purchase.plans.film10min.features.duration",
       "purchase.plans.film10min.features.custom",
@@ -65,7 +68,8 @@ const PLAN_CONFIG: Record<
     eyebrow: "purchase.plans.pack3films.eyebrow",
     durationShort: "purchase.plans.pack3films.durationShort",
     filmCount: 3,
-    price: 99.99,
+    price: 149.99,
+    perMinuteRate: "purchase.plans.pack3films.perMinuteRate",
     highlighted: true,
     promoLabel: "purchase.plans.pack3films.promoLabel",
     features: [
@@ -91,11 +95,6 @@ export function getPurchasePlans(locale: LocaleCode): PurchasePlan[] {
 
   return (Object.keys(PLAN_CONFIG) as PurchasePlanId[]).map((id) => {
     const config = PLAN_CONFIG[id];
-    const perFilmPrice =
-      config.filmCount > 1
-        ? formatMoney(config.price / config.filmCount, locale)
-        : undefined;
-
     return {
       id,
       name: t(config.name),
@@ -108,7 +107,7 @@ export function getPurchasePlans(locale: LocaleCode): PurchasePlan[] {
       features: config.features.map((key) => t(key)),
       highlighted: config.highlighted,
       ...(config.promoLabel ? { promoLabel: t(config.promoLabel) } : {}),
-      ...(perFilmPrice ? { perFilmPrice } : {}),
+      perFilmPrice: t(config.perMinuteRate),
     };
   });
 }

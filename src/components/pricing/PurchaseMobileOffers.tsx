@@ -73,7 +73,10 @@ function MobileOfferItem({
             <p className="purchase-mobile-offer__eyebrow">{plan.eyebrow}</p>
           </div>
 
-          <p className="purchase-mobile-offer__peek-price">{plan.price}</p>
+          <div className="purchase-mobile-offer__peek-price-block">
+            <p className="purchase-mobile-offer__peek-price">{plan.price}</p>
+            <p className="purchase-mobile-offer__peek-per-film">{plan.perFilmPrice}</p>
+          </div>
         </div>
 
         <div className="purchase-mobile-offer__body">
