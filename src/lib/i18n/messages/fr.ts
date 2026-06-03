@@ -583,10 +583,11 @@ export const fr = {
           "Résumé : Pour sa toute première journée à l'école, Léo a peur et se sent seul. Mais après avoir noué une amitié et perdu un avion en papier dans une forêt mystérieuse, il découvre que le courage, ce n'est pas l'absence de peur, c'est avancer ensemble.",
       },
       leoEtoiles: {
-        title: "Léo et la planète aux étoiles",
-        tagline: "Un voyage cosmique plein d'émerveillement",
+        title: "Léo et la lune de glace",
+        durationLabel: "3 min",
+        tagline: "Une expédition gelée au-delà des étoiles",
         synopsis:
-          "Résumé : Léo décolle vers une planète scintillante où chaque nuit réserve une nouvelle merveille. Entre étoiles filantes et rencontres improbables, il comprend que l'univers est encore plus grand que son imagination.",
+          "Résumé : Léo part explorer une lune de glace aux reflets argentés. Entre cratères étincelants et aurores polaires, il découvre que les plus belles aventures peuvent être froides… et magiques.",
       },
     },
   },

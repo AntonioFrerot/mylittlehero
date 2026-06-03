@@ -2,15 +2,16 @@ import {
   LEO_ET_NALA_POSTER_SRC,
   LEO_ET_NALA_VIDEO_POSTER_SRC,
   SUPER_LEO_POSTER_SRC,
+  LEO_ICE_MOON_POSTER_SRC,
 } from "@/lib/leo-example-posters";
 import type { FilmThemeId } from "@/lib/i18n/film-labels";
 
 export const EXAMPLE_FILM_SLUGS = [
+  "leo-carte-pirates",
+  "leo-ice-moon",
   "leo-et-nala",
   "super-leo",
-  "leo-carte-pirates",
   "leo-lost-plane",
-  "leo-planete-etoiles",
 ] as const;
 
 export type ExampleFilmSlug = (typeof EXAMPLE_FILM_SLUGS)[number];
@@ -79,15 +80,15 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     themes: ["aventure"],
     durationLabel: "5 MIN",
   },
-  "leo-planete-etoiles": {
-    slug: "leo-planete-etoiles",
-    title: "Léo et la planète aux étoiles",
-    tagline: "Un voyage cosmique plein d'émerveillement",
-    posterSrc: "/posters/leo-planete-etoiles.png",
+  "leo-ice-moon": {
+    slug: "leo-ice-moon",
+    title: "Léo et la lune de glace",
+    tagline: "Une expédition gelée au-delà des étoiles",
+    posterSrc: LEO_ICE_MOON_POSTER_SRC,
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "manga",
-    themes: ["aventure"],
-    durationLabel: "29 MIN",
+    themes: ["aventure", "scifi"],
+    durationLabel: "3 MIN",
   },
 };
 

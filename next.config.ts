@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         destination: "/films/super-leo",
         permanent: true,
       },
+      {
+        source: "/films/leo-planete-etoiles",
+        destination: "/films/leo-ice-moon",
+        permanent: true,
+      },
     ];
   },
   experimental: {

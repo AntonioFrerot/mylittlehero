@@ -577,10 +577,11 @@ export const en = {
           "Summary: On his very first day at school, Leo feels scared and alone. But after making a new friend and losing a paper plane inside a mysterious forest, he discovers that courage does not mean having no fear—it means moving forward together.",
       },
       leoEtoiles: {
-        title: "Leo and the Planet of Stars",
-        tagline: "A cosmic journey full of wonder",
+        title: "Leo and the Ice Moon",
+        durationLabel: "3 min",
+        tagline: "A frozen expedition beyond the stars",
         synopsis:
-          "Summary: Leo lifts off toward a sparkling planet where every night holds a new wonder. Between shooting stars and unlikely encounters, he learns that the universe is even bigger than his imagination.",
+          "Summary: Leo sets off to explore an ice moon with silver reflections. Between glittering craters and polar lights, he discovers that the greatest adventures can be cold—and magical.",
       },
     },
   },

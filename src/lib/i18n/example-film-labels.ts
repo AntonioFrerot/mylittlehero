@@ -16,7 +16,7 @@ const SLUG_TO_COPY_KEY: Record<ExampleFilmSlug, FilmCopyKey> = {
   "super-leo": "leoTemple",
   "leo-carte-pirates": "leoPirates",
   "leo-lost-plane": "leoLostPlane",
-  "leo-planete-etoiles": "leoEtoiles",
+  "leo-ice-moon": "leoEtoiles",
 };
 
 /** id affiche catalogue → slug page film */
@@ -25,7 +25,7 @@ export const POSTER_ID_TO_SLUG: Record<string, ExampleFilmSlug> = {
   "super-leo": "super-leo",
   "leo-pirates": "leo-carte-pirates",
   "leo-lost-plane": "leo-lost-plane",
-  "leo-etoiles": "leo-planete-etoiles",
+  "leo-ice-moon": "leo-ice-moon",
 };
 
 function filmKey(

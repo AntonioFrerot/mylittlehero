@@ -20,18 +20,10 @@ export const LEO_ET_NALA_POSTER_SRC = "/posters/leo-et-nala.png?v=3";
 export const LEO_ET_NALA_VIDEO_POSTER_SRC =
   "/posters/leo-et-nala-video-poster.png?v=2";
 export const SUPER_LEO_POSTER_SRC = "/posters/super-leo.png?v=2";
+export const LEO_ICE_MOON_POSTER_SRC = "/posters/leo-ice-moon.png?v=1";
 
 /** Affiches réalistes des cinq films d'exemple du petit Léo (accueil + hero). */
 export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
-  {
-    id: "leo-nala",
-    title: "Léo et Nala",
-    seed: "leo-et-nala",
-    src: LEO_ET_NALA_POSTER_SRC,
-    href: "/films/leo-et-nala",
-    durationLabel: "5 MIN",
-    featured: true,
-  },
   {
     id: "leo-pirates",
     title: "Candy Signal",
@@ -39,6 +31,24 @@ export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
     src: "/posters/candy-signal.png",
     href: "/films/leo-carte-pirates",
     durationLabel: "9 MIN",
+    featured: true,
+  },
+  {
+    id: "leo-ice-moon",
+    title: "Léo et la lune de glace",
+    seed: "leo-ice-moon",
+    src: LEO_ICE_MOON_POSTER_SRC,
+    href: "/films/leo-ice-moon",
+    durationLabel: "3 MIN",
+    featured: true,
+  },
+  {
+    id: "leo-nala",
+    title: "Léo et Nala",
+    seed: "leo-et-nala",
+    src: LEO_ET_NALA_POSTER_SRC,
+    href: "/films/leo-et-nala",
+    durationLabel: "5 MIN",
     featured: true,
   },
   {
@@ -57,15 +67,6 @@ export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
     src: "/posters/leo-lost-plane.png",
     href: "/films/leo-lost-plane",
     durationLabel: "5 MIN",
-    featured: true,
-  },
-  {
-    id: "leo-etoiles",
-    title: "Léo et la planète aux étoiles",
-    seed: "leo-planete-etoiles",
-    src: "/posters/leo-planete-etoiles.png",
-    href: "/films/leo-planete-etoiles",
-    durationLabel: "29 MIN",
     featured: true,
   },
 ];
