@@ -78,7 +78,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     videoSrc: "/videos/leo-lost-plane.mp4",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "animation",
-    themes: ["aventure"],
+    themes: ["animation"],
     durationLabel: "5 MIN",
   },
   "leo-ice-moon": {

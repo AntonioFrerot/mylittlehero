@@ -1535,7 +1535,7 @@ body {
       #000 100%
     );
     --catalogue-video-band-overlap: 0.5cm;
-    --hero-catalogue-handoff-band-height: 4rem;
+    --hero-catalogue-handoff-band-height: 2.8rem;
     --hero-catalogue-handoff-band-hero-share: 0.8;
     --hero-catalogue-handoff-band-melt: linear-gradient(
       to bottom,
@@ -1633,7 +1633,7 @@ body {
     position: absolute;
     inset-inline: 0;
     top: var(--hero-catalogue-handoff-band-top, auto);
-    height: var(--hero-catalogue-handoff-band-height, 4rem);
+    height: var(--hero-catalogue-handoff-band-height, 2.8rem);
     z-index: 10;
     background: var(--hero-catalogue-handoff-band-melt);
     pointer-events: none;

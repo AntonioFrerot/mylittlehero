@@ -136,7 +136,7 @@ export function HeroMobilePosterFadeBand() {
             hero,
             getComputedStyle(root)
               .getPropertyValue("--hero-catalogue-handoff-band-height")
-              .trim() || "4rem",
+              .trim() || "2.8rem",
           );
           const heroShareRaw = Number.parseFloat(
             getComputedStyle(root)
