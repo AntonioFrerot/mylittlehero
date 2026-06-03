@@ -1,13 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import {
-  MOSAIC_GRID_COLS,
-  MOSAIC_MOBILE_FADE_END_ROW,
-} from "@/lib/mosaic-layout";
 
 const MOBILE_MQ = "(max-width: 767px)";
-const FADE_FRACTIONS = [0, 0.14, 0.3, 0.48, 0.66, 0.82, 0.94, 1];
 
 function measureLength(element: HTMLElement, value: string) {
   const probe = document.createElement("div");
@@ -21,49 +16,8 @@ function measureLength(element: HTMLElement, value: string) {
   return height;
 }
 
-function measureCm(element: HTMLElement, value = "0.5cm") {
-  return measureLength(element, value);
-}
-
-function easeOutCubic(t: number) {
-  return 1 - (1 - t) ** 3;
-}
-
-function buildHeroHandoffMask(fadeStart: number, fadeHeightPx: number, fadeEnd: number) {
-  const stops = FADE_FRACTIONS.map((fraction) => {
-    const opacity = 1 - easeOutCubic(fraction);
-    const position = fadeStart + fadeHeightPx * fraction;
-    return `rgba(0, 0, 0, ${opacity.toFixed(3)}) ${position}px`;
-  });
-
-  return `linear-gradient(to bottom, #000 0, #000 ${fadeStart}px, ${stops.join(", ")}, transparent ${fadeEnd}px, transparent 100%)`;
-}
-
-function measureMosaicRowTopRel(
-  mosaicGrid: Element,
-  heroTop: number,
-  row: number,
-  cols = MOSAIC_GRID_COLS,
-) {
-  const tiles = mosaicGrid.querySelectorAll(".hero-mosaic-tile");
-  const tile = tiles[(row - 1) * cols] as HTMLElement | undefined;
-  if (!tile) return null;
-  return tile.getBoundingClientRect().top - heroTop;
-}
-
-function readFadeEndRow(root: HTMLElement) {
-  const raw = getComputedStyle(root).getPropertyValue("--hero-poster-fade-end-row").trim();
-  const parsed = Number.parseInt(raw, 10);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : MOSAIC_MOBILE_FADE_END_ROW;
-}
-
 function clearMobileHeroVars(hero: HTMLElement, root: HTMLElement) {
-  hero.style.removeProperty("--hero-poster-fade-top");
   hero.style.removeProperty("--hero-catalogue-handoff-band-top");
-  root.style.removeProperty("--hero-mobile-handoff-fade");
-  root.style.removeProperty("--hero-handoff-fade-start");
-  root.style.removeProperty("--hero-handoff-fade-end");
-  root.style.removeProperty("--hero-handoff-mask-image");
   root.style.removeProperty("--catalogue-video-offset-top");
 }
 
@@ -81,119 +35,56 @@ export function HeroMobilePosterFadeBand() {
         return;
       }
 
-      const mosaicWrap = hero.querySelector(".hero-mosaic-wrap");
-      const mosaicGrid = hero.querySelector(".hero-mosaic-grid");
-      const examplesButton = hero.querySelector<HTMLElement>(".hero-examples-button");
-      if (!mosaicWrap) return;
+      const catalogue = document.getElementById("catalogue");
+      if (!catalogue) return;
 
       const heroTop = hero.getBoundingClientRect().top;
-      const wrapBottom = mosaicWrap.getBoundingClientRect().bottom;
-      const edgeFadeBottom =
-        getComputedStyle(root).getPropertyValue("--catalogue-edge-fade-bottom").trim() ||
-        "2.24rem";
-      const bandHeightPx = measureLength(
-        hero,
-        getComputedStyle(root).getPropertyValue("--hero-poster-fade-band").trim() ||
-          `calc(${edgeFadeBottom} + 0.6cm + 0.5cm)`,
-      );
-      const shiftDownPx = measureLength(
-        hero,
-        getComputedStyle(root).getPropertyValue("--catalogue-mobile-shift-down").trim() ||
-          "0cm",
-      );
-      const bandRisePx = measureLength(
-        hero,
-        getComputedStyle(root).getPropertyValue("--hero-poster-band-rise").trim() || "1cm",
-      );
-      const handoffShiftUpPx = measureLength(
-        hero,
-        getComputedStyle(root).getPropertyValue("--hero-poster-handoff-shift-up").trim() ||
-          "0cm",
-      );
-      const bandTopRel = wrapBottom - heroTop + shiftDownPx;
-      hero.style.setProperty(
-        "--hero-poster-fade-top",
-        `${Math.max(0, bandTopRel)}px`,
-      );
+      const overlapValue =
+        getComputedStyle(root)
+          .getPropertyValue("--hero-catalogue-handoff-overlap")
+          .trim() || "2rem";
+      const overlapPx = measureLength(hero, overlapValue);
+      const heroBottom = hero.getBoundingClientRect().bottom;
+      const catalogueTop = catalogue.getBoundingClientRect().top;
+      const offset = Math.max(0, Math.ceil(heroBottom - catalogueTop - overlapPx));
 
-      const catalogue = document.getElementById("catalogue");
-      if (catalogue) {
-        const bandOverlapPx = measureLength(hero, "0.5cm");
-        const bandBottom =
-          wrapBottom + shiftDownPx + bandHeightPx - bandRisePx - handoffShiftUpPx;
-        const catalogueTop = catalogue.getBoundingClientRect().top;
-        const catalogueOffset = Math.max(
-          0,
-          Math.ceil(bandBottom - catalogueTop - bandOverlapPx),
+      root.style.setProperty("--catalogue-video-offset-top", `${offset}px`);
+
+      const videoBackdrop = catalogue.querySelector<HTMLElement>(
+        ".catalogue-video-backdrop",
+      );
+      if (videoBackdrop) {
+        const handoffBandHeightPx = measureLength(
+          hero,
+          getComputedStyle(root)
+            .getPropertyValue("--hero-catalogue-handoff-band-height")
+            .trim() || "1.68rem",
         );
-        root.style.setProperty("--catalogue-video-offset-top", `${catalogueOffset}px`);
-
-        const videoBackdrop = catalogue.querySelector<HTMLElement>(
-          ".catalogue-video-backdrop",
+        const heroShareRaw = Number.parseFloat(
+          getComputedStyle(root)
+            .getPropertyValue("--hero-catalogue-handoff-band-hero-share")
+            .trim(),
         );
-        if (videoBackdrop) {
-          const handoffBandHeightPx = measureLength(
-            hero,
-            getComputedStyle(root)
-              .getPropertyValue("--hero-catalogue-handoff-band-height")
-              .trim() || "2.8rem",
-          );
-          const heroShareRaw = Number.parseFloat(
-            getComputedStyle(root)
-              .getPropertyValue("--hero-catalogue-handoff-band-hero-share")
-              .trim(),
-          );
-          const heroShare =
-            Number.isFinite(heroShareRaw) && heroShareRaw > 0 && heroShareRaw < 1
-              ? heroShareRaw
-              : 0.8;
-          const videoTop = videoBackdrop.getBoundingClientRect().top;
-          const bandTop = videoTop - heroTop - handoffBandHeightPx * heroShare;
+        const heroShare =
+          Number.isFinite(heroShareRaw) && heroShareRaw > 0 && heroShareRaw < 1
+            ? heroShareRaw
+            : 0.8;
+        const videoTop = videoBackdrop.getBoundingClientRect().top;
+        const bandTop = videoTop - heroTop - handoffBandHeightPx * heroShare;
 
-          hero.style.setProperty(
-            "--hero-catalogue-handoff-band-top",
-            `${bandTop}px`,
-          );
-        }
-      }
-
-      if (mosaicGrid) {
-        const minFadePx = measureCm(hero);
-        const fadeEndRow = readFadeEndRow(root);
-        let fadeEndRel = wrapBottom - heroTop;
-        const rowTopRel = measureMosaicRowTopRel(mosaicGrid, heroTop, fadeEndRow);
-        if (rowTopRel !== null) {
-          fadeEndRel = rowTopRel;
-        }
-
-        const fadeEnd = Math.max(0, fadeEndRel);
-        const fadeStart = Math.max(0, fadeEnd - minFadePx);
-        const fadeHeightPx = fadeEnd - fadeStart;
-
-        root.style.setProperty("--hero-mobile-handoff-fade", `${fadeHeightPx}px`);
-        root.style.setProperty("--hero-handoff-fade-start", `${fadeStart}px`);
-        root.style.setProperty("--hero-handoff-fade-end", `${fadeEnd}px`);
-        root.style.setProperty(
-          "--hero-handoff-mask-image",
-          buildHeroHandoffMask(fadeStart, fadeHeightPx, fadeEnd),
+        hero.style.setProperty(
+          "--hero-catalogue-handoff-band-top",
+          `${bandTop}px`,
         );
       }
     };
 
     sync();
 
-    const mosaicWrap = hero.querySelector(".hero-mosaic-wrap");
-    const mosaicGrid = hero.querySelector(".hero-mosaic-grid");
-    const examplesButton = hero.querySelector(".hero-examples-button");
-    const heroActions = hero.querySelector(".hero-actions");
     const catalogue = document.getElementById("catalogue");
     const videoBackdrop = catalogue?.querySelector(".catalogue-video-backdrop");
     const observer = new ResizeObserver(sync);
     observer.observe(hero);
-    if (mosaicWrap) observer.observe(mosaicWrap);
-    if (mosaicGrid) observer.observe(mosaicGrid);
-    if (examplesButton) observer.observe(examplesButton);
-    if (heroActions) observer.observe(heroActions);
     if (catalogue) observer.observe(catalogue);
     if (videoBackdrop) observer.observe(videoBackdrop);
 
