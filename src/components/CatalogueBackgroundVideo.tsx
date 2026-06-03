@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef } from "react";
 const DESKTOP_BACKGROUND_VIDEO_SRC = "/videos/leo-et-nala.mp4";
 const DESKTOP_BACKGROUND_VIDEO_VERSION = "3";
 const MOBILE_BACKGROUND_VIDEO_SRC = "/videos/leo-et-nala-mobile.mp4";
-const MOBILE_BACKGROUND_VIDEO_VERSION = "2";
+const MOBILE_BACKGROUND_VIDEO_VERSION = "4";
 
 export function CatalogueBackgroundVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
