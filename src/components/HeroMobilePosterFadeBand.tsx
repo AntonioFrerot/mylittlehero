@@ -138,16 +138,17 @@ export function HeroMobilePosterFadeBand() {
               .getPropertyValue("--hero-catalogue-handoff-band-height")
               .trim() || "4rem",
           );
+          const heroShareRaw = Number.parseFloat(
+            getComputedStyle(root)
+              .getPropertyValue("--hero-catalogue-handoff-band-hero-share")
+              .trim(),
+          );
+          const heroShare =
+            Number.isFinite(heroShareRaw) && heroShareRaw > 0 && heroShareRaw < 1
+              ? heroShareRaw
+              : 0.7;
           const videoTop = videoBackdrop.getBoundingClientRect().top;
-          let bandTop = videoTop - heroTop - handoffBandHeightPx / 2;
-
-          const heroActions = hero.querySelector<HTMLElement>(".hero-actions");
-          const bandAnchor = heroActions ?? examplesButton;
-          if (bandAnchor) {
-            const anchorBottom = bandAnchor.getBoundingClientRect().bottom - heroTop;
-            const gapPx = measureLength(hero, "0.5rem");
-            bandTop = Math.max(bandTop, anchorBottom + gapPx);
-          }
+          const bandTop = videoTop - heroTop - handoffBandHeightPx * heroShare;
 
           hero.style.setProperty(
             "--hero-catalogue-handoff-band-top",

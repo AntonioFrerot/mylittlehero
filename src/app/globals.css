@@ -1536,6 +1536,7 @@ body {
     );
     --catalogue-video-band-overlap: 0.5cm;
     --hero-catalogue-handoff-band-height: 4rem;
+    --hero-catalogue-handoff-band-hero-share: 0.7;
     --hero-catalogue-handoff-band-melt: linear-gradient(
       to bottom,
       rgb(11 14 20 / 0%) 0%,
