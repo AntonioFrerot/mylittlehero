@@ -59,6 +59,7 @@ function readFadeEndRow(root: HTMLElement) {
 
 function clearMobileHeroVars(hero: HTMLElement, root: HTMLElement) {
   hero.style.removeProperty("--hero-poster-fade-top");
+  hero.style.removeProperty("--hero-catalogue-handoff-band-top");
   root.style.removeProperty("--hero-mobile-handoff-fade");
   root.style.removeProperty("--hero-handoff-fade-start");
   root.style.removeProperty("--hero-handoff-fade-end");
@@ -126,6 +127,33 @@ export function HeroMobilePosterFadeBand() {
           Math.ceil(bandBottom - catalogueTop - bandOverlapPx),
         );
         root.style.setProperty("--catalogue-video-offset-top", `${catalogueOffset}px`);
+
+        const videoBackdrop = catalogue.querySelector<HTMLElement>(
+          ".catalogue-video-backdrop",
+        );
+        if (videoBackdrop) {
+          const handoffBandHeightPx = measureLength(
+            hero,
+            getComputedStyle(root)
+              .getPropertyValue("--hero-catalogue-handoff-band-height")
+              .trim() || "4rem",
+          );
+          const videoTop = videoBackdrop.getBoundingClientRect().top;
+          let bandTop = videoTop - heroTop - handoffBandHeightPx / 2;
+
+          const heroActions = hero.querySelector<HTMLElement>(".hero-actions");
+          const bandAnchor = heroActions ?? examplesButton;
+          if (bandAnchor) {
+            const anchorBottom = bandAnchor.getBoundingClientRect().bottom - heroTop;
+            const gapPx = measureLength(hero, "0.5rem");
+            bandTop = Math.max(bandTop, anchorBottom + gapPx);
+          }
+
+          hero.style.setProperty(
+            "--hero-catalogue-handoff-band-top",
+            `${bandTop}px`,
+          );
+        }
       }
 
       if (mosaicGrid) {
@@ -156,13 +184,17 @@ export function HeroMobilePosterFadeBand() {
     const mosaicWrap = hero.querySelector(".hero-mosaic-wrap");
     const mosaicGrid = hero.querySelector(".hero-mosaic-grid");
     const examplesButton = hero.querySelector(".hero-examples-button");
+    const heroActions = hero.querySelector(".hero-actions");
     const catalogue = document.getElementById("catalogue");
+    const videoBackdrop = catalogue?.querySelector(".catalogue-video-backdrop");
     const observer = new ResizeObserver(sync);
     observer.observe(hero);
     if (mosaicWrap) observer.observe(mosaicWrap);
     if (mosaicGrid) observer.observe(mosaicGrid);
     if (examplesButton) observer.observe(examplesButton);
+    if (heroActions) observer.observe(heroActions);
     if (catalogue) observer.observe(catalogue);
+    if (videoBackdrop) observer.observe(videoBackdrop);
 
     window.addEventListener("resize", sync);
     window.addEventListener("orientationchange", sync);

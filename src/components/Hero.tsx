@@ -56,6 +56,7 @@ export async function Hero() {
       </div>
 
       <div className="hero-overlay-bottom" aria-hidden />
+      <div className="hero-mobile-handoff-band max-md:block hidden" aria-hidden />
     </section>
   );
 }
