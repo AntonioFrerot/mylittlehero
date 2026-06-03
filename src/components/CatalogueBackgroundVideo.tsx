@@ -48,7 +48,7 @@ export function CatalogueBackgroundVideo() {
       onCanPlay={tryPlay}
       aria-hidden
     >
-      <source src={`${LEO_NALA_BACKGROUND_VIDEO_SRC}?v=2`} type="video/mp4" />
+      <source src={`${LEO_NALA_BACKGROUND_VIDEO_SRC}?v=3`} type="video/mp4" />
     </video>
   );
 }
