@@ -3,6 +3,7 @@ import {
   LEO_ET_NALA_VIDEO_POSTER_SRC,
   SUPER_LEO_POSTER_SRC,
   LEO_ICE_MOON_POSTER_SRC,
+  LEO_LOST_PLANE_POSTER_SRC,
 } from "@/lib/leo-example-posters";
 import type { FilmThemeId } from "@/lib/i18n/film-labels";
 
@@ -55,7 +56,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "realistic",
     themes: ["fantastique"],
-    durationLabel: "14 MIN",
+    durationLabel: "10 MIN",
   },
   "leo-carte-pirates": {
     slug: "leo-carte-pirates",
@@ -73,7 +74,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     slug: "leo-lost-plane",
     title: "Leo and the Lost Plane",
     tagline: "Une nouvelle école. Un nouvel ami. Une aventure inoubliable.",
-    posterSrc: "/posters/leo-lost-plane.png",
+    posterSrc: LEO_LOST_PLANE_POSTER_SRC,
     videoSrc: "/videos/leo-lost-plane.mp4",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "animation",

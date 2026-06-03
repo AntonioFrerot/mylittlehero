@@ -21,6 +21,7 @@ export const LEO_ET_NALA_VIDEO_POSTER_SRC =
   "/posters/leo-et-nala-video-poster.png?v=2";
 export const SUPER_LEO_POSTER_SRC = "/posters/super-leo.png?v=2";
 export const LEO_ICE_MOON_POSTER_SRC = "/posters/leo-ice-moon.png?v=1";
+export const LEO_LOST_PLANE_POSTER_SRC = "/posters/leo-lost-plane.png?v=2";
 
 /** Affiches réalistes des cinq films d'exemple du petit Léo (accueil + hero). */
 export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
@@ -57,14 +58,14 @@ export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
     seed: "super-leo",
     src: SUPER_LEO_POSTER_SRC,
     href: "/films/super-leo",
-    durationLabel: "14 MIN",
+    durationLabel: "10 MIN",
     featured: true,
   },
   {
     id: "leo-lost-plane",
     title: "Leo and the Lost Plane",
     seed: "leo-lost-plane",
-    src: "/posters/leo-lost-plane.png",
+    src: LEO_LOST_PLANE_POSTER_SRC,
     href: "/films/leo-lost-plane",
     durationLabel: "5 MIN",
     featured: true,

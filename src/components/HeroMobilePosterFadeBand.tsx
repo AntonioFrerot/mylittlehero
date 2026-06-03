@@ -146,7 +146,7 @@ export function HeroMobilePosterFadeBand() {
           const heroShare =
             Number.isFinite(heroShareRaw) && heroShareRaw > 0 && heroShareRaw < 1
               ? heroShareRaw
-              : 0.7;
+              : 0.8;
           const videoTop = videoBackdrop.getBoundingClientRect().top;
           const bandTop = videoTop - heroTop - handoffBandHeightPx * heroShare;
 
