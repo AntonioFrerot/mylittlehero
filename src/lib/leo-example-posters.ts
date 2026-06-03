@@ -19,6 +19,7 @@ export type LeoExamplePoster = HeroPosterAsset;
 export const LEO_ET_NALA_POSTER_SRC = "/posters/leo-et-nala.png?v=3";
 export const LEO_ET_NALA_VIDEO_POSTER_SRC =
   "/posters/leo-et-nala-video-poster.png?v=2";
+export const SUPER_LEO_POSTER_SRC = "/posters/super-leo.png?v=2";
 
 /** Affiches réalistes des cinq films d'exemple du petit Léo (accueil + hero). */
 export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
@@ -41,11 +42,11 @@ export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
     featured: true,
   },
   {
-    id: "leo-temple",
-    title: "Léo et le temple perdu",
-    seed: "leo-temple-perdu",
-    src: "/posters/leo-temple-perdu.png",
-    href: "/films/leo-temple-perdu",
+    id: "super-leo",
+    title: "Super Léo",
+    seed: "super-leo",
+    src: SUPER_LEO_POSTER_SRC,
+    href: "/films/super-leo",
     durationLabel: "14 MIN",
     featured: true,
   },

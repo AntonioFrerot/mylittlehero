@@ -1,12 +1,13 @@
 import {
   LEO_ET_NALA_POSTER_SRC,
   LEO_ET_NALA_VIDEO_POSTER_SRC,
+  SUPER_LEO_POSTER_SRC,
 } from "@/lib/leo-example-posters";
 import type { FilmThemeId } from "@/lib/i18n/film-labels";
 
 export const EXAMPLE_FILM_SLUGS = [
   "leo-et-nala",
-  "leo-temple-perdu",
+  "super-leo",
   "leo-carte-pirates",
   "leo-lost-plane",
   "leo-planete-etoiles",
@@ -45,14 +46,14 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     themes: ["aventure", "fantastique"],
     durationLabel: "5 MIN",
   },
-  "leo-temple-perdu": {
-    slug: "leo-temple-perdu",
-    title: "Léo et le temple perdu",
-    tagline: "Un temple oublié et des énigmes à résoudre",
-    posterSrc: "/posters/leo-temple-perdu.png",
+  "super-leo": {
+    slug: "super-leo",
+    title: "Super Léo",
+    tagline: "Un héros électrique au cœur de la grande ville",
+    posterSrc: SUPER_LEO_POSTER_SRC,
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
-    style: "animation",
-    themes: ["aventure"],
+    style: "realistic",
+    themes: ["fantastique"],
     durationLabel: "14 MIN",
   },
   "leo-carte-pirates": {

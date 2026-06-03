@@ -563,10 +563,10 @@ export const fr = {
           "Résumé : Sur une île déserte baignée de soleil, Léo rencontre Nala, une lionne au grand cœur. Ensemble, ils vivent une amitié magique et découvrent que les plus belles aventures naissent quand on partage ses rêves.",
       },
       leoTemple: {
-        title: "Léo et le temple perdu",
-        tagline: "Un temple oublié et des énigmes à résoudre",
+        title: "Super Léo",
+        tagline: "Un héros électrique au cœur de la grande ville",
         synopsis:
-          "Résumé : Guidé par une carte mystérieuse, Léo s'aventure vers un temple oublié au cœur de la jungle. Entre énigmes ancestrales et passages secrets, il apprend que la vraie découverte est la confiance en soi.",
+          "Résumé : Dans une métropole assombrie par l'orage, Léo endosse une armure dorée et affronte la foudre pour protéger ceux qu'il aime. Entre éclairs et courage, il découvre que le vrai super-pouvoir, c'est croire en soi.",
       },
       leoPirates: {
         title: "Le Signal des Bonbons",

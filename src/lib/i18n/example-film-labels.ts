@@ -13,7 +13,7 @@ type FilmCopyKey =
 
 const SLUG_TO_COPY_KEY: Record<ExampleFilmSlug, FilmCopyKey> = {
   "leo-et-nala": "leoNala",
-  "leo-temple-perdu": "leoTemple",
+  "super-leo": "leoTemple",
   "leo-carte-pirates": "leoPirates",
   "leo-lost-plane": "leoLostPlane",
   "leo-planete-etoiles": "leoEtoiles",
@@ -22,7 +22,7 @@ const SLUG_TO_COPY_KEY: Record<ExampleFilmSlug, FilmCopyKey> = {
 /** id affiche catalogue → slug page film */
 export const POSTER_ID_TO_SLUG: Record<string, ExampleFilmSlug> = {
   "leo-nala": "leo-et-nala",
-  "leo-temple": "leo-temple-perdu",
+  "super-leo": "super-leo",
   "leo-pirates": "leo-carte-pirates",
   "leo-lost-plane": "leo-lost-plane",
   "leo-etoiles": "leo-planete-etoiles",

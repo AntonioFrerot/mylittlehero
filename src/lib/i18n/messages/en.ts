@@ -558,10 +558,10 @@ export const en = {
           "Summary: On a sun-drenched desert island, Leo meets Nala, a lioness with a big heart. Together they share a magical friendship and discover that the best adventures begin when you share your dreams.",
       },
       leoTemple: {
-        title: "Leo and the Lost Temple",
-        tagline: "A forgotten temple and puzzles to solve",
+        title: "Super Leo",
+        tagline: "An electric hero in the heart of the big city",
         synopsis:
-          "Summary: Guided by a mysterious map, Leo ventures to a forgotten temple deep in the jungle. Through ancient riddles and secret passages, he learns that true discovery is believing in yourself.",
+          "Summary: In a storm-darkened metropolis, Leo dons a golden suit and faces the lightning to protect those he loves. Between flashes of light and courage, he learns that the real superpower is believing in yourself.",
       },
       leoPirates: {
         title: "Candy Signal",

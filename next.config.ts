@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      {
+        source: "/films/leo-temple-perdu",
+        destination: "/films/super-leo",
+        permanent: true,
+      },
+    ];
+  },
   experimental: {
     serverActions: {
       // Photos personnages jusqu'à 5 Mo (+ champs du formulaire)
