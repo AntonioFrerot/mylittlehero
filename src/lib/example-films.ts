@@ -3,6 +3,7 @@ import {
   LEO_ET_NALA_VIDEO_POSTER_SRC,
   SUPER_LEO_POSTER_SRC,
   LEO_ICE_MOON_POSTER_SRC,
+  LEO_ICE_MOON_VIDEO_POSTER_SRC,
   LEO_LOST_PLANE_POSTER_SRC,
 } from "@/lib/leo-example-posters";
 import type { FilmThemeId } from "@/lib/i18n/film-labels";
@@ -86,6 +87,8 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     title: "Léo et la lune de glace",
     tagline: "Une expédition gelée au-delà des étoiles",
     posterSrc: LEO_ICE_MOON_POSTER_SRC,
+    videoPosterSrc: LEO_ICE_MOON_VIDEO_POSTER_SRC,
+    videoSrc: "https://youtu.be/38b6U9JxK5k",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "manga",
     themes: ["aventure", "scifi"],

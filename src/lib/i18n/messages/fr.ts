@@ -585,9 +585,10 @@ export const fr = {
       leoEtoiles: {
         title: "Léo et la lune de glace",
         durationLabel: "3 min",
+        intro: "Voici un exemple de film de science-fiction pour Léo :",
         tagline: "Une expédition gelée au-delà des étoiles",
         synopsis:
-          "Résumé : Léo part explorer une lune de glace aux reflets argentés. Entre cratères étincelants et aurores polaires, il découvre que les plus belles aventures peuvent être froides… et magiques.",
+          "Résumé : Léo, un voyageur spatial de 9 ans, se réveille dans sa petite capsule blanche lorsque l'IA du vaisseau détecte une planète gelée inconnue. Il atterrit pour explorer, sans savoir que d'étranges créatures extraterrestres l'observent en secret. La planète semble vide et incroyablement froide, mais sous la glace se cache une civilisation souterraine.",
       },
     },
   },

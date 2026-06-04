@@ -579,9 +579,10 @@ export const en = {
       leoEtoiles: {
         title: "Leo and the Ice Moon",
         durationLabel: "3 min",
+        intro: "Here is an example of a science-fiction film for Leo:",
         tagline: "A frozen expedition beyond the stars",
         synopsis:
-          "Summary: Leo sets off to explore an ice moon with silver reflections. Between glittering craters and polar lights, he discovers that the greatest adventures can be cold—and magical.",
+          "Summary: Leo, a 9-year-old space traveler, wakes up inside his small white capsule when the ship's AI detects an unknown frozen planet. He lands to explore, unaware that strange alien creatures are secretly watching him. The planet looks empty and incredibly cold, but beneath the ice lies an underground civilization.",
       },
     },
   },
