@@ -85,7 +85,7 @@ export function Header() {
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-3 px-4 md:grid md:h-16 md:grid-cols-[auto_1fr_auto] md:items-center md:gap-4 md:px-8 lg:px-10">
         <Link
           href="/"
-          className="group flex min-w-0 shrink-0 items-center gap-2"
+          className="group flex min-w-0 shrink-0 items-center gap-1"
           onClick={(event) => {
             if (!menuOpen) return;
             if ((pathname || "/") === "/") {
@@ -105,7 +105,7 @@ export function Header() {
             priority
             unoptimized
           />
-          <span className="truncate font-display text-base font-semibold tracking-tight text-cream sm:text-lg md:text-xl">
+          <span className="-ml-px truncate font-display text-base font-semibold tracking-tight text-cream sm:text-lg md:text-xl">
             MyLittle<span className="text-gold-light">Hero</span>
             <span className="sr-only">{BRAND_NAME}</span>
           </span>
