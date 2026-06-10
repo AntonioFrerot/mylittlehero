@@ -16,12 +16,17 @@ export function FilmVideoMedia({
   title,
   posterAlt,
 }: FilmVideoMediaProps) {
+  const thumbSrc = videoPosterSrc ?? posterSrc;
+  const thumbObjectClass = videoPosterSrc
+    ? "object-cover object-center"
+    : "object-cover object-[center_20%]";
+
   if (videoSrc) {
     return (
       <ExampleFilmVideo
         src={videoSrc}
         title={title}
-        posterSrc={videoPosterSrc ?? posterSrc}
+        posterSrc={thumbSrc}
         posterAlt={posterAlt}
       />
     );
@@ -30,12 +35,13 @@ export function FilmVideoMedia({
   return (
     <div className="relative aspect-video w-full overflow-hidden bg-cinema-night">
       <Image
-        src={posterSrc}
+        src={thumbSrc}
         alt={posterAlt}
         fill
-        className="object-cover object-[center_20%]"
+        className={thumbObjectClass}
         sizes="(max-width: 1024px) 100vw, 896px"
         priority
+        unoptimized={Boolean(videoPosterSrc)}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/80 via-cinema-black/20 to-cinema-black/10" />
     </div>

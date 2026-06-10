@@ -20,6 +20,8 @@ export const LEO_ET_NALA_POSTER_SRC = "/posters/leo-et-nala.png?v=3";
 export const LEO_ET_NALA_VIDEO_POSTER_SRC =
   "/posters/leo-et-nala-video-poster.png?v=2";
 export const SUPER_LEO_POSTER_SRC = "/posters/super-leo.png?v=2";
+export const SUPER_LEO_VIDEO_POSTER_SRC =
+  "/posters/super-leo-video-poster.png?v=2";
 export const LEO_ICE_MOON_POSTER_SRC = "/posters/leo-ice-moon.png?v=1";
 export const LEO_ICE_MOON_VIDEO_POSTER_SRC =
   "/posters/leo-ice-moon-video-poster.png?v=1";

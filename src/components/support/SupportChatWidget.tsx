@@ -6,7 +6,6 @@ import {
   BTN_3D_CHAT_SEND,
   BTN_3D_FAB,
   BTN_3D_ICON,
-  SURFACE_3D_PANEL_LG,
 } from "@/lib/ui/button-3d-classes";
 import { SUPPORT_WELCOME_MESSAGE } from "@/lib/support-chat/knowledge";
 
@@ -142,7 +141,7 @@ export function SupportChatWidget() {
     <div className="fixed right-4 z-[60] flex flex-col items-end gap-3 safe-bottom sm:right-6">
       {open && (
         <div
-          className={`${SURFACE_3D_PANEL_LG} flex w-[min(100vw-2rem,24rem)] flex-col overflow-hidden sm:w-[22rem]`}
+          className="flex w-[min(100vw-2rem,24rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-cinema-surface shadow-[0_6px_18px_rgba(0,0,0,0.4)] sm:w-[22rem]"
           role="dialog"
           aria-label="Assistant MyLittleHero"
         >
@@ -167,7 +166,7 @@ export function SupportChatWidget() {
 
           <div
             ref={listRef}
-            className="flex max-h-[min(22rem,50vh)] flex-col gap-3 overflow-y-auto px-3 py-4"
+            className="flex max-h-[min(22rem,50vh)] flex-col gap-3 overflow-y-auto bg-cinema-surface px-3 py-4"
           >
             {messages.map((message) => (
               <div
@@ -178,7 +177,7 @@ export function SupportChatWidget() {
                   className={`max-w-[90%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                     message.role === "user"
                       ? "rounded-br-md bg-gradient-to-r from-gold-dark via-gold to-gold-light text-cinema-black"
-                      : "rounded-bl-md border border-white/10 bg-cinema-black/50 text-cream/90"
+                      : "rounded-bl-md border border-white/10 bg-cinema-night text-cream/90"
                   }`}
                 >
                   {message.content}
@@ -187,7 +186,7 @@ export function SupportChatWidget() {
             ))}
             {pending && (
               <div className="flex justify-start">
-                <p className="rounded-2xl rounded-bl-md border border-white/10 bg-cinema-black/50 px-3.5 py-2.5 text-sm text-cream/50">
+                <p className="rounded-2xl rounded-bl-md border border-white/10 bg-cinema-night px-3.5 py-2.5 text-sm text-cream/50">
                   <span className="inline-flex gap-1">
                     <span className="animate-pulse">●</span>
                     <span className="animate-pulse [animation-delay:150ms]">●</span>
@@ -198,7 +197,7 @@ export function SupportChatWidget() {
             )}
           </div>
 
-          <div className="border-t border-white/10 bg-cinema-black/40 p-3">
+          <div className="border-t border-white/10 bg-cinema-night p-3">
             <div className="flex gap-2">
               <textarea
                 ref={inputRef}
@@ -208,7 +207,7 @@ export function SupportChatWidget() {
                 rows={2}
                 placeholder="Votre question…"
                 disabled={pending}
-                className="support-chat-input min-h-[44px] flex-1 resize-none rounded-xl border border-white/10 bg-cinema-black/60 px-3 py-2 text-[16px] leading-snug text-cream placeholder:text-cream/35 outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30 disabled:opacity-60 sm:text-sm"
+                className="support-chat-input min-h-[44px] flex-1 resize-none rounded-xl border border-white/10 bg-cinema-black px-3 py-2 text-[16px] leading-snug text-cream placeholder:text-cream/35 outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30 disabled:opacity-60 sm:text-sm"
               />
               <button
                 type="button"
