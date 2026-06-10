@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { HashScrollHandler } from "@/components/HashScrollHandler";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { SupportChatWidget } from "@/components/support/SupportChatWidget";
-import { BRAND_NAME } from "@/lib/brand";
+import { BRAND_NAME, SITE_LOGO_SRC } from "@/lib/brand";
 import { getServerLocale, getServerTranslator } from "@/lib/i18n/server";
 import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
@@ -30,6 +30,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${BRAND_NAME} — ${t("meta.title")}`,
     description: t("meta.description"),
+    icons: {
+      icon: SITE_LOGO_SRC,
+      apple: SITE_LOGO_SRC,
+    },
   };
 }
 

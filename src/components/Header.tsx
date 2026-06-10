@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { HashLink } from "@/components/ui/HashLink";
 import { useEffect, useState } from "react";
 import { HeaderAuth } from "@/components/auth/HeaderAuth";
 import { MobileNavMenu } from "@/components/MobileNavMenu";
 import { useLocale } from "@/components/LocaleProvider";
-import { BRAND_NAME } from "@/lib/brand";
+import { BRAND_NAME, SITE_LOGO_SRC } from "@/lib/brand";
 import { SITE_NAV_LINKS } from "@/lib/navigation/site-nav";
-import { BTN_3D_ICON, BTN_3D_LOGO } from "@/lib/ui/button-3d-classes";
+import { BTN_3D_ICON } from "@/lib/ui/button-3d-classes";
 import { usePathname } from "next/navigation";
 
 export function Header() {
@@ -95,9 +96,15 @@ export function Header() {
             closeMenu();
           }}
         >
-          <span className={BTN_3D_LOGO} aria-hidden>
-            ✦
-          </span>
+          <Image
+            src={SITE_LOGO_SRC}
+            alt=""
+            width={44}
+            height={44}
+            className="h-10 w-10 shrink-0 object-contain md:h-11 md:w-11"
+            priority
+            unoptimized
+          />
           <span className="truncate font-display text-base font-semibold tracking-tight text-cream sm:text-lg md:text-xl">
             MyLittle<span className="text-gold-light">Hero</span>
             <span className="sr-only">{BRAND_NAME}</span>
