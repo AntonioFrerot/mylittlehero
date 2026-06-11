@@ -1,9 +1,16 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { hashPassword, verifyPassword } from "./password";
-
+import {
+  databaseRequiredError,
+  ensureSchema,
+  getSql,
+  isDatabaseEnabled,
+  isHostedProduction,
+} from "@/lib/db/client";
+import { normalizeEmail } from "@/lib/db/normalize-email";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { DEFAULT_LOCALE } from "@/lib/i18n/locales";
+import { hashPassword, verifyPassword } from "./password";
 
 export type StoredUser = {
   email: string;
@@ -26,7 +33,25 @@ export type AccountDetails = {
 const DATA_DIR = path.join(process.cwd(), "data");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
 
-async function readUsers(): Promise<StoredUser[]> {
+function rowToUser(row: {
+  email: string;
+  name: string | null;
+  password_hash: string;
+  created_at: Date;
+  subscription_plan_id: string | null;
+  locale: string | null;
+}): StoredUser {
+  return {
+    email: row.email,
+    name: row.name ?? undefined,
+    passwordHash: row.password_hash,
+    createdAt: row.created_at.toISOString(),
+    subscriptionPlanId: row.subscription_plan_id ?? undefined,
+    locale: (row.locale as LocaleCode | null) ?? undefined,
+  };
+}
+
+async function readUsersFile(): Promise<StoredUser[]> {
   try {
     const raw = await readFile(USERS_FILE, "utf8");
     const parsed = JSON.parse(raw) as StoredUser[];
@@ -36,16 +61,50 @@ async function readUsers(): Promise<StoredUser[]> {
   }
 }
 
-async function writeUsers(users: StoredUser[]): Promise<void> {
+async function writeUsersFile(users: StoredUser[]): Promise<void> {
   await mkdir(DATA_DIR, { recursive: true });
   await writeFile(USERS_FILE, JSON.stringify(users, null, 2), "utf8");
+}
+
+async function findUserByEmailDb(
+  email: string
+): Promise<StoredUser | undefined> {
+  await ensureSchema();
+  const db = getSql();
+  const rows = await db<
+    {
+      email: string;
+      name: string | null;
+      password_hash: string;
+      created_at: Date;
+      subscription_plan_id: string | null;
+      locale: string | null;
+    }[]
+  >`
+    SELECT email, name, password_hash, created_at, subscription_plan_id, locale
+    FROM users
+    WHERE email = ${email}
+    LIMIT 1
+  `;
+  const row = rows[0];
+  return row ? rowToUser(row) : undefined;
+}
+
+async function findUserByEmailFile(
+  email: string
+): Promise<StoredUser | undefined> {
+  const users = await readUsersFile();
+  return users.find((u) => u.email === email);
 }
 
 export async function findUserByEmail(
   email: string
 ): Promise<StoredUser | undefined> {
-  const users = await readUsers();
-  return users.find((u) => u.email === email);
+  const normalized = normalizeEmail(email);
+  if (isDatabaseEnabled()) {
+    return findUserByEmailDb(normalized);
+  }
+  return findUserByEmailFile(normalized);
 }
 
 export async function registerUser(input: {
@@ -53,34 +112,57 @@ export async function registerUser(input: {
   password: string;
   name?: string;
 }): Promise<{ ok: true } | { ok: false; error: string }> {
-  const email = input.email.trim().toLowerCase();
-
-  if (await findUserByEmail(email)) {
+  if (isHostedProduction() && !isDatabaseEnabled()) {
     return {
       ok: false,
-      error: "Un compte existe déjà avec cette adresse e-mail.",
+      error:
+        "La création de compte n'est pas encore configurée sur ce serveur. Contactez le support.",
     };
   }
 
-  const passwordHash = await hashPassword(input.password);
-  const users = await readUsers();
+  const email = normalizeEmail(input.email);
 
-  users.push({
-    email,
-    name: input.name?.trim() || undefined,
-    passwordHash,
-    createdAt: new Date().toISOString(),
-  });
+  try {
+    if (await findUserByEmail(email)) {
+      return {
+        ok: false,
+        error: "Un compte existe déjà avec cette adresse e-mail.",
+      };
+    }
 
-  await writeUsers(users);
-  return { ok: true };
+    const passwordHash = await hashPassword(input.password);
+    const createdAt = new Date().toISOString();
+    const name = input.name?.trim() || undefined;
+
+    if (isDatabaseEnabled()) {
+      await ensureSchema();
+      const db = getSql();
+      await db`
+        INSERT INTO users (email, name, password_hash, created_at)
+        VALUES (${email}, ${name ?? null}, ${passwordHash}, ${createdAt})
+      `;
+      return { ok: true };
+    }
+
+    const users = await readUsersFile();
+    users.push({
+      email,
+      name,
+      passwordHash,
+      createdAt,
+    });
+    await writeUsersFile(users);
+    return { ok: true };
+  } catch {
+    return { ok: false, error: databaseRequiredError() };
+  }
 }
 
 export async function authenticateUser(
   email: string,
   password: string
 ): Promise<StoredUser | null> {
-  const user = await findUserByEmail(email.trim().toLowerCase());
+  const user = await findUserByEmail(email);
   if (!user) return null;
 
   const valid = await verifyPassword(password, user.passwordHash);
@@ -100,7 +182,7 @@ export async function getAccountDetails(
   };
 }
 
-async function updateUser(
+async function updateUserDb(
   email: string,
   patch: Partial<
     Pick<
@@ -109,7 +191,58 @@ async function updateUser(
     >
   >
 ): Promise<{ ok: true; user: StoredUser } | { ok: false; error: string }> {
-  const users = await readUsers();
+  const current = await findUserByEmailDb(email);
+  if (!current) {
+    return { ok: false, error: "Compte introuvable." };
+  }
+
+  let name = current.name;
+  if (patch.name !== undefined) {
+    const trimmed = patch.name.trim();
+    name = trimmed || undefined;
+  }
+
+  const next: StoredUser = {
+    ...current,
+    ...patch,
+    name,
+    subscriptionPlanId:
+      patch.subscriptionPlanId !== undefined
+        ? patch.subscriptionPlanId || undefined
+        : current.subscriptionPlanId,
+    locale:
+      patch.locale !== undefined
+        ? patch.locale
+        : patch.filmLanguage !== undefined
+          ? patch.filmLanguage
+          : current.locale,
+  };
+
+  await ensureSchema();
+  const db = getSql();
+  await db`
+    UPDATE users
+    SET
+      name = ${next.name ?? null},
+      password_hash = ${next.passwordHash},
+      subscription_plan_id = ${next.subscriptionPlanId ?? null},
+      locale = ${next.locale ?? null}
+    WHERE email = ${email}
+  `;
+
+  return { ok: true, user: next };
+}
+
+async function updateUserFile(
+  email: string,
+  patch: Partial<
+    Pick<
+      StoredUser,
+      "name" | "passwordHash" | "subscriptionPlanId" | "locale" | "filmLanguage"
+    >
+  >
+): Promise<{ ok: true; user: StoredUser } | { ok: false; error: string }> {
+  const users = await readUsersFile();
   const index = users.findIndex((u) => u.email === email);
   if (index === -1) {
     return { ok: false, error: "Compte introuvable." };
@@ -128,8 +261,24 @@ async function updateUser(
   }
 
   users[index] = next;
-  await writeUsers(users);
+  await writeUsersFile(users);
   return { ok: true, user: next };
+}
+
+async function updateUser(
+  email: string,
+  patch: Partial<
+    Pick<
+      StoredUser,
+      "name" | "passwordHash" | "subscriptionPlanId" | "locale" | "filmLanguage"
+    >
+  >
+): Promise<{ ok: true; user: StoredUser } | { ok: false; error: string }> {
+  const normalized = normalizeEmail(email);
+  if (isDatabaseEnabled()) {
+    return updateUserDb(normalized, patch);
+  }
+  return updateUserFile(normalized, patch);
 }
 
 export async function updateUserName(

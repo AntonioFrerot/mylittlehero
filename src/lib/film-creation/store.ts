@@ -1,5 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { ensureSchema, getSql, isDatabaseEnabled } from "@/lib/db/client";
+import { normalizeEmail } from "@/lib/db/normalize-email";
 import {
   normalizeFilmStatus,
   normalizeFilmTheme,
@@ -28,7 +30,7 @@ function normalizeFilm(raw: UserFilm & { characters?: UserFilm["characters"] }):
   };
 }
 
-async function readFilms(email: string): Promise<UserFilm[]> {
+async function readFilmsFile(email: string): Promise<UserFilm[]> {
   try {
     const raw = await readFile(userFilePath(email), "utf8");
     const parsed = JSON.parse(raw) as UserFilm[];
@@ -38,23 +40,61 @@ async function readFilms(email: string): Promise<UserFilm[]> {
   }
 }
 
-async function writeFilms(email: string, films: UserFilm[]): Promise<void> {
+async function writeFilmsFile(email: string, films: UserFilm[]): Promise<void> {
   await mkdir(DATA_DIR, { recursive: true });
   await writeFile(userFilePath(email), JSON.stringify(films, null, 2), "utf8");
 }
 
-export async function listUserFilms(email: string): Promise<UserFilm[]> {
-  const films = await readFilms(email);
+async function readFilmsDb(email: string): Promise<UserFilm[]> {
+  await ensureSchema();
+  const db = getSql();
+  const rows = await db<{ data: UserFilm }[]>`
+    SELECT data FROM films WHERE user_email = ${email}
+  `;
+  return rows.map((row) => normalizeFilm(row.data));
+}
+
+async function upsertFilmDb(email: string, film: UserFilm): Promise<void> {
+  await ensureSchema();
+  const db = getSql();
+  await db`
+    INSERT INTO films (user_email, id, data, created_at)
+    VALUES (${email}, ${film.id}, ${db.json(film)}, ${film.createdAt})
+    ON CONFLICT (user_email, id)
+    DO UPDATE SET data = ${db.json(film)}
+  `;
+}
+
+async function readFilms(email: string): Promise<UserFilm[]> {
+  const normalized = normalizeEmail(email);
+  if (isDatabaseEnabled()) {
+    return readFilmsDb(normalized);
+  }
+  return readFilmsFile(normalized);
+}
+
+function sortFilms(films: UserFilm[]): UserFilm[] {
   return films.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 }
 
+export async function listUserFilms(email: string): Promise<UserFilm[]> {
+  return sortFilms(await readFilms(email));
+}
+
 export async function addUserFilm(email: string, film: UserFilm): Promise<UserFilm[]> {
-  const films = await readFilms(email);
+  const normalized = normalizeEmail(email);
+
+  if (isDatabaseEnabled()) {
+    await upsertFilmDb(normalized, film);
+    return listUserFilms(normalized);
+  }
+
+  const films = await readFilmsFile(normalized);
   films.push(film);
-  await writeFilms(email, films);
-  return listUserFilms(email);
+  await writeFilmsFile(normalized, films);
+  return listUserFilms(normalized);
 }
 
 export async function getUserFilmById(
@@ -70,7 +110,8 @@ export async function updateUserFilm(
   filmId: string,
   patch: UserFilmUpdatePatch
 ): Promise<UserFilm | null> {
-  const films = await readFilms(email);
+  const normalized = normalizeEmail(email);
+  const films = await readFilms(normalized);
   const index = films.findIndex((film) => film.id === filmId);
   if (index < 0) return null;
 
@@ -80,11 +121,18 @@ export async function updateUserFilm(
         .filter((theme): theme is FilmThemeId => theme != null)
     : undefined;
 
-  films[index] = {
-    ...films[index],
+  const updated: UserFilm = {
+    ...films[index]!,
     ...patch,
     ...(nextThemes && nextThemes.length > 0 ? { themes: nextThemes } : {}),
   };
-  await writeFilms(email, films);
-  return films[index];
+
+  if (isDatabaseEnabled()) {
+    await upsertFilmDb(normalized, updated);
+    return updated;
+  }
+
+  films[index] = updated;
+  await writeFilmsFile(normalized, films);
+  return updated;
 }

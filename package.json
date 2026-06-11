@@ -10,8 +10,10 @@
     "story:retry": "npx --yes tsx scripts/retry-story.mjs"
   },
   "dependencies": {
+    "@vercel/blob": "^2.4.0",
     "jose": "^6.2.3",
     "next": "16.2.6",
+    "postgres": "^3.4.9",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },

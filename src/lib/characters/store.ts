@@ -1,5 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { ensureSchema, getSql, isDatabaseEnabled } from "@/lib/db/client";
+import { normalizeEmail } from "@/lib/db/normalize-email";
 import type { Character, LegacyCharacter } from "./types";
 
 function normalizeCharacter(raw: LegacyCharacter): Character {
@@ -37,7 +39,7 @@ function userFilePath(email: string): string {
   return path.join(DATA_DIR, `${safe}.json`);
 }
 
-async function readCharacters(email: string): Promise<Character[]> {
+async function readCharactersFile(email: string): Promise<Character[]> {
   try {
     const raw = await readFile(userFilePath(email), "utf8");
     const parsed = JSON.parse(raw) as LegacyCharacter[];
@@ -47,23 +49,79 @@ async function readCharacters(email: string): Promise<Character[]> {
   }
 }
 
-async function writeCharacters(email: string, characters: Character[]): Promise<void> {
+async function writeCharactersFile(
+  email: string,
+  characters: Character[]
+): Promise<void> {
   await mkdir(DATA_DIR, { recursive: true });
   await writeFile(userFilePath(email), JSON.stringify(characters, null, 2), "utf8");
 }
 
-export async function listCharacters(email: string): Promise<Character[]> {
-  const characters = await readCharacters(email);
+async function readCharactersDb(email: string): Promise<Character[]> {
+  await ensureSchema();
+  const db = getSql();
+  const rows = await db<{ data: Character }[]>`
+    SELECT data FROM characters WHERE user_email = ${email}
+  `;
+  return rows.map((row) => row.data);
+}
+
+async function writeCharacterDb(
+  email: string,
+  character: Character
+): Promise<void> {
+  await ensureSchema();
+  const db = getSql();
+  await db`
+    INSERT INTO characters (user_email, id, data, updated_at)
+    VALUES (${email}, ${character.id}, ${db.json(character)}, ${character.updatedAt})
+    ON CONFLICT (user_email, id)
+    DO UPDATE SET data = ${db.json(character)}, updated_at = ${character.updatedAt}
+  `;
+}
+
+async function deleteCharacterDb(
+  email: string,
+  characterId: string
+): Promise<void> {
+  await ensureSchema();
+  const db = getSql();
+  await db`
+    DELETE FROM characters
+    WHERE user_email = ${email} AND id = ${characterId}
+  `;
+}
+
+async function readCharacters(email: string): Promise<Character[]> {
+  const normalized = normalizeEmail(email);
+  if (isDatabaseEnabled()) {
+    return readCharactersDb(normalized);
+  }
+  return readCharactersFile(normalized);
+}
+
+function sortCharacters(characters: Character[]): Character[] {
   return characters.sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
+}
+
+export async function listCharacters(email: string): Promise<Character[]> {
+  return sortCharacters(await readCharacters(email));
 }
 
 export async function saveCharacter(
   email: string,
   character: Character
 ): Promise<Character[]> {
-  const characters = await readCharacters(email);
+  const normalized = normalizeEmail(email);
+
+  if (isDatabaseEnabled()) {
+    await writeCharacterDb(normalized, character);
+    return listCharacters(normalized);
+  }
+
+  const characters = await readCharactersFile(normalized);
   const index = characters.findIndex((c) => c.id === character.id);
 
   if (index >= 0) {
@@ -72,16 +130,23 @@ export async function saveCharacter(
     characters.push(character);
   }
 
-  await writeCharacters(email, characters);
-  return listCharacters(email);
+  await writeCharactersFile(normalized, characters);
+  return listCharacters(normalized);
 }
 
 export async function deleteCharacter(
   email: string,
   characterId: string
 ): Promise<Character[]> {
-  const characters = await readCharacters(email);
+  const normalized = normalizeEmail(email);
+
+  if (isDatabaseEnabled()) {
+    await deleteCharacterDb(normalized, characterId);
+    return listCharacters(normalized);
+  }
+
+  const characters = await readCharactersFile(normalized);
   const filtered = characters.filter((c) => c.id !== characterId);
-  await writeCharacters(email, filtered);
-  return listCharacters(email);
+  await writeCharactersFile(normalized, filtered);
+  return listCharacters(normalized);
 }

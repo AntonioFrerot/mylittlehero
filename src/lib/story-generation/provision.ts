@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { isDatabaseEnabled } from "@/lib/db/client";
 import type { UserFilm } from "@/lib/film-creation/types";
 import {
   formatSceneFileName,
@@ -7,6 +8,7 @@ import {
   STORY_PROMPT_PATH,
 } from "./paths";
 import { getStorySceneCount } from "./scene-count";
+import { provisionStoryScenesDb, writeStoryWorkspaceDb } from "./story-db";
 import type { StoryWorkspaceManifest } from "./types";
 
 export type { StoryWorkspaceManifest } from "./types";
@@ -19,9 +21,6 @@ export async function provisionStoryWorkspace(
     film.durationSeconds ??
     (film.durationMinutes != null ? film.durationMinutes * 60 : 0);
   const sceneCount = getStorySceneCount(durationSeconds);
-  const filmDir = getFilmStoryDir(email, film.id);
-
-  await mkdir(filmDir, { recursive: true });
 
   const manifest: StoryWorkspaceManifest = {
     filmId: film.id,
@@ -39,6 +38,20 @@ export async function provisionStoryWorkspace(
     promptPath: path.relative(process.cwd(), STORY_PROMPT_PATH),
     status: "awaiting_generation",
   };
+
+  if (isDatabaseEnabled()) {
+    await writeStoryWorkspaceDb(email, film.id, {
+      manifest,
+      title: film.title,
+      resume: "",
+      tagline: "",
+    });
+    await provisionStoryScenesDb(email, film.id, sceneCount);
+    return `db:story:${film.id}`;
+  }
+
+  const filmDir = getFilmStoryDir(email, film.id);
+  await mkdir(filmDir, { recursive: true });
 
   await writeFile(
     path.join(filmDir, "film.json"),

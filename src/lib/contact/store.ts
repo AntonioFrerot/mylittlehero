@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
+import { ensureSchema, getSql, isDatabaseEnabled } from "@/lib/db/client";
 
 export type ContactMessage = {
   id: string;
@@ -12,7 +13,7 @@ export type ContactMessage = {
 
 const DATA_FILE = path.join(process.cwd(), "data", "contact-messages.json");
 
-async function readMessages(): Promise<ContactMessage[]> {
+async function readMessagesFile(): Promise<ContactMessage[]> {
   try {
     const raw = await readFile(DATA_FILE, "utf8");
     const parsed = JSON.parse(raw) as ContactMessage[];
@@ -22,7 +23,7 @@ async function readMessages(): Promise<ContactMessage[]> {
   }
 }
 
-async function writeMessages(messages: ContactMessage[]): Promise<void> {
+async function writeMessagesFile(messages: ContactMessage[]): Promise<void> {
   await mkdir(path.dirname(DATA_FILE), { recursive: true });
   await writeFile(DATA_FILE, JSON.stringify(messages, null, 2), "utf8");
 }
@@ -30,13 +31,24 @@ async function writeMessages(messages: ContactMessage[]): Promise<void> {
 export async function addContactMessage(
   input: Omit<ContactMessage, "id" | "createdAt">
 ): Promise<ContactMessage> {
-  const messages = await readMessages();
   const entry: ContactMessage = {
     id: randomUUID(),
     createdAt: new Date().toISOString(),
     ...input,
   };
+
+  if (isDatabaseEnabled()) {
+    await ensureSchema();
+    const db = getSql();
+    await db`
+      INSERT INTO contact_messages (id, name, email, message, created_at)
+      VALUES (${entry.id}, ${entry.name}, ${entry.email}, ${entry.message}, ${entry.createdAt})
+    `;
+    return entry;
+  }
+
+  const messages = await readMessagesFile();
   messages.push(entry);
-  await writeMessages(messages);
+  await writeMessagesFile(messages);
   return entry;
 }

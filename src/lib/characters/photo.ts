@@ -1,3 +1,4 @@
+import { del, put } from "@vercel/blob";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -24,6 +25,10 @@ export function isAllowedPhotoType(type: string): boolean {
   return ALLOWED_TYPES.has(type);
 }
 
+function isBlobStorageEnabled(): boolean {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
+}
+
 export async function saveCharacterPhoto(
   email: string,
   characterId: string,
@@ -44,11 +49,20 @@ export async function saveCharacterPhoto(
 
   const ext = EXT_BY_MIME[file.type] ?? ".jpg";
   const userKey = userPhotoDirKey(email);
-  const dir = path.join(process.cwd(), "public", "uploads", "characters", userKey);
-  await mkdir(dir, { recursive: true });
-
   const filename = `${characterId}${ext}`;
   const buffer = Buffer.from(await file.arrayBuffer());
+
+  if (isBlobStorageEnabled()) {
+    const blob = await put(`characters/${userKey}/${filename}`, buffer, {
+      access: "public",
+      contentType: file.type,
+      addRandomSuffix: false,
+    });
+    return { ok: true, photoSrc: blob.url };
+  }
+
+  const dir = path.join(process.cwd(), "public", "uploads", "characters", userKey);
+  await mkdir(dir, { recursive: true });
   await writeFile(path.join(dir, filename), buffer);
 
   return {
@@ -60,7 +74,18 @@ export async function saveCharacterPhoto(
 export async function deleteCharacterPhotoFile(
   photoSrc: string | undefined
 ): Promise<void> {
-  if (!photoSrc?.startsWith("/uploads/characters/")) return;
+  if (!photoSrc) return;
+
+  if (photoSrc.includes("blob.vercel-storage.com")) {
+    try {
+      await del(photoSrc);
+    } catch {
+      // fichier déjà absent
+    }
+    return;
+  }
+
+  if (!photoSrc.startsWith("/uploads/characters/")) return;
 
   const fullPath = path.join(process.cwd(), "public", photoSrc);
   try {
