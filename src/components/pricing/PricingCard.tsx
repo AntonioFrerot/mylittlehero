@@ -2,7 +2,7 @@ import React from "react";
 import type { PricingPlan } from "@/lib/pricing";
 import { getTierQuotaLabel } from "@/lib/pricing";
 import { BTN_3D_BADGE, SURFACE_3D_CHIP, SURFACE_3D_CHIP_CALLOUT, SURFACE_3D_CHIP_MUTED, SURFACE_3D_ICON_SM } from "@/lib/ui/button-3d-classes";
-import { Button } from "@/components/ui/Button";
+import { CheckoutButton } from "@/components/pricing/CheckoutButton";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 
@@ -43,11 +43,10 @@ function renderPricingFeature(feature: string) {
 
 type PricingCardProps = {
   plan: PricingPlan;
-  ctaHref: string;
   locale: LocaleCode;
 };
 
-export function PricingCard({ plan, ctaHref, locale }: PricingCardProps) {
+export function PricingCard({ plan, locale }: PricingCardProps) {
   const t = createTranslator(locale);
   const isYearly = plan.billing === "yearly";
 
@@ -108,13 +107,14 @@ export function PricingCard({ plan, ctaHref, locale }: PricingCardProps) {
         ))}
       </ul>
 
-      <Button
-        href={ctaHref}
+      <CheckoutButton
+        planId={plan.id}
+        planType="subscription"
         variant="primary"
         className="mt-6 w-full !rounded-xl !px-4 !py-2.5 !text-sm lg:mt-auto lg:!py-3"
       >
         {t("pricing.choosePlan")}
-      </Button>
+      </CheckoutButton>
     </article>
   );
 }

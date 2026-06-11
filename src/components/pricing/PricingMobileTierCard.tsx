@@ -10,7 +10,7 @@ import {
   SURFACE_3D_ICON_SM,
   SURFACE_3D_TOGGLE,
 } from "@/lib/ui/button-3d-classes";
-import { Button } from "@/components/ui/Button";
+import { CheckoutButton } from "@/components/pricing/CheckoutButton";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 
@@ -49,7 +49,6 @@ type PricingMobileTierCardProps = {
   monthlyPlan: PricingPlan;
   yearlyPlan: PricingPlan;
   tierLabel: string;
-  ctaHref: string;
   locale: LocaleCode;
   highlighted?: boolean;
 };
@@ -105,7 +104,6 @@ export function PricingMobileTierCard({
   monthlyPlan,
   yearlyPlan,
   tierLabel,
-  ctaHref,
   locale,
   highlighted = false,
 }: PricingMobileTierCardProps) {
@@ -174,13 +172,14 @@ export function PricingMobileTierCard({
         </ul>
       </div>
 
-      <Button
-        href={ctaHref}
+      <CheckoutButton
+        planId={plan.id}
+        planType="subscription"
         variant="primary"
         className="mt-6 w-full !rounded-xl"
       >
         {t("pricing.choosePlan")}
-      </Button>
+      </CheckoutButton>
     </article>
   );
 }

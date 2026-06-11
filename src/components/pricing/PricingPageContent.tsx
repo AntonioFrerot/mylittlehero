@@ -3,14 +3,11 @@ import { PricingCard } from "@/components/pricing/PricingCard";
 import { PricingMobileTierCard } from "@/components/pricing/PricingMobileTierCard";
 import { getServerTranslator } from "@/lib/i18n/server";
 import { findPricingPlanById, getPricingPlans } from "@/lib/pricing";
-import { getSession } from "@/lib/auth/get-session";
-import { getCreerSonFilmHref } from "@/lib/navigation/creer-film";
+import { CheckoutLauncher } from "@/components/pricing/CheckoutLauncher";
 import Link from "next/link";
 
 export async function PricingPageContent() {
   const { locale, t } = await getServerTranslator();
-  const session = await getSession();
-  const offerCtaHref = getCreerSonFilmHref(!!session);
   const pricingPlans = getPricingPlans(locale);
   const standardMonthly = findPricingPlanById("standard-monthly", locale)!;
   const standardYearly = findPricingPlanById("standard-yearly", locale)!;
@@ -19,6 +16,7 @@ export async function PricingPageContent() {
 
   return (
     <div className="relative min-h-screen bg-cinema-black pb-20 safe-top-offset md:pb-28">
+      <CheckoutLauncher planType="subscription" />
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-cinema-night to-transparent"
         aria-hidden
@@ -50,14 +48,12 @@ export async function PricingPageContent() {
               monthlyPlan={standardMonthly}
               yearlyPlan={standardYearly}
               tierLabel={t("pricing.tierEssential")}
-              ctaHref={offerCtaHref}
               locale={locale}
             />
             <PricingMobileTierCard
               monthlyPlan={premiumMonthly}
               yearlyPlan={premiumYearly}
               tierLabel={t("pricing.tierPremium")}
-              ctaHref={offerCtaHref}
               locale={locale}
               highlighted
             />
@@ -68,7 +64,6 @@ export async function PricingPageContent() {
               <PricingCard
                 key={plan.id}
                 plan={plan}
-                ctaHref={offerCtaHref}
                 locale={locale}
               />
             ))}

@@ -1,3 +1,4 @@
+import { CheckoutLauncher } from "@/components/pricing/CheckoutLauncher";
 import { FreeTrialBanner } from "@/components/pricing/FreeTrialBanner";
 import { PurchaseCard } from "@/components/pricing/PurchaseCard";
 import { PurchaseMobileOffers } from "@/components/pricing/PurchaseMobileOffers";
@@ -23,6 +24,7 @@ export async function PurchasePageContent() {
 
   return (
     <div className="purchase-page relative min-h-screen pb-20 safe-top-offset md:pb-28">
+      <CheckoutLauncher planType="purchase" />
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-cinema-night to-transparent"
         aria-hidden

@@ -99,6 +99,32 @@ async function runSchema(): Promise<void> {
       PRIMARY KEY (user_email, film_id, scene_number)
     )
   `;
+
+  await db`
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT
+  `;
+
+  await db`
+    CREATE TABLE IF NOT EXISTS stripe_checkout_sessions (
+      session_id TEXT PRIMARY KEY,
+      user_email TEXT NOT NULL,
+      plan_id TEXT NOT NULL,
+      plan_type TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL
+    )
+  `;
+
+  await db`
+    CREATE TABLE IF NOT EXISTS film_credits (
+      id TEXT PRIMARY KEY,
+      user_email TEXT NOT NULL REFERENCES users(email) ON DELETE CASCADE,
+      plan_id TEXT NOT NULL,
+      max_duration_seconds INT NOT NULL,
+      stripe_session_id TEXT NOT NULL,
+      used_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL
+    )
+  `;
 }
 
 export async function ensureSchema(): Promise<void> {

@@ -298,7 +298,7 @@ export const fr = {
     billingMonthlyShort: "Mois",
     billingYearlyShort: "Année",
     paymentNotice:
-      "Paiement sécurisé à venir — les boutons seront connectés à la souscription prochainement.",
+      "Paiement sécurisé par carte bancaire (Stripe). Vous serez redirigé vers une page de paiement.",
     periodMonthly: "/ mois",
     periodYearly: "/ an",
     tierStandardDaily: "15 films / mois",
@@ -358,7 +358,7 @@ export const fr = {
     mobileOfDuration: "de {duration}",
     viewSubscriptions: "Voir les abonnements →",
     paymentNotice:
-      "Paiement sécurisé à venir — les boutons seront connectés prochainement.",
+      "Paiement sécurisé par carte bancaire (Stripe). Vous serez redirigé vers une page de paiement.",
     plans: {
       film5min: {
         name: "Découverte",
@@ -401,6 +401,19 @@ export const fr = {
         },
       },
     },
+  },
+  checkout: {
+    loading: "Redirection vers le paiement…",
+    error: "Impossible de démarrer le paiement. Réessayez ou contactez le support.",
+    successBadge: "Paiement confirmé",
+    successPurchaseTitle: "Merci pour votre commande !",
+    successPurchaseMessage:
+      "Votre paiement a bien été reçu. Vos crédits film sont disponibles — vous pouvez lancer la création dès maintenant.",
+    successSubscriptionTitle: "Abonnement activé !",
+    successSubscriptionMessage:
+      "Votre abonnement est actif sur votre compte. Vous pouvez créer vos films dès maintenant.",
+    successCta: "Créer mon film",
+    successAccount: "Voir mon espace",
   },
   contact: {
     backHome: "← Retour à l'accueil",

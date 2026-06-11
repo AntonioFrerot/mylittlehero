@@ -74,7 +74,7 @@ ${themesBlock()}
 
 ═══ ABONNEMENTS — page /creer ═══
 ${subscriptionBlock()}
-Paiement en ligne : à venir (boutons pas encore connectés).
+Paiement en ligne : Stripe (carte bancaire) sur /achat et /creer — connexion requise avant le paiement.
 
 ═══ ACHATS À L'UNITÉ — page /achat (sans abonnement) ═══
 ${purchaseBlock()}
@@ -112,7 +112,7 @@ export function getIntentAnswer(
     case "thanks":
       return "Avec plaisir. Si une autre question vous vient — tarifs, personnages, délai, Mon espace — je suis là.";
     case "pricing":
-      return `Deux types d'offres : abonnements sur /creer (${subscriptions.map((p) => `${p.name} ${p.price}${p.period}`).join(" ; ")}) et achats à l'unité sur /achat (${purchases.map((p) => `${p.name} ${p.price}`).join(" ; ")}). Le paiement en ligne sera activé prochainement.`;
+      return `Deux types d'offres : abonnements sur /creer (${subscriptions.map((p) => `${p.name} ${p.price}${p.period}`).join(" ; ")}) et achats à l'unité sur /achat (${purchases.map((p) => `${p.name} ${p.price}`).join(" ; ")}). Cliquez sur Commander ou Choisir cette offre : vous serez redirigé vers Stripe pour payer par carte.`;
     case "delivery":
       return `Votre film apparaît dans Mon espace → Mes films. Délai annoncé sur le site : jusqu'à 12 h maximum pour le parcours standard ; sur /creer, comptez environ 1 h de traitement par minute de film choisie ; sur /achat, les offres indiquent une livraison sous 48 h.`;
     case "howto":
@@ -132,7 +132,7 @@ export function getIntentAnswer(
     case "contact":
       return `Notre équipe répond via /contact ou à ${CONTACT_EMAIL}. Décrivez votre situation (commande, film en cours, question tarifaire) pour une réponse ciblée.`;
     case "payment":
-      return "Le paiement sécurisé en ligne sera activé prochainement sur /creer et /achat. En attendant, vous pouvez préparer votre compte, vos personnages et votre film.";
+      return "Le paiement se fait par carte bancaire via Stripe sur /achat (achats à l'unité) et /creer (abonnements). Connectez-vous, choisissez une offre, puis suivez la page de paiement sécurisée. Après validation, vos crédits ou votre abonnement sont activés sur votre compte.";
     case "quality":
       return "Les films visent un rendu cinématographique soigné, avec styles Animation, Réaliste ou Manga. L'extrait « Léo et Nala » (/films/leo-et-nala) illustre bien le niveau attendu.";
     case "gift":

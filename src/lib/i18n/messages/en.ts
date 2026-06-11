@@ -295,7 +295,7 @@ export const en = {
     billingMonthlyShort: "Mo",
     billingYearlyShort: "Year",
     paymentNotice:
-      "Secure payment coming soon — buttons will be connected to subscription shortly.",
+      "Secure card payment via Stripe. You will be redirected to the checkout page.",
     periodMonthly: "/ month",
     periodYearly: "/ year",
     tierStandardDaily: "15 films / month",
@@ -355,7 +355,7 @@ export const en = {
     mobileOfDuration: "{duration}",
     viewSubscriptions: "View subscriptions →",
     paymentNotice:
-      "Secure payment coming soon — buttons will be connected shortly.",
+      "Secure card payment via Stripe. You will be redirected to the checkout page.",
     plans: {
       film5min: {
         name: "Discovery",
@@ -398,6 +398,19 @@ export const en = {
         },
       },
     },
+  },
+  checkout: {
+    loading: "Redirecting to checkout…",
+    error: "Unable to start checkout. Please try again or contact support.",
+    successBadge: "Payment confirmed",
+    successPurchaseTitle: "Thank you for your order!",
+    successPurchaseMessage:
+      "Your payment was received. Your film credits are ready — you can start creating now.",
+    successSubscriptionTitle: "Subscription activated!",
+    successSubscriptionMessage:
+      "Your subscription is active on your account. You can start creating films now.",
+    successCta: "Create my film",
+    successAccount: "Go to my account",
   },
   contact: {
     backHome: "← Back to home",
