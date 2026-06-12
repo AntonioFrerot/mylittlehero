@@ -309,6 +309,41 @@ export async function spendTicketsForFilm(input: {
   return { ok: true };
 }
 
+export async function grantAdminTickets(input: {
+  userEmail: string;
+  tickets: number;
+  referenceId?: string;
+}): Promise<
+  { ok: true; balance: number } | { ok: false; error: string }
+> {
+  if (input.tickets <= 0) {
+    return { ok: false, error: "Le nombre de tickets doit être positif." };
+  }
+
+  if (isHostedProduction() && !isDatabaseEnabled()) {
+    return { ok: false, error: databaseRequiredError() };
+  }
+
+  const email = normalizeEmail(input.userEmail);
+  const referenceId =
+    input.referenceId?.trim() || `admin-grant:${randomUUID()}`;
+
+  if (await hasLedgerReference(email, referenceId)) {
+    const balance = await getTicketBalance(email);
+    return { ok: true, balance };
+  }
+
+  await insertLedgerEntry({
+    userEmail: email,
+    delta: input.tickets,
+    kind: "purchase",
+    referenceId,
+  });
+
+  const balance = await getTicketBalance(email);
+  return { ok: true, balance };
+}
+
 export function getPlanTicketGrant(planId: PurchasePlanId): number {
   return PLAN_TICKET_GRANTS[planId];
 }
