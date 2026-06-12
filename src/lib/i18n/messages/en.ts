@@ -367,7 +367,7 @@ export const en = {
         features: {
           duration: "5 minutes of film",
           custom: "Full customisation",
-          delivery: "Delivery within 48 h",
+          delivery: "Delivery within 24 h",
         },
       },
       film10min: {
@@ -380,7 +380,7 @@ export const en = {
         features: {
           duration: "10 minutes of film",
           custom: "Full customisation",
-          delivery: "Delivery within 48 h",
+          delivery: "Delivery within 24 h",
         },
       },
       pack3films: {
@@ -394,7 +394,7 @@ export const en = {
         features: {
           duration: "10 minutes per film",
           custom: "Full customisation",
-          delivery: "Delivery within 48 h",
+          delivery: "Delivery within 24 h",
         },
       },
     },
@@ -405,12 +405,33 @@ export const en = {
     successBadge: "Payment confirmed",
     successPurchaseTitle: "Thank you for your order!",
     successPurchaseMessage:
-      "Your payment was received. Your film credits are ready — you can start creating now.",
+      "Your payment was received. You can start creating your film now.",
     successSubscriptionTitle: "Subscription activated!",
     successSubscriptionMessage:
       "Your subscription is active on your account. You can start creating films now.",
     successCta: "Create my film",
     successAccount: "Go to my account",
+  },
+  tickets: {
+    walletTitle: "My tickets",
+    walletSubtitle:
+      "Each ticket lets you create 5 minutes of personalised film.",
+    ruleShort: "1 ticket = 5 min · 2 tickets = 10 min",
+    ruleDetail:
+      "Example: the 3-film pack gives you 6 tickets (3 × 10-minute films). Tickets are deducted when you create a film, based on the duration you choose.",
+    buyCta: "Buy tickets",
+    subscriptionBypass:
+      "Your active subscription covers film creation — tickets are not consumed.",
+    durationCost: "Cost: {cost}",
+    durationFreeTrial: "Free trial — no tickets required",
+    durationIncludedSubscription: "Included in your subscription",
+    balanceShort: "Balance: {count}",
+    insufficientForDuration:
+      "Not enough tickets for this duration. Buy tickets or choose a shorter film.",
+    spendOnSubmitSingular: "1 ticket will be used when you submit.",
+    spendOnSubmitPlural: "{count} tickets will be used when you submit.",
+    successBalance:
+      "Use your tickets to create a film — the duration you choose determines how many tickets are used.",
   },
   contact: {
     backHome: "← Back to home",
@@ -463,6 +484,8 @@ export const en = {
       durationHint: "Choose the ideal length for your child's adventure.",
       durationLabel: "Film duration",
       durationChoose: "Choose a duration…",
+      oneTicket: "1 ticket",
+      ticketsCount: "{count} tickets",
       avoidQuestion: "Would you like to avoid anything in this film?",
       avoidPlaceholder: "E.g. no spiders, no overly scary scenes…",
       avoidHint: "Monsters, spiders, stressful situations, etc.",
@@ -470,6 +493,8 @@ export const en = {
       storyPlaceholder: "E.g. a beach at sunset, meeting a lion cub…",
       storyHint: "Settings, encounters, key moments you imagine.",
       submit: "Create film",
+      submitOneTicket: "Create film · 1 ticket",
+      submitTickets: "Create film · {count} tickets",
       pending: "Creating…",
       viewFilms: "View my films",
     },
@@ -502,6 +527,8 @@ export const en = {
       styleRequired: "Choose a film style.",
       themesRequired: "Select at least one theme.",
       durationRequired: "Choose the film duration.",
+      insufficientTickets: "You don't have enough tickets for this duration.",
+      purchaseCta: "View pricing",
     },
     success:
       "Your film is being created. You'll receive a notification when it's available in your account.",

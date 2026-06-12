@@ -4,6 +4,11 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { SESSION_COOKIE, type SessionUser } from "./session";
 import { createSessionToken } from "./session-token";
+import {
+  AUTH_REDIRECT_LOGIN_DEFAULT,
+  AUTH_REDIRECT_SIGNUP_DEFAULT,
+  getAuthRedirectFromForm,
+} from "./redirect-paths";
 import { authenticateUser, registerUser } from "./users-store";
 
 const SESSION_MAX_AGE = 60 * 60 * 24 * 30;
@@ -11,14 +16,6 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 30;
 export type AuthFormState = {
   error?: string;
 };
-
-function getRedirectPath(formData: FormData): string {
-  const raw = formData.get("redirect");
-  if (typeof raw === "string" && raw.startsWith("/") && !raw.startsWith("//")) {
-    return raw;
-  }
-  return "/creer-film";
-}
 
 function validateCredentials(
   email: unknown,
@@ -61,7 +58,10 @@ export async function signIn(
     return { error: "E-mail ou mot de passe incorrect." };
   }
 
-  const redirectTo = getRedirectPath(formData);
+  const redirectTo = getAuthRedirectFromForm(
+    formData,
+    AUTH_REDIRECT_LOGIN_DEFAULT
+  );
   await setSession(
     { email: user.email, ...(user.name ? { name: user.name } : {}) },
     redirectTo
@@ -93,7 +93,10 @@ export async function signUp(
 
   if (!result.ok) return { error: result.error };
 
-  const redirectTo = getRedirectPath(formData);
+  const redirectTo = getAuthRedirectFromForm(
+    formData,
+    AUTH_REDIRECT_SIGNUP_DEFAULT
+  );
   await setSession(
     {
       email: validated.email,

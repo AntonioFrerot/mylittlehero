@@ -68,9 +68,9 @@ ${stepsBlock()}
 ${themesBlock()}
 
 ═══ DÉLAIS DE LIVRAISON ═══
-• Parcours général (accueil / Mon espace) : film disponible sous 12 heures maximum après commande.
+• Parcours général (accueil / Mon espace) : film disponible sous 24 heures maximum après commande.
 • Abonnements (/creer) : repère affiché « 1 min de film = 1 h de traitement » (durée choisie × 1 h, dans la limite du délai annoncé).
-• Achats à l'unité (/achat) : réception sous 48 h (offres Découverte, Aventure, Famille).
+• Achats à l'unité (/achat) : réception sous 24 h (offres Découverte, Aventure, Famille).
 
 ═══ ABONNEMENTS — page /creer ═══
 ${subscriptionBlock()}
@@ -114,7 +114,7 @@ export function getIntentAnswer(
     case "pricing":
       return `Deux types d'offres : abonnements sur /creer (${subscriptions.map((p) => `${p.name} ${p.price}${p.period}`).join(" ; ")}) et achats à l'unité sur /achat (${purchases.map((p) => `${p.name} ${p.price}`).join(" ; ")}). Cliquez sur Commander ou Choisir cette offre : vous serez redirigé vers Stripe pour payer par carte.`;
     case "delivery":
-      return `Votre film apparaît dans Mon espace → Mes films. Délai annoncé sur le site : jusqu'à 12 h maximum pour le parcours standard ; sur /creer, comptez environ 1 h de traitement par minute de film choisie ; sur /achat, les offres indiquent une livraison sous 48 h.`;
+      return `Votre film apparaît dans Mon espace → Mes films. Délai annoncé sur le site : jusqu'à 24 h maximum pour le parcours standard ; sur /creer, comptez environ 1 h de traitement par minute de film choisie ; sur /achat, les offres indiquent une livraison sous 24 h.`;
     case "howto":
       return `En résumé : créez un compte → Mon espace → ajoutez vos personnages (photo du visage obligatoire) → /creer-film (style Animation/Réaliste/Manga, thèmes, durée ${FILM_MIN_MINUTES}–${FILM_MAX_MINUTES} min). Vous pouvez aussi cliquer sur « Essayer gratuitement » pour un premier test (~2 min).`;
     case "characters":
@@ -144,7 +144,7 @@ export function getIntentAnswer(
     case "monEspace":
       return "Mon espace (/mon-espace) regroupe votre Profil, Les personnages et Mes films. C'est là que vous gérez vos héros, suivez la préparation des films et les regardez une fois prêts.";
     default:
-      return `Je n'ai pas tous les détails sur ce point précis. En revanche je peux vous guider sur /creer, /achat, la création de film, les personnages, le délai (jusqu'à 12 h) ou /contact.`;
+      return `Je n'ai pas tous les détails sur ce point précis. En revanche je peux vous guider sur /creer, /achat, la création de film, les personnages, le délai (jusqu'à 24 h) ou /contact.`;
   }
 }
 
@@ -182,8 +182,8 @@ export function buildSupportFaq(): FaqEntry[] {
         "prêt",
         "pret",
         "combien de temps",
-        "12 heure",
-        "12h",
+        "24 heure",
+        "24h",
         "48h",
         "48 heure",
         "quand",

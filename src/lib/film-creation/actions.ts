@@ -18,6 +18,12 @@ import { provisionStoryWorkspace } from "@/lib/story-generation/provision";
 import { scheduleStoryGeneration } from "@/lib/story-generation/schedule";
 import { attachStoryToFilms } from "@/lib/film-creation/catalog-films";
 import { readStoryManifest } from "@/lib/story-generation/manifest";
+import { findUserByEmail } from "@/lib/auth/users-store";
+import {
+  getTicketsRequiredForDuration,
+  isPaidFilmDuration,
+} from "@/lib/purchases/ticket-rules";
+import { spendTicketsForFilm } from "@/lib/purchases/tickets";
 import { addUserFilm, getUserFilmById, listUserFilms, updateUserFilm } from "./store";
 import type {
   FilmCharacterRef,
@@ -167,10 +173,32 @@ export async function saveFilmCreation(
     return { error: t("filmCreation.errors.durationRequired") };
   }
 
-  const filmLanguage = await getUserLocale(session.email);
+  const [user, filmLanguage] = await Promise.all([
+    findUserByEmail(session.email),
+    getUserLocale(session.email),
+  ]);
+  const hasActiveSubscription = Boolean(user?.subscriptionPlanId);
+  const ticketsRequired = getTicketsRequiredForDuration(durationSeconds);
+  const filmId = randomUUID();
+
+  if (!isPaidFilmDuration(durationSeconds)) {
+    return { error: t("filmCreation.errors.durationRequired") };
+  }
+
+  if (!hasActiveSubscription) {
+    const spendResult = await spendTicketsForFilm({
+      userEmail: session.email,
+      filmId,
+      tickets: ticketsRequired,
+    });
+
+    if (!spendResult.ok) {
+      return { error: t("filmCreation.errors.insufficientTickets") };
+    }
+  }
 
   const film: UserFilm = {
-    id: randomUUID(),
+    id: filmId,
     title: buildLocalizedFilmTitle(themes, locale),
     style,
     themes,

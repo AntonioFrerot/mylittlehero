@@ -45,7 +45,6 @@ export function YesNoTextField({
               type="radio"
               name={choiceName}
               value="yes"
-              required
               className="h-4 w-4 border-white/20 bg-cinema-black text-gold accent-gold"
               onChange={() => setShowText(true)}
             />
@@ -56,7 +55,6 @@ export function YesNoTextField({
               type="radio"
               name={choiceName}
               value="no"
-              required
               className="h-4 w-4 border-white/20 bg-cinema-black text-gold accent-gold"
               onChange={() => setShowText(false)}
             />

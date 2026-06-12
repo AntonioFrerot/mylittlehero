@@ -1,27 +1,35 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import Image from "next/image";
+import { useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
+import { SITE_TICKET_SRC } from "@/lib/brand";
+import { formatFilmDurationSeconds } from "@/lib/film-creation/duration";
 import {
-  FILM_DURATION_OPTIONS,
-  formatFilmDurationSeconds,
-} from "@/lib/film-creation/duration";
-import { SURFACE_3D_DURATION_VALUE, SURFACE_3D_PANEL } from "@/lib/ui/button-3d-classes";
+  getTicketsRequiredForDuration,
+  PAID_FILM_DURATION_SECONDS,
+} from "@/lib/purchases/ticket-rules";
 
-export function FilmDurationPicker() {
+type FilmDurationPickerProps = {
+  value: number;
+  onChange: (seconds: number) => void;
+};
+
+export function FilmDurationPicker({ value, onChange }: FilmDurationPickerProps) {
   const { locale, t } = useLocale();
-  const sliderId = useId();
-  const [index, setIndex] = useState(0);
-
-  const options = useMemo(() => FILM_DURATION_OPTIONS, []);
-  const selectedSeconds = options[index] ?? options[0];
   const displayLocale = locale === "fr" ? "fr" : "en";
+  const [selected, setSelected] = useState(value);
 
-  const minLabel = formatFilmDurationSeconds(options[0], displayLocale);
-  const maxLabel = formatFilmDurationSeconds(
-    options[options.length - 1],
-    displayLocale
-  );
+  function selectDuration(seconds: number) {
+    setSelected(seconds);
+    onChange(seconds);
+  }
+
+  function ticketLabel(count: number): string {
+    return count === 1
+      ? t("filmCreation.form.oneTicket")
+      : t("filmCreation.form.ticketsCount", { count });
+  }
 
   return (
     <fieldset className="space-y-4">
@@ -30,41 +38,47 @@ export function FilmDurationPicker() {
       </legend>
       <p className="text-sm text-cream/50">{t("filmCreation.form.durationHint")}</p>
 
-      <input type="hidden" name="duration" value={selectedSeconds} />
+      <input type="hidden" name="duration" value={selected} />
 
-      <div className={`${SURFACE_3D_PANEL} px-3 py-3 sm:px-4`}>
-        <div className="flex items-baseline justify-between gap-3">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gold/75">
-            {t("filmCreation.form.durationLabel")}
-          </span>
-          <span className={SURFACE_3D_DURATION_VALUE}>
-            {formatFilmDurationSeconds(selectedSeconds, displayLocale)}
-          </span>
-        </div>
+      <div className="duration-options">
+        {PAID_FILM_DURATION_SECONDS.map((seconds) => {
+          const isActive = selected === seconds;
+          const tickets = getTicketsRequiredForDuration(seconds);
 
-        <div className="mt-3">
-          <input
-            id={sliderId}
-            type="range"
-            min={0}
-            max={options.length - 1}
-            step={1}
-            value={index}
-            onChange={(event) => setIndex(Number(event.target.value))}
-            aria-valuemin={0}
-            aria-valuemax={options.length - 1}
-            aria-valuenow={index}
-            aria-valuetext={formatFilmDurationSeconds(
-              selectedSeconds,
-              displayLocale
-            )}
-            className="duration-slider w-full cursor-pointer appearance-none bg-transparent"
-          />
-          <div className="mt-1.5 flex justify-between text-[11px] text-cream/45">
-            <span>{minLabel}</span>
-            <span>{maxLabel}</span>
-          </div>
-        </div>
+          return (
+            <label
+              key={seconds}
+              className={`duration-option ${isActive ? "duration-option--active" : ""}`}
+            >
+              <input
+                type="radio"
+                name="durationChoice"
+                value={seconds}
+                checked={isActive}
+                onChange={() => selectDuration(seconds)}
+                className="sr-only"
+              />
+
+              <div className="duration-option__main">
+                <span className="duration-option__value">
+                  {formatFilmDurationSeconds(seconds, displayLocale)}
+                </span>
+              </div>
+
+              <div className="duration-option__footer">
+                <Image
+                  src={SITE_TICKET_SRC}
+                  alt=""
+                  width={120}
+                  height={48}
+                  className="duration-option__ticket"
+                  unoptimized
+                />
+                <span className="duration-option__cost">{ticketLabel(tickets)}</span>
+              </div>
+            </label>
+          );
+        })}
       </div>
     </fieldset>
   );

@@ -7,6 +7,10 @@ import {
   signUp,
   type AuthFormState,
 } from "@/lib/auth/actions";
+import {
+  AUTH_REDIRECT_LOGIN_DEFAULT,
+  AUTH_REDIRECT_SIGNUP_DEFAULT,
+} from "@/lib/auth/redirect-paths";
 
 import {
   BTN_3D_PRIMARY_ACTION,
@@ -22,17 +26,24 @@ const inputClass =
   "w-full rounded-xl border border-white/10 bg-cinema-black/60 px-4 py-3 text-cream placeholder:text-cream/35 outline-none transition-colors focus:border-gold/50 focus:ring-1 focus:ring-gold/30";
 
 type AuthFormProps = {
-  redirectTo: string;
+  /** Redirection explicite (?redirect=) — sinon défaut selon connexion / inscription. */
+  redirectFromUrl?: string;
   initialMode?: AuthMode;
 };
 
-export function AuthForm({ redirectTo, initialMode = "login" }: AuthFormProps) {
+export function AuthForm({
+  redirectFromUrl,
+  initialMode = "login",
+}: AuthFormProps) {
   const { t } = useLocale();
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [loginState, loginAction, loginPending] = useActionState(signIn, initialState);
   const [signupState, signupAction, signupPending] = useActionState(signUp, initialState);
 
   const isLogin = mode === "login";
+  const redirectTo =
+    redirectFromUrl ??
+    (isLogin ? AUTH_REDIRECT_LOGIN_DEFAULT : AUTH_REDIRECT_SIGNUP_DEFAULT);
   const state = isLogin ? loginState : signupState;
   const pending = isLogin ? loginPending : signupPending;
 

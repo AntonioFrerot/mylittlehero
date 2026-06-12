@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { updateUserSubscription } from "@/lib/auth/users-store";
 import {
-  grantFilmCreditsFromPurchase,
+  grantTicketsFromPurchase,
   isCheckoutSessionProcessed,
   markCheckoutSessionProcessed,
-} from "@/lib/purchases/credits";
+} from "@/lib/purchases/tickets";
 import type { PurchasePlanId } from "@/lib/i18n/purchase-catalog";
 import { getStripe, isStripeConfigured } from "@/lib/stripe/client";
 
@@ -41,7 +41,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
-  await grantFilmCreditsFromPurchase({
+  await grantTicketsFromPurchase({
     userEmail,
     planId: planId as PurchasePlanId,
     stripeSessionId: sessionId,

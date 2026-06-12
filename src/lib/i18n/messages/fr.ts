@@ -69,7 +69,7 @@ export const fr = {
     howStep2Cta: "Créer son film →",
     howStep3Title: "Réception du film",
     howStep3Desc:
-      "Le film est disponible dans votre espace après un délai maximum de 12 heures, prêt à être regardé.",
+      "Le film est disponible dans votre espace après un délai maximum de 24 heures, prêt à être regardé.",
     themesEyebrow: "Univers",
     themesTitle: "Thèmes disponibles",
     themesSubtitle:
@@ -370,7 +370,7 @@ export const fr = {
         features: {
           duration: "5 minutes de film",
           custom: "Personnalisation complète",
-          delivery: "Réception sous 48 h",
+          delivery: "Réception sous 24 h",
         },
       },
       film10min: {
@@ -383,7 +383,7 @@ export const fr = {
         features: {
           duration: "10 minutes de film",
           custom: "Personnalisation complète",
-          delivery: "Réception sous 48 h",
+          delivery: "Réception sous 24 h",
         },
       },
       pack3films: {
@@ -397,7 +397,7 @@ export const fr = {
         features: {
           duration: "10 minutes par film",
           custom: "Personnalisation complète",
-          delivery: "Réception sous 48 h",
+          delivery: "Réception sous 24 h",
         },
       },
     },
@@ -408,12 +408,33 @@ export const fr = {
     successBadge: "Paiement confirmé",
     successPurchaseTitle: "Merci pour votre commande !",
     successPurchaseMessage:
-      "Votre paiement a bien été reçu. Vos crédits film sont disponibles — vous pouvez lancer la création dès maintenant.",
+      "Votre paiement a bien été reçu. Vous pouvez lancer la création de votre film dès maintenant.",
     successSubscriptionTitle: "Abonnement activé !",
     successSubscriptionMessage:
       "Votre abonnement est actif sur votre compte. Vous pouvez créer vos films dès maintenant.",
     successCta: "Créer mon film",
     successAccount: "Voir mon espace",
+  },
+  tickets: {
+    walletTitle: "Mes tickets",
+    walletSubtitle:
+      "Chaque ticket vous permet de créer 5 minutes de film personnalisé.",
+    ruleShort: "1 ticket = 5 min · 2 tickets = 10 min",
+    ruleDetail:
+      "Exemple : le pack 3 films vous donne 6 tickets (3 films de 10 minutes). Les tickets sont débités à la création du film, selon la durée choisie.",
+    buyCta: "Acheter des tickets",
+    subscriptionBypass:
+      "Votre abonnement actif couvre la création de films — les tickets ne sont pas consommés.",
+    durationCost: "Coût : {cost}",
+    durationFreeTrial: "Essai gratuit — aucun ticket requis",
+    durationIncludedSubscription: "Inclus dans votre abonnement",
+    balanceShort: "Solde : {count}",
+    insufficientForDuration:
+      "Pas assez de tickets pour cette durée. Achetez des tickets ou choisissez une durée plus courte.",
+    spendOnSubmitSingular: "1 ticket sera utilisé à la validation.",
+    spendOnSubmitPlural: "{count} tickets seront utilisés à la validation.",
+    successBalance:
+      "Utilisez vos tickets pour créer un film — la durée choisie détermine le nombre de tickets consommés.",
   },
   contact: {
     backHome: "← Retour à l'accueil",
@@ -466,6 +487,8 @@ export const fr = {
       durationHint: "Choisissez la longueur idéale pour l'aventure de votre enfant.",
       durationLabel: "Durée du film",
       durationChoose: "Choisir une durée…",
+      oneTicket: "1 ticket",
+      ticketsCount: "{count} tickets",
       avoidQuestion: "Souhaitez-vous éviter quelque chose dans ce film ?",
       avoidPlaceholder: "Ex. pas d'araignées, pas de scènes trop effrayantes…",
       avoidHint: "Monstres, araignées, situations stressantes, etc.",
@@ -474,6 +497,8 @@ export const fr = {
       storyHint:
         "Merci d’éviter tout élément sensible, dangereux ou non adapté afin de garantir la création du film.",
       submit: "Créer le film",
+      submitOneTicket: "Créer le film · 1 ticket",
+      submitTickets: "Créer le film · {count} tickets",
       pending: "Création en cours…",
       viewFilms: "Voir Mes films",
     },
@@ -507,6 +532,8 @@ export const fr = {
       styleRequired: "Choisissez un style de film.",
       themesRequired: "Sélectionnez au moins un thème.",
       durationRequired: "Choisissez la durée du film.",
+      insufficientTickets: "Vous n'avez pas assez de tickets pour cette durée.",
+      purchaseCta: "Voir les tarifs",
     },
     success:
       "Votre film est en cours de création. Vous recevrez une notification lorsqu'il sera disponible dans votre espace.",

@@ -2,6 +2,7 @@ import { Header } from "@/components/Header";
 import { FilmCreationForm } from "@/components/film-creation/FilmCreationForm";
 import { getMyCharacters } from "@/lib/characters/actions";
 import { getSession } from "@/lib/auth/get-session";
+import { getMyFilmTicketSummary } from "@/lib/purchases/actions";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
 import { SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
@@ -25,7 +26,10 @@ export default async function CreerFilmPage() {
 
   const { t } = await getServerTranslator();
   const greeting = session.name ?? session.email.split("@")[0];
-  const characters = await getMyCharacters();
+  const [characters, ticketSummary] = await Promise.all([
+    getMyCharacters(),
+    getMyFilmTicketSummary(),
+  ]);
 
   return (
     <>
@@ -50,7 +54,11 @@ export default async function CreerFilmPage() {
           </p>
 
           <div className={`mt-8 ${SURFACE_3D_PANEL_LG} p-4 sm:mt-10 sm:p-6 md:p-8`}>
-            <FilmCreationForm characters={characters} />
+            <FilmCreationForm
+              characters={characters}
+              ticketBalance={ticketSummary?.balance ?? 0}
+              hasActiveSubscription={ticketSummary?.hasActiveSubscription ?? false}
+            />
           </div>
 
           <p className="mt-6 text-center text-sm text-cream/45">

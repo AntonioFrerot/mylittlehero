@@ -125,6 +125,22 @@ async function runSchema(): Promise<void> {
       created_at TIMESTAMPTZ NOT NULL
     )
   `;
+
+  await db`
+    CREATE TABLE IF NOT EXISTS film_ticket_ledger (
+      id TEXT PRIMARY KEY,
+      user_email TEXT NOT NULL REFERENCES users(email) ON DELETE CASCADE,
+      delta INT NOT NULL,
+      kind TEXT NOT NULL,
+      reference_id TEXT,
+      created_at TIMESTAMPTZ NOT NULL
+    )
+  `;
+
+  await db`
+    CREATE INDEX IF NOT EXISTS film_ticket_ledger_user_email_idx
+    ON film_ticket_ledger (user_email)
+  `;
 }
 
 export async function ensureSchema(): Promise<void> {

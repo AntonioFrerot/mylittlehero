@@ -1,6 +1,10 @@
 import { Header } from "@/components/Header";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { getSession } from "@/lib/auth/get-session";
+import {
+  AUTH_REDIRECT_LOGIN_DEFAULT,
+  isSafeRedirectPath,
+} from "@/lib/auth/redirect-paths";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
 import Link from "next/link";
@@ -19,21 +23,16 @@ type PageProps = {
   searchParams: Promise<{ redirect?: string; mode?: string }>;
 };
 
-function safeRedirect(path: string | undefined): string {
-  if (path && path.startsWith("/") && !path.startsWith("//")) {
-    return path;
-  }
-  return "/creer-film";
-}
-
 export default async function ConnexionPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const redirectTo = safeRedirect(params.redirect);
+  const redirectFromUrl = isSafeRedirectPath(params.redirect)
+    ? params.redirect
+    : undefined;
   const initialMode = params.mode === "signup" ? "signup" : "login";
 
   const session = await getSession();
   if (session) {
-    redirect(redirectTo);
+    redirect(redirectFromUrl ?? AUTH_REDIRECT_LOGIN_DEFAULT);
   }
 
   const { t } = await getServerTranslator();
@@ -56,7 +55,10 @@ export default async function ConnexionPage({ searchParams }: PageProps) {
           <p className="mt-3 text-center text-cream/65">{t("auth.loginSubtitle")}</p>
 
           <div className="mt-10">
-            <AuthForm redirectTo={redirectTo} initialMode={initialMode} />
+            <AuthForm
+              redirectFromUrl={redirectFromUrl}
+              initialMode={initialMode}
+            />
           </div>
         </div>
       </main>

@@ -44,6 +44,9 @@ export function CharacterFacePicker({
     <div className="space-y-4">
       <p className="text-sm text-cream/50">{t("filmCreation.form.characterHint")}</p>
 
+      {selectionOrder.map((id) => (
+        <input key={id} type="hidden" name="characters" value={id} />
+      ))}
       {mainCharacterId ? (
         <input type="hidden" name="mainCharacter" value={mainCharacterId} />
       ) : null}
@@ -67,7 +70,6 @@ export function CharacterFacePicker({
             >
               <input
                 type="checkbox"
-                name="characters"
                 value={character.id}
                 checked={isSelected}
                 onChange={(event) =>

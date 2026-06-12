@@ -30,7 +30,7 @@ type PageProps = {
 export default async function MonEspacePage({ searchParams }: PageProps) {
   const session = await getSession();
   if (!session) {
-    redirect("/connexion?redirect=/mon-espace");
+    redirect("/connexion?redirect=%2Fmon-espace%3Fsection%3Dfilms");
   }
 
   const { t } = await getServerTranslator();

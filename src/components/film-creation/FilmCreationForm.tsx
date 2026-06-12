@@ -1,6 +1,11 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState, type FormEvent } from "react";
+import { useTicketBalance } from "@/hooks/use-ticket-balance";
+import {
+  getTicketsRequiredForDuration,
+  PAID_FILM_DURATION_SECONDS,
+} from "@/lib/purchases/ticket-rules";
 import Link from "next/link";
 import { useLocale } from "@/components/LocaleProvider";
 import {
@@ -11,10 +16,11 @@ import { FILM_THEMES } from "@/lib/film-creation/types";
 import { CharacterFacePicker } from "@/components/film-creation/CharacterFacePicker";
 import { FilmDurationPicker } from "@/components/film-creation/FilmDurationPicker";
 import { YesNoTextField } from "@/components/film-creation/YesNoTextField";
+import { TicketCountPill } from "@/components/tickets/TicketCountPill";
 import {
   BTN_3D_PRIMARY_ACTION,
-  BTN_3D_PRIMARY_ACTION_LG,
   BTN_3D_SECONDARY_ACTION_LG,
+  BTN_FILM_CREATE_SUBMIT,
   SURFACE_3D_CARD,
 } from "@/lib/ui/button-3d-classes";
 import type { Character } from "@/lib/characters/types";
@@ -24,21 +30,74 @@ const initialState: FilmCreationFormState = {};
 
 type FilmCreationFormProps = {
   characters: Character[];
+  ticketBalance: number;
+  hasActiveSubscription: boolean;
 };
 
 function themeLabelKey(theme: (typeof FILM_THEMES)[number]): TranslationKey {
   return `filmCreation.themes.${theme}` as TranslationKey;
 }
 
-export function FilmCreationForm({ characters }: FilmCreationFormProps) {
+export function FilmCreationForm({
+  characters,
+  ticketBalance,
+  hasActiveSubscription,
+}: FilmCreationFormProps) {
   const { t } = useLocale();
+  const [durationSeconds, setDurationSeconds] = useState<number>(
+    PAID_FILM_DURATION_SECONDS[0]
+  );
+  const [clientError, setClientError] = useState<string | null>(null);
   const [state, formAction, pending] = useActionState(
     saveFilmCreation,
     initialState
   );
+  const { balance: liveBalance } = useTicketBalance();
+  const effectiveTicketBalance = liveBalance ?? ticketBalance;
+
+  const ticketsRequired = getTicketsRequiredForDuration(durationSeconds);
+  const insufficientTickets =
+    !hasActiveSubscription && effectiveTicketBalance < ticketsRequired;
+
+  function ticketCostLabel(count: number): string {
+    return count === 1
+      ? t("filmCreation.form.oneTicket")
+      : t("filmCreation.form.ticketsCount", { count });
+  }
 
   const eligibleCharacters = characters.filter((c) => c.photoSrc);
   const missingPhoto = characters.filter((c) => !c.photoSrc);
+
+  function validateBeforeSubmit(form: HTMLFormElement): string | null {
+    const formData = new FormData(form);
+    if (formData.getAll("themes").length === 0) {
+      return t("filmCreation.errors.themesRequired");
+    }
+    if (formData.getAll("characters").length === 0) {
+      return t("filmCreation.errors.selectCharacter");
+    }
+    if (insufficientTickets) {
+      return t("filmCreation.errors.insufficientTickets");
+    }
+    return null;
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    const validationError = validateBeforeSubmit(event.currentTarget);
+    if (validationError) {
+      event.preventDefault();
+      setClientError(validationError);
+      return;
+    }
+    setClientError(null);
+  }
+
+  const insufficientTicketsMessage = t("filmCreation.errors.insufficientTickets");
+  const showTicketPurchaseCta =
+    !hasActiveSubscription &&
+    (insufficientTickets ||
+      clientError === insufficientTicketsMessage ||
+      state.error === insufficientTicketsMessage);
 
   if (state.success) {
     return (
@@ -66,7 +125,12 @@ export function FilmCreationForm({ characters }: FilmCreationFormProps) {
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-8 sm:gap-10">
+    <form
+      action={formAction}
+      noValidate
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-8 sm:gap-10"
+    >
       <fieldset className="space-y-4">
         <legend className="font-display text-lg font-semibold text-cream md:text-xl">
           {t("filmCreation.form.themesLegend")}
@@ -127,7 +191,10 @@ export function FilmCreationForm({ characters }: FilmCreationFormProps) {
         )}
       </fieldset>
 
-      <FilmDurationPicker />
+      <FilmDurationPicker
+        value={durationSeconds}
+        onChange={setDurationSeconds}
+      />
 
       <YesNoTextField
         question={t("filmCreation.form.avoidQuestion")}
@@ -147,19 +214,53 @@ export function FilmCreationForm({ characters }: FilmCreationFormProps) {
         hint={t("filmCreation.form.storyHint")}
       />
 
-      {state.error && (
+      {showTicketPurchaseCta ? (
+        <div className="rounded-xl border border-amber-500/35 bg-amber-950/30 px-4 py-4 text-center">
+          <p className="text-sm text-amber-100/95">{insufficientTicketsMessage}</p>
+          <Link
+            href="/achat"
+            className={`mt-4 inline-flex ${BTN_3D_PRIMARY_ACTION}`}
+          >
+            {t("filmCreation.errors.purchaseCta")}
+          </Link>
+        </div>
+      ) : (clientError || state.error) ? (
         <p className="rounded-lg border border-red-500/30 bg-red-950/40 px-3 py-2 text-sm text-red-200">
-          {state.error}
+          {clientError ?? state.error}
         </p>
-      )}
+      ) : null}
 
-      <button
-        type="submit"
-        disabled={pending || eligibleCharacters.length === 0}
-        className={BTN_3D_PRIMARY_ACTION_LG}
-      >
-        {pending ? t("filmCreation.form.pending") : t("filmCreation.form.submit")}
-      </button>
+      <div className="film-create-submit-wrap">
+        <button
+          type="submit"
+          disabled={pending || eligibleCharacters.length === 0}
+          className={`${BTN_FILM_CREATE_SUBMIT}${
+            insufficientTickets ? " film-create-submit--blocked" : ""
+          }`}
+          aria-disabled={insufficientTickets || undefined}
+        >
+          {pending ? (
+            <span className="film-create-submit__pending">
+              {t("filmCreation.form.pending")}
+            </span>
+          ) : (
+            <>
+              <span className="film-create-submit__label">
+                {t("filmCreation.form.submit")}
+              </span>
+              {!hasActiveSubscription ? (
+                <span className="film-create-submit__cost">
+                  <TicketCountPill
+                    count={ticketsRequired}
+                    size="onPrimary"
+                    label={ticketCostLabel(ticketsRequired)}
+                  />
+                </span>
+              ) : null}
+            </>
+          )}
+        </button>
+      </div>
     </form>
   );
 }

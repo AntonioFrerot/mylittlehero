@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/Button";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { HeaderTicketCount } from "@/components/tickets/HeaderTicketCount";
 import { useLocale } from "@/components/LocaleProvider";
 import { useAuthUser } from "@/hooks/use-auth-user";
 
@@ -18,6 +19,7 @@ export function HeaderAuth() {
   if (user) {
     return (
       <div className="hidden items-center justify-end gap-2 md:flex">
+        <HeaderTicketCount />
         <Button href="/mon-espace" variant="primary" className="!px-4 !py-2 !text-sm">
           {t("nav.mySpace")}
         </Button>
@@ -51,14 +53,17 @@ export function MobileAuthLinks({ onNavigate }: { onNavigate: () => void }) {
   if (user) {
     return (
       <div className="flex flex-col gap-2">
-        <Button
-          href="/mon-espace"
-          variant="primary"
-          className={mobileAuthButtonClass}
-          onClick={onNavigate}
-        >
-          {t("nav.mySpace")}
-        </Button>
+        <div className="flex items-center justify-end gap-2">
+          <HeaderTicketCount />
+          <Button
+            href="/mon-espace"
+            variant="primary"
+            className={`${mobileAuthButtonClass} flex-1`}
+            onClick={onNavigate}
+          >
+            {t("nav.mySpace")}
+          </Button>
+        </div>
         <LogoutButton fullWidth className={mobileAuthButtonClass} />
       </div>
     );
