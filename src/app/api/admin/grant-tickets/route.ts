@@ -7,10 +7,15 @@ type GrantTicketsBody = {
 };
 
 export async function POST(request: Request) {
-  const secret = process.env.AUTH_SECRET?.trim();
   const header = request.headers.get("x-admin-secret")?.trim();
+  const allowedSecrets = [
+    process.env.ADMIN_GRANT_SECRET,
+    process.env.AUTH_SECRET,
+  ]
+    .map((value) => value?.trim())
+    .filter((value): value is string => Boolean(value));
 
-  if (!secret || header !== secret) {
+  if (!header || !allowedSecrets.includes(header)) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 
