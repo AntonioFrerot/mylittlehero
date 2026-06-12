@@ -53,17 +53,14 @@ export function MobileAuthLinks({ onNavigate }: { onNavigate: () => void }) {
   if (user) {
     return (
       <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-end gap-2">
-          <HeaderTicketCount />
-          <Button
-            href="/mon-espace"
-            variant="primary"
-            className={`${mobileAuthButtonClass} flex-1`}
-            onClick={onNavigate}
-          >
-            {t("nav.mySpace")}
-          </Button>
-        </div>
+        <Button
+          href="/mon-espace"
+          variant="primary"
+          className={mobileAuthButtonClass}
+          onClick={onNavigate}
+        >
+          {t("nav.mySpace")}
+        </Button>
         <LogoutButton fullWidth className={mobileAuthButtonClass} />
       </div>
     );

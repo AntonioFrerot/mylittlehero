@@ -7,7 +7,7 @@ import {
   isDatabaseEnabled,
   isHostedProduction,
 } from "@/lib/db/client";
-import { normalizeEmail } from "@/lib/db/normalize-email";
+import { isValidEmail, normalizeEmail } from "@/lib/db/normalize-email";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { DEFAULT_LOCALE } from "@/lib/i18n/locales";
 import { hashPassword, verifyPassword } from "./password";
@@ -94,7 +94,7 @@ async function findUserByEmailFile(
   email: string
 ): Promise<StoredUser | undefined> {
   const users = await readUsersFile();
-  return users.find((u) => u.email === email);
+  return users.find((u) => normalizeEmail(u.email) === email);
 }
 
 export async function findUserByEmail(
@@ -107,27 +107,25 @@ export async function findUserByEmail(
   return findUserByEmailFile(normalized);
 }
 
+export type RegisterUserError = "invalid_email" | "email_exists" | "unavailable";
+
 export async function registerUser(input: {
   email: string;
   password: string;
   name?: string;
-}): Promise<{ ok: true } | { ok: false; error: string }> {
+}): Promise<{ ok: true } | { ok: false; error: RegisterUserError }> {
   if (isHostedProduction() && !isDatabaseEnabled()) {
-    return {
-      ok: false,
-      error:
-        "La création de compte n'est pas encore configurée sur ce serveur. Contactez le support.",
-    };
+    return { ok: false, error: "unavailable" };
   }
 
   const email = normalizeEmail(input.email);
+  if (!isValidEmail(email)) {
+    return { ok: false, error: "invalid_email" };
+  }
 
   try {
     if (await findUserByEmail(email)) {
-      return {
-        ok: false,
-        error: "Un compte existe déjà avec cette adresse e-mail.",
-      };
+      return { ok: false, error: "email_exists" };
     }
 
     const passwordHash = await hashPassword(input.password);
@@ -137,14 +135,23 @@ export async function registerUser(input: {
     if (isDatabaseEnabled()) {
       await ensureSchema();
       const db = getSql();
-      await db`
+      const inserted = await db<{ email: string }[]>`
         INSERT INTO users (email, name, password_hash, created_at)
         VALUES (${email}, ${name ?? null}, ${passwordHash}, ${createdAt})
+        ON CONFLICT (email) DO NOTHING
+        RETURNING email
       `;
+      if (inserted.length === 0) {
+        return { ok: false, error: "email_exists" };
+      }
       return { ok: true };
     }
 
     const users = await readUsersFile();
+    if (users.some((user) => normalizeEmail(user.email) === email)) {
+      return { ok: false, error: "email_exists" };
+    }
+
     users.push({
       email,
       name,
@@ -154,7 +161,7 @@ export async function registerUser(input: {
     await writeUsersFile(users);
     return { ok: true };
   } catch {
-    return { ok: false, error: databaseRequiredError() };
+    return { ok: false, error: "unavailable" };
   }
 }
 

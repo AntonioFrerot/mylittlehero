@@ -9,6 +9,8 @@ import {
   AUTH_REDIRECT_SIGNUP_DEFAULT,
   getAuthRedirectFromForm,
 } from "./redirect-paths";
+import { isValidEmail, normalizeEmail } from "@/lib/db/normalize-email";
+import { getServerTranslator } from "@/lib/i18n/server";
 import { authenticateUser, registerUser } from "./users-store";
 
 const SESSION_MAX_AGE = 60 * 60 * 24 * 30;
@@ -21,13 +23,22 @@ function validateCredentials(
   email: unknown,
   password: unknown
 ): { email: string; password: string } | { error: string } {
-  if (typeof email !== "string" || !email.includes("@")) {
+  if (typeof email !== "string" || !isValidEmail(email)) {
     return { error: "Indiquez une adresse e-mail valide." };
   }
   if (typeof password !== "string" || password.length < 6) {
     return { error: "Le mot de passe doit contenir au moins 6 caractères." };
   }
-  return { email: email.trim().toLowerCase(), password };
+  return { email: normalizeEmail(email), password };
+}
+
+function registerErrorMessage(
+  error: "invalid_email" | "email_exists" | "unavailable",
+  t: (key: "auth.invalidEmail" | "auth.emailAlreadyRegistered" | "auth.signupUnavailable") => string
+): string {
+  if (error === "email_exists") return t("auth.emailAlreadyRegistered");
+  if (error === "invalid_email") return t("auth.invalidEmail");
+  return t("auth.signupUnavailable");
 }
 
 async function setSession(user: SessionUser, redirectTo: string) {
@@ -91,7 +102,10 @@ export async function signUp(
     name: typeof name === "string" ? name : undefined,
   });
 
-  if (!result.ok) return { error: result.error };
+  if (!result.ok) {
+    const { t } = await getServerTranslator();
+    return { error: registerErrorMessage(result.error, t) };
+  }
 
   const redirectTo = getAuthRedirectFromForm(
     formData,

@@ -6,6 +6,8 @@ import { HashLink } from "@/components/ui/HashLink";
 import { useEffect, useState } from "react";
 import { HeaderAuth } from "@/components/auth/HeaderAuth";
 import { MobileNavMenu } from "@/components/MobileNavMenu";
+import { HeaderTicketCount } from "@/components/tickets/HeaderTicketCount";
+import { useAuthUser } from "@/hooks/use-auth-user";
 import { useLocale } from "@/components/LocaleProvider";
 import { BRAND_NAME, SITE_LOGO_SRC } from "@/lib/brand";
 import { SITE_NAV_LINKS } from "@/lib/navigation/site-nav";
@@ -14,6 +16,7 @@ import { usePathname } from "next/navigation";
 
 export function Header() {
   const { t } = useLocale();
+  const user = useAuthUser();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -133,38 +136,41 @@ export function Header() {
           <HeaderAuth />
         </div>
 
-        <button
-          type="button"
-          className={`${BTN_3D_ICON} h-11 w-11 rounded-lg text-cream md:hidden`}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-nav-panel"
-          aria-label={menuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          {menuOpen ? (
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M6 6l12 12M18 6L6 18" />
-            </svg>
-          ) : (
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M4 7h16M4 12h16M4 17h16" />
-            </svg>
-          )}
-        </button>
+        <div className="flex shrink-0 items-center gap-2 md:hidden">
+          {user ? <HeaderTicketCount className="header-ticket-count--mobile" /> : null}
+          <button
+            type="button"
+            className={`${BTN_3D_ICON} h-11 w-11 rounded-lg text-cream`}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-nav-panel"
+            aria-label={menuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? (
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            ) : (
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M4 7h16M4 12h16M4 17h16" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
 
       {menuOpen && (

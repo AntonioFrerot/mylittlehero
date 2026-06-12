@@ -12,8 +12,8 @@ import {
   saveFilmCreation,
   type FilmCreationFormState,
 } from "@/lib/film-creation/actions";
-import { FILM_THEMES } from "@/lib/film-creation/types";
 import { CharacterFacePicker } from "@/components/film-creation/CharacterFacePicker";
+import { FilmThemePicker } from "@/components/film-creation/FilmThemePicker";
 import { FilmDurationPicker } from "@/components/film-creation/FilmDurationPicker";
 import { YesNoTextField } from "@/components/film-creation/YesNoTextField";
 import { TicketCountPill } from "@/components/tickets/TicketCountPill";
@@ -21,10 +21,8 @@ import {
   BTN_3D_PRIMARY_ACTION,
   BTN_3D_SECONDARY_ACTION_LG,
   BTN_FILM_CREATE_SUBMIT,
-  SURFACE_3D_CARD,
 } from "@/lib/ui/button-3d-classes";
 import type { Character } from "@/lib/characters/types";
-import type { TranslationKey } from "@/lib/i18n/translator";
 
 const initialState: FilmCreationFormState = {};
 
@@ -33,10 +31,6 @@ type FilmCreationFormProps = {
   ticketBalance: number;
   hasActiveSubscription: boolean;
 };
-
-function themeLabelKey(theme: (typeof FILM_THEMES)[number]): TranslationKey {
-  return `filmCreation.themes.${theme}` as TranslationKey;
-}
 
 export function FilmCreationForm({
   characters,
@@ -129,29 +123,16 @@ export function FilmCreationForm({
       action={formAction}
       noValidate
       onSubmit={handleSubmit}
-      className="flex flex-col gap-8 sm:gap-10"
+      className="film-creation-form flex flex-col gap-8 sm:gap-10"
     >
-      <fieldset className="space-y-4">
+      <fieldset className="film-creation-form__themes">
         <legend className="font-display text-lg font-semibold text-cream md:text-xl">
           {t("filmCreation.form.themesLegend")}
         </legend>
-        <p className="text-sm text-cream/50">{t("filmCreation.form.themesHint")}</p>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:gap-3">
-          {FILM_THEMES.map((theme) => (
-            <label
-              key={theme}
-              className={SURFACE_3D_CARD}
-            >
-              <input
-                type="checkbox"
-                name="themes"
-                value={theme}
-                className="h-4 w-4 shrink-0 rounded border-white/20 bg-cinema-black text-gold accent-gold"
-              />
-              <span className="text-sm text-cream/85">{t(themeLabelKey(theme))}</span>
-            </label>
-          ))}
-        </div>
+        <p className="film-creation-form__themes-hint text-sm text-cream/50">
+          {t("filmCreation.form.themesHint")}
+        </p>
+        <FilmThemePicker />
       </fieldset>
 
       <fieldset className="space-y-3">

@@ -125,6 +125,11 @@ export const en = {
     loading: "Loading…",
     tabsLabel: "Log in or sign up",
     termsPrefix: "By continuing, you accept our terms of use.",
+    invalidEmail: "Enter a valid email address.",
+    emailAlreadyRegistered:
+      "An account already exists with this email. Log in with this email — only one account is allowed per address.",
+    signupUnavailable:
+      "Account creation is not configured on this server yet. Please contact support.",
   },
   space: {
     backHome: "← Back to home",
@@ -468,6 +473,8 @@ export const en = {
       themesLegend: "Which themes?",
       themesHint:
         "These themes guide how your story is created. You can select several to blend different worlds.",
+      themesChoose: "Choose one or more themes…",
+      themesSelectedCount: "{count} themes selected",
       characterLegend: "Which characters in the story?",
       characterHint:
         "Click on the characters you want to see in the story. (Click first on the main character)",

@@ -127,6 +127,11 @@ export const fr = {
     loading: "Chargement…",
     tabsLabel: "Connexion ou inscription",
     termsPrefix: "En continuant, vous acceptez nos conditions d'utilisation.",
+    invalidEmail: "Indiquez une adresse e-mail valide.",
+    emailAlreadyRegistered:
+      "Un compte existe déjà avec cette adresse e-mail. Connectez-vous avec cet e-mail — un seul compte est autorisé par adresse.",
+    signupUnavailable:
+      "La création de compte n'est pas encore configurée sur ce serveur. Contactez le support.",
   },
   space: {
     backHome: "← Retour à l'accueil",
@@ -471,6 +476,8 @@ export const fr = {
       themesLegend: "Quels thèmes ?",
       themesHint:
         "Cochez le ou les thèmes qui guideront la création de l'histoire.",
+      themesChoose: "Choisir les thèmes...",
+      themesSelectedCount: "{count} thèmes sélectionnés",
       characterLegend: "Quels personnages ?",
       characterHint:
         "Sélectionnez les personnages que vous souhaitez voir dans l'histoire. (Cliquez en premier sur le personnage principal)",
