@@ -2549,26 +2549,37 @@ body {
 }
 
 .gold-ticket--header .gold-ticket__icon {
-  height: 1.75rem;
+  height: 2rem;
 }
 
 .gold-ticket--header .gold-ticket__value {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
 }
 
 .header-ticket-count--mobile {
   display: flex;
   align-items: center;
-  padding-right: 0.1rem;
+  padding-right: 0.15rem;
 }
 
 @media (max-width: 767px) {
+  .header-ticket-count--mobile .gold-ticket--header {
+    gap: 0.45rem;
+  }
+
   .header-ticket-count--mobile .gold-ticket--header .gold-ticket__icon {
-    height: 1.55rem;
+    height: 2.35rem;
+    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.5))
+      drop-shadow(0 0 16px rgba(232, 197, 71, 0.35));
   }
 
   .header-ticket-count--mobile .gold-ticket--header .gold-ticket__value {
-    font-size: 0.98rem;
+    font-size: 1.2rem;
+  }
+
+  .header-ticket-count--mobile .gold-ticket-skeleton {
+    width: 4.5rem;
+    height: 2.35rem;
   }
 }
 
