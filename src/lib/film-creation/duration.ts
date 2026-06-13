@@ -45,6 +45,10 @@ export function formatFilmDurationSeconds(
   totalSeconds: number,
   locale: "fr" | "en" = "fr"
 ): string {
+  if (totalSeconds < 60) {
+    return locale === "en" ? `${totalSeconds} sec` : `${totalSeconds} sec`;
+  }
+
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
 

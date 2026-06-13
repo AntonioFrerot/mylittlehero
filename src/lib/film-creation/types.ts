@@ -63,6 +63,8 @@ export type UserFilm = {
   style: FilmStyle | string;
   themes: (FilmTheme | string)[];
   durationSeconds?: number;
+  /** Film gratuit unique (15 s). */
+  isFreeTrial?: boolean;
   /** @deprecated Ancien champ en minutes entières */
   durationMinutes?: number;
   characters: FilmCharacterRef[];

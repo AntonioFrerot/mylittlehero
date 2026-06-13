@@ -21,10 +21,13 @@ import { readStoryManifest } from "@/lib/story-generation/manifest";
 import { findUserByEmail } from "@/lib/auth/users-store";
 import {
   getTicketsRequiredForDuration,
+  isAllowedFilmDuration,
+  isFreeTrialFilmDuration,
   isPaidFilmDuration,
 } from "@/lib/purchases/ticket-rules";
 import { spendTicketsForFilm } from "@/lib/purchases/tickets";
 import { addUserFilm, getUserFilmById, listUserFilms, updateUserFilm } from "./store";
+import { hasUserUsedFreeFilm } from "./free-film";
 import type {
   FilmCharacterRef,
   FilmStyle,
@@ -77,6 +80,8 @@ function parseYesNoText(
 function parseDuration(value: unknown): number | null {
   if (typeof value !== "string" || !value.trim()) return null;
   const seconds = Number(value);
+  if (!Number.isFinite(seconds)) return null;
+  if (isFreeTrialFilmDuration(seconds)) return seconds;
   if (!isValidFilmDurationSeconds(seconds)) return null;
   return seconds;
 }
@@ -169,8 +174,17 @@ export async function saveFilmCreation(
   if (themes.length === 0) {
     return { error: t("filmCreation.errors.themesRequired") };
   }
-  if (!durationSeconds) {
+  if (!durationSeconds || !isAllowedFilmDuration(durationSeconds)) {
     return { error: t("filmCreation.errors.durationRequired") };
+  }
+
+  const isFreeFilm = isFreeTrialFilmDuration(durationSeconds);
+  const existingFilms = await listUserFilms(session.email);
+
+  if (isFreeFilm) {
+    if (hasUserUsedFreeFilm(existingFilms)) {
+      return { error: t("filmCreation.errors.freeFilmAlreadyUsed") };
+    }
   }
 
   const [user, filmLanguage] = await Promise.all([
@@ -181,19 +195,21 @@ export async function saveFilmCreation(
   const ticketsRequired = getTicketsRequiredForDuration(durationSeconds);
   const filmId = randomUUID();
 
-  if (!isPaidFilmDuration(durationSeconds)) {
-    return { error: t("filmCreation.errors.durationRequired") };
-  }
+  if (!isFreeFilm) {
+    if (!isPaidFilmDuration(durationSeconds)) {
+      return { error: t("filmCreation.errors.durationRequired") };
+    }
 
-  if (!hasActiveSubscription) {
-    const spendResult = await spendTicketsForFilm({
-      userEmail: session.email,
-      filmId,
-      tickets: ticketsRequired,
-    });
+    if (!hasActiveSubscription) {
+      const spendResult = await spendTicketsForFilm({
+        userEmail: session.email,
+        filmId,
+        tickets: ticketsRequired,
+      });
 
-    if (!spendResult.ok) {
-      return { error: t("filmCreation.errors.insufficientTickets") };
+      if (!spendResult.ok) {
+        return { error: t("filmCreation.errors.insufficientTickets") };
+      }
     }
   }
 
@@ -203,6 +219,7 @@ export async function saveFilmCreation(
     style,
     themes,
     durationSeconds,
+    ...(isFreeFilm ? { isFreeTrial: true } : {}),
     characters: selectedCharacters,
     language: filmLanguage,
     avoid,

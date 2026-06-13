@@ -3,12 +3,14 @@
 import { getSession } from "@/lib/auth/get-session";
 import { findUserByEmail } from "@/lib/auth/users-store";
 import { listUserFilms } from "@/lib/film-creation/store";
+import { hasUserUsedFreeFilm } from "@/lib/film-creation/free-film";
 import { getTicketBalance } from "@/lib/purchases/tickets";
 
 export type FilmTicketSummary = {
   balance: number;
   hasActiveSubscription: boolean;
   hasCreatedFilms: boolean;
+  freeFilmAvailable: boolean;
 };
 
 export async function getMyFilmTicketSummary(): Promise<FilmTicketSummary | null> {
@@ -25,5 +27,6 @@ export async function getMyFilmTicketSummary(): Promise<FilmTicketSummary | null
     balance,
     hasActiveSubscription: Boolean(user?.subscriptionPlanId),
     hasCreatedFilms: films.length > 0,
+    freeFilmAvailable: !hasUserUsedFreeFilm(films),
   };
 }

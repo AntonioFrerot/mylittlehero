@@ -4,6 +4,7 @@ import { useActionState, useState, type FormEvent } from "react";
 import { useTicketBalance } from "@/hooks/use-ticket-balance";
 import {
   getTicketsRequiredForDuration,
+  isFreeTrialFilmDuration,
   PAID_FILM_DURATION_SECONDS,
 } from "@/lib/purchases/ticket-rules";
 import Link from "next/link";
@@ -30,12 +31,14 @@ type FilmCreationFormProps = {
   characters: Character[];
   ticketBalance: number;
   hasActiveSubscription: boolean;
+  freeFilmAvailable: boolean;
 };
 
 export function FilmCreationForm({
   characters,
   ticketBalance,
   hasActiveSubscription,
+  freeFilmAvailable,
 }: FilmCreationFormProps) {
   const { t } = useLocale();
   const [durationSeconds, setDurationSeconds] = useState<number>(
@@ -49,9 +52,14 @@ export function FilmCreationForm({
   const { balance: liveBalance } = useTicketBalance();
   const effectiveTicketBalance = liveBalance ?? ticketBalance;
 
-  const ticketsRequired = getTicketsRequiredForDuration(durationSeconds);
+  const isFreeFilm = isFreeTrialFilmDuration(durationSeconds);
+  const ticketsRequired = isFreeFilm
+    ? 0
+    : getTicketsRequiredForDuration(durationSeconds);
   const insufficientTickets =
-    !hasActiveSubscription && effectiveTicketBalance < ticketsRequired;
+    !isFreeFilm &&
+    !hasActiveSubscription &&
+    effectiveTicketBalance < ticketsRequired;
 
   function ticketCostLabel(count: number): string {
     return count === 1
@@ -175,6 +183,7 @@ export function FilmCreationForm({
       <FilmDurationPicker
         value={durationSeconds}
         onChange={setDurationSeconds}
+        freeFilmAvailable={freeFilmAvailable}
       />
 
       <YesNoTextField
@@ -229,13 +238,17 @@ export function FilmCreationForm({
               <span className="film-create-submit__label">
                 {t("filmCreation.form.submit")}
               </span>
-              {!hasActiveSubscription ? (
+              {!hasActiveSubscription && !isFreeFilm ? (
                 <span className="film-create-submit__cost">
                   <TicketCountPill
                     count={ticketsRequired}
                     size="onPrimary"
                     label={ticketCostLabel(ticketsRequired)}
                   />
+                </span>
+              ) : isFreeFilm ? (
+                <span className="film-create-submit__cost film-create-submit__cost--free">
+                  {t("filmCreation.form.durationFreeBadge")}
                 </span>
               ) : null}
             </>

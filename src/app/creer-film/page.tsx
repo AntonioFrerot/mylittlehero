@@ -58,6 +58,7 @@ export default async function CreerFilmPage() {
               characters={characters}
               ticketBalance={ticketSummary?.balance ?? 0}
               hasActiveSubscription={ticketSummary?.hasActiveSubscription ?? false}
+              freeFilmAvailable={ticketSummary?.freeFilmAvailable ?? false}
             />
           </div>
 

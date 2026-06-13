@@ -2881,6 +2881,25 @@ body {
   gap: 0.875rem;
 }
 
+.duration-options-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+@media (min-width: 640px) {
+  .duration-options-wrap {
+    gap: 1rem;
+  }
+}
+
+.film-create-submit__cost--free {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
 @media (min-width: 640px) {
   .duration-options {
     gap: 1rem;
@@ -2987,4 +3006,44 @@ body {
   line-height: 1;
   color: var(--gold-light);
   white-space: nowrap;
+}
+
+.duration-option.duration-option--free {
+  min-height: 7.5rem;
+}
+
+.duration-option.duration-option--free .duration-option__main {
+  flex: 0 0 auto;
+  padding: 1rem 1rem 0.35rem;
+}
+
+.duration-option.duration-option--free .duration-option__value {
+  font-size: clamp(1.5rem, 4.5vw, 2rem);
+}
+
+.duration-option__free-note {
+  margin: 0;
+  padding: 0 1rem 0.65rem;
+  text-align: center;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: rgba(244, 240, 232, 0.55);
+}
+
+.duration-option.duration-option--active .duration-option__free-note {
+  color: rgba(232, 197, 71, 0.78);
+}
+
+.duration-option__free-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  border: 1px solid rgba(201, 162, 39, 0.45);
+  background: rgba(201, 162, 39, 0.16);
+  padding: 0.35rem 0.85rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--gold-light);
 }

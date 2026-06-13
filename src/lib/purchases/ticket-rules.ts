@@ -1,8 +1,10 @@
 import type { PurchasePlanId } from "@/lib/i18n/purchase-catalog";
-import { FILM_DURATION_MIN_SECONDS } from "@/lib/film-creation/duration";
 
 /** 1 ticket = 5 minutes de film. */
 export const TICKET_DURATION_SECONDS = 5 * 60;
+
+/** Durée du film gratuit unique (essai). */
+export const FREE_FILM_DURATION_SECONDS = 15;
 
 export const PAID_FILM_DURATION_SECONDS = [5 * 60, 10 * 60] as const;
 
@@ -22,7 +24,14 @@ export function getTicketsRequiredForDuration(durationSeconds: number): number {
 }
 
 export function isFreeTrialFilmDuration(durationSeconds: number): boolean {
-  return durationSeconds <= FILM_DURATION_MIN_SECONDS;
+  return durationSeconds === FREE_FILM_DURATION_SECONDS;
+}
+
+export function isAllowedFilmDuration(durationSeconds: number): boolean {
+  return (
+    isPaidFilmDuration(durationSeconds) ||
+    isFreeTrialFilmDuration(durationSeconds)
+  );
 }
 
 export function formatTicketCostLabel(
