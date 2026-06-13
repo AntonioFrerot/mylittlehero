@@ -477,6 +477,7 @@ export const fr = {
       themesHint:
         "Cochez le ou les thèmes qui guideront la création de l'histoire.",
       themesChoose: "Choisir les thèmes...",
+      themesValidate: "Valider",
       themesSelectedCount: "{count} thèmes sélectionnés",
       characterLegend: "Quels personnages ?",
       characterHint:

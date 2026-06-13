@@ -474,6 +474,7 @@ export const en = {
       themesHint:
         "These themes guide how your story is created. You can select several to blend different worlds.",
       themesChoose: "Choose one or more themes…",
+      themesValidate: "Confirm",
       themesSelectedCount: "{count} themes selected",
       characterLegend: "Which characters in the story?",
       characterHint:

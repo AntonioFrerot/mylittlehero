@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { FILM_THEMES } from "@/lib/film-creation/types";
-import { SURFACE_3D_CARD } from "@/lib/ui/button-3d-classes";
+import { SURFACE_3D_CARD, BTN_3D_PRIMARY_ACTION_LG } from "@/lib/ui/button-3d-classes";
 import type { TranslationKey } from "@/lib/i18n/translator";
 
 const MOBILE_THEMES_MQ = "(max-width: 639px)";
@@ -31,12 +31,34 @@ export function FilmThemePicker() {
   const listId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState<string[]>([]);
+  const [draftSelected, setDraftSelected] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const isMobile = useSyncExternalStore(
     subscribeMobileViewport,
     getMobileViewportSnapshot,
     getMobileViewportServerSnapshot
   );
+
+  function toggleDraftTheme(theme: string) {
+    setDraftSelected((prev) =>
+      prev.includes(theme) ? prev.filter((id) => id !== theme) : [...prev, theme]
+    );
+  }
+
+  function openPanel() {
+    setDraftSelected(selected);
+    setOpen(true);
+  }
+
+  function closePanel() {
+    setDraftSelected(selected);
+    setOpen(false);
+  }
+
+  function validatePanel() {
+    setSelected(draftSelected);
+    setOpen(false);
+  }
 
   function toggleTheme(theme: string) {
     setSelected((prev) =>
@@ -59,12 +81,12 @@ export function FilmThemePicker() {
 
     function handlePointerDown(event: PointerEvent) {
       if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false);
+        closePanel();
       }
     }
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") closePanel();
     }
 
     document.addEventListener("pointerdown", handlePointerDown);
@@ -93,7 +115,7 @@ export function FilmThemePicker() {
             aria-expanded={open}
             aria-controls={listId}
             aria-haspopup="listbox"
-            onClick={() => setOpen((value) => !value)}
+            onClick={() => (open ? closePanel() : openPanel())}
           >
             <span className="film-theme-dropdown__trigger-label">{triggerLabel()}</span>
             <svg
@@ -109,34 +131,43 @@ export function FilmThemePicker() {
           </button>
 
           {open ? (
-            <ul
-              id={listId}
-              className="film-theme-dropdown__panel"
-              role="listbox"
-              aria-multiselectable="true"
-              aria-label={t("filmCreation.form.themesLegend")}
-            >
-              {FILM_THEMES.map((theme) => {
-                const isSelected = selected.includes(theme);
-                return (
-                  <li key={theme} role="option" aria-selected={isSelected}>
-                    <button
-                      type="button"
-                      className={`film-theme-dropdown__option${isSelected ? " film-theme-dropdown__option--selected" : ""}`}
-                      onClick={() => toggleTheme(theme)}
-                    >
-                      <span
-                        className={`film-theme-dropdown__check${isSelected ? " film-theme-dropdown__check--on" : ""}`}
-                        aria-hidden
+            <div className="film-theme-dropdown__panel-wrap">
+              <ul
+                id={listId}
+                className="film-theme-dropdown__panel"
+                role="listbox"
+                aria-multiselectable="true"
+                aria-label={t("filmCreation.form.themesLegend")}
+              >
+                {FILM_THEMES.map((theme) => {
+                  const isSelected = draftSelected.includes(theme);
+                  return (
+                    <li key={theme} role="option" aria-selected={isSelected}>
+                      <button
+                        type="button"
+                        className={`film-theme-dropdown__option${isSelected ? " film-theme-dropdown__option--selected" : ""}`}
+                        onClick={() => toggleDraftTheme(theme)}
                       >
-                        {isSelected ? "✓" : ""}
-                      </span>
-                      <span>{t(themeLabelKey(theme))}</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+                        <span
+                          className={`film-theme-dropdown__check${isSelected ? " film-theme-dropdown__check--on" : ""}`}
+                          aria-hidden
+                        >
+                          {isSelected ? "✓" : ""}
+                        </span>
+                        <span>{t(themeLabelKey(theme))}</span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+              <button
+                type="button"
+                className={BTN_3D_PRIMARY_ACTION_LG}
+                onClick={validatePanel}
+              >
+                {t("filmCreation.form.themesValidate")}
+              </button>
+            </div>
           ) : null}
         </div>
       </>

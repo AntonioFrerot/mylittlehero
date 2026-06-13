@@ -2564,22 +2564,22 @@ body {
 
 @media (max-width: 767px) {
   .header-ticket-count--mobile .gold-ticket--header {
-    gap: 0.45rem;
+    gap: 0.35rem;
   }
 
   .header-ticket-count--mobile .gold-ticket--header .gold-ticket__icon {
-    height: 2.35rem;
-    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.5))
-      drop-shadow(0 0 16px rgba(232, 197, 71, 0.35));
+    height: 1.65rem;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.45))
+      drop-shadow(0 0 12px rgba(232, 197, 71, 0.28));
   }
 
   .header-ticket-count--mobile .gold-ticket--header .gold-ticket__value {
-    font-size: 1.2rem;
+    font-size: 0.95rem;
   }
 
   .header-ticket-count--mobile .gold-ticket-skeleton {
-    width: 4.5rem;
-    height: 2.35rem;
+    width: 3.25rem;
+    height: 1.65rem;
   }
 }
 
@@ -2787,7 +2787,7 @@ body {
   transform: rotate(180deg);
 }
 
-.film-theme-dropdown__panel {
+.film-theme-dropdown__panel-wrap {
   position: absolute;
   z-index: 30;
   top: calc(100% + 0.45rem);
@@ -2795,11 +2795,8 @@ body {
   left: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
-  max-height: min(16.5rem, 52vh);
-  overflow-y: auto;
-  margin: 0;
-  list-style: none;
+  gap: 0.55rem;
+  overflow: hidden;
   border-radius: 1rem;
   border: 1px solid rgba(201, 162, 39, 0.35);
   background: rgba(11, 16, 32, 0.98);
@@ -2811,17 +2808,34 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
+.film-theme-dropdown__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-height: min(16.5rem, 52vh);
+  overflow-y: auto;
+  margin: 0;
+  list-style: none;
+  padding: 0;
+}
+
 .film-theme-dropdown__panel li {
   margin: 0;
   padding: 0;
 }
 
 @media (max-width: 639px) {
+  .film-theme-dropdown__panel-wrap {
+    position: static;
+    top: auto;
+    margin-top: 0.4rem;
+    padding: 0.55rem;
+  }
+
   .film-theme-dropdown__panel {
     max-height: none;
     overflow: visible;
     gap: 0.5rem;
-    padding: 0.55rem;
   }
 }
 
