@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { FILM_THEMES } from "@/lib/film-creation/types";
-import { SURFACE_3D_CARD, BTN_3D_PRIMARY_ACTION_LG } from "@/lib/ui/button-3d-classes";
+import { BTN_FILM_THEME_VALIDATE, SURFACE_3D_CARD } from "@/lib/ui/button-3d-classes";
 import type { TranslationKey } from "@/lib/i18n/translator";
 
 const MOBILE_THEMES_MQ = "(max-width: 639px)";
@@ -26,12 +26,14 @@ function getMobileViewportServerSnapshot() {
   return true;
 }
 
+const OUTSIDE_TAP_MOVE_THRESHOLD_PX = 10;
+
 export function FilmThemePicker() {
   const { t } = useLocale();
   const listId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const outsideTapRef = useRef<{ x: number; y: number; moved: boolean } | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
-  const [draftSelected, setDraftSelected] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const isMobile = useSyncExternalStore(
     subscribeMobileViewport,
@@ -39,24 +41,11 @@ export function FilmThemePicker() {
     getMobileViewportServerSnapshot
   );
 
-  function toggleDraftTheme(theme: string) {
-    setDraftSelected((prev) =>
-      prev.includes(theme) ? prev.filter((id) => id !== theme) : [...prev, theme]
-    );
-  }
-
   function openPanel() {
-    setDraftSelected(selected);
     setOpen(true);
   }
 
   function closePanel() {
-    setDraftSelected(selected);
-    setOpen(false);
-  }
-
-  function validatePanel() {
-    setSelected(draftSelected);
     setOpen(false);
   }
 
@@ -79,10 +68,40 @@ export function FilmThemePicker() {
   useEffect(() => {
     if (!open) return;
 
+    function isOutside(target: EventTarget | null): boolean {
+      return target instanceof Node && !rootRef.current?.contains(target);
+    }
+
     function handlePointerDown(event: PointerEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        closePanel();
+      if (!isOutside(event.target)) {
+        outsideTapRef.current = null;
+        return;
       }
+
+      outsideTapRef.current = {
+        x: event.clientX,
+        y: event.clientY,
+        moved: false,
+      };
+    }
+
+    function handlePointerMove(event: PointerEvent) {
+      const gesture = outsideTapRef.current;
+      if (!gesture || gesture.moved) return;
+
+      const dx = Math.abs(event.clientX - gesture.x);
+      const dy = Math.abs(event.clientY - gesture.y);
+      if (dx > OUTSIDE_TAP_MOVE_THRESHOLD_PX || dy > OUTSIDE_TAP_MOVE_THRESHOLD_PX) {
+        gesture.moved = true;
+      }
+    }
+
+    function handlePointerUp(event: PointerEvent) {
+      const gesture = outsideTapRef.current;
+      outsideTapRef.current = null;
+
+      if (!gesture || gesture.moved || !isOutside(event.target)) return;
+      closePanel();
     }
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -90,9 +109,16 @@ export function FilmThemePicker() {
     }
 
     document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("pointermove", handlePointerMove, { passive: true });
+    document.addEventListener("pointerup", handlePointerUp);
+    document.addEventListener("pointercancel", handlePointerUp);
     document.addEventListener("keydown", handleKeyDown);
     return () => {
+      outsideTapRef.current = null;
       document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("pointermove", handlePointerMove);
+      document.removeEventListener("pointerup", handlePointerUp);
+      document.removeEventListener("pointercancel", handlePointerUp);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [open]);
@@ -140,13 +166,13 @@ export function FilmThemePicker() {
                 aria-label={t("filmCreation.form.themesLegend")}
               >
                 {FILM_THEMES.map((theme) => {
-                  const isSelected = draftSelected.includes(theme);
+                  const isSelected = selected.includes(theme);
                   return (
                     <li key={theme} role="option" aria-selected={isSelected}>
                       <button
                         type="button"
                         className={`film-theme-dropdown__option${isSelected ? " film-theme-dropdown__option--selected" : ""}`}
-                        onClick={() => toggleDraftTheme(theme)}
+                        onClick={() => toggleTheme(theme)}
                       >
                         <span
                           className={`film-theme-dropdown__check${isSelected ? " film-theme-dropdown__check--on" : ""}`}
@@ -160,13 +186,15 @@ export function FilmThemePicker() {
                   );
                 })}
               </ul>
-              <button
-                type="button"
-                className={BTN_3D_PRIMARY_ACTION_LG}
-                onClick={validatePanel}
-              >
-                {t("filmCreation.form.themesValidate")}
-              </button>
+              <div className="film-theme-dropdown__footer">
+                <button
+                  type="button"
+                  className={BTN_FILM_THEME_VALIDATE}
+                  onClick={closePanel}
+                >
+                  {t("filmCreation.form.themesValidate")}
+                </button>
+              </div>
             </div>
           ) : null}
         </div>

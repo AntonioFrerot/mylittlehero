@@ -2839,6 +2839,30 @@ body {
   }
 }
 
+.film-theme-dropdown__footer {
+  margin-top: 0.1rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid rgba(201, 162, 39, 0.2);
+}
+
+.film-theme-dropdown__validate {
+  display: flex;
+  width: 100%;
+  min-height: 2.85rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.85rem;
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--cinema-black);
+}
+
+.film-theme-dropdown__validate:disabled {
+  cursor: not-allowed;
+}
+
 .film-theme-dropdown__option {
   display: flex;
   width: 100%;

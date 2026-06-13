@@ -30,6 +30,10 @@ export const BTN_3D_PRIMARY_ACTION =
 export const BTN_3D_PRIMARY_ACTION_LG =
   `btn-3d btn-3d--primary ${GLOW_SOFT} inline-flex min-h-[48px] w-full items-center justify-center rounded-full px-8 py-3.5 text-sm font-semibold transition-all hover:brightness-110 disabled:opacity-60 active:scale-[0.98] sm:w-auto`;
 
+/** Valider — menu thèmes mobile (doré compact, pleine largeur via CSS). */
+export const BTN_FILM_THEME_VALIDATE =
+  `btn-3d btn-3d--primary ${GLOW_SOFT} film-theme-dropdown__validate font-display font-bold transition-all hover:brightness-110 disabled:opacity-45 disabled:saturate-70 active:scale-[0.98]`;
+
 /** Bouton principal création de film — doré, compact, pastille ticket intégrée. */
 export const BTN_FILM_CREATE_SUBMIT =
   `btn-3d btn-3d--primary ${GLOW_FULL} film-create-submit font-display font-bold transition-all hover:brightness-110 disabled:opacity-55 disabled:saturate-75 active:scale-[0.98]`;

@@ -5,7 +5,6 @@ import { useTicketBalance } from "@/hooks/use-ticket-balance";
 import {
   getTicketsRequiredForDuration,
   isFreeTrialFilmDuration,
-  PAID_FILM_DURATION_SECONDS,
 } from "@/lib/purchases/ticket-rules";
 import Link from "next/link";
 import { useLocale } from "@/components/LocaleProvider";
@@ -41,9 +40,7 @@ export function FilmCreationForm({
   freeFilmAvailable,
 }: FilmCreationFormProps) {
   const { t } = useLocale();
-  const [durationSeconds, setDurationSeconds] = useState<number>(
-    PAID_FILM_DURATION_SECONDS[0]
-  );
+  const [durationSeconds, setDurationSeconds] = useState<number | null>(null);
   const [clientError, setClientError] = useState<string | null>(null);
   const [state, formAction, pending] = useActionState(
     saveFilmCreation,
@@ -52,11 +49,16 @@ export function FilmCreationForm({
   const { balance: liveBalance } = useTicketBalance();
   const effectiveTicketBalance = liveBalance ?? ticketBalance;
 
-  const isFreeFilm = isFreeTrialFilmDuration(durationSeconds);
-  const ticketsRequired = isFreeFilm
-    ? 0
-    : getTicketsRequiredForDuration(durationSeconds);
+  const isFreeFilm =
+    durationSeconds != null && isFreeTrialFilmDuration(durationSeconds);
+  const ticketsRequired =
+    durationSeconds != null
+      ? isFreeFilm
+        ? 0
+        : getTicketsRequiredForDuration(durationSeconds)
+      : 0;
   const insufficientTickets =
+    durationSeconds != null &&
     !isFreeFilm &&
     !hasActiveSubscription &&
     effectiveTicketBalance < ticketsRequired;
@@ -77,6 +79,10 @@ export function FilmCreationForm({
     }
     if (formData.getAll("characters").length === 0) {
       return t("filmCreation.errors.selectCharacter");
+    }
+    const durationRaw = formData.get("duration");
+    if (typeof durationRaw !== "string" || !durationRaw.trim()) {
+      return t("filmCreation.errors.durationRequired");
     }
     if (insufficientTickets) {
       return t("filmCreation.errors.insufficientTickets");
@@ -238,7 +244,7 @@ export function FilmCreationForm({
               <span className="film-create-submit__label">
                 {t("filmCreation.form.submit")}
               </span>
-              {!hasActiveSubscription && !isFreeFilm ? (
+              {!hasActiveSubscription && durationSeconds != null && !isFreeFilm ? (
                 <span className="film-create-submit__cost">
                   <TicketCountPill
                     count={ticketsRequired}
@@ -246,7 +252,7 @@ export function FilmCreationForm({
                     label={ticketCostLabel(ticketsRequired)}
                   />
                 </span>
-              ) : isFreeFilm ? (
+              ) : durationSeconds != null && isFreeFilm ? (
                 <span className="film-create-submit__cost film-create-submit__cost--free">
                   {t("filmCreation.form.durationFreeBadge")}
                 </span>

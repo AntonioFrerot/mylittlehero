@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { SITE_TICKET_SRC } from "@/lib/brand";
 import { formatFilmDurationSeconds } from "@/lib/film-creation/duration";
@@ -12,7 +11,7 @@ import {
 } from "@/lib/purchases/ticket-rules";
 
 type FilmDurationPickerProps = {
-  value: number;
+  value: number | null;
   onChange: (seconds: number) => void;
   freeFilmAvailable?: boolean;
 };
@@ -24,10 +23,8 @@ export function FilmDurationPicker({
 }: FilmDurationPickerProps) {
   const { locale, t } = useLocale();
   const displayLocale = locale === "fr" ? "fr" : "en";
-  const [selected, setSelected] = useState(value);
 
   function selectDuration(seconds: number) {
-    setSelected(seconds);
     onChange(seconds);
   }
 
@@ -44,12 +41,12 @@ export function FilmDurationPicker({
       </legend>
       <p className="text-sm text-cream/50">{t("filmCreation.form.durationHint")}</p>
 
-      <input type="hidden" name="duration" value={selected} />
+      <input type="hidden" name="duration" value={value ?? ""} />
 
       <div className="duration-options-wrap">
         <div className="duration-options">
           {PAID_FILM_DURATION_SECONDS.map((seconds) => {
-            const isActive = selected === seconds;
+            const isActive = value === seconds;
             const tickets = getTicketsRequiredForDuration(seconds);
 
             return (
@@ -91,14 +88,14 @@ export function FilmDurationPicker({
         {freeFilmAvailable ? (
           <label
             className={`duration-option duration-option--free ${
-              selected === FREE_FILM_DURATION_SECONDS ? "duration-option--active" : ""
+              value === FREE_FILM_DURATION_SECONDS ? "duration-option--active" : ""
             }`}
           >
             <input
               type="radio"
               name="durationChoice"
               value={FREE_FILM_DURATION_SECONDS}
-              checked={selected === FREE_FILM_DURATION_SECONDS}
+              checked={value === FREE_FILM_DURATION_SECONDS}
               onChange={() => selectDuration(FREE_FILM_DURATION_SECONDS)}
               className="sr-only"
             />
