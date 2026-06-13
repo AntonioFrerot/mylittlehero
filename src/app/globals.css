@@ -2652,6 +2652,12 @@ body {
   white-space: nowrap;
 }
 
+.film-create-submit--solo {
+  justify-content: center;
+  padding: 0.65rem 1.85rem;
+  min-width: min(100%, 15.5rem);
+}
+
 .film-create-submit__pending {
   padding-inline: 1rem;
   white-space: nowrap;

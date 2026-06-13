@@ -62,6 +62,8 @@ export function FilmCreationForm({
     !isFreeFilm &&
     !hasActiveSubscription &&
     effectiveTicketBalance < ticketsRequired;
+  const showSubmitCostBadge =
+    durationSeconds != null && (isFreeFilm || !hasActiveSubscription);
 
   function ticketCostLabel(count: number): string {
     return count === 1
@@ -232,7 +234,7 @@ export function FilmCreationForm({
           disabled={pending || eligibleCharacters.length === 0}
           className={`${BTN_FILM_CREATE_SUBMIT}${
             insufficientTickets ? " film-create-submit--blocked" : ""
-          }`}
+          }${!showSubmitCostBadge || pending ? " film-create-submit--solo" : ""}`}
           aria-disabled={insufficientTickets || undefined}
         >
           {pending ? (
