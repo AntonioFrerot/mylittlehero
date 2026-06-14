@@ -134,6 +134,9 @@ export const en = {
   space: {
     backHome: "← Back to home",
     eyebrow: "My account",
+    heroTitleBefore: "My ",
+    heroTitleAccent: "account",
+    heroLead: "Your profile, characters and films.",
     hello: "Hello, {name}",
     profile: "Profile",
     characters: "Characters",
@@ -159,8 +162,7 @@ export const en = {
     savingLanguage: "Saving…",
     languageUpdated: "Language updated.",
     profileSectionTitle: "Profile",
-    profileSectionDesc:
-      "Your first name appears on your account home. Email is used to log in.",
+    profileSectionDesc: "Email is used to log in.",
     saveName: "Save first name",
     savingName: "Saving…",
     nameUpdated: "First name updated.",

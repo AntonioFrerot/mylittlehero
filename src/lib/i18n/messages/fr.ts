@@ -136,6 +136,9 @@ export const fr = {
   space: {
     backHome: "← Retour à l'accueil",
     eyebrow: "Mon espace",
+    heroTitleBefore: "Mon ",
+    heroTitleAccent: "espace",
+    heroLead: "Votre profil, vos personnages et vos films.",
     hello: "Bonjour, {name}",
     profile: "Profil",
     characters: "Personnages",
@@ -161,8 +164,7 @@ export const fr = {
     savingLanguage: "Enregistrement…",
     languageUpdated: "Langue mise à jour.",
     profileSectionTitle: "Profil",
-    profileSectionDesc:
-      "Votre prénom s'affiche dans l'accueil de Mon espace. L'e-mail sert à vous connecter.",
+    profileSectionDesc: "L'e-mail sert à vous connecter.",
     saveName: "Enregistrer",
     savingName: "Enregistrement…",
     nameUpdated: "Prénom mis à jour.",
@@ -290,7 +292,7 @@ export const fr = {
   pricing: {
     backHome: "← Retour à l'accueil",
     title: "Créer le film de votre enfant",
-    subtitle: "Choisissez la formule qui correspond à votre famille.",
+    subtitle: "Choisissez la formule qui vous correspond.",
     freeTrial: "Essayer gratuitement",
     choosePlan: "Choisir cette offre",
     mostPopular: "Le plus populaire",

@@ -37,7 +37,6 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
   const { t } = await getServerTranslator();
   const params = await searchParams;
   const section = parseEspaceSection(params.section);
-  const greeting = session.name ?? session.email.split("@")[0];
   const createFilmHref = await resolveCreerSonFilmHref();
 
   const account =
@@ -49,25 +48,34 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-cinema-black pb-20 safe-top-offset">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
-          <Link
-            href="/"
-            className="text-sm text-cream/50 transition-colors hover:text-gold-light"
-          >
-            {t("space.backHome")}
-          </Link>
-
-          <div className="mt-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-light/80">
-              {t("space.eyebrow")}
-            </p>
-            <h1 className="font-display mt-2 text-3xl font-bold text-cream md:text-4xl">
-              {t("space.hello", { name: greeting })}
-            </h1>
+      <main className="min-h-screen bg-cinema-black pb-20">
+        <section className="mon-espace-hero safe-top-offset" aria-labelledby="mon-espace-title">
+          <div className="mon-espace-hero__ambient" aria-hidden>
+            <div className="mon-espace-hero__glow mon-espace-hero__glow--gold" />
+            <div className="mon-espace-hero__glow mon-espace-hero__glow--violet" />
           </div>
 
-          <div className="mt-8 grid gap-6 sm:mt-10 lg:grid-cols-[220px_1fr] lg:gap-10">
+          <div className="mon-espace-hero__shell mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
+            <Link href="/" className="mon-espace-hero__back">
+              {t("space.backHome")}
+            </Link>
+
+            <header className="mon-espace-hero__header">
+              <h1 id="mon-espace-title" className="mon-espace-hero__title">
+                <span className="mon-espace-hero__title-before">
+                  {t("space.heroTitleBefore")}
+                </span>
+                <span className="mon-espace-hero__title-accent">
+                  {t("space.heroTitleAccent")}
+                </span>
+              </h1>
+              <p className="mon-espace-hero__lead">{t("space.heroLead")}</p>
+            </header>
+          </div>
+        </section>
+
+        <div className="mon-espace-content mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
+          <div className="mt-2 grid gap-6 sm:mt-4 lg:grid-cols-[220px_1fr] lg:gap-10">
             <MonEspaceNav active={section} />
 
             <div className="min-w-0">
