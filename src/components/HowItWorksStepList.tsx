@@ -6,7 +6,6 @@ import { useLocale } from "@/components/LocaleProvider";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import {
   CREER_FILM_CONNEXION_REDIRECT,
-  CREER_FILM_PATH,
 } from "@/lib/navigation/creer-film";
 import { SURFACE_3D_ICON_LG, SURFACE_3D_STEP_CARD } from "@/lib/ui/button-3d-classes";
 import type { TranslationKey } from "@/lib/i18n/translator";
@@ -72,12 +71,16 @@ function StepIcon({ step }: { step: number }) {
   );
 }
 
-function getStepHref(step: number, isLoggedIn: boolean): string | undefined {
+function getStepHref(
+  step: number,
+  isLoggedIn: boolean,
+  createFilmHref: string
+): string | undefined {
   if (step === 1) {
     return isLoggedIn ? undefined : CREER_FILM_CONNEXION_REDIRECT;
   }
   if (step === 2) {
-    return isLoggedIn ? CREER_FILM_PATH : CREER_FILM_CONNEXION_REDIRECT;
+    return isLoggedIn ? createFilmHref : CREER_FILM_CONNEXION_REDIRECT;
   }
   return undefined;
 }
@@ -129,14 +132,18 @@ function StepCard({
   return <li className={className}>{content}</li>;
 }
 
-export function HowItWorksStepList() {
+type HowItWorksStepListProps = {
+  createFilmHref: string;
+};
+
+export function HowItWorksStepList({ createFilmHref }: HowItWorksStepListProps) {
   const user = useAuthUser();
   const isLoggedIn = !!user;
 
   return (
     <ol className="mt-10 grid gap-4 sm:mt-12 sm:gap-6 md:mt-16 md:grid-cols-3 md:gap-8">
       {STEPS.map((step) => {
-        const href = getStepHref(step, isLoggedIn);
+        const href = getStepHref(step, isLoggedIn, createFilmHref);
 
         if (href) {
           return (

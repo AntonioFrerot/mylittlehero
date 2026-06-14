@@ -143,7 +143,7 @@ export const en = {
       "Update your first name, password, language and plan linked to your account.",
     charactersTitle: "Characters",
     charactersDesc:
-      "Enter the first name, age, height and preferences for each character in your stories.",
+      "Enter the first name, age, height and preferences for each character in your stories. Add a face photo for each character.",
     filmsTitle: "My films",
     filmsDesc: "Find all the films you have created here.",
     browseCatalog: "Browse the catalogue",

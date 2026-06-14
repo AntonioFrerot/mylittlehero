@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getServerTranslator } from "@/lib/i18n/server";
-import { getCreerSonFilmHref } from "@/lib/navigation/creer-film";
-import { getSession } from "@/lib/auth/get-session";
+import { resolveCreerSonFilmHref } from "@/lib/navigation/creer-film.server";
 
 type PaymentSuccessContentProps = {
   kind: "purchase" | "subscription";
@@ -9,8 +8,7 @@ type PaymentSuccessContentProps = {
 
 export async function PaymentSuccessContent({ kind }: PaymentSuccessContentProps) {
   const { t } = await getServerTranslator();
-  const session = await getSession();
-  const creerHref = getCreerSonFilmHref(!!session);
+  const creerHref = await resolveCreerSonFilmHref();
 
   const title =
     kind === "purchase" ? t("checkout.successPurchaseTitle") : t("checkout.successSubscriptionTitle");

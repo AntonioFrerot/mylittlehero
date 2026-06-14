@@ -2,15 +2,13 @@ import { BrowseCatalogHero } from "@/components/browse/BrowseCatalogHero";
 import { BrowseThemeSection } from "@/components/browse/BrowseThemeSection";
 import { getCatalogFilmsForSession } from "@/lib/film-creation/catalog-films";
 import { getBrowseThemeRows } from "@/lib/browse-catalog";
-import { getSession } from "@/lib/auth/get-session";
 import { getServerTranslator } from "@/lib/i18n/server";
-import { getCreerSonFilmHref } from "@/lib/navigation/creer-film";
+import { resolveCreerSonFilmHref } from "@/lib/navigation/creer-film.server";
 import { themeNameKey } from "@/lib/theme-labels";
 
 export async function BrowseCatalogContent() {
   const { t, locale } = await getServerTranslator();
-  const session = await getSession();
-  const createHref = getCreerSonFilmHref(!!session);
+  const createHref = await resolveCreerSonFilmHref();
   const rows = getBrowseThemeRows();
   const userFilms = await getCatalogFilmsForSession();
   const durationLocale = locale === "fr" ? "fr" : "en";

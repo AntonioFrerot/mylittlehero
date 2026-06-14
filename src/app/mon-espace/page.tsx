@@ -9,6 +9,7 @@ import { getMyCharacters } from "@/lib/characters/actions";
 import { getMyFilmsWithStory } from "@/lib/film-creation/actions";
 import { getSession } from "@/lib/auth/get-session";
 import { parseEspaceSection } from "@/lib/espace/sections";
+import { resolveCreerSonFilmHref } from "@/lib/navigation/creer-film.server";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
 import Link from "next/link";
@@ -37,6 +38,7 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
   const params = await searchParams;
   const section = parseEspaceSection(params.section);
   const greeting = session.name ?? session.email.split("@")[0];
+  const createFilmHref = await resolveCreerSonFilmHref();
 
   const account =
     section === "profil" ? await getMyAccountDetails() : null;
@@ -81,7 +83,7 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
                       </p>
                     </div>
                     <Button
-                      href="/creer-film"
+                      href={createFilmHref}
                       variant="primary"
                       className="w-full !text-sm shrink-0 sm:w-auto"
                     >
@@ -99,28 +101,10 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
                   </div>
                 </>
               ) : section === "personnages" ? (
-                <>
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                      <h2 className="font-display text-xl font-semibold text-cream md:text-2xl">
-                        {t("space.charactersTitle")}
-                      </h2>
-                      <p className="mt-2 max-w-xl text-sm text-cream/60 md:text-base">
-                        {t("space.charactersDesc")}
-                      </p>
-                    </div>
-                    <Button
-                      href="/creer-film"
-                      variant="primary"
-                      className="w-full !text-sm shrink-0 sm:w-auto"
-                    >
-                      {t("space.createFilm")}
-                    </Button>
-                  </div>
-                  <div className="mt-8">
-                    <CharacterManager initialCharacters={characters} />
-                  </div>
-                </>
+                <CharacterManager
+                  initialCharacters={characters}
+                  createFilmHref={createFilmHref}
+                />
               ) : (
                 <>
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -141,7 +125,7 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
                         {t("space.browseCatalog")}
                       </Button>
                       <Button
-                        href="/creer-film"
+                        href={createFilmHref}
                         variant="primary"
                         className="w-full !text-sm shrink-0 sm:w-auto"
                       >
@@ -150,7 +134,7 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
                     </div>
                   </div>
                   <div className="mt-8">
-                    <MesFilmsList films={films} />
+                    <MesFilmsList films={films} createFilmHref={createFilmHref} />
                   </div>
                 </>
               )}

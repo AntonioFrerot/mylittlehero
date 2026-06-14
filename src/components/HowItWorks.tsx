@@ -1,8 +1,10 @@
 import { HowItWorksStepList } from "@/components/HowItWorksStepList";
 import { getServerTranslator } from "@/lib/i18n/server";
+import { resolveCreerSonFilmHref } from "@/lib/navigation/creer-film.server";
 
 export async function HowItWorks() {
   const { t } = await getServerTranslator();
+  const createFilmHref = await resolveCreerSonFilmHref();
 
   return (
     <section
@@ -20,7 +22,7 @@ export async function HowItWorks() {
           <p className="mt-4 text-cream/60">{t("home.howSubtitle")}</p>
         </div>
 
-        <HowItWorksStepList />
+        <HowItWorksStepList createFilmHref={createFilmHref} />
       </div>
     </section>
   );

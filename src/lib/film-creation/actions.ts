@@ -243,6 +243,8 @@ export async function saveFilmCreation(
 
   revalidatePath("/mon-espace");
   revalidatePath("/creer-film");
+  revalidatePath("/creer");
+  revalidatePath("/achat");
   revalidatePath("/catalogue");
 
   return { success: t("filmCreation.success") };

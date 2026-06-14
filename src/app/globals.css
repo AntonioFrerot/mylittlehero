@@ -1669,7 +1669,7 @@ body {
   }
 
   #catalogue .catalogue-video-backdrop > .hero-overlay-tint {
-    opacity: 0.8;
+    opacity: 0.7;
     -webkit-mask-image: none;
     mask-image: none;
   }

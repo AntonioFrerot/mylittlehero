@@ -2,8 +2,8 @@
 
 import { getSession } from "@/lib/auth/get-session";
 import { findUserByEmail } from "@/lib/auth/users-store";
+import { isFreeFilmAvailableForEmail } from "@/lib/film-creation/free-film";
 import { listUserFilms } from "@/lib/film-creation/store";
-import { hasUserUsedFreeFilm } from "@/lib/film-creation/free-film";
 import { getTicketBalance } from "@/lib/purchases/tickets";
 
 export type FilmTicketSummary = {
@@ -17,16 +17,17 @@ export async function getMyFilmTicketSummary(): Promise<FilmTicketSummary | null
   const session = await getSession();
   if (!session) return null;
 
-  const [balance, user, films] = await Promise.all([
+  const [balance, user, films, freeFilmAvailable] = await Promise.all([
     getTicketBalance(session.email),
     findUserByEmail(session.email),
     listUserFilms(session.email),
+    isFreeFilmAvailableForEmail(session.email),
   ]);
 
   return {
     balance,
     hasActiveSubscription: Boolean(user?.subscriptionPlanId),
     hasCreatedFilms: films.length > 0,
-    freeFilmAvailable: !hasUserUsedFreeFilm(films),
+    freeFilmAvailable,
   };
 }

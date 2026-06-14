@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   BTN_3D_COMPACT_SECONDARY,
@@ -10,6 +10,7 @@ import {
   SURFACE_3D_PANEL_LG,
 } from "@/lib/ui/button-3d-classes";
 import { useLocale } from "@/components/LocaleProvider";
+import { Button } from "@/components/ui/Button";
 import { CharacterPhotoUpload } from "@/components/espace/CharacterPhotoUpload";
 import {
   removeCharacter,
@@ -26,6 +27,7 @@ const inputClass =
 
 type CharacterManagerProps = {
   initialCharacters: Character[];
+  createFilmHref: string;
 };
 
 function formatMeta(character: Character): string {
@@ -36,9 +38,13 @@ function formatMeta(character: Character): string {
   return parts.join(" · ");
 }
 
-export function CharacterManager({ initialCharacters }: CharacterManagerProps) {
+export function CharacterManager({
+  initialCharacters,
+  createFilmHref,
+}: CharacterManagerProps) {
   const { t } = useLocale();
   const router = useRouter();
+  const formSectionRef = useRef<HTMLDivElement>(null);
   const [characters, setCharacters] = useState(initialCharacters);
   const [editing, setEditing] = useState<Character | null>(null);
   const [state, formAction, pending] = useActionState(upsertCharacter, initialState);
@@ -54,7 +60,16 @@ export function CharacterManager({ initialCharacters }: CharacterManagerProps) {
     }
   }, [state.success, router]);
 
-  const startNew = () => setEditing(null);
+  const scrollToForm = () => {
+    requestAnimationFrame(() => {
+      formSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
+
+  const startNew = () => {
+    setEditing(null);
+    scrollToForm();
+  };
   const startEdit = (character: Character) => setEditing(character);
 
   const handleDelete = async (id: string) => {
@@ -67,28 +82,42 @@ export function CharacterManager({ initialCharacters }: CharacterManagerProps) {
   };
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:gap-10">
+    <div className="space-y-8">
       <div>
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="font-display text-xl font-semibold text-cream md:text-2xl">
-            {t("characters.listTitle")}
-          </h2>
-          <button
-            type="button"
-            onClick={startNew}
-            className="text-sm text-gold-light transition-colors hover:text-gold"
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="font-display text-xl font-semibold text-cream md:text-2xl">
+              {t("space.charactersTitle")}
+            </h2>
+            <p className="mt-2 max-w-xl text-sm text-cream/60 md:text-base">
+              {t("space.charactersDesc")}
+            </p>
+          </div>
+          <Button
+            href={createFilmHref}
+            variant="primary"
+            className="w-full !text-sm shrink-0 sm:w-auto"
           >
-            {t("characters.addNew")}
-          </button>
+            {t("space.createFilm")}
+          </Button>
         </div>
-        <p className="mt-2 text-sm text-cream/55">{t("characters.listHint")}</p>
+        <button
+          type="button"
+          onClick={startNew}
+          className="mt-4 w-fit text-sm text-gold-light transition-colors hover:text-gold"
+        >
+          {t("characters.addNew")}
+        </button>
+      </div>
 
+      <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:gap-10">
+      <div>
         {characters.length === 0 ? (
-          <div className="mt-8 rounded-2xl border border-dashed border-white/15 bg-cinema-night/40 p-8 text-center">
+          <div className="rounded-2xl border border-dashed border-white/15 bg-cinema-night/40 p-8 text-center">
             <p className="text-cream/50">{t("characters.empty")}</p>
           </div>
         ) : (
-          <ul className="mt-6 flex flex-col gap-3">
+          <ul className="flex flex-col gap-3">
             {characters.map((character) => {
               const meta = formatMeta(character);
               return (
@@ -162,7 +191,10 @@ export function CharacterManager({ initialCharacters }: CharacterManagerProps) {
         )}
       </div>
 
-      <div className={`${SURFACE_3D_PANEL} rounded-2xl p-6 md:p-8`}>
+      <div
+        ref={formSectionRef}
+        className={`${SURFACE_3D_PANEL} scroll-mt-24 rounded-2xl p-6 md:p-8`}
+      >
         <h2 className="font-display text-xl font-semibold text-cream">
           {editing ? t("characters.formEditTitle") : t("characters.formAddTitle")}
         </h2>
@@ -248,6 +280,7 @@ export function CharacterManager({ initialCharacters }: CharacterManagerProps) {
                 : t("characters.submitAdd")}
           </button>
         </form>
+      </div>
       </div>
     </div>
   );

@@ -3,6 +3,8 @@ import { ExampleFilmHeroSpotlight } from "@/components/films/ExampleFilmHeroSpot
 import { ExampleFilmMedia } from "@/components/films/ExampleFilmMedia";
 import { HashLink } from "@/components/ui/HashLink";
 import { Button } from "@/components/ui/Button";
+import { getSession } from "@/lib/auth/get-session";
+import { isFreeFilmAvailableForEmail } from "@/lib/film-creation/free-film";
 import { getExampleFilm } from "@/lib/example-films";
 import { POSTER_DIMENSIONS } from "@/lib/hero-posters";
 import {
@@ -45,6 +47,11 @@ export default async function ExampleFilmPage({ params }: PageProps) {
   if (!film) notFound();
 
   const { locale, t } = await getServerTranslator();
+  const session = await getSession();
+  const showFreeTrialCta = session
+    ? await isFreeFilmAvailableForEmail(session.email)
+    : true;
+  const freeTrialHref = session ? "/creer-film" : "/connexion?redirect=%2Fcreer-film";
 
   const filmTitle = translateExampleFilmTitle(slug, film.title, locale);
   const filmTagline = translateExampleFilmTagline(slug, film.tagline, locale);
@@ -110,15 +117,17 @@ export default async function ExampleFilmPage({ params }: PageProps) {
             </aside>
           </div>
 
-          <div className="mt-6 sm:mt-8">
-            <Button
-              href="/connexion?redirect=%2Fcreer-film"
-              variant="primary"
-              className="w-full sm:w-auto"
-            >
-              {t("examples.tryFree")}
-            </Button>
-          </div>
+          {showFreeTrialCta ? (
+            <div className="mt-6 sm:mt-8">
+              <Button
+                href={freeTrialHref}
+                variant="primary"
+                className="w-full sm:w-auto"
+              >
+                {t("examples.tryFree")}
+              </Button>
+            </div>
+          ) : null}
 
           <div className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-cinema-surface shadow-glow-gold-subtle">
             <ExampleFilmMedia

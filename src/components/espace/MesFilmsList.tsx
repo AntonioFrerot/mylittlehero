@@ -81,9 +81,10 @@ function FilmPoster({
 
 type MesFilmsListProps = {
   films: UserFilmWithStory[];
+  createFilmHref: string;
 };
 
-export function MesFilmsList({ films }: MesFilmsListProps) {
+export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
   const { locale, t } = useLocale();
 
   if (films.length === 0) {
@@ -97,7 +98,7 @@ export function MesFilmsList({ films }: MesFilmsListProps) {
           <Button href="/catalogue" variant="secondary" className="!text-sm">
             {t("space.browseCatalog")}
           </Button>
-          <Button href="/creer-film" variant="primary" className="!text-sm">
+          <Button href={createFilmHref} variant="primary" className="!text-sm">
             {t("space.createFilm")}
           </Button>
         </div>

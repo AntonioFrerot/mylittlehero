@@ -3,12 +3,15 @@ import { FilmCreationForm } from "@/components/film-creation/FilmCreationForm";
 import { getMyCharacters } from "@/lib/characters/actions";
 import { getSession } from "@/lib/auth/get-session";
 import { getMyFilmTicketSummary } from "@/lib/purchases/actions";
+import { canCreateFilm, PRICING_PATH } from "@/lib/navigation/creer-film";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
 import { SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getServerTranslator();
@@ -24,12 +27,14 @@ export default async function CreerFilmPage() {
     redirect("/connexion?redirect=/creer-film");
   }
 
+  const ticketSummary = await getMyFilmTicketSummary();
+  if (ticketSummary && !canCreateFilm(ticketSummary)) {
+    redirect(PRICING_PATH);
+  }
+
   const { t } = await getServerTranslator();
   const greeting = session.name ?? session.email.split("@")[0];
-  const [characters, ticketSummary] = await Promise.all([
-    getMyCharacters(),
-    getMyFilmTicketSummary(),
-  ]);
+  const characters = await getMyCharacters();
 
   return (
     <>

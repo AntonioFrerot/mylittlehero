@@ -4,16 +4,13 @@ import {
   BTN_3D_PRIMARY_COMPACT,
   BTN_3D_SOFT_COMPACT,
   SURFACE_3D_PANEL_LG,
-  SURFACE_3D_SUBSCRIPTION,
 } from "@/lib/ui/button-3d-classes";
 
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Button } from "@/components/ui/Button";
 import { useLocale } from "@/components/LocaleProvider";
 import {
-  cancelAccountSubscription,
   updateAccountLocale,
   updateAccountName,
   updateAccountPassword,
@@ -22,7 +19,6 @@ import {
 import type { AccountDetails } from "@/lib/auth/users-store";
 import { LOCALES, getLocaleLabel, parseLocale, type LocaleCode } from "@/lib/i18n/locales";
 import { createTranslator } from "@/lib/i18n/translator";
-import { findPricingPlanById } from "@/lib/pricing";
 
 const initialState: AccountFormState = {};
 
@@ -95,10 +91,6 @@ export function AccountInformationsForm({
     updateAccountPassword,
     initialState
   );
-  const [cancelState, cancelAction, cancelPending] = useActionState(
-    cancelAccountSubscription,
-    initialState
-  );
   const [languageState, languageAction, languagePending] = useActionState(
     updateAccountLocale,
     initialState
@@ -109,12 +101,10 @@ export function AccountInformationsForm({
   }, [account.locale]);
 
   useEffect(() => {
-    if (nameState.success || cancelState.success || languageState.success) {
+    if (nameState.success || languageState.success) {
       router.refresh();
     }
-  }, [nameState.success, cancelState.success, languageState.success, router]);
-
-  const currentPlan = findPricingPlanById(account.subscriptionPlanId, locale);
+  }, [nameState.success, languageState.success, router]);
 
   return (
     <div className="space-y-6">
@@ -286,58 +276,6 @@ export function AccountInformationsForm({
               : t("space.updatePassword")}
           </button>
         </form>
-      </SectionCard>
-
-      <SectionCard
-        title={t("space.subscriptionTitle")}
-        description={t("space.subscriptionDesc")}
-      >
-        {currentPlan ? (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-            <p className={SURFACE_3D_SUBSCRIPTION}>
-              <span className="font-semibold text-gold-light">
-                {currentPlan.name}
-              </span>
-              <span className="text-cream/60">
-                {" "}
-                — {currentPlan.price}
-                {currentPlan.period}
-              </span>
-            </p>
-            <form
-              action={cancelAction}
-              className="shrink-0 sm:self-center"
-              onSubmit={(e) => {
-                if (!confirm(t("space.confirmCancelSubscription"))) {
-                  e.preventDefault();
-                }
-              }}
-            >
-              <button
-                type="submit"
-                disabled={cancelPending}
-                className="text-sm text-cream/45 transition-colors hover:text-red-300/90 disabled:opacity-50"
-              >
-                {cancelPending
-                  ? t("space.cancelling")
-                  : t("space.cancelSubscription")}
-              </button>
-            </form>
-          </div>
-        ) : (
-          <p className="text-sm text-cream/55">{t("space.noSubscription")}</p>
-        )}
-
-        <FormMessage
-          state={cancelState}
-          successMessage={
-            cancelState.success ? t("space.subscriptionCancelled") : undefined
-          }
-        />
-
-        <Button href="/creer" variant="secondary" className="!text-sm mt-6">
-          {t("space.changePlan")}
-        </Button>
       </SectionCard>
     </div>
   );
