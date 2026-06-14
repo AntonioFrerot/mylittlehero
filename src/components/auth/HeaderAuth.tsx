@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { HeaderTicketCount } from "@/components/tickets/HeaderTicketCount";
 import { useLocale } from "@/components/LocaleProvider";
+import { MON_ESPACE_DEFAULT_PATH } from "@/lib/espace/sections";
 import { useAuthUser } from "@/hooks/use-auth-user";
 
 export function HeaderAuth() {
@@ -20,7 +21,7 @@ export function HeaderAuth() {
     return (
       <div className="hidden items-center justify-end gap-2 md:flex">
         <HeaderTicketCount />
-        <Button href="/mon-espace" variant="primary" className="!px-4 !py-2 !text-sm">
+        <Button href={MON_ESPACE_DEFAULT_PATH} variant="primary" className="!px-4 !py-2 !text-sm">
           {t("nav.mySpace")}
         </Button>
         <LogoutButton />
@@ -54,7 +55,7 @@ export function MobileAuthLinks({ onNavigate }: { onNavigate: () => void }) {
     return (
       <div className="flex flex-col gap-2">
         <Button
-          href="/mon-espace"
+          href={MON_ESPACE_DEFAULT_PATH}
           variant="primary"
           className={mobileAuthButtonClass}
           onClick={onNavigate}

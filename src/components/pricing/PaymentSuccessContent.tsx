@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MON_ESPACE_DEFAULT_PATH } from "@/lib/espace/sections";
 import { getServerTranslator } from "@/lib/i18n/server";
 import { resolveCreerSonFilmHref } from "@/lib/navigation/creer-film.server";
 
@@ -39,7 +40,7 @@ export async function PaymentSuccessContent({ kind }: PaymentSuccessContentProps
             {t("checkout.successCta")}
           </Link>
           <Link
-            href="/mon-espace"
+            href={MON_ESPACE_DEFAULT_PATH}
             className="text-sm text-cream/50 transition-colors hover:text-gold-light"
           >
             {t("checkout.successAccount")}

@@ -8,7 +8,7 @@ import { getMyAccountDetails } from "@/lib/auth/account-actions";
 import { getMyCharacters } from "@/lib/characters/actions";
 import { getMyFilmsWithStory } from "@/lib/film-creation/actions";
 import { getSession } from "@/lib/auth/get-session";
-import { parseEspaceSection } from "@/lib/espace/sections";
+import { parseEspaceSection, MON_ESPACE_DEFAULT_PATH } from "@/lib/espace/sections";
 import { resolveCreerSonFilmHref } from "@/lib/navigation/creer-film.server";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
@@ -31,11 +31,14 @@ type PageProps = {
 export default async function MonEspacePage({ searchParams }: PageProps) {
   const session = await getSession();
   if (!session) {
-    redirect("/connexion?redirect=%2Fmon-espace%3Fsection%3Dfilms");
+    redirect(`/connexion?redirect=${encodeURIComponent(MON_ESPACE_DEFAULT_PATH)}`);
   }
 
   const { t } = await getServerTranslator();
   const params = await searchParams;
+  if (!params.section) {
+    redirect(MON_ESPACE_DEFAULT_PATH);
+  }
   const section = parseEspaceSection(params.section);
   const createFilmHref = await resolveCreerSonFilmHref();
 
@@ -61,7 +64,10 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
             </Link>
 
             <header className="mon-espace-hero__header">
-              <h1 id="mon-espace-title" className="mon-espace-hero__title">
+              <h1
+                id="mon-espace-title"
+                className="mon-espace-hero__title max-md:flex max-md:flex-col max-md:items-center max-md:leading-none"
+              >
                 <span className="mon-espace-hero__title-before">
                   {t("space.heroTitleBefore")}
                 </span>

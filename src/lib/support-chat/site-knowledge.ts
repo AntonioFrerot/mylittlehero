@@ -142,7 +142,7 @@ export function getIntentAnswer(
     case "catalogue":
       return `Le catalogue (/catalogue) liste les univers disponibles (${themes.map((t) => t.name).join(", ")}). Choisissez un thème pour lancer la création du film de votre enfant.`;
     case "monEspace":
-      return "Mon espace (/mon-espace) regroupe votre Profil, Les personnages et Mes films. C'est là que vous gérez vos héros, suivez la préparation des films et les regardez une fois prêts.";
+      return "Mon espace (/mon-espace) regroupe votre Profil, Personnages et Mes films. C'est là que vous gérez vos héros, suivez la préparation des films et les regardez une fois prêts.";
     default:
       return `Je n'ai pas tous les détails sur ce point précis. En revanche je peux vous guider sur /creer, /achat, la création de film, les personnages, le délai (jusqu'à 24 h) ou /contact.`;
   }
