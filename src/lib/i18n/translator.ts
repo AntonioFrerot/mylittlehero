@@ -44,13 +44,17 @@ function getNestedValue(obj: Record<string, unknown>, path: string): string {
 }
 
 export function createTranslator(locale: LocaleCode) {
-  const messages = getMessages(locale) as Record<string, unknown>;
+  return createTranslatorFromMessages(getMessages(locale));
+}
+
+export function createTranslatorFromMessages(messages: Messages) {
+  const catalog = messages as Record<string, unknown>;
 
   return function t(
     key: TranslationKey,
     vars?: Record<string, string | number>
   ): string {
-    let text = getNestedValue(messages, key);
+    let text = getNestedValue(catalog, key);
     if (vars) {
       for (const [name, value] of Object.entries(vars)) {
         text = text.replace(`{${name}}`, String(value));

@@ -17,13 +17,12 @@ export type MosaicPlacement = {
   rowStart: number;
 };
 
-const MOSAIC_ROWS = MOSAIC_ROWS_MOBILE;
 
-function buildUniformMosaic(): MosaicPlacement[] {
+function buildUniformMosaic(rows: number): MosaicPlacement[] {
   const placements: MosaicPlacement[] = [];
   let index = 0;
 
-  for (let row = 0; row < MOSAIC_ROWS; row++) {
+  for (let row = 0; row < rows; row++) {
     for (let col = 0; col < MOSAIC_GRID_COLS; col++) {
       placements.push({
         id: `mosaic-${index}`,
@@ -39,4 +38,8 @@ function buildUniformMosaic(): MosaicPlacement[] {
   return placements;
 }
 
-export const heroMosaicPlacements = buildUniformMosaic();
+export const heroMosaicPlacementsMobile = buildUniformMosaic(MOSAIC_ROWS_MOBILE);
+export const heroMosaicPlacementsDesktop = buildUniformMosaic(MOSAIC_ROWS_DESKTOP);
+
+/** @deprecated Préférer heroMosaicPlacementsMobile / Desktop selon viewport */
+export const heroMosaicPlacements = heroMosaicPlacementsMobile;

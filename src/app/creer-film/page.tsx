@@ -11,8 +11,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
-
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getServerTranslator();
   return {
@@ -22,19 +20,22 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CreerFilmPage() {
-  const session = await getSession();
+  const [session, ticketSummary, { t }, characters] = await Promise.all([
+    getSession(),
+    getMyFilmTicketSummary(),
+    getServerTranslator(),
+    getMyCharacters(),
+  ]);
+
   if (!session) {
     redirect("/connexion?redirect=/creer-film");
   }
 
-  const ticketSummary = await getMyFilmTicketSummary();
   if (ticketSummary && !canCreateFilm(ticketSummary)) {
     redirect(PRICING_PATH);
   }
 
-  const { t } = await getServerTranslator();
   const greeting = session.name ?? session.email.split("@")[0];
-  const characters = await getMyCharacters();
 
   return (
     <>

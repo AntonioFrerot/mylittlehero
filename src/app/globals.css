@@ -1338,16 +1338,16 @@ body {
   background:
     radial-gradient(
       ellipse 115% 95% at 50% 36%,
-      rgba(5, 7, 15, 0.38) 0%,
-      rgba(5, 7, 15, 0.62) 48%,
-      rgba(5, 7, 15, 0.8) 100%
+      rgba(5, 7, 15, 0.342) 0%,
+      rgba(5, 7, 15, 0.558) 48%,
+      rgba(5, 7, 15, 0.72) 100%
     ),
     linear-gradient(
       to bottom,
-      rgba(5, 7, 15, 0.62) 0%,
-      rgba(5, 7, 15, 0.72) 42%,
-      rgba(5, 7, 15, 0.82) 72%,
-      rgba(5, 7, 15, 0.94) 92%,
+      rgba(5, 7, 15, 0.558) 0%,
+      rgba(5, 7, 15, 0.648) 42%,
+      rgba(5, 7, 15, 0.738) 72%,
+      rgba(5, 7, 15, 0.846) 92%,
       var(--catalogue-bg) 100%
     );
 }
@@ -1361,8 +1361,8 @@ body {
   height: 8.5rem;
   background: linear-gradient(
     to bottom,
-    rgba(5, 7, 15, 0.88) 0%,
-    rgba(5, 7, 15, 0.52) 58%,
+    rgba(5, 7, 15, 0.792) 0%,
+    rgba(5, 7, 15, 0.468) 58%,
     transparent 100%
   );
 }
@@ -1614,15 +1614,15 @@ body {
     background:
       radial-gradient(
         ellipse 115% 95% at 50% 36%,
-        rgba(5, 7, 15, 0.32) 0%,
-        rgba(5, 7, 15, 0.52) 48%,
-        rgba(5, 7, 15, 0.64) 100%
+        rgba(5, 7, 15, 0.288) 0%,
+        rgba(5, 7, 15, 0.468) 48%,
+        rgba(5, 7, 15, 0.576) 100%
       ),
       linear-gradient(
         to bottom,
-        rgba(5, 7, 15, 0.58) 0%,
-        rgba(5, 7, 15, 0.64) 52%,
-        rgba(5, 7, 15, 0.64) 100%
+        rgba(5, 7, 15, 0.522) 0%,
+        rgba(5, 7, 15, 0.576) 52%,
+        rgba(5, 7, 15, 0.576) 100%
       );
   }
 
@@ -1809,23 +1809,23 @@ body {
     background:
       radial-gradient(
         ellipse 52% 46% at 50% 40%,
-        rgba(5, 7, 15, 0.056) 0%,
-        rgba(5, 7, 15, 0.042) 42%,
-        rgba(5, 7, 15, 0.018) 68%,
+        rgba(5, 7, 15, 0.05) 0%,
+        rgba(5, 7, 15, 0.038) 42%,
+        rgba(5, 7, 15, 0.016) 68%,
         transparent 100%
       ),
       radial-gradient(
         ellipse 95% 82% at 50% 40%,
-        rgba(5, 7, 15, 0.504) 0%,
-        rgba(5, 7, 15, 0.63) 44%,
-        rgba(5, 7, 15, 0.738) 100%
+        rgba(5, 7, 15, 0.454) 0%,
+        rgba(5, 7, 15, 0.567) 44%,
+        rgba(5, 7, 15, 0.664) 100%
       ),
       linear-gradient(
         to bottom,
-        rgba(5, 7, 15, 0.63) 0%,
-        rgba(5, 7, 15, 0.63) 72%,
-        rgba(5, 7, 15, 0.774) 86%,
-        rgba(5, 7, 15, 0.864) 94%,
+        rgba(5, 7, 15, 0.567) 0%,
+        rgba(5, 7, 15, 0.567) 72%,
+        rgba(5, 7, 15, 0.697) 86%,
+        rgba(5, 7, 15, 0.778) 94%,
         var(--catalogue-bg) 100%
       );
   }

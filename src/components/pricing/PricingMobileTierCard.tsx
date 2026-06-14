@@ -11,8 +11,7 @@ import {
   SURFACE_3D_TOGGLE,
 } from "@/lib/ui/button-3d-classes";
 import { CheckoutButton } from "@/components/pricing/CheckoutButton";
-import { createTranslator } from "@/lib/i18n/translator";
-import type { LocaleCode } from "@/lib/i18n/locales";
+import { useLocale } from "@/components/LocaleProvider";
 
 const PRICING_GOLD_TOKENS_RE =
   /\b(15 films|180 films|30 films|360 films|5 minutes|10 minutes)\b/g;
@@ -49,7 +48,6 @@ type PricingMobileTierCardProps = {
   monthlyPlan: PricingPlan;
   yearlyPlan: PricingPlan;
   tierLabel: string;
-  locale: LocaleCode;
   highlighted?: boolean;
 };
 
@@ -104,10 +102,9 @@ export function PricingMobileTierCard({
   monthlyPlan,
   yearlyPlan,
   tierLabel,
-  locale,
   highlighted = false,
 }: PricingMobileTierCardProps) {
-  const t = createTranslator(locale);
+  const { locale, t } = useLocale();
   const [yearly, setYearly] = useState(() => false);
   const plan = yearly ? yearlyPlan : monthlyPlan;
 

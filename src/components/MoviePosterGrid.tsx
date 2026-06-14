@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CatalogueBackgroundVideo } from "@/components/CatalogueBackgroundVideo";
+import { CatalogueBackgroundVideoLazy } from "@/components/CatalogueBackgroundVideoLazy";
 import { MoviePosterCarousel } from "@/components/MoviePosterCarousel";
 import { leoExampleFilms } from "@/lib/data";
 import {
@@ -84,7 +84,7 @@ export async function MoviePosterGrid() {
         className="catalogue-video-backdrop pointer-events-none absolute inset-x-0 z-0 max-md:overflow-visible overflow-hidden max-md:bg-transparent bg-[var(--catalogue-bg)]"
         aria-hidden
       >
-        <CatalogueBackgroundVideo />
+        <CatalogueBackgroundVideoLazy />
         <div className="hero-overlay-tint pointer-events-none absolute inset-0 z-[1] md:hidden" aria-hidden />
         <div className="catalogue-video-overlay pointer-events-none absolute inset-0 z-[1]" aria-hidden />
         <div className="catalogue-video-fade-top pointer-events-none absolute inset-x-0 top-0 z-[2]" aria-hidden />

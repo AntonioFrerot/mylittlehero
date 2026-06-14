@@ -1,4 +1,4 @@
-import { ThemesCarousel } from "@/components/ThemesCarousel";
+import { ThemesCarouselLazy } from "@/components/ThemesCarouselLazy";
 import { themes } from "@/lib/data";
 import { getServerTranslator } from "@/lib/i18n/server";
 
@@ -19,7 +19,7 @@ export async function ThemeSection() {
         </div>
 
         <div className="relative left-1/2 mt-12 w-[100vw] max-w-[100vw] -translate-x-1/2 md:mt-16">
-          <ThemesCarousel
+          <ThemesCarouselLazy
             themes={themes.map(({ id, gradient }) => ({ id, gradient }))}
           />
         </div>

@@ -1,22 +1,28 @@
 import type { Metadata, Viewport } from "next";
 import { HashScrollHandler } from "@/components/HashScrollHandler";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import { LocaleProvider } from "@/components/LocaleProvider";
-import { SupportChatWidget } from "@/components/support/SupportChatWidget";
+import { SupportChatLazy } from "@/components/support/SupportChatLazy";
+import { getSession } from "@/lib/auth/get-session";
 import { BRAND_NAME, SITE_LOGO_SRC } from "@/lib/brand";
 import { getServerLocale, getServerTranslator } from "@/lib/i18n/server";
+import { getMessages } from "@/lib/i18n/translator";
+import { getTicketBalance } from "@/lib/purchases/tickets";
 import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 
 const dmSans = DM_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600"],
+  display: "swap",
 });
 
 const fraunces = Fraunces({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["600", "700"],
+  display: "swap",
 });
 
 export const viewport: Viewport = {
@@ -43,6 +49,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getServerLocale();
+  const session = await getSession();
+  const initialBalance = session ? await getTicketBalance(session.email) : null;
 
   return (
     <html
@@ -50,10 +58,15 @@ export default async function RootLayout({
       className={`${dmSans.variable} ${fraunces.variable} scroll-smooth`}
     >
       <body className="min-h-screen bg-cinema-black font-sans text-cream antialiased">
-        <LocaleProvider locale={locale}>
-          <HashScrollHandler />
-          {children}
-          <SupportChatWidget />
+        <LocaleProvider locale={locale} messages={getMessages(locale)}>
+          <AuthProvider
+            initialUser={session}
+            initialBalance={initialBalance}
+          >
+            <HashScrollHandler />
+            {children}
+            <SupportChatLazy />
+          </AuthProvider>
         </LocaleProvider>
       </body>
     </html>

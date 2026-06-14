@@ -6,7 +6,10 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
-import { createTranslator } from "@/lib/i18n/translator";
+import {
+  createTranslatorFromMessages,
+  type Messages,
+} from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import type { TranslationKey } from "@/lib/i18n/translator";
 
@@ -19,17 +22,19 @@ const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 export function LocaleProvider({
   locale,
+  messages,
   children,
 }: {
   locale: LocaleCode;
+  messages: Messages;
   children: ReactNode;
 }) {
   const value = useMemo(
     () => ({
       locale,
-      t: createTranslator(locale),
+      t: createTranslatorFromMessages(messages),
     }),
-    [locale]
+    [locale, messages]
   );
 
   return (

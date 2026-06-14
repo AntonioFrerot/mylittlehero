@@ -7,7 +7,7 @@ import {
   BTN_3D_FAB,
   BTN_3D_ICON,
 } from "@/lib/ui/button-3d-classes";
-import { SUPPORT_WELCOME_MESSAGE } from "@/lib/support-chat/knowledge";
+import { SUPPORT_WELCOME_MESSAGE } from "@/lib/support-chat/welcome-message";
 
 type UiMessage = {
   id: string;

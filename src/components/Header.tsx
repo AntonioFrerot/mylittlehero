@@ -25,7 +25,15 @@ export function Header() {
   const closeMenu = () => setMenuOpen(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 24);
+        ticking = false;
+      });
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -80,7 +88,7 @@ export function Header() {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         scrolled || menuOpen
-          ? `border-b border-white/5 ${menuOpen ? "bg-cinema-night" : "bg-cinema-night/95"} shadow-lg shadow-black/30 ${menuOpen ? "" : "backdrop-blur-xl"}`
+          ? `border-b border-white/5 ${menuOpen ? "bg-cinema-night" : "max-md:bg-cinema-night md:bg-cinema-night/95"} shadow-lg shadow-black/30 ${menuOpen ? "" : "md:backdrop-blur-xl"}`
           : "bg-gradient-to-b from-black/70 via-black/30 to-transparent backdrop-blur-[2px]"
       }`}
       style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
@@ -106,7 +114,6 @@ export function Header() {
             height={44}
             className="h-10 w-10 shrink-0 object-contain md:h-11 md:w-11"
             priority
-            unoptimized
           />
           <span className="-ml-px truncate font-display text-base font-semibold tracking-tight text-cream sm:text-lg md:text-xl">
             MyLittle<span className="text-gold-light">Hero</span>

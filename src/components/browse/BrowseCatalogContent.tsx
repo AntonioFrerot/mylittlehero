@@ -7,10 +7,12 @@ import { resolveCreerSonFilmHref } from "@/lib/navigation/creer-film.server";
 import { themeNameKey } from "@/lib/theme-labels";
 
 export async function BrowseCatalogContent() {
-  const { t, locale } = await getServerTranslator();
-  const createHref = await resolveCreerSonFilmHref();
+  const [{ t, locale }, createHref, userFilms] = await Promise.all([
+    getServerTranslator(),
+    resolveCreerSonFilmHref(),
+    getCatalogFilmsForSession(),
+  ]);
   const rows = getBrowseThemeRows();
-  const userFilms = await getCatalogFilmsForSession();
   const durationLocale = locale === "fr" ? "fr" : "en";
 
   return (

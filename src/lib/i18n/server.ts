@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { cookies, headers } from "next/headers";
 import { getSession } from "@/lib/auth/get-session";
 import { findUserByEmail } from "@/lib/auth/users-store";
@@ -19,7 +20,7 @@ function readUserLocale(
   return user?.locale ?? user?.filmLanguage ?? null;
 }
 
-export async function getServerLocale(): Promise<LocaleCode> {
+export const getServerLocale = cache(async (): Promise<LocaleCode> => {
   const session = await getSession();
   if (session) {
     const user = await findUserByEmail(session.email);
@@ -43,10 +44,10 @@ export async function getServerLocale(): Promise<LocaleCode> {
   if (fromAccept) return fromAccept;
 
   return DEFAULT_LOCALE;
-}
+});
 
-export async function getServerTranslator() {
+export const getServerTranslator = cache(async () => {
   const locale = await getServerLocale();
   const { createTranslator } = await import("./translator");
   return { locale, t: createTranslator(locale) };
-}
+});

@@ -28,11 +28,19 @@ function getMobileViewportServerSnapshot() {
 
 const OUTSIDE_TAP_MOVE_THRESHOLD_PX = 10;
 
+type OutsideGesture = {
+  x: number;
+  y: number;
+  scrollX: number;
+  scrollY: number;
+  moved: boolean;
+};
+
 export function FilmThemePicker() {
   const { t } = useLocale();
   const listId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
-  const outsideTapRef = useRef<{ x: number; y: number; moved: boolean } | null>(null);
+  const outsideTapRef = useRef<OutsideGesture | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const isMobile = useSyncExternalStore(
@@ -81,6 +89,8 @@ export function FilmThemePicker() {
       outsideTapRef.current = {
         x: event.clientX,
         y: event.clientY,
+        scrollX: window.scrollX,
+        scrollY: window.scrollY,
         moved: false,
       };
     }
@@ -96,12 +106,29 @@ export function FilmThemePicker() {
       }
     }
 
+    function handleScroll() {
+      const gesture = outsideTapRef.current;
+      if (!gesture || gesture.moved) return;
+
+      if (
+        window.scrollX !== gesture.scrollX ||
+        window.scrollY !== gesture.scrollY
+      ) {
+        gesture.moved = true;
+      }
+    }
+
     function handlePointerUp(event: PointerEvent) {
       const gesture = outsideTapRef.current;
       outsideTapRef.current = null;
 
       if (!gesture || gesture.moved || !isOutside(event.target)) return;
       closePanel();
+    }
+
+    function handlePointerCancel() {
+      // Scroll ou reprise par le navigateur : ne pas fermer le panneau.
+      outsideTapRef.current = null;
     }
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -111,14 +138,19 @@ export function FilmThemePicker() {
     document.addEventListener("pointerdown", handlePointerDown);
     document.addEventListener("pointermove", handlePointerMove, { passive: true });
     document.addEventListener("pointerup", handlePointerUp);
-    document.addEventListener("pointercancel", handlePointerUp);
+    document.addEventListener("pointercancel", handlePointerCancel);
+    document.addEventListener("scroll", handleScroll, {
+      passive: true,
+      capture: true,
+    });
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       outsideTapRef.current = null;
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("pointermove", handlePointerMove);
       document.removeEventListener("pointerup", handlePointerUp);
-      document.removeEventListener("pointercancel", handlePointerUp);
+      document.removeEventListener("pointercancel", handlePointerCancel);
+      document.removeEventListener("scroll", handleScroll, true);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [open]);

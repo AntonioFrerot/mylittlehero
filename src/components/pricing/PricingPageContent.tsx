@@ -48,13 +48,11 @@ export async function PricingPageContent() {
               monthlyPlan={standardMonthly}
               yearlyPlan={standardYearly}
               tierLabel={t("pricing.tierEssential")}
-              locale={locale}
             />
             <PricingMobileTierCard
               monthlyPlan={premiumMonthly}
               yearlyPlan={premiumYearly}
               tierLabel={t("pricing.tierPremium")}
-              locale={locale}
               highlighted
             />
           </div>
