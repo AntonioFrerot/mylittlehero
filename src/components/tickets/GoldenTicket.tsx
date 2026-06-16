@@ -33,8 +33,8 @@ export function GoldenTicket({
         <Image
           src={SITE_TICKET_SRC}
           alt=""
-          width={160}
-          height={64}
+          width={347}
+          height={449}
           className="gold-ticket__img"
           unoptimized
         />

@@ -70,14 +70,16 @@ export function FilmDurationPicker({
                 </div>
 
                 <div className="duration-option__footer">
-                  <Image
-                    src={SITE_TICKET_SRC}
-                    alt=""
-                    width={120}
-                    height={48}
-                    className="duration-option__ticket"
-                    unoptimized
-                  />
+                  <span className="duration-option__ticket-icon gold-ticket__icon">
+                    <Image
+                      src={SITE_TICKET_SRC}
+                      alt=""
+                      width={347}
+                      height={449}
+                      className="gold-ticket__img"
+                      unoptimized
+                    />
+                  </span>
                   <span className="duration-option__cost">{ticketLabel(tickets)}</span>
                 </div>
               </label>
