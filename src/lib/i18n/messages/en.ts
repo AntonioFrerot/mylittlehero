@@ -588,6 +588,7 @@ export const en = {
     tryFree: "Try for free",
     posterAlt: "Poster — {title}",
     playVideo: "Play video — {title}",
+    videoComingSoon: "Coming soon...",
     qualityHint: {
       title: "Better quality",
       titleLine1: "Better",

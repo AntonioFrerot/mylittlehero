@@ -7,6 +7,7 @@ export type FilmVideoMediaProps = {
   videoSrc?: string;
   title: string;
   posterAlt: string;
+  comingSoon?: boolean;
 };
 
 export function FilmVideoMedia({
@@ -15,13 +16,14 @@ export function FilmVideoMedia({
   videoSrc,
   title,
   posterAlt,
+  comingSoon = false,
 }: FilmVideoMediaProps) {
   const thumbSrc = videoPosterSrc ?? posterSrc;
   const thumbObjectClass = videoPosterSrc
     ? "object-cover object-center"
     : "object-cover object-[center_20%]";
 
-  if (videoSrc) {
+  if (videoSrc && !comingSoon) {
     return (
       <ExampleFilmVideo
         src={videoSrc}

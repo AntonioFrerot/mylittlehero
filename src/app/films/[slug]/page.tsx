@@ -134,6 +134,9 @@ export default async function ExampleFilmPage({ params }: PageProps) {
               film={film}
               title={filmTitle}
               posterAlt={t("examples.posterAlt", { title: filmTitle })}
+              videoComingSoonLabel={
+                film.videoComingSoon ? t("examples.videoComingSoon") : undefined
+              }
             />
           </div>
         </div>

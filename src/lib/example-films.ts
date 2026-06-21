@@ -6,6 +6,7 @@ import {
   LEO_ICE_MOON_POSTER_SRC,
   LEO_ICE_MOON_VIDEO_POSTER_SRC,
   LEO_LOST_PLANE_POSTER_SRC,
+  LEO_LOST_PLANE_VIDEO_POSTER_SRC,
 } from "@/lib/leo-example-posters";
 import type { FilmThemeId } from "@/lib/i18n/film-labels";
 
@@ -31,6 +32,8 @@ export type ExampleFilm = {
   /** Miniature 16:9 avant lecture vidéo (sinon posterSrc). */
   videoPosterSrc?: string;
   videoSrc?: string;
+  /** Vidéo pas encore publiée — overlay sur la miniature. */
+  videoComingSoon?: boolean;
   heroPhotoSrc: string;
   themes: FilmThemeId[];
   style: ExampleFilmStyle;
@@ -56,6 +59,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     tagline: "Un héros électrique au cœur de la grande ville",
     posterSrc: SUPER_LEO_POSTER_SRC,
     videoPosterSrc: SUPER_LEO_VIDEO_POSTER_SRC,
+    videoComingSoon: true,
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "realistic",
     themes: ["fantastique"],
@@ -78,7 +82,9 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     title: "Leo and the Lost Plane",
     tagline: "Une nouvelle école. Un nouvel ami. Une aventure inoubliable.",
     posterSrc: LEO_LOST_PLANE_POSTER_SRC,
+    videoPosterSrc: LEO_LOST_PLANE_VIDEO_POSTER_SRC,
     videoSrc: "/videos/leo-lost-plane.mp4",
+    videoComingSoon: true,
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "animation",
     themes: ["animation"],

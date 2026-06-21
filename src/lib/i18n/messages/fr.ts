@@ -593,6 +593,7 @@ export const fr = {
     tryFree: "Essayer gratuitement",
     posterAlt: "Affiche — {title}",
     playVideo: "Lire la vidéo — {title}",
+    videoComingSoon: "Bientôt disponible...",
     qualityHint: {
       title: "Meilleure qualité",
       titleLine1: "Meilleure",

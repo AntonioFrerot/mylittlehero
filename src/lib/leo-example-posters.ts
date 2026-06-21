@@ -26,6 +26,8 @@ export const LEO_ICE_MOON_POSTER_SRC = "/posters/leo-ice-moon.png?v=1";
 export const LEO_ICE_MOON_VIDEO_POSTER_SRC =
   "/posters/leo-ice-moon-video-poster.png?v=1";
 export const LEO_LOST_PLANE_POSTER_SRC = "/posters/leo-lost-plane.png?v=2";
+export const LEO_LOST_PLANE_VIDEO_POSTER_SRC =
+  "/posters/leo-lost-plane-video-poster.png?v=1";
 
 /** Affiches réalistes des cinq films d'exemple du petit Léo (accueil + hero). */
 export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [

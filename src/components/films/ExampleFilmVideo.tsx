@@ -14,15 +14,21 @@ type ExampleFilmVideoProps = {
 type ExampleFilmMp4PlayerProps = {
   src: string;
   title: string;
+  posterSrc: string;
 };
 
-function ExampleFilmMp4Player({ src, title }: ExampleFilmMp4PlayerProps) {
+function ExampleFilmMp4Player({
+  src,
+  title,
+  posterSrc,
+}: ExampleFilmMp4PlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const capturedRef = useRef(false);
   const [posterUrl, setPosterUrl] = useState<string | null>(null);
-  const [loadingPoster, setLoadingPoster] = useState(true);
+  const [loadingPoster, setLoadingPoster] = useState(!posterSrc);
 
   const captureFirstFrame = () => {
+    if (posterSrc) return;
     const video = videoRef.current;
     if (!video || capturedRef.current || !video.videoWidth) return;
 
@@ -47,6 +53,7 @@ function ExampleFilmMp4Player({ src, title }: ExampleFilmMp4PlayerProps) {
   };
 
   const handleLoadedData = () => {
+    if (posterSrc) return;
     const video = videoRef.current;
     if (!video || capturedRef.current) return;
     video.currentTime = 0.01;
@@ -66,7 +73,7 @@ function ExampleFilmMp4Player({ src, title }: ExampleFilmMp4PlayerProps) {
         controls
         playsInline
         preload="metadata"
-        poster={posterUrl ?? undefined}
+        poster={posterSrc || posterUrl || undefined}
         onLoadedData={handleLoadedData}
         onSeeked={captureFirstFrame}
         onError={() => setLoadingPoster(false)}
@@ -98,5 +105,5 @@ export function ExampleFilmVideo({
     );
   }
 
-  return <ExampleFilmMp4Player src={src} title={title} />;
+  return <ExampleFilmMp4Player src={src} title={title} posterSrc={posterSrc} />;
 }
