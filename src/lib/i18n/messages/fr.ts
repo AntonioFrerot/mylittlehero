@@ -97,7 +97,9 @@ export const fr = {
       "Un clic, et c'est parti. Imaginez la lumière qui baisse, le générique qui s'affiche, lui au centre de chaque scène. Plus que quelques minutes vous séparent de ce frisson de cinéma, celui qu'on partage quand on a tout imaginé soi-même.",
     footerTagline: "Films personnalisés",
     footerPrivacy: "Confidentialité",
-    footerTerms: "Conditions",
+    footerTerms: "CGV",
+    footerLegal: "Mentions légales",
+    footerCookies: "Cookies",
   },
   auth: {
     backToOffers: "← Retour aux offres",
@@ -127,6 +129,12 @@ export const fr = {
     loading: "Chargement…",
     tabsLabel: "Connexion ou inscription",
     termsPrefix: "En continuant, vous acceptez nos conditions d'utilisation.",
+    acceptTermsLead: "J'accepte les",
+    acceptTermsAnd: "et la",
+    acceptTermsTail:
+      ", et je confirme être majeur(e) et parent ou représentant légal de l'enfant concerné.",
+    acceptTermsRequired:
+      "Vous devez accepter les conditions d'utilisation et la politique de confidentialité pour créer un compte.",
     invalidEmail: "Indiquez une adresse e-mail valide.",
     emailAlreadyRegistered:
       "Un compte existe déjà avec cette adresse e-mail. Connectez-vous avec cet e-mail — un seul compte est autorisé par adresse.",
@@ -412,6 +420,16 @@ export const fr = {
   checkout: {
     loading: "Redirection vers le paiement…",
     error: "Impossible de démarrer le paiement. Réessayez ou contactez le support.",
+    withdrawalWaiverBefore:
+      "Je demande expressément que l'exécution du contrat commence avant la fin du délai de rétractation de 14 jours (crédit de tickets ou activation de l'abonnement sur mon compte). Je reconnais perdre mon droit de rétractation dès le début de la production d'un film personnalisé, conformément à l'article L.221-28 du Code de la consommation. J'ai lu et j'accepte les",
+    withdrawalWaiverAfter: ".",
+    withdrawalWaiverRequired:
+      "Vous devez accepter la renonciation au droit de rétractation pour continuer.",
+    resumeTitle: "Finaliser votre commande",
+    resumeHint:
+      "Avant le paiement sécurisé, confirmez la renonciation au droit de rétractation pour les contenus numériques personnalisés.",
+    resumePay: "Continuer vers le paiement sécurisé",
+    resumeDismiss: "Choisir une autre offre",
     successBadge: "Paiement confirmé",
     successPurchaseTitle: "Merci pour votre commande !",
     successPurchaseMessage:
@@ -463,6 +481,20 @@ export const fr = {
     },
     success:
       "Merci pour votre message. Notre équipe vous répondra dans les plus brefs délais.",
+  },
+  legal: {
+    backHome: "← Retour à l'accueil",
+    lastUpdated: "Dernière mise à jour : {date}",
+    relatedTitle: "Autres documents",
+    publisherIncomplete:
+      "Information : certaines mentions légales de l'éditeur doivent encore être complétées par l'exploitant du site avant le début des ventes.",
+    documents: {
+      mentionsLegales: "Mentions légales",
+      politiqueConfidentialite: "Politique de confidentialité",
+      cgv: "Conditions Générales de Vente",
+      cgu: "Conditions Générales d'Utilisation",
+      politiqueCookies: "Politique cookies",
+    },
   },
   filmCreation: {
     backToFilms: "← Mes films",

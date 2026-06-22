@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CreerSonFilmButton } from "@/components/CreerSonFilmButton";
 import { getServerTranslator } from "@/lib/i18n/server";
 
@@ -37,16 +38,25 @@ export async function CTAFooter() {
           <p>
             © {new Date().getFullYear()} MyLittleHero — {t("home.footerTagline")}
           </p>
-          <nav className="flex flex-wrap justify-center gap-6" aria-label="Pied de page">
-            <a href="#" className="hover:text-cream/70">
+          <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2" aria-label="Pied de page">
+            <Link href="/politique-de-confidentialite" className="hover:text-cream/70">
               {t("home.footerPrivacy")}
-            </a>
-            <a href="#" className="hover:text-cream/70">
+            </Link>
+            <Link href="/cgv" className="hover:text-cream/70">
               {t("home.footerTerms")}
-            </a>
-            <a href="/contact" className="hover:text-cream/70">
+            </Link>
+            <Link href="/cgu" className="hover:text-cream/70">
+              {t("legal.documents.cgu")}
+            </Link>
+            <Link href="/mentions-legales" className="hover:text-cream/70">
+              {t("home.footerLegal")}
+            </Link>
+            <Link href="/politique-cookies" className="hover:text-cream/70">
+              {t("home.footerCookies")}
+            </Link>
+            <Link href="/contact" className="hover:text-cream/70">
               {t("nav.contact")}
-            </a>
+            </Link>
           </nav>
         </div>
       </div>

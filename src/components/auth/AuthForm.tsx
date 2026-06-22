@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import {
@@ -138,6 +139,35 @@ export function AuthForm({
           </label>
         )}
 
+        {!isLogin && (
+          <label className="flex items-start gap-3 text-xs leading-relaxed text-cream/50">
+            <input
+              type="checkbox"
+              name="acceptTerms"
+              value="1"
+              required
+              className="mt-0.5 size-4 shrink-0 rounded border-white/20 bg-cinema-black/60 text-gold focus:ring-gold/40"
+            />
+            <span>
+              {t("auth.acceptTermsLead")}{" "}
+              <Link
+                href="/cgu"
+                className="text-gold-light underline-offset-2 hover:text-gold hover:underline"
+              >
+                {t("legal.documents.cgu")}
+              </Link>{" "}
+              {t("auth.acceptTermsAnd")}{" "}
+              <Link
+                href="/politique-de-confidentialite"
+                className="text-gold-light underline-offset-2 hover:text-gold hover:underline"
+              >
+                {t("legal.documents.politiqueConfidentialite")}
+              </Link>
+              {t("auth.acceptTermsTail")}
+            </span>
+          </label>
+        )}
+
         {state.error && (
           <p className="rounded-lg border border-red-500/30 bg-red-950/40 px-3 py-2 text-sm text-red-200">
             {state.error}
@@ -158,7 +188,14 @@ export function AuthForm({
       </form>
 
       <p className="mt-6 text-center text-xs text-cream/40">
-        {t("auth.termsPrefix")}
+        {isLogin ? (
+          <>
+            {t("auth.termsPrefix")}{" "}
+            <Link href="/cgu" className="text-gold-light/80 hover:text-gold-light">
+              {t("legal.documents.cgu")}
+            </Link>
+          </>
+        ) : null}
       </p>
     </div>
   );

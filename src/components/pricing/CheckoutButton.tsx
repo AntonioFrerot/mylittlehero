@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { WithdrawalWaiverField } from "@/components/pricing/WithdrawalWaiverField";
 import { useLocale } from "@/components/LocaleProvider";
 import { useAuthUser } from "@/hooks/use-auth-user";
+import { requestCheckoutSession } from "@/lib/stripe/start-checkout-client";
 import type { CheckoutPlanId, CheckoutPlanType } from "@/lib/stripe/plans";
 
 type CheckoutButtonProps = {
@@ -30,6 +32,8 @@ export function CheckoutButton({
   const user = useAuthUser();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [waiverAccepted, setWaiverAccepted] = useState(false);
+  const waiverId = `withdrawal-waiver-${planType}-${planId}`;
 
   if (user === undefined) {
     return (
@@ -47,44 +51,56 @@ export function CheckoutButton({
       return;
     }
 
+    if (!waiverAccepted) {
+      setError(t("checkout.withdrawalWaiverRequired"));
+      return;
+    }
+
     setPending(true);
     setError(null);
 
-    try {
-      const response = await fetch("/api/stripe/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId, planType }),
-      });
+    const result = await requestCheckoutSession({
+      planId,
+      planType,
+      withdrawalWaiverAccepted: true,
+    });
 
-      const data = (await response.json()) as { url?: string; error?: string };
-
-      if (!response.ok || !data.url) {
-        setError(data.error ?? t("checkout.error"));
-        setPending(false);
-        return;
-      }
-
-      window.location.href = data.url;
-    } catch {
-      setError(t("checkout.error"));
+    if (!result.ok) {
+      setError(
+        result.error === "checkout.error"
+          ? t("checkout.error")
+          : result.error
+      );
       setPending(false);
+      return;
     }
+
+    window.location.href = result.url;
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-3">
+      {user ? (
+        <WithdrawalWaiverField
+          id={waiverId}
+          checked={waiverAccepted}
+          onChange={(checked) => {
+            setWaiverAccepted(checked);
+            if (checked) setError(null);
+          }}
+        />
+      ) : null}
       <Button
         type="button"
         variant={variant}
         className={className}
-        disabled={pending}
+        disabled={pending || (Boolean(user) && !waiverAccepted)}
         onClick={() => void handleCheckout()}
       >
         {pending ? t("checkout.loading") : children}
       </Button>
       {error && (
-        <p className="mt-2 text-center text-xs text-red-300/90" role="alert">
+        <p className="text-center text-xs text-red-300/90" role="alert">
           {error}
         </p>
       )}

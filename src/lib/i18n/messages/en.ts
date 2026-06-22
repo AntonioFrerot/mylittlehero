@@ -96,7 +96,9 @@ export const en = {
       "One click and you're off. Picture the lights dimming, the opening credits rolling, them at the centre of every scene. You're only minutes away from that cinema thrill you share when you've imagined it all yourself.",
     footerTagline: "Personalised films",
     footerPrivacy: "Privacy",
-    footerTerms: "Terms",
+    footerTerms: "Terms of sale",
+    footerLegal: "Legal notice",
+    footerCookies: "Cookies",
   },
   auth: {
     backToOffers: "← Back to plans",
@@ -125,6 +127,12 @@ export const en = {
     loading: "Loading…",
     tabsLabel: "Log in or sign up",
     termsPrefix: "By continuing, you accept our terms of use.",
+    acceptTermsLead: "I accept the",
+    acceptTermsAnd: "and",
+    acceptTermsTail:
+      ", and confirm I am 18+ and the parent or legal guardian of the child concerned.",
+    acceptTermsRequired:
+      "You must accept the terms of use and privacy policy to create an account.",
     invalidEmail: "Enter a valid email address.",
     emailAlreadyRegistered:
       "An account already exists with this email. Log in with this email — only one account is allowed per address.",
@@ -409,6 +417,16 @@ export const en = {
   checkout: {
     loading: "Redirecting to checkout…",
     error: "Unable to start checkout. Please try again or contact support.",
+    withdrawalWaiverBefore:
+      "I expressly request that performance of the contract begin before the end of the 14-day withdrawal period (ticket credit or subscription activation on my account). I acknowledge that I lose my right of withdrawal once production of a personalized film begins, in accordance with applicable consumer law. I have read and accept the",
+    withdrawalWaiverAfter: ".",
+    withdrawalWaiverRequired:
+      "You must accept the withdrawal waiver to continue.",
+    resumeTitle: "Complete your order",
+    resumeHint:
+      "Before secure payment, confirm the withdrawal waiver for personalized digital content.",
+    resumePay: "Continue to secure payment",
+    resumeDismiss: "Choose another plan",
     successBadge: "Payment confirmed",
     successPurchaseTitle: "Thank you for your order!",
     successPurchaseMessage:
@@ -460,6 +478,20 @@ export const en = {
     },
     success:
       "Thank you for your message. Our team will get back to you as soon as possible.",
+  },
+  legal: {
+    backHome: "← Back to home",
+    lastUpdated: "Last updated: {date}",
+    relatedTitle: "Other documents",
+    publisherIncomplete:
+      "Note: some publisher legal details must still be completed by the site operator before sales begin.",
+    documents: {
+      mentionsLegales: "Legal notice",
+      politiqueConfidentialite: "Privacy policy",
+      cgv: "Terms of sale",
+      cgu: "Terms of use",
+      politiqueCookies: "Cookie policy",
+    },
   },
   filmCreation: {
     backToFilms: "← My films",

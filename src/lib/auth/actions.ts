@@ -95,6 +95,12 @@ export async function signUp(
     return { error: "Les mots de passe ne correspondent pas." };
   }
 
+  const acceptTerms = formData.get("acceptTerms");
+  if (acceptTerms !== "1") {
+    const { t } = await getServerTranslator();
+    return { error: t("auth.acceptTermsRequired") };
+  }
+
   const name = formData.get("name");
   const result = await registerUser({
     email: validated.email,

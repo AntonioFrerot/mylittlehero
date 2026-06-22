@@ -13,6 +13,7 @@ export const runtime = "nodejs";
 type CheckoutBody = {
   planId?: string;
   planType?: CheckoutPlanType;
+  withdrawalWaiverAccepted?: boolean;
 };
 
 export async function POST(request: Request) {
@@ -48,6 +49,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Offre invalide." }, { status: 400 });
   }
 
+  if (body.withdrawalWaiverAccepted !== true) {
+    return NextResponse.json(
+      {
+        error:
+          "Vous devez accepter la renonciation au droit de rétractation pour continuer.",
+      },
+      { status: 400 }
+    );
+  }
+
+  const waiverAcceptedAt = new Date().toISOString();
+
   const priceId = getStripePriceId(planType, planId);
   if (!priceId) {
     return NextResponse.json(
@@ -73,6 +86,8 @@ export async function POST(request: Request) {
       userEmail: session.email,
       planId,
       planType,
+      withdrawalWaiverAccepted: "true",
+      withdrawalWaiverAt: waiverAcceptedAt,
     },
     locale: "fr",
   });
