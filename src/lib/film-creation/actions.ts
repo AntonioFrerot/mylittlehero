@@ -1,6 +1,7 @@
 "use server";
 
 import { getSession } from "@/lib/auth/get-session";
+import { isAdminEmail } from "@/lib/auth/is-admin";
 import { getUserLocale } from "@/lib/auth/users-store";
 import { listCharacters } from "@/lib/characters/store";
 import { formatCharacterAge } from "@/lib/characters/format";
@@ -99,6 +100,10 @@ export async function getMyFilms(): Promise<UserFilm[]> {
 export async function getMyFilmCreationCooldown() {
   const session = await getSession();
   if (!session) {
+    return { active: false, endsAt: null, remainingMs: 0 };
+  }
+
+  if (isAdminEmail(session.email)) {
     return { active: false, endsAt: null, remainingMs: 0 };
   }
 
@@ -210,11 +215,14 @@ export async function saveFilmCreation(
   }
 
   const existingFilms = await listUserFilms(session.email);
-  const creationCooldown = getFilmCreationCooldownState(
-    getLatestFilmCreatedAt(existingFilms)
-  );
-  if (creationCooldown.active) {
-    return { error: t("filmCreation.errors.cooldownActive") };
+
+  if (!isAdminEmail(session.email)) {
+    const creationCooldown = getFilmCreationCooldownState(
+      getLatestFilmCreatedAt(existingFilms)
+    );
+    if (creationCooldown.active) {
+      return { error: t("filmCreation.errors.cooldownActive") };
+    }
   }
 
   const isFreeFilm = isFreeTrialFilmDuration(durationSeconds);

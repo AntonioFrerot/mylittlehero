@@ -176,7 +176,7 @@ ${purchaseBlock(catalogLocale)}
 • ready : ${isEn ? "watchable in My films" : "visible dans Mes films"}
 
 ═══ ${isEn ? "RULES BETWEEN CREATIONS" : "RÈGLES ENTRE CRÉATIONS"} ═══
-• ${isEn ? "24 h cooldown after each film creation (all users)." : "Délai de 24 h après chaque création de film (tous les utilisateurs)."}
+• ${isEn ? "24 h cooldown after each film creation (regular users; admins exempt)." : "Délai de 24 h après chaque création de film (clients ; les admins en sont exemptés)."}
 • ${isEn ? "Insufficient tickets → buy on /achat or subscribe on /creer." : "Tickets insuffisants → achat sur /achat ou abonnement sur /creer."}
 
 ═══ ${isEn ? "PRIVACY" : "CONFIDENTIALITÉ"} ═══

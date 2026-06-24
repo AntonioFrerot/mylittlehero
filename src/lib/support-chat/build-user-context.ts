@@ -1,4 +1,5 @@
 import { getSession } from "@/lib/auth/get-session";
+import { isAdminEmail } from "@/lib/auth/is-admin";
 import { findUserByEmail } from "@/lib/auth/users-store";
 import { listCharacters } from "@/lib/characters/store";
 import {
@@ -27,7 +28,9 @@ export async function buildSupportUserContext(
     isFreeFilmAvailableForEmail(session.email),
   ]);
 
-  const cooldown = getFilmCreationCooldownState(getLatestFilmCreatedAt(films));
+  const cooldown = isAdminEmail(session.email)
+    ? { active: false, endsAt: null, remainingMs: 0 }
+    : getFilmCreationCooldownState(getLatestFilmCreatedAt(films));
   const plan = findPricingPlanById(user?.subscriptionPlanId, locale);
 
   return {
