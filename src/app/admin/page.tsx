@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header";
 import { AdminFilmsList } from "@/components/admin/AdminFilmsList";
+import { AdminNotificationsForm } from "@/components/admin/AdminNotificationsForm";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { listAdminFilmsByStatus } from "@/lib/film-creation/admin-films";
 import { BRAND_NAME } from "@/lib/brand";
@@ -37,7 +38,8 @@ export default async function AdminPage() {
           </div>
         </section>
 
-        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 md:px-8 md:py-10">
+        <div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-6 md:px-8 md:py-10">
+          <AdminNotificationsForm />
           <AdminFilmsList
             awaiting={awaiting}
             completed={completed}

@@ -33,6 +33,8 @@
 !/public/videos/leo-et-nala-mobile.mp4
 /public/uploads/characters/**
 !/public/uploads/characters/.gitkeep
+/public/uploads/notifications/**
+!/public/uploads/notifications/.gitkeep
 
 # misc
 .cursor/

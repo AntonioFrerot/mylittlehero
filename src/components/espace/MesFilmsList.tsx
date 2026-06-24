@@ -26,6 +26,7 @@ import {
 } from "@/lib/i18n/film-labels";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { ShareFilmButton } from "@/components/espace/ShareFilmButton";
+import { getYouTubeWatchUrl } from "@/lib/youtube";
 import { SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
 import Link from "next/link";
 
@@ -238,12 +239,15 @@ export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
                       storyStatus={film.storyGeneration?.status}
                     />
                   ) : null}
-                  {isReady ? (
+                  {isReady && film.videoSrc ? (
                     <div className="mt-[0.9rem] flex flex-row flex-wrap items-center gap-[0.675rem]">
                       <Button href={filmHref} variant="primary" className="!text-sm">
                         {t("space.watchFilm")}
                       </Button>
-                      <ShareFilmButton path={filmHref} title={displayTitle || film.title} />
+                      <ShareFilmButton
+                        url={getYouTubeWatchUrl(film.videoSrc) ?? film.videoSrc}
+                        title={displayTitle || film.title}
+                      />
                     </div>
                   ) : null}
                 </div>

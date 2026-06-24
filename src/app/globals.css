@@ -3555,3 +3555,229 @@ body {
   line-height: 1;
   color: var(--gold-light);
 }
+
+/* Notifications — cloche header */
+.notification-bell {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.notification-bell__trigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  padding: 0.35rem;
+  color: var(--cream);
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.notification-bell__trigger:hover {
+  color: var(--gold-light);
+}
+
+.notification-bell__trigger:focus-visible {
+  outline: 2px solid rgba(232, 197, 71, 0.55);
+  outline-offset: 3px;
+  border-radius: 0.25rem;
+}
+
+.notification-bell__trigger:active {
+  transform: scale(0.94);
+}
+
+.notification-bell__trigger svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.notification-bell__badge {
+  position: absolute;
+  top: -0.15rem;
+  right: -0.15rem;
+  display: flex;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 2px solid var(--cinema-black);
+  background: linear-gradient(165deg, #f0d060 0%, #c9a227 100%);
+  padding: 0 0.25rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--cinema-black);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+.notification-bell__panel {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: min(22rem, calc(100vw - 1.5rem));
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  background: rgba(11, 16, 32, 0.98);
+  box-shadow:
+    0 12px 36px rgba(0, 0, 0, 0.55),
+    0 0 24px rgba(201, 162, 39, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.notification-bell__panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+  padding: 0.85rem 1rem;
+}
+
+.notification-bell__panel-title {
+  margin: 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--cream);
+}
+
+.notification-bell__panel-count {
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: rgba(201, 162, 39, 0.18);
+  padding: 0.2rem 0.55rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.notification-bell__empty {
+  margin: 0;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: rgba(244, 240, 232, 0.55);
+}
+
+.notification-bell__list {
+  margin: 0;
+  max-height: min(20rem, 52vh);
+  overflow-y: auto;
+  list-style: none;
+  padding: 0.35rem 0;
+}
+
+.notification-bell__item {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border: 0;
+  background: transparent;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.notification-bell__item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.notification-bell__item--unread {
+  background: rgba(201, 162, 39, 0.06);
+}
+
+.notification-bell__item--unread:hover {
+  background: rgba(201, 162, 39, 0.1);
+}
+
+.notification-bell__thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  overflow: hidden;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(201, 162, 39, 0.25);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.notification-bell__thumb--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.notification-bell__content {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.notification-bell__item-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--cream);
+}
+
+.notification-bell__item--unread .notification-bell__item-title {
+  color: var(--gold-light);
+}
+
+.notification-bell__item-body {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: rgba(244, 240, 232, 0.62);
+}
+
+.notification-bell__item-date {
+  margin-top: 0.15rem;
+  font-size: 0.68rem;
+  color: rgba(244, 240, 232, 0.4);
+}
+
+.notification-bell__panel-foot {
+  border-top: 1px solid rgba(201, 162, 39, 0.2);
+  padding: 0.65rem 1rem;
+}
+
+.notification-bell__foot-link {
+  display: block;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gold-light);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.notification-bell__foot-link:hover {
+  color: var(--cream);
+}
+
+@media (max-width: 767px) {
+  .notification-bell__panel {
+    position: fixed;
+    top: calc(3.5rem + env(safe-area-inset-top, 0px) + 0.5rem);
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(22rem, calc(100vw - 1.5rem));
+    z-index: 60;
+  }
+}

@@ -141,6 +141,26 @@ async function runSchema(): Promise<void> {
     CREATE INDEX IF NOT EXISTS film_ticket_ledger_user_email_idx
     ON film_ticket_ledger (user_email)
   `;
+
+  await db`
+    CREATE TABLE IF NOT EXISTS notifications (
+      id TEXT PRIMARY KEY,
+      user_email TEXT NOT NULL REFERENCES users(email) ON DELETE CASCADE,
+      kind TEXT NOT NULL,
+      title TEXT NOT NULL,
+      body TEXT NOT NULL DEFAULT '',
+      image_src TEXT,
+      href TEXT NOT NULL,
+      reference_id TEXT,
+      read_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL
+    )
+  `;
+
+  await db`
+    CREATE INDEX IF NOT EXISTS notifications_user_email_created_idx
+    ON notifications (user_email, created_at DESC)
+  `;
 }
 
 export async function ensureSchema(): Promise<void> {

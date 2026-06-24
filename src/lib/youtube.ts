@@ -30,6 +30,13 @@ export function isYouTubeUrl(url: string): boolean {
   return parseYouTubeVideoId(url) !== null;
 }
 
+/** URL watch YouTube canonique pour partage (watch?v=…). */
+export function getYouTubeWatchUrl(url: string): string | null {
+  const videoId = parseYouTubeVideoId(url);
+  if (!videoId) return null;
+  return `https://www.youtube.com/watch?v=${videoId}`;
+}
+
 export type YouTubeEmbedOptions = {
   autoplay?: boolean;
   origin?: string;

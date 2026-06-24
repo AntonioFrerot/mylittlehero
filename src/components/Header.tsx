@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { HeaderAuth } from "@/components/auth/HeaderAuth";
 import { MobileNavMenu } from "@/components/MobileNavMenu";
 import { HeaderTicketCount } from "@/components/tickets/HeaderTicketCount";
+import { HeaderNotificationBell } from "@/components/notifications/HeaderNotificationBell";
 import { useAuthUser, useIsAdmin } from "@/components/auth/AuthProvider";
 import { useLocale } from "@/components/LocaleProvider";
 import { BRAND_NAME, SITE_LOGO_SRC } from "@/lib/brand";
@@ -154,6 +155,7 @@ export function Header() {
 
         <div className="flex shrink-0 items-center gap-2 md:hidden">
           {user ? <HeaderTicketCount className="header-ticket-count--mobile" /> : null}
+          {user ? <HeaderNotificationBell /> : null}
           <button
             type="button"
             className={`${BTN_3D_ICON} h-11 w-11 rounded-lg text-cream`}

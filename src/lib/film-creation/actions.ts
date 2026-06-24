@@ -314,6 +314,15 @@ export async function deliverUserFilm(
   const film = await updateUserFilm(email, filmId, patch);
   if (!film) return null;
 
+  try {
+    const { createFilmReadyNotification } = await import(
+      "@/lib/notifications/film-ready"
+    );
+    await createFilmReadyNotification(email, film);
+  } catch (error) {
+    console.error("Film ready notification failed", { email, filmId, error });
+  }
+
   revalidatePath("/catalogue");
   revalidatePath("/mon-espace");
   revalidatePath(`/mon-espace/films/${filmId}`);

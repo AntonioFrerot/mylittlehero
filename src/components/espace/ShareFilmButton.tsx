@@ -5,18 +5,16 @@ import { useLocale } from "@/components/LocaleProvider";
 import { useCallback, useState } from "react";
 
 type ShareFilmButtonProps = {
-  path: string;
+  url: string;
   title: string;
   className?: string;
 };
 
-export function ShareFilmButton({ path, title, className = "" }: ShareFilmButtonProps) {
+export function ShareFilmButton({ url, title, className = "" }: ShareFilmButtonProps) {
   const { t } = useLocale();
   const [copied, setCopied] = useState(false);
 
   const handleShare = useCallback(async () => {
-    const url = `${window.location.origin}${path}`;
-
     try {
       if (typeof navigator.share === "function") {
         await navigator.share({ title, url });
@@ -33,7 +31,7 @@ export function ShareFilmButton({ path, title, className = "" }: ShareFilmButton
     } catch {
       window.prompt(t("space.shareFilmPrompt"), url);
     }
-  }, [path, title, t]);
+  }, [url, title, t]);
 
   return (
     <Button
