@@ -41,6 +41,32 @@ body {
   overflow-x: clip;
 }
 
+/* Curseur main sur tous les contrôles cliquables (Tailwind preflight met default sur button) */
+button:not(:disabled),
+input:where([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"]):not(:disabled),
+select:not(:disabled),
+summary,
+a[href],
+label[for],
+label:has(input:not([type="hidden"])),
+label:has(select),
+label:has(textarea),
+[role="button"]:not([aria-disabled="true"]),
+[role="link"],
+[role="menuitem"],
+[role="tab"]:not([aria-disabled="true"]),
+[role="option"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+[role="button"][aria-disabled="true"],
+[role="tab"][aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
 .text-yellow {
   color: #e8c547;
   margin: 0;
