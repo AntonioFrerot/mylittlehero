@@ -104,7 +104,7 @@ export function CharacterManager({
         <button
           type="button"
           onClick={startNew}
-          className="mt-4 w-fit text-sm text-gold-light transition-colors hover:text-gold"
+          className="mt-4 w-fit cursor-pointer text-sm text-gold-light transition-colors hover:text-gold"
         >
           {t("characters.addNew")}
         </button>

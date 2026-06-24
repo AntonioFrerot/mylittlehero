@@ -28,6 +28,10 @@ import {
 import { spendTicketsForFilm } from "@/lib/purchases/tickets";
 import { addUserFilm, getUserFilmById, listUserFilms, updateUserFilm } from "./store";
 import { hasUserUsedFreeFilm, isUserFreeTrialFilm } from "./free-film";
+import {
+  getFilmCreationCooldownState,
+  getLatestFilmCreatedAt,
+} from "./creation-cooldown";
 import type {
   FilmCharacterRef,
   FilmStyle,
@@ -90,6 +94,16 @@ export async function getMyFilms(): Promise<UserFilm[]> {
   const session = await getSession();
   if (!session) return [];
   return listUserFilms(session.email);
+}
+
+export async function getMyFilmCreationCooldown() {
+  const session = await getSession();
+  if (!session) {
+    return { active: false, endsAt: null, remainingMs: 0 };
+  }
+
+  const films = await listUserFilms(session.email);
+  return getFilmCreationCooldownState(getLatestFilmCreatedAt(films));
 }
 
 export async function getMyFilmsWithStory(): Promise<UserFilmWithStory[]> {
@@ -195,8 +209,15 @@ export async function saveFilmCreation(
     return { error: t("filmCreation.errors.durationRequired") };
   }
 
-  const isFreeFilm = isFreeTrialFilmDuration(durationSeconds);
   const existingFilms = await listUserFilms(session.email);
+  const creationCooldown = getFilmCreationCooldownState(
+    getLatestFilmCreatedAt(existingFilms)
+  );
+  if (creationCooldown.active) {
+    return { error: t("filmCreation.errors.cooldownActive") };
+  }
+
+  const isFreeFilm = isFreeTrialFilmDuration(durationSeconds);
 
   if (isFreeFilm) {
     if (hasUserUsedFreeFilm(existingFilms)) {

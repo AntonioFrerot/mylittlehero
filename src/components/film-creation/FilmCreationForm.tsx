@@ -13,6 +13,7 @@ import {
   type FilmCreationFormState,
 } from "@/lib/film-creation/actions";
 import { CharacterFacePicker } from "@/components/film-creation/CharacterFacePicker";
+import { FilmCreationCooldown } from "@/components/film-creation/FilmCreationCooldown";
 import { FilmThemePicker } from "@/components/film-creation/FilmThemePicker";
 import { FilmDurationPicker } from "@/components/film-creation/FilmDurationPicker";
 import { YesNoTextField } from "@/components/film-creation/YesNoTextField";
@@ -31,6 +32,7 @@ type FilmCreationFormProps = {
   ticketBalance: number;
   hasActiveSubscription: boolean;
   freeFilmAvailable: boolean;
+  cooldownEndsAt?: string | null;
 };
 
 export function FilmCreationForm({
@@ -38,10 +40,15 @@ export function FilmCreationForm({
   ticketBalance,
   hasActiveSubscription,
   freeFilmAvailable,
+  cooldownEndsAt = null,
 }: FilmCreationFormProps) {
   const { t } = useLocale();
   const [durationSeconds, setDurationSeconds] = useState<number | null>(null);
   const [clientError, setClientError] = useState<string | null>(null);
+  const [cooldownActive, setCooldownActive] = useState(() => {
+    if (!cooldownEndsAt) return false;
+    return new Date(cooldownEndsAt).getTime() > Date.now();
+  });
   const [state, formAction, pending] = useActionState(
     saveFilmCreation,
     initialState
@@ -88,6 +95,9 @@ export function FilmCreationForm({
     }
     if (insufficientTickets) {
       return t("filmCreation.errors.insufficientTickets");
+    }
+    if (cooldownActive) {
+      return t("filmCreation.errors.cooldownActive");
     }
     return null;
   }
@@ -229,39 +239,46 @@ export function FilmCreationForm({
       ) : null}
 
       <div className="film-create-submit-wrap">
-        <button
-          type="submit"
-          disabled={pending || eligibleCharacters.length === 0}
-          className={`${BTN_FILM_CREATE_SUBMIT}${
-            insufficientTickets ? " film-create-submit--blocked" : ""
-          }${!showSubmitCostBadge || pending ? " film-create-submit--solo" : ""}`}
-          aria-disabled={insufficientTickets || undefined}
-        >
-          {pending ? (
-            <span className="film-create-submit__pending">
-              {t("filmCreation.form.pending")}
-            </span>
-          ) : (
-            <>
-              <span className="film-create-submit__label">
-                {t("filmCreation.form.submit")}
+        {cooldownActive && cooldownEndsAt ? (
+          <FilmCreationCooldown
+            endsAt={cooldownEndsAt}
+            onCooldownEnd={() => setCooldownActive(false)}
+          />
+        ) : (
+          <button
+            type="submit"
+            disabled={pending || eligibleCharacters.length === 0}
+            className={`${BTN_FILM_CREATE_SUBMIT}${
+              insufficientTickets ? " film-create-submit--blocked" : ""
+            }${!showSubmitCostBadge || pending ? " film-create-submit--solo" : ""}`}
+            aria-disabled={insufficientTickets || undefined}
+          >
+            {pending ? (
+              <span className="film-create-submit__pending">
+                {t("filmCreation.form.pending")}
               </span>
-              {!hasActiveSubscription && durationSeconds != null && !isFreeFilm ? (
-                <span className="film-create-submit__cost">
-                  <TicketCountPill
-                    count={ticketsRequired}
-                    size="onPrimary"
-                    label={ticketCostLabel(ticketsRequired)}
-                  />
+            ) : (
+              <>
+                <span className="film-create-submit__label">
+                  {t("filmCreation.form.submit")}
                 </span>
-              ) : durationSeconds != null && isFreeFilm ? (
-                <span className="film-create-submit__cost film-create-submit__cost--free">
-                  {t("filmCreation.form.durationFreeBadge")}
-                </span>
-              ) : null}
-            </>
-          )}
-        </button>
+                {!hasActiveSubscription && durationSeconds != null && !isFreeFilm ? (
+                  <span className="film-create-submit__cost">
+                    <TicketCountPill
+                      count={ticketsRequired}
+                      size="onPrimary"
+                      label={ticketCostLabel(ticketsRequired)}
+                    />
+                  </span>
+                ) : durationSeconds != null && isFreeFilm ? (
+                  <span className="film-create-submit__cost film-create-submit__cost--free">
+                    {t("filmCreation.form.durationFreeBadge")}
+                  </span>
+                ) : null}
+              </>
+            )}
+          </button>
+        )}
       </div>
     </form>
   );

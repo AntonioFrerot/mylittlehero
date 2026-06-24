@@ -1,6 +1,7 @@
 import { del, put } from "@vercel/blob";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { isHostedProduction } from "@/lib/db/client";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_TYPES = new Set([
@@ -53,12 +54,28 @@ export async function saveCharacterPhoto(
   const buffer = Buffer.from(await file.arrayBuffer());
 
   if (isBlobStorageEnabled()) {
-    const blob = await put(`characters/${userKey}/${filename}`, buffer, {
-      access: "public",
-      contentType: file.type,
-      addRandomSuffix: false,
-    });
-    return { ok: true, photoSrc: blob.url };
+    try {
+      const blob = await put(`characters/${userKey}/${filename}`, buffer, {
+        access: "public",
+        contentType: file.type,
+        addRandomSuffix: false,
+      });
+      return { ok: true, photoSrc: blob.url };
+    } catch {
+      return {
+        ok: false,
+        error:
+          "Impossible d'enregistrer la photo pour le moment. Réessayez dans quelques instants.",
+      };
+    }
+  }
+
+  if (isHostedProduction()) {
+    return {
+      ok: false,
+      error:
+        "Le stockage des photos n'est pas configuré sur le site en ligne. Contactez le support.",
+    };
   }
 
   const dir = path.join(process.cwd(), "public", "uploads", "characters", userKey);

@@ -594,6 +594,9 @@ export const en = {
       submitTickets: "Create film · {count} tickets",
       pending: "Creating…",
       viewFilms: "View my films",
+      cooldownMessage:
+        "To ensure the quality of each story, you must wait 24 hours between each film creation.",
+      cooldownTimerLabel: "Next creation available in",
     },
     styles: {
       animation: "Animation",
@@ -628,6 +631,8 @@ export const en = {
       freeFilmAlreadyUsed: "You have already used your free 15-second film.",
       insufficientTickets: "You don't have enough tickets for this duration.",
       purchaseCta: "View pricing",
+      cooldownActive:
+        "You must wait 24 hours after your last creation before starting a new one.",
     },
     success:
       "Your film is being created. You'll receive a notification when it's available in your account.",
@@ -663,6 +668,9 @@ export const en = {
       tailleMax: "Height cannot exceed {max} cm.",
       photoRequired: "Add a face photo for the character.",
       notFound: "Character not found.",
+      loginRequired: "Log in to manage your characters.",
+      saveFailed:
+        "Could not save the character right now. Please try again in a few moments.",
     },
     successUpdated: "Character updated.",
     successAdded: "Character added to your account.",

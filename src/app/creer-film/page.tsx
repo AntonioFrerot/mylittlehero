@@ -1,6 +1,7 @@
 import { Header } from "@/components/Header";
 import { FilmCreationForm } from "@/components/film-creation/FilmCreationForm";
 import { getMyCharacters } from "@/lib/characters/actions";
+import { getMyFilmCreationCooldown } from "@/lib/film-creation/actions";
 import { getSession } from "@/lib/auth/get-session";
 import { getMyFilmTicketSummary } from "@/lib/purchases/actions";
 import { canCreateFilm, PRICING_PATH } from "@/lib/navigation/creer-film";
@@ -20,11 +21,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CreerFilmPage() {
-  const [session, ticketSummary, { t }, characters] = await Promise.all([
+  const [session, ticketSummary, { t }, characters, creationCooldown] =
+    await Promise.all([
     getSession(),
     getMyFilmTicketSummary(),
     getServerTranslator(),
     getMyCharacters(),
+    getMyFilmCreationCooldown(),
   ]);
 
   if (!session) {
@@ -65,6 +68,7 @@ export default async function CreerFilmPage() {
               ticketBalance={ticketSummary?.balance ?? 0}
               hasActiveSubscription={ticketSummary?.hasActiveSubscription ?? false}
               freeFilmAvailable={ticketSummary?.freeFilmAvailable ?? false}
+              cooldownEndsAt={creationCooldown.endsAt}
             />
           </div>
 

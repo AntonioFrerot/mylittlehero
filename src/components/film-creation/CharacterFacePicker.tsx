@@ -104,7 +104,7 @@ export function CharacterFacePicker({
 
         <Link
           href="/mon-espace?section=personnages"
-          className={`${SURFACE_3D_CARD_SELECTABLE} hover:border-gold/40 hover:bg-gold/5 ${
+          className={`${SURFACE_3D_CARD_SELECTABLE} cursor-pointer hover:border-gold/40 hover:bg-gold/5 ${
             hasSelection ? "" : "items-center p-4"
           }`}
           aria-label={t("filmCreation.form.addCharacterAria")}

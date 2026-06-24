@@ -2,6 +2,11 @@
 
 import { getSession } from "@/lib/auth/get-session";
 import { getServerTranslator } from "@/lib/i18n/server";
+import {
+  databaseRequiredError,
+  isDatabaseEnabled,
+  isHostedProduction,
+} from "@/lib/db/client";
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "node:crypto";
 import {
@@ -16,13 +21,6 @@ export type CharacterFormState = {
   error?: string;
   success?: string;
 };
-
-function requireSession() {
-  return getSession().then((session) => {
-    if (!session) throw new Error("Unauthenticated");
-    return session;
-  });
-}
 
 function optionalText(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;
@@ -74,84 +72,111 @@ export async function upsertCharacter(
   formData: FormData
 ): Promise<CharacterFormState> {
   const { t } = await getServerTranslator();
-  const session = await requireSession();
 
-  const id = formData.get("id");
-  const prenom = formData.get("prenom");
-  const age = optionalAge(formData.get("age"));
-  const tailleResult = parseTailleCm(formData.get("taille"), t);
-  const additionalInfo = optionalText(formData.get("additionalInfo"));
-  const photoInput = formData.get("photo");
-
-  if (typeof prenom !== "string" || !prenom.trim()) {
-    return { error: t("characters.errors.prenomRequired") };
-  }
-  if ("error" in tailleResult) {
-    return { error: tailleResult.error };
-  }
-
-  const now = new Date().toISOString();
-  const characterId =
-    typeof id === "string" && id.trim() ? id.trim() : randomUUID();
-
-  const existing = await listCharacters(session.email);
-  const previous = existing.find((c) => c.id === characterId);
-
-  let photoSrc = previous?.photoSrc ?? "";
-
-  if (photoInput instanceof File && photoInput.size > 0) {
-    const saved = await saveCharacterPhoto(
-      session.email,
-      characterId,
-      photoInput
-    );
-    if (!saved.ok) return { error: saved.error };
-
-    if (previous?.photoSrc && previous.photoSrc !== saved.photoSrc) {
-      await deleteCharacterPhotoFile(previous.photoSrc);
+  try {
+    const session = await getSession();
+    if (!session) {
+      return { error: t("characters.errors.loginRequired") };
     }
-    photoSrc = saved.photoSrc;
-  } else if (!photoSrc) {
-    return { error: t("characters.errors.photoRequired") };
+
+    if (isHostedProduction() && !isDatabaseEnabled()) {
+      return { error: databaseRequiredError() };
+    }
+
+    const id = formData.get("id");
+    const prenom = formData.get("prenom");
+    const age = optionalAge(formData.get("age"));
+    const tailleResult = parseTailleCm(formData.get("taille"), t);
+    const additionalInfo = optionalText(formData.get("additionalInfo"));
+    const photoInput = formData.get("photo");
+
+    if (typeof prenom !== "string" || !prenom.trim()) {
+      return { error: t("characters.errors.prenomRequired") };
+    }
+    if ("error" in tailleResult) {
+      return { error: tailleResult.error };
+    }
+
+    const now = new Date().toISOString();
+    const characterId =
+      typeof id === "string" && id.trim() ? id.trim() : randomUUID();
+
+    const existing = await listCharacters(session.email);
+    const previous = existing.find((c) => c.id === characterId);
+
+    let photoSrc = previous?.photoSrc ?? "";
+
+    if (photoInput instanceof File && photoInput.size > 0) {
+      const saved = await saveCharacterPhoto(
+        session.email,
+        characterId,
+        photoInput
+      );
+      if (!saved.ok) return { error: saved.error };
+
+      if (previous?.photoSrc && previous.photoSrc !== saved.photoSrc) {
+        await deleteCharacterPhotoFile(previous.photoSrc);
+      }
+      photoSrc = saved.photoSrc;
+    } else if (!photoSrc) {
+      return { error: t("characters.errors.photoRequired") };
+    }
+
+    const character: Character = {
+      id: characterId,
+      prenom: prenom.trim(),
+      photoSrc,
+      ...(age ? { age } : {}),
+      taille: tailleResult.taille,
+      ...(additionalInfo ? { additionalInfo } : {}),
+      createdAt: previous?.createdAt ?? now,
+      updatedAt: now,
+    };
+
+    await saveCharacter(session.email, character);
+    revalidatePath("/mon-espace");
+    revalidatePath("/creer-film");
+
+    return {
+      success: previous
+        ? t("characters.successUpdated")
+        : t("characters.successAdded"),
+    };
+  } catch (error) {
+    console.error("Character upsert failed", error);
+    return { error: t("characters.errors.saveFailed") };
   }
-
-  const character: Character = {
-    id: characterId,
-    prenom: prenom.trim(),
-    photoSrc,
-    ...(age ? { age } : {}),
-    taille: tailleResult.taille,
-    ...(additionalInfo ? { additionalInfo } : {}),
-    createdAt: previous?.createdAt ?? now,
-    updatedAt: now,
-  };
-
-  await saveCharacter(session.email, character);
-  revalidatePath("/mon-espace");
-  revalidatePath("/creer-film");
-
-  return {
-    success: previous
-      ? t("characters.successUpdated")
-      : t("characters.successAdded"),
-  };
 }
 
 export async function removeCharacter(
   characterId: string
 ): Promise<CharacterFormState> {
   const { t } = await getServerTranslator();
-  const session = await requireSession();
-  if (!characterId) return { error: t("characters.errors.notFound") };
 
-  const existing = await listCharacters(session.email);
-  const target = existing.find((c) => c.id === characterId);
-  if (target?.photoSrc) {
-    await deleteCharacterPhotoFile(target.photoSrc);
+  try {
+    const session = await getSession();
+    if (!session) {
+      return { error: t("characters.errors.loginRequired") };
+    }
+
+    if (isHostedProduction() && !isDatabaseEnabled()) {
+      return { error: databaseRequiredError() };
+    }
+
+    if (!characterId) return { error: t("characters.errors.notFound") };
+
+    const existing = await listCharacters(session.email);
+    const target = existing.find((c) => c.id === characterId);
+    if (target?.photoSrc) {
+      await deleteCharacterPhotoFile(target.photoSrc);
+    }
+
+    await deleteCharacter(session.email, characterId);
+    revalidatePath("/mon-espace");
+    revalidatePath("/creer-film");
+    return { success: t("characters.successDeleted") };
+  } catch (error) {
+    console.error("Character delete failed", error);
+    return { error: t("characters.errors.saveFailed") };
   }
-
-  await deleteCharacter(session.email, characterId);
-  revalidatePath("/mon-espace");
-  revalidatePath("/creer-film");
-  return { success: t("characters.successDeleted") };
 }

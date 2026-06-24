@@ -28,10 +28,10 @@ export const BTN_3D_GHOST =
   "text-cream/80 hover:text-gold-light active:scale-[0.98]";
 
 export const BTN_3D_PRIMARY_ACTION =
-  `btn-3d btn-3d--primary ${GLOW_SOFT} inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition-all hover:brightness-110 disabled:opacity-60 active:scale-[0.98]`;
+  `btn-3d btn-3d--primary ${GLOW_SOFT} inline-flex cursor-pointer items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98]`;
 
 export const BTN_3D_PRIMARY_ACTION_LG =
-  `btn-3d btn-3d--primary ${GLOW_SOFT} inline-flex min-h-[48px] w-full items-center justify-center rounded-full px-8 py-3.5 text-sm font-semibold transition-all hover:brightness-110 disabled:opacity-60 active:scale-[0.98] sm:w-auto`;
+  `btn-3d btn-3d--primary ${GLOW_SOFT} inline-flex min-h-[48px] w-full cursor-pointer items-center justify-center rounded-full px-8 py-3.5 text-sm font-semibold transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98] sm:w-auto`;
 
 /** Valider — menu thèmes mobile (doré compact, pleine largeur via CSS). */
 export const BTN_FILM_THEME_VALIDATE =
