@@ -20,6 +20,8 @@ import type { Character } from "./types";
 export type CharacterFormState = {
   error?: string;
   success?: string;
+  character?: Character;
+  mode?: "created" | "updated";
 };
 
 function optionalText(value: unknown): string | undefined {
@@ -141,6 +143,8 @@ export async function upsertCharacter(
       success: previous
         ? t("characters.successUpdated")
         : t("characters.successAdded"),
+      character,
+      mode: previous ? "updated" : "created",
     };
   } catch (error) {
     console.error("Character upsert failed", error);

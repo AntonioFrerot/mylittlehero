@@ -656,6 +656,7 @@ export const en = {
     additionalInfo: "Additional information:",
     submitEdit: "Save changes",
     submitAdd: "Add character",
+    submitPendingAdd: "Creating character...",
     photoLabel: "Face photo:",
     choosePhoto: "Choose a photo",
     fileHint: "JPG, PNG or WebP — max. 5 MB",

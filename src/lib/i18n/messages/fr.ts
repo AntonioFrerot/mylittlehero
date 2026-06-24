@@ -662,6 +662,7 @@ export const fr = {
     additionalInfo: "Informations supplémentaires :",
     submitEdit: "Enregistrer les modifications",
     submitAdd: "Ajouter le personnage",
+    submitPendingAdd: "Création du personnage en cours...",
     photoLabel: "Photo du visage :",
     choosePhoto: "Choisir une photo",
     fileHint: "JPG, PNG ou WebP — max. 5 Mo",

@@ -47,6 +47,7 @@ export function CharacterManager({
   const formSectionRef = useRef<HTMLDivElement>(null);
   const [characters, setCharacters] = useState(initialCharacters);
   const [editing, setEditing] = useState<Character | null>(null);
+  const [formResetKey, setFormResetKey] = useState(0);
   const [state, formAction, pending] = useActionState(upsertCharacter, initialState);
 
   useEffect(() => {
@@ -54,11 +55,26 @@ export function CharacterManager({
   }, [initialCharacters]);
 
   useEffect(() => {
-    if (state.success) {
-      setEditing(null);
-      router.refresh();
+    if (!state.character) return;
+
+    const saved = state.character;
+    setCharacters((list) => {
+      const index = list.findIndex((character) => character.id === saved.id);
+      if (index >= 0) {
+        const next = [...list];
+        next[index] = saved;
+        return next;
+      }
+      return [saved, ...list];
+    });
+
+    if (state.mode === "created") {
+      setFormResetKey((key) => key + 1);
     }
-  }, [state.success, router]);
+
+    setEditing(null);
+    router.refresh();
+  }, [state.character, state.mode, router]);
 
   const scrollToForm = () => {
     requestAnimationFrame(() => {
@@ -200,7 +216,7 @@ export function CharacterManager({
         </h2>
 
         <form
-          key={editing?.id ?? "new"}
+          key={editing?.id ?? `new-${formResetKey}`}
           action={formAction}
           className="mt-6 flex flex-col gap-4"
         >
@@ -262,7 +278,7 @@ export function CharacterManager({
               {state.error}
             </p>
           )}
-          {state.success && (
+          {state.success && state.mode === "updated" && (
             <p className="rounded-lg border border-emerald-500/30 bg-emerald-950/40 px-3 py-2 text-sm text-emerald-200">
               {state.success}
             </p>
@@ -274,7 +290,9 @@ export function CharacterManager({
             className={`mt-2 ${BTN_3D_PRIMARY_ACTION}`}
           >
             {pending
-              ? t("common.saving")
+              ? editing
+                ? t("common.saving")
+                : t("characters.submitPendingAdd")
               : editing
                 ? t("characters.submitEdit")
                 : t("characters.submitAdd")}
