@@ -5,7 +5,7 @@ import { LocaleProvider } from "@/components/LocaleProvider";
 import { SupportChatLazy } from "@/components/support/SupportChatLazy";
 import { getSession } from "@/lib/auth/get-session";
 import { isAdminEmail } from "@/lib/auth/is-admin";
-import { BRAND_NAME, SITE_LOGO_SRC } from "@/lib/brand";
+import { BRAND_NAME } from "@/lib/brand";
 import { getServerLocale, getServerTranslator } from "@/lib/i18n/server";
 import { getMessages } from "@/lib/i18n/translator";
 import { getTicketBalance } from "@/lib/purchases/tickets";
@@ -37,10 +37,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${BRAND_NAME} — ${t("meta.title")}`,
     description: t("meta.description"),
-    icons: {
-      icon: SITE_LOGO_SRC,
-      apple: SITE_LOGO_SRC,
-    },
   };
 }
 

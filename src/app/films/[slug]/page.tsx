@@ -1,10 +1,11 @@
 import { Header } from "@/components/Header";
 import { ExampleFilmHeroSpotlight } from "@/components/films/ExampleFilmHeroSpotlight";
 import { ExampleFilmMedia } from "@/components/films/ExampleFilmMedia";
+import { FreeTrialIntentLink } from "@/components/film-creation/FreeTrialIntentLink";
 import { HashLink } from "@/components/ui/HashLink";
-import { Button } from "@/components/ui/Button";
 import { getSession } from "@/lib/auth/get-session";
 import { isFreeFilmAvailableForEmail } from "@/lib/film-creation/free-film";
+import { buildCreerFilmFreeTrialHref } from "@/lib/film-creation/free-trial-intent";
 import { getExampleFilm } from "@/lib/example-films";
 import { POSTER_DIMENSIONS } from "@/lib/hero-posters";
 import {
@@ -51,7 +52,7 @@ export default async function ExampleFilmPage({ params }: PageProps) {
   const showFreeTrialCta = session
     ? await isFreeFilmAvailableForEmail(session.email)
     : true;
-  const freeTrialHref = session ? "/creer-film" : "/connexion?redirect=%2Fcreer-film";
+  const freeTrialHref = buildCreerFilmFreeTrialHref(Boolean(session));
 
   const filmTitle = translateExampleFilmTitle(slug, film.title, locale);
   const filmTagline = translateExampleFilmTagline(slug, film.tagline, locale);
@@ -119,13 +120,12 @@ export default async function ExampleFilmPage({ params }: PageProps) {
 
           {showFreeTrialCta ? (
             <div className="mt-6 sm:mt-8">
-              <Button
+              <FreeTrialIntentLink
                 href={freeTrialHref}
-                variant="primary"
                 className="w-full sm:w-auto"
               >
                 {t("examples.tryFree")}
-              </Button>
+              </FreeTrialIntentLink>
             </div>
           ) : null}
 

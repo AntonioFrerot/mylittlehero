@@ -599,6 +599,8 @@ export const fr = {
       characterHint:
         "Sélectionnez le personnage principal de l'histoire.",
       characterAria: "Personnages du film",
+      characterScrollLeftAria: "Voir les personnages précédents",
+      characterScrollRightAria: "Voir les personnages suivants",
       mainCharacterBadge: "Principal",
       selectedCharacterBadge: "SÉLECTIONNÉ",
       addCharacterLabel: "Nouveau personnage",
@@ -628,8 +630,6 @@ export const fr = {
       submitTickets: "Créer son film · {count} tickets",
       pending: "Création en cours…",
       viewFilms: "Voir Mes films",
-      cooldownMessage:
-        "Pour garantir la qualité de chaque histoire, vous devez attendre 24 h entre chaque création de film.",
       cooldownTimerLabel: "Prochaine création possible dans",
     },
     styles: {

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { isUserCharacterPhoto } from "@/lib/characters/user-photo";
 
 type UserFilmHeroSpotlightProps = {
   className?: string;
@@ -31,7 +32,7 @@ export function UserFilmHeroSpotlight({
                 src={photoSrc}
                 alt={photoAlt}
                 fill
-                unoptimized={photoSrc.startsWith("/uploads/")}
+                unoptimized={isUserCharacterPhoto(photoSrc)}
                 quality={100}
                 className="object-cover object-[center_20%]"
                 sizes="(max-width: 640px) 128px, 144px"

@@ -40,9 +40,6 @@ export function FilmCreationCooldown({
 
   return (
     <div className="film-create-cooldown">
-      <p className="film-create-cooldown__message">
-        {t("filmCreation.form.cooldownMessage")}
-      </p>
       <p className="film-create-cooldown__label">
         {t("filmCreation.form.cooldownTimerLabel")}
       </p>

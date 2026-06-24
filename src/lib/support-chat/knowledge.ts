@@ -15,5 +15,4 @@ export {
   type FaqEntry,
 };
 
-export const SUPPORT_CHAT_SYSTEM_PROMPT = buildSupportChatSystemPrompt();
 export const SUPPORT_FAQ = buildSupportFaq();

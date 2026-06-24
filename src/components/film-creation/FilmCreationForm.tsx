@@ -15,7 +15,7 @@ import {
 import { CharacterFacePicker } from "@/components/film-creation/CharacterFacePicker";
 import { FilmCreationCooldown } from "@/components/film-creation/FilmCreationCooldown";
 import { FilmThemePicker } from "@/components/film-creation/FilmThemePicker";
-import { FilmDurationPicker } from "@/components/film-creation/FilmDurationPicker";
+import { FilmDurationPickerWithIntent } from "@/components/film-creation/FilmDurationPickerWithIntent";
 import { YesNoTextField } from "@/components/film-creation/YesNoTextField";
 import { TicketCountPill } from "@/components/tickets/TicketCountPill";
 import {
@@ -198,7 +198,7 @@ export function FilmCreationForm({
         )}
       </fieldset>
 
-      <FilmDurationPicker
+      <FilmDurationPickerWithIntent
         value={durationSeconds}
         onChange={setDurationSeconds}
         freeFilmAvailable={freeFilmAvailable}

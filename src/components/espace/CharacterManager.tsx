@@ -19,6 +19,10 @@ import {
 } from "@/lib/characters/actions";
 import { formatCharacterAge } from "@/lib/characters/format";
 import type { Character } from "@/lib/characters/types";
+import {
+  CHARACTER_AVATAR_IMAGE_QUALITY,
+  isUserCharacterPhoto,
+} from "@/lib/characters/user-photo";
 
 const initialState: CharacterFormState = {};
 
@@ -151,7 +155,9 @@ export function CharacterManager({
                           alt={t("common.photoOf", { name: character.prenom })}
                           fill
                           className="object-cover"
-                          sizes="56px"
+                          sizes="112px"
+                          quality={CHARACTER_AVATAR_IMAGE_QUALITY}
+                          unoptimized={isUserCharacterPhoto(character.photoSrc)}
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center text-sm text-cream/30">

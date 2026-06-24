@@ -22,6 +22,17 @@ function formatNotificationDate(iso: string, locale: string): string {
   }).format(new Date(iso));
 }
 
+function isOutsideNotificationMenu(
+  target: EventTarget | null,
+  panel: HTMLElement | null,
+  trigger: HTMLElement | null
+): boolean {
+  if (!(target instanceof Node)) return false;
+  if (panel?.contains(target)) return false;
+  if (trigger?.contains(target)) return false;
+  return true;
+}
+
 type HeaderNotificationBellProps = {
   className?: string;
 };
@@ -30,6 +41,7 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
   const { locale, t } = useLocale();
   const user = useAuthUser();
   const router = useRouter();
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const prevUnreadRef = useRef(0);
   const [open, setOpen] = useState(false);
@@ -78,14 +90,47 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
   useEffect(() => {
     if (!open) return;
 
-    function handlePointerDown(event: MouseEvent) {
-      if (!panelRef.current?.contains(event.target as Node)) {
-        setOpen(false);
+    function closeIfOutside(event: Event) {
+      if (
+        !isOutsideNotificationMenu(
+          event.target,
+          panelRef.current,
+          triggerRef.current
+        )
+      ) {
+        return;
       }
+
+      if (event.cancelable) {
+        event.preventDefault();
+      }
+      event.stopPropagation();
+      setOpen(false);
     }
 
-    document.addEventListener("mousedown", handlePointerDown);
-    return () => document.removeEventListener("mousedown", handlePointerDown);
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+
+    document.addEventListener("pointerdown", closeIfOutside, true);
+    document.addEventListener("touchstart", closeIfOutside, {
+      capture: true,
+      passive: false,
+    });
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", closeIfOutside, true);
+      document.removeEventListener("touchstart", closeIfOutside, true);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
   }, [open]);
 
   const handleNotificationClick = useCallback(
@@ -126,8 +171,9 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
         : String(unreadCount);
 
   return (
-    <div ref={panelRef} className={`notification-bell ${className}`.trim()}>
+    <div className={`notification-bell ${className}`.trim()}>
       <button
+        ref={triggerRef}
         type="button"
         className="notification-bell__trigger"
         aria-expanded={open}
@@ -168,77 +214,82 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
       </button>
 
       {open ? (
-        <div className="notification-bell__panel" role="menu">
-          <div className="notification-bell__panel-head">
-            <p className="notification-bell__panel-title">{t("notifications.panelTitle")}</p>
-            {unreadCount > 0 ? (
-              <span className="notification-bell__panel-count">
-                {t("notifications.unreadCount", { count: unreadCount })}
-              </span>
-            ) : null}
-          </div>
+        <>
+          <div className="notification-bell__backdrop" aria-hidden />
+          <div ref={panelRef} className="notification-bell__panel" role="menu">
+            <div className="notification-bell__panel-head">
+              <p className="notification-bell__panel-title">
+                {t("notifications.panelTitle")}
+              </p>
+              {unreadCount > 0 ? (
+                <span className="notification-bell__panel-count">
+                  {t("notifications.unreadCount", { count: unreadCount })}
+                </span>
+              ) : null}
+            </div>
 
-          {loading && notifications.length === 0 ? (
-            <p className="notification-bell__empty">{t("notifications.loading")}</p>
-          ) : notifications.length === 0 ? (
-            <p className="notification-bell__empty">{t("notifications.empty")}</p>
-          ) : (
-            <ul className="notification-bell__list">
-              {notifications.map((notification) => (
-                <li key={notification.id}>
-                  <button
-                    type="button"
-                    role="menuitem"
-                    className={`notification-bell__item${
-                      notification.readAt ? "" : " notification-bell__item--unread"
-                    }`}
-                    onClick={() => void handleNotificationClick(notification)}
-                  >
-                    {notification.imageSrc ? (
-                      <div className="notification-bell__thumb">
-                        <Image
-                          src={notification.imageSrc}
-                          alt=""
-                          fill
-                          className="object-cover"
-                          sizes="48px"
-                          unoptimized={notification.imageSrc.startsWith("blob:")}
-                        />
-                      </div>
-                    ) : (
-                      <div className="notification-bell__thumb notification-bell__thumb--placeholder">
-                        🎬
-                      </div>
-                    )}
-                    <span className="notification-bell__content">
-                      <span className="notification-bell__item-title">
-                        {notification.title}
-                      </span>
-                      {notification.body ? (
-                        <span className="notification-bell__item-body">
-                          {notification.body}
+            {loading && notifications.length === 0 ? (
+              <p className="notification-bell__empty">{t("notifications.loading")}</p>
+            ) : notifications.length === 0 ? (
+              <p className="notification-bell__empty">{t("notifications.empty")}</p>
+            ) : (
+              <ul className="notification-bell__list">
+                {notifications.map((notification) => (
+                  <li key={notification.id}>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className={`notification-bell__item${
+                        notification.readAt ? "" : " notification-bell__item--unread"
+                      }`}
+                      onClick={() => void handleNotificationClick(notification)}
+                    >
+                      {notification.imageSrc ? (
+                        <div className="notification-bell__thumb">
+                          <Image
+                            src={notification.imageSrc}
+                            alt=""
+                            fill
+                            className="object-cover"
+                            sizes="48px"
+                            unoptimized={notification.imageSrc.startsWith("blob:")}
+                          />
+                        </div>
+                      ) : (
+                        <div className="notification-bell__thumb notification-bell__thumb--placeholder">
+                          🎬
+                        </div>
+                      )}
+                      <span className="notification-bell__content">
+                        <span className="notification-bell__item-title">
+                          {notification.title}
                         </span>
-                      ) : null}
-                      <span className="notification-bell__item-date">
-                        {formatNotificationDate(notification.createdAt, locale)}
+                        {notification.body ? (
+                          <span className="notification-bell__item-body">
+                            {notification.body}
+                          </span>
+                        ) : null}
+                        <span className="notification-bell__item-date">
+                          {formatNotificationDate(notification.createdAt, locale)}
+                        </span>
                       </span>
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
 
-          <div className="notification-bell__panel-foot">
-            <Link
-              href="/mon-espace?section=films"
-              className="notification-bell__foot-link"
-              onClick={() => setOpen(false)}
-            >
-              {t("notifications.viewFilms")}
-            </Link>
+            <div className="notification-bell__panel-foot">
+              <Link
+                href="/mon-espace?section=films"
+                className="notification-bell__foot-link"
+                onClick={() => setOpen(false)}
+              >
+                {t("notifications.viewFilms")}
+              </Link>
+            </div>
           </div>
-        </div>
+        </>
       ) : null}
     </div>
   );

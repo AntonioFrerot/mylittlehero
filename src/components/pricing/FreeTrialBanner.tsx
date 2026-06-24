@@ -1,6 +1,7 @@
-import { Button } from "@/components/ui/Button";
+import { FreeTrialIntentLink } from "@/components/film-creation/FreeTrialIntentLink";
 import { getSession } from "@/lib/auth/get-session";
 import { isFreeFilmAvailableForEmail } from "@/lib/film-creation/free-film";
+import { buildCreerFilmFreeTrialHref } from "@/lib/film-creation/free-trial-intent";
 import { getServerTranslator } from "@/lib/i18n/server";
 
 export async function FreeTrialBanner() {
@@ -12,13 +13,13 @@ export async function FreeTrialBanner() {
   }
 
   const { t } = await getServerTranslator();
-  const href = session ? "/creer-film" : "/connexion?redirect=%2Fcreer-film";
+  const href = buildCreerFilmFreeTrialHref(Boolean(session));
 
   return (
     <div className="flex justify-center">
-      <Button href={href} variant="primary" className="!text-sm md:!text-base">
+      <FreeTrialIntentLink href={href} className="!text-sm md:!text-base">
         {t("pricing.freeTrial")}
-      </Button>
+      </FreeTrialIntentLink>
     </div>
   );
 }

@@ -14,12 +14,14 @@ type FilmDurationPickerProps = {
   value: number | null;
   onChange: (seconds: number) => void;
   freeFilmAvailable?: boolean;
+  freeTrialIntent?: boolean;
 };
 
 export function FilmDurationPicker({
   value,
   onChange,
   freeFilmAvailable = false,
+  freeTrialIntent = false,
 }: FilmDurationPickerProps) {
   const { locale, t } = useLocale();
   const displayLocale = locale === "fr" ? "fr" : "en";
@@ -87,7 +89,7 @@ export function FilmDurationPicker({
           })}
         </div>
 
-        {freeFilmAvailable ? (
+        {freeFilmAvailable && freeTrialIntent ? (
           <label
             className={`duration-option duration-option--free ${
               value === FREE_FILM_DURATION_SECONDS ? "duration-option--active" : ""

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useLocale } from "@/components/LocaleProvider";
 import {
   BTN_3D_CHAT_SEND,
   BTN_3D_FAB,
@@ -50,6 +51,7 @@ function CloseIcon({ className }: { className?: string }) {
 }
 
 export function SupportChatWidget() {
+  const { locale } = useLocale();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
@@ -95,7 +97,7 @@ export function SupportChatWidget() {
       const response = await fetch("/api/support-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: apiMessages }),
+        body: JSON.stringify({ messages: apiMessages, locale }),
       });
 
       const data = (await response.json()) as {

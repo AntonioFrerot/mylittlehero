@@ -595,6 +595,8 @@ export const en = {
       characterLegend: "Which character?",
       characterHint: "Select the main character for the story.",
       characterAria: "Film characters",
+      characterScrollLeftAria: "Show previous characters",
+      characterScrollRightAria: "Show next characters",
       mainCharacterBadge: "Main",
       selectedCharacterBadge: "SELECTED",
       addCharacterLabel: "New character",
@@ -623,8 +625,6 @@ export const en = {
       submitTickets: "Create film · {count} tickets",
       pending: "Creating…",
       viewFilms: "View my films",
-      cooldownMessage:
-        "To ensure the quality of each story, you must wait 24 hours between each film creation.",
       cooldownTimerLabel: "Next creation available in",
     },
     styles: {

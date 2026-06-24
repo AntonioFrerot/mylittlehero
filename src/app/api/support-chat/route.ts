@@ -1,5 +1,7 @@
+import { buildSupportUserContext } from "@/lib/support-chat/build-user-context";
 import { generateSupportReply } from "@/lib/support-chat/assistant";
 import type { ChatMessage } from "@/lib/support-chat/types";
+import { parseLocale } from "@/lib/i18n/locales";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -58,7 +60,13 @@ export async function POST(request: Request) {
     );
   }
 
-  const { reply, source } = await generateSupportReply(messages);
+  const locale = parseLocale((body as { locale?: unknown }).locale) ?? "fr";
+  const userContext = await buildSupportUserContext(locale);
+
+  const { reply, source } = await generateSupportReply(messages, {
+    locale,
+    userContext,
+  });
 
   return NextResponse.json({ reply, source });
 }
