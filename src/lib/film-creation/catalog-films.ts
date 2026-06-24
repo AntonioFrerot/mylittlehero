@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/auth/get-session";
-import { readStoryManifest } from "@/lib/story-generation/manifest";
+import { readStoryManifest, readStoryResume } from "@/lib/story-generation/manifest";
 import { listUserFilms } from "./store";
 import type { UserFilm, UserFilmWithStory } from "./types";
 
@@ -9,19 +9,38 @@ export async function attachStoryToFilms(
 ): Promise<UserFilmWithStory[]> {
   return Promise.all(
     films.map(async (film) => {
-      const manifest = await readStoryManifest(email, film.id);
-      if (!manifest) return film;
+      const [manifest, resume] = await Promise.all([
+        readStoryManifest(email, film.id),
+        readStoryResume(email, film.id),
+      ]);
+
+      if (!manifest && !resume) return film;
+
       return {
         ...film,
-        storyGeneration: {
-          status: manifest.status,
-          ...(manifest.generationMode
-            ? { mode: manifest.generationMode }
-            : {}),
-          ...(manifest.generationError
-            ? { error: manifest.generationError }
-            : {}),
-        },
+        ...(resume ? { storyResume: resume } : {}),
+        ...(manifest?.generatedTitle
+          ? { storyGeneratedTitle: manifest.generatedTitle }
+          : {}),
+        ...(manifest?.storyValidatedAt
+          ? { storyValidatedAt: manifest.storyValidatedAt }
+          : {}),
+        ...(manifest?.regenerationUsed
+          ? { storyRegenerationUsed: true }
+          : {}),
+        ...(manifest
+          ? {
+              storyGeneration: {
+                status: manifest.status,
+                ...(manifest.generationMode
+                  ? { mode: manifest.generationMode }
+                  : {}),
+                ...(manifest.generationError
+                  ? { error: manifest.generationError }
+                  : {}),
+              },
+            }
+          : {}),
       };
     })
   );

@@ -25,4 +25,8 @@ export type StoryWorkspaceManifest = {
   generationError?: string;
   generationCompletedAt?: string;
   generationMode?: "openai" | "mock";
+  /** Le client a validé le titre et le résumé — le film peut être produit. */
+  storyValidatedAt?: string;
+  /** Une seule régénération autorisée avant validation. */
+  regenerationUsed?: boolean;
 };

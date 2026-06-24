@@ -42,7 +42,7 @@ type ButtonAsLink = BaseProps &
 type ButtonProps = ButtonAsButton | ButtonAsLink;
 
 const baseClasses =
-  "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-6 py-3 text-sm transition-all duration-300 active:scale-[0.98] md:min-h-0 md:px-8 md:py-3.5 md:text-base";
+  "inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-full px-6 py-3 text-sm transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed md:min-h-0 md:px-8 md:py-3.5 md:text-base";
 
 export function Button({
   variant = "primary",

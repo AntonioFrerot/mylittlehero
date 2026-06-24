@@ -14,6 +14,7 @@ import type { SessionUser } from "@/lib/auth/session";
 type AuthContextValue = {
   user: SessionUser | null | undefined;
   balance: number | null;
+  isAdmin: boolean;
   refresh: () => Promise<void>;
 };
 
@@ -23,22 +24,26 @@ type AuthProviderProps = {
   children: ReactNode;
   initialUser: SessionUser | null;
   initialBalance: number | null;
+  initialIsAdmin?: boolean;
 };
 
 export function AuthProvider({
   children,
   initialUser,
   initialBalance,
+  initialIsAdmin = false,
 }: AuthProviderProps) {
   const [user, setUser] = useState<SessionUser | null | undefined>(initialUser);
   const [balance, setBalance] = useState<number | null>(() =>
     initialUser ? initialBalance : null
   );
+  const [isAdmin, setIsAdmin] = useState(initialIsAdmin);
 
   useEffect(() => {
     setUser(initialUser);
     setBalance(initialUser ? initialBalance : null);
-  }, [initialUser, initialBalance]);
+    setIsAdmin(initialIsAdmin);
+  }, [initialUser, initialBalance, initialIsAdmin]);
 
   const refresh = useCallback(async () => {
     try {
@@ -46,13 +51,16 @@ export function AuthProvider({
       const data = (await response.json()) as {
         user: SessionUser | null;
         balance?: number;
+        isAdmin?: boolean;
       };
       setUser(data.user);
       if (!data.user) {
         setBalance(null);
+        setIsAdmin(false);
         return;
       }
       setBalance(typeof data.balance === "number" ? data.balance : 0);
+      setIsAdmin(Boolean(data.isAdmin));
     } catch {
       setUser(null);
       setBalance(null);
@@ -60,8 +68,8 @@ export function AuthProvider({
   }, []);
 
   const value = useMemo(
-    () => ({ user, balance, refresh }),
-    [user, balance, refresh]
+    () => ({ user, balance, isAdmin, refresh }),
+    [user, balance, isAdmin, refresh]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -77,6 +85,10 @@ function useAuthContext() {
 
 export function useAuthUser() {
   return useAuthContext().user;
+}
+
+export function useIsAdmin() {
+  return useAuthContext().isAdmin;
 }
 
 export function useTicketBalance() {

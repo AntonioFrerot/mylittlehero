@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { isAdminEmail } from "@/lib/auth/is-admin";
 import { SESSION_COOKIE } from "@/lib/auth/session";
 import { verifySessionToken } from "@/lib/auth/session-token";
 import {
@@ -8,7 +9,7 @@ import {
 } from "@/lib/i18n/country-locale";
 import { LOCALE_COOKIE, parseLocale } from "@/lib/i18n/locales";
 
-const protectedPaths = ["/mon-espace", "/creer-film"];
+const protectedPaths = ["/mon-espace", "/creer-film", "/admin"];
 
 function applyLocaleCookie(request: NextRequest, response: NextResponse) {
   const existingLocale = parseLocale(request.cookies.get(LOCALE_COOKIE)?.value);
@@ -45,6 +46,14 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.redirect(url);
     applyLocaleCookie(request, response);
     return response;
+  }
+
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    if (!isAdminEmail(session.email)) {
+      const response = NextResponse.redirect(new URL("/", request.url));
+      applyLocaleCookie(request, response);
+      return response;
+    }
   }
 
   const response = NextResponse.next();

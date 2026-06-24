@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
-import { BTN_3D_BADGE_INLINE, SURFACE_3D_CARD_SELECTABLE, SURFACE_3D_CHECK_BADGE } from "@/lib/ui/button-3d-classes";
+import { BTN_3D_CHARACTER_SELECTED_BADGE, SURFACE_3D_CARD_SELECTABLE, SURFACE_3D_CHECK_BADGE } from "@/lib/ui/button-3d-classes";
 import { formatCharacterAge } from "@/lib/characters/format";
 import type { Character } from "@/lib/characters/types";
 
@@ -26,40 +26,26 @@ export function CharacterFacePicker({
   missingPhoto,
 }: CharacterFacePickerProps) {
   const { t } = useLocale();
-  const [selectionOrder, setSelectionOrder] = useState<string[]>([]);
+  const [selectedId, setSelectedId] = useState("");
 
-  const mainCharacterId = selectionOrder[0] ?? "";
-  const hasSelection = selectionOrder.length > 0;
-
-  function toggleCharacter(id: string, checked: boolean) {
-    setSelectionOrder((prev) => {
-      if (checked) {
-        return prev.includes(id) ? prev : [...prev, id];
-      }
-      return prev.filter((entry) => entry !== id);
-    });
-  }
+  const hasSelection = selectedId.length > 0;
 
   return (
     <div className="space-y-4">
       <p className="text-sm text-cream/50">{t("filmCreation.form.characterHint")}</p>
 
-      {selectionOrder.map((id) => (
-        <input key={id} type="hidden" name="characters" value={id} />
-      ))}
-      {mainCharacterId ? (
-        <input type="hidden" name="mainCharacter" value={mainCharacterId} />
+      {selectedId ? (
+        <input type="hidden" name="mainCharacter" value={selectedId} />
       ) : null}
 
       <div
         className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4"
-        role="group"
+        role="radiogroup"
         aria-label={t("filmCreation.form.characterAria")}
       >
         {eligible.map((character) => {
           const meta = formatMeta(character);
-          const isSelected = selectionOrder.includes(character.id);
-          const isMain = character.id === mainCharacterId;
+          const isSelected = selectedId === character.id;
 
           return (
             <label
@@ -69,25 +55,25 @@ export function CharacterFacePicker({
               }`}
             >
               <input
-                type="checkbox"
+                type="radio"
+                name="characters"
                 value={character.id}
                 checked={isSelected}
-                onChange={(event) =>
-                  toggleCharacter(character.id, event.target.checked)
-                }
+                onChange={() => setSelectedId(character.id)}
                 className="peer sr-only"
+                required
               />
-              {hasSelection && (
+              {hasSelection ? (
                 <div className="px-3 pt-2.5">
                   <div className="h-5 w-full shrink-0">
-                    {isMain ? (
-                      <span className={BTN_3D_BADGE_INLINE}>
-                        {t("filmCreation.form.mainCharacterBadge")}
+                    {isSelected ? (
+                      <span className={BTN_3D_CHARACTER_SELECTED_BADGE}>
+                        {t("filmCreation.form.selectedCharacterBadge")}
                       </span>
                     ) : null}
                   </div>
                 </div>
-              )}
+              ) : null}
               <div
                 className={`flex w-full flex-col items-center ${
                   hasSelection ? "px-4 pb-4 pt-2.5" : ""
@@ -101,19 +87,16 @@ export function CharacterFacePicker({
                     className="object-cover"
                     sizes="(max-width: 640px) 80px, 96px"
                   />
-                  <span
-                    className={SURFACE_3D_CHECK_BADGE}
-                    aria-hidden
-                  >
+                  <span className={SURFACE_3D_CHECK_BADGE} aria-hidden>
                     ✓
                   </span>
                 </div>
                 <p className="mt-3 text-center font-display text-sm font-semibold text-cream/90 group-has-checked:text-gold-light">
                   {character.prenom}
                 </p>
-                {meta && (
+                {meta ? (
                   <p className="mt-0.5 text-center text-xs text-cream/50">{meta}</p>
-                )}
+                ) : null}
               </div>
             </label>
           );
@@ -126,11 +109,11 @@ export function CharacterFacePicker({
           }`}
           aria-label={t("filmCreation.form.addCharacterAria")}
         >
-          {hasSelection && (
+          {hasSelection ? (
             <div className="px-3 pt-2.5" aria-hidden>
               <div className="h-5 w-full shrink-0" />
             </div>
-          )}
+          ) : null}
           <div
             className={`flex flex-col items-center ${
               hasSelection ? "px-4 pb-4 pt-2.5" : ""
@@ -156,13 +139,13 @@ export function CharacterFacePicker({
         </Link>
       </div>
 
-      {missingPhoto.length > 0 && (
+      {missingPhoto.length > 0 ? (
         <p className="text-xs text-amber-200/80">
           {t("filmCreation.form.missingPhotoList", {
             names: missingPhoto.map((c) => c.prenom).join(", "),
           })}
         </p>
-      )}
+      ) : null}
     </div>
   );
 }

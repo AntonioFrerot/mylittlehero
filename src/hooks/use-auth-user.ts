@@ -1,1 +1,1 @@
-export { useAuthUser } from "@/components/auth/AuthProvider";
+export { useAuthUser, useIsAdmin } from "@/components/auth/AuthProvider";

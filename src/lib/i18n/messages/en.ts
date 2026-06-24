@@ -38,6 +38,7 @@ export const en = {
     createFilm: "Create your film",
     openMenu: "Open menu",
     closeMenu: "Close menu",
+    admin: "Admin",
   },
   home: {
     heroBadge: "Personalised films",
@@ -139,6 +140,36 @@ export const en = {
     signupUnavailable:
       "Account creation is not configured on this server yet. Please contact support.",
   },
+  admin: {
+    pageTitle: "Films awaiting creation",
+    eyebrow: "Administration",
+    pageLead:
+      "Deliver films to clients: add the YouTube video and poster.",
+    filmCount: "{count} film(s)",
+    empty: "No films awaiting creation at the moment.",
+    awaitingTitle: "Awaiting",
+    awaitingEmpty: "No films awaiting delivery at the moment.",
+    completedTitle: "Completed",
+    completedEmpty: "No films delivered yet.",
+    resume: "Summary",
+    mainCharacterPhoto: "Main character photo",
+    mainCharacter: "main",
+    characterAge: "Age {age}",
+    validatedAt: "Validated on {date}",
+    allCharacters: "Film characters",
+    nothingSpecified: "Nothing specific",
+    deliveryTitle: "Deliver film to client",
+    deliveryLead:
+      "Once sent, the video and poster will appear on the client's film page.",
+    youtubeUrlLabel: "YouTube link (unlisted)",
+    youtubeUrlHint: "E.g. https://www.youtube.com/watch?v=... or https://youtu.be/...",
+    posterLabel: "Film poster",
+    posterHint: "JPG, PNG or WebP — max 5 MB. Portrait format recommended.",
+    deliverySubmit: "Send to client",
+    deliverySubmitting: "Sending…",
+    deliveredVideo: "Video:",
+    deliveredStatus: "Delivered to client",
+  },
   space: {
     backHome: "← Back to home",
     eyebrow: "My account",
@@ -190,7 +221,7 @@ export const en = {
     changePlan: "Change plan",
     subscriptionCancelled: "Your subscription has been cancelled.",
     accountLoadError: "Unable to load your account.",
-    charactersLabel: "Characters:",
+    charactersLabel: "Character:",
     createdOn: "Created on {date}",
     backToFilms: "← My films",
     filmReadyEyebrow: "Your film is ready",
@@ -205,8 +236,10 @@ export const en = {
       "{name} is the hero of this adventure, with their face and first name at the heart of the story.",
     filmSynopsisPrefix: "Summary:",
     filmSynopsisHeading: "Summary:",
+    readSynopsisMore: "Read more",
     filmSynopsisFallback:
       "Your personalised film is ready — press play below to enjoy the adventure.",
+    filmInCreationLabel: "Being created...",
     filmHeroPhotoAlt: "Photo of {name}, hero of the film",
     filmHeroFallbackName: "your little hero",
     filmThemeIntro: {
@@ -234,9 +267,34 @@ export const en = {
       alreadyDone: "The story has already been generated for this film.",
       alreadyRunning: "Generation is already running for this film.",
       filmNotFound: "Film not found.",
+      freeTrialNotAvailable:
+        "Story generation is not available for the 15-second free trial.",
       noApiKey:
         "Missing OpenAI key. Add OPENAI_API_KEY to .env.local at the project root, then restart npm run dev.",
     },
+    storyActions: {
+      validateButton: "Approve",
+      regenerateButton: "Regenerate",
+      confirmButton: "Confirm",
+      cancelButton: "Cancel",
+      validateTitle: "Approve story",
+      validateMessage:
+        "If you approve, your film can start being created. If you do not wish to approve, you may regenerate once using the Regenerate button.",
+      regenerateTitle: "Regenerate story",
+      regenerateMessage:
+        "If you confirm, a new story will be created. You are only allowed one regeneration.",
+      validateSuccess:
+        "Story approved. Your film is being created.",
+      regenerateSuccess:
+        "Story regenerated. Your film is being created.",
+      alreadyValidated: "This story has already been approved.",
+      regenerationUsed: "You have already used your regeneration.",
+      storyNotReady: "The story is not ready yet.",
+      pending: "Processing…",
+    },
+    freeTrialViewFilm: "View trial",
+    freeTrialFilmEyebrow: "Free trial",
+    freeTrialFilmMetaTitle: "Free trial",
     navLabel: "My account sections",
     confirmCancelSubscription: "Confirm cancellation of your subscription?",
   },
@@ -376,7 +434,7 @@ export const en = {
         name: "Discovery",
         subtitle: "Perfect for a first adventure",
         eyebrow: "Gentle start",
-        perMinuteRate: "1 min = €10",
+        perMinuteRate: "1 min = €12",
         durationShort: "5 min",
         durationPeek: "5 minutes",
         features: {
@@ -389,7 +447,7 @@ export const en = {
         name: "Adventure",
         subtitle: "A richer, more immersive story",
         eyebrow: "Balanced choice",
-        perMinuteRate: "1 min = €7.50",
+        perMinuteRate: "1 min = €10",
         durationShort: "10 min",
         durationPeek: "10 minutes",
         features: {
@@ -402,7 +460,7 @@ export const en = {
         name: "Family",
         subtitle: "Three films for more magical moments",
         eyebrow: "Best value",
-        perMinuteRate: "1 min = €5",
+        perMinuteRate: "1 min = €6.67",
         durationShort: "10 min",
         durationPeek: "10 minutes",
         promoLabel: "Buy 2 + 1 FREE",
@@ -417,14 +475,9 @@ export const en = {
   checkout: {
     loading: "Redirecting to checkout…",
     error: "Unable to start checkout. Please try again or contact support.",
-    withdrawalWaiverBefore:
-      "I expressly request that performance of the contract begin before the end of the 14-day withdrawal period (ticket credit or subscription activation on my account). I acknowledge that I lose my right of withdrawal once production of a personalized film begins, in accordance with applicable consumer law. I have read and accept the",
-    withdrawalWaiverAfter: ".",
-    withdrawalWaiverRequired:
-      "You must accept the withdrawal waiver to continue.",
     resumeTitle: "Complete your order",
     resumeHint:
-      "Before secure payment, confirm the withdrawal waiver for personalized digital content.",
+      "You will be redirected to secure Stripe checkout to complete your order.",
     resumePay: "Continue to secure payment",
     resumeDismiss: "Choose another plan",
     successBadge: "Payment confirmed",
@@ -510,11 +563,11 @@ export const en = {
       themesChoose: "Choose one or more themes…",
       themesValidate: "Confirm",
       themesSelectedCount: "{count} themes selected",
-      characterLegend: "Which characters in the story?",
-      characterHint:
-        "Click on the characters you want to see in the story. (Click first on the main character)",
+      characterLegend: "Which character?",
+      characterHint: "Select the main character for the story.",
       characterAria: "Film characters",
       mainCharacterBadge: "Main",
+      selectedCharacterBadge: "SELECTED",
       addCharacterLabel: "New character",
       addCharacterAria: "Create a new character",
       noCharacters: "You don't have any characters yet.",
@@ -562,11 +615,12 @@ export const en = {
       preparing: "In preparation",
       generating: "Generating",
       ready: "Ready",
+      awaiting_validation: "Awaiting validation",
     },
     errors: {
       loginRequired: "Log in to create your film.",
       noCharacters: "Add at least one character in My account before creating a film.",
-      selectCharacter: "Select at least one character for this story.",
+      selectCharacter: "Select a character for this story.",
       photoRequired: "Add a face photo for: {names}.",
       styleRequired: "Choose a film style.",
       themesRequired: "Select at least one theme.",

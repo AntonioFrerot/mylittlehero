@@ -21,6 +21,9 @@ export const BTN_3D_PRIMARY_FLAT =
 export const BTN_3D_SECONDARY =
   "btn-3d btn-3d--secondary hover:border-gold/70 hover:bg-white/10 active:scale-[0.98]";
 
+export const BTN_3D_SUCCESS =
+  "btn-3d btn-3d--success font-semibold hover:brightness-110 hover:scale-[1.02] active:scale-[0.98]";
+
 export const BTN_3D_GHOST =
   "text-cream/80 hover:text-gold-light active:scale-[0.98]";
 
@@ -67,6 +70,10 @@ export const BTN_3D_BADGE =
 
 export const BTN_3D_BADGE_INLINE =
   "btn-3d btn-3d--primary flex h-full w-full items-center justify-center rounded-md text-[10px] font-bold uppercase tracking-[0.14em] text-cinema-black";
+
+/** Pastille « SÉLECTIONNÉ » — sélection personnage (création film). */
+export const BTN_3D_CHARACTER_SELECTED_BADGE =
+  "btn-3d btn-3d--primary btn-3d--glow-subtle flex h-full w-full items-center justify-center rounded-md border border-gold-light/45 text-[10px] font-bold uppercase tracking-[0.14em] text-cinema-black brightness-110 saturate-125";
 
 export const BTN_3D_COMPACT_SECONDARY =
   "btn-3d btn-3d--secondary rounded-lg px-3 py-1.5 text-xs text-cream/80 active:scale-[0.98]";

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { HeaderAuth } from "@/components/auth/HeaderAuth";
 import { MobileNavMenu } from "@/components/MobileNavMenu";
 import { HeaderTicketCount } from "@/components/tickets/HeaderTicketCount";
-import { useAuthUser } from "@/hooks/use-auth-user";
+import { useAuthUser, useIsAdmin } from "@/components/auth/AuthProvider";
 import { useLocale } from "@/components/LocaleProvider";
 import { BRAND_NAME, SITE_LOGO_SRC } from "@/lib/brand";
 import { SITE_NAV_LINKS } from "@/lib/navigation/site-nav";
@@ -17,6 +17,7 @@ import { usePathname } from "next/navigation";
 export function Header() {
   const { t } = useLocale();
   const user = useAuthUser();
+  const isAdmin = useIsAdmin();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -137,6 +138,14 @@ export function Header() {
               </NavLink>
             );
           })}
+          {isAdmin ? (
+            <Link
+              href="/admin"
+              className="text-sm text-cream/70 transition-colors hover:text-gold-light"
+            >
+              {t("nav.admin")}
+            </Link>
+          ) : null}
         </nav>
 
         <div className="hidden md:block">

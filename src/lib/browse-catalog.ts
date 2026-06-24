@@ -1,4 +1,5 @@
 import { themes } from "@/lib/data";
+import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
 import type { UserFilm } from "@/lib/film-creation/types";
 import {
   normalizeFilmStatus,
@@ -28,12 +29,14 @@ export function filmHasCatalogTheme(
 }
 
 export function getFilmDisplayPosterSrc(film: UserFilm): string | undefined {
+  if (isUserFreeTrialFilm(film)) return undefined;
   if (film.posterSrc) return film.posterSrc;
   const main = film.characters.find((character) => character.isMain);
   return main?.photoSrc ?? film.characters[0]?.photoSrc;
 }
 
 export function isFilmVisibleInCatalog(film: UserFilm): boolean {
+  if (isUserFreeTrialFilm(film)) return false;
   return (
     normalizeFilmStatus(String(film.status)) === "ready" &&
     Boolean(getFilmDisplayPosterSrc(film))

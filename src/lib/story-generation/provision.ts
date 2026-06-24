@@ -5,7 +5,7 @@ import type { UserFilm } from "@/lib/film-creation/types";
 import {
   formatSceneFileName,
   getFilmStoryDir,
-  STORY_PROMPT_PATH,
+  RESUME_TITRE_PROMPT_PATH,
 } from "./paths";
 import { getStorySceneCount } from "./scene-count";
 import { provisionStoryScenesDb, writeStoryWorkspaceDb } from "./story-db";
@@ -35,7 +35,7 @@ export async function provisionStoryWorkspace(
     ...(film.additionalInfo ? { additionalInfo: film.additionalInfo } : {}),
     characters: film.characters,
     provisionalTitle: film.title,
-    promptPath: path.relative(process.cwd(), STORY_PROMPT_PATH),
+    promptPath: path.relative(process.cwd(), RESUME_TITRE_PROMPT_PATH),
     status: "awaiting_generation",
   };
 

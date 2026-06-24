@@ -1,7 +1,7 @@
 import { createChatCompletion } from "@/lib/openai/chat-completion";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import type { UserFilm } from "@/lib/film-creation/types";
-import { buildFullStorySystemPrompt } from "./build-prompt";
+import { buildFullStorySystemPrompt, buildTitleResumeSystemPrompt } from "./build-prompt";
 import { parseJsonFromModel } from "./parse-json";
 import { getStorySceneCount, STORY_SCENE_DURATION_SECONDS } from "./scene-count";
 import { getStyleScenePrefix } from "./style-scene-prefix";
@@ -10,9 +10,13 @@ export const STORY_SCENES_PER_BATCH = 2;
 export const STORY_MIN_SCENE_CHARS = 1700;
 export const STORY_MAX_SCENE_CHARS = 2000;
 
-export type StoryPlan = {
+export type StoryTitleResume = {
   title: string;
   resume: string;
+  tagline: string;
+};
+
+export type StoryPlan = StoryTitleResume & {
   sceneOutlines: string[];
 };
 
@@ -20,6 +24,49 @@ export type GeneratedScene = {
   number: number;
   content: string;
 };
+
+export async function generateTitleAndResume(
+  film: UserFilm,
+  locale: LocaleCode
+): Promise<StoryTitleResume | null> {
+  const systemPrompt = await buildTitleResumeSystemPrompt(film, locale);
+
+  const userPrompt = `Produis un JSON strict avec un titre court, un résumé d'histoire (4 à 8 phrases) et une accroche courte (tagline).
+
+{
+  "title": "titre court du film",
+  "resume": "résumé de l'histoire",
+  "tagline": "accroche courte sous le titre"
+}
+
+Le titre, le résumé et l'accroche sont en ${locale === "en" ? "anglais" : "français"}.
+
+Contraintes :
+- Le titre ne doit pas contenir les noms des thèmes (Aventure, Animation, Fantastique, etc.).
+- Le résumé ne doit pas mentionner la taille ou la hauteur du personnage en cm.
+- L'accroche est une seule phrase simple et évocative, dans le style des exemples du prompt système (pas le prénom du héros, pas un extrait du résumé).`;
+
+  const raw = await createChatCompletion(
+    [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    { jsonMode: true, maxTokens: 1200, temperature: 0.75 }
+  );
+
+  if (!raw) return null;
+
+  const parsed = parseJsonFromModel<StoryTitleResume>(raw);
+  if (!parsed?.title?.trim() || !parsed.resume?.trim() || !parsed.tagline?.trim()) {
+    return null;
+  }
+
+  return {
+    title: parsed.title.trim(),
+    resume: parsed.resume.trim(),
+    tagline: parsed.tagline.trim(),
+  };
+}
 
 export async function generateStoryPlan(
   film: UserFilm,
@@ -70,6 +117,7 @@ Le titre et le résumé sont en ${locale === "en" ? "anglais" : "français"}. Le
   return {
     title: parsed.title.trim(),
     resume: parsed.resume.trim(),
+    tagline: parsed.tagline?.trim() ?? "",
     sceneOutlines: outlines.slice(0, sceneCount),
   };
 }

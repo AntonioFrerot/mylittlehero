@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { WithdrawalWaiverField } from "@/components/pricing/WithdrawalWaiverField";
 import { useLocale } from "@/components/LocaleProvider";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { requestCheckoutSession } from "@/lib/stripe/start-checkout-client";
@@ -42,9 +41,7 @@ function clearCheckoutQueryParam() {
 export function CheckoutLauncher({ planType }: CheckoutLauncherProps) {
   const { t } = useLocale();
   const user = useAuthUser();
-  const waiverId = useId();
   const [planId, setPlanId] = useState<CheckoutPlanId | null>(null);
-  const [waiverAccepted, setWaiverAccepted] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,17 +53,13 @@ export function CheckoutLauncher({ planType }: CheckoutLauncherProps) {
     if (!checkoutPlanId || !isCheckoutPlanId(planType, checkoutPlanId)) return;
 
     setPlanId(checkoutPlanId);
-    setWaiverAccepted(false);
     setError(null);
   }, [user, planType]);
 
   if (!user || !planId) return null;
 
   async function handleResumeCheckout() {
-    if (!planId || !waiverAccepted) {
-      setError(t("checkout.withdrawalWaiverRequired"));
-      return;
-    }
+    if (!planId) return;
 
     setPending(true);
     setError(null);
@@ -74,7 +67,6 @@ export function CheckoutLauncher({ planType }: CheckoutLauncherProps) {
     const result = await requestCheckoutSession({
       planId,
       planType,
-      withdrawalWaiverAccepted: true,
     });
 
     if (!result.ok) {
@@ -94,7 +86,6 @@ export function CheckoutLauncher({ planType }: CheckoutLauncherProps) {
   function handleDismiss() {
     clearCheckoutQueryParam();
     setPlanId(null);
-    setWaiverAccepted(false);
     setError(null);
   }
 
@@ -107,23 +98,12 @@ export function CheckoutLauncher({ planType }: CheckoutLauncherProps) {
       <p className="text-sm font-medium text-gold-light">{t("checkout.resumeTitle")}</p>
       <p className="mt-2 text-sm text-cream/65">{t("checkout.resumeHint")}</p>
 
-      <div className="mt-4">
-        <WithdrawalWaiverField
-          id={waiverId}
-          checked={waiverAccepted}
-          onChange={(checked) => {
-            setWaiverAccepted(checked);
-            if (checked) setError(null);
-          }}
-        />
-      </div>
-
       <div className="mt-5 flex flex-col gap-3 sm:flex-row">
         <Button
           type="button"
           variant="primary"
           className="w-full sm:flex-1"
-          disabled={pending || !waiverAccepted}
+          disabled={pending}
           onClick={() => void handleResumeCheckout()}
         >
           {pending ? t("checkout.loading") : t("checkout.resumePay")}

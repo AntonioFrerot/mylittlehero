@@ -17,6 +17,50 @@ function formatDuration(seconds: number, locale: LocaleCode): string {
     : `${minutes} min ${String(remainder).padStart(2, "0")} (${seconds} s au total)`;
 }
 
+export function buildTitleResumeClientBrief(
+  film: UserFilm,
+  locale: LocaleCode = "fr"
+): string {
+  const t = createTranslator(locale);
+
+  const main =
+    film.characters.find((c) => c.isMain) ?? film.characters[0] ?? null;
+
+  const themeLines = film.themes
+    .map((theme) => `- ${t(`filmCreation.themes.${theme}` as never)}`)
+    .join("\n");
+
+  const mainLines = main
+    ? [
+        `Prénom : ${main.prenom}`,
+        main.age ? `Âge : ${main.age}` : null,
+      ]
+        .filter(Boolean)
+        .join("\n")
+    : "Non renseigné";
+
+  const avoidBlock = film.avoid.trim()
+    ? film.avoid.trim()
+    : "(rien de spécifique)";
+  const wantsBlock = film.additionalInfo?.trim()
+    ? film.additionalInfo.trim()
+    : "(rien de spécifique)";
+
+  return `Thème(s) choisi(s) par le client :
+${themeLines}
+
+Personnage principal :
+${mainLines}
+
+Ce que le client ne veut pas :
+${avoidBlock}
+
+Ce que le client souhaite intégrer (sauf si cela enfreint les règles de génération) :
+${wantsBlock}
+
+Langue : ${locale === "en" ? "anglais" : "français"} — le titre et le résumé doivent être dans cette langue.`;
+}
+
 export function buildClientBrief(film: UserFilm, locale: LocaleCode = "fr"): string {
   const t = createTranslator(locale);
   const durationSeconds =

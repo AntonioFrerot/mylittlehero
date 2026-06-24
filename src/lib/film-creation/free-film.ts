@@ -4,6 +4,9 @@ import {
   FREE_FILM_DURATION_SECONDS,
   isFreeTrialFilmDuration,
 } from "@/lib/purchases/ticket-rules";
+import { isUserFreeTrialFilm } from "./is-free-trial-film";
+
+export { isUserFreeTrialFilm } from "./is-free-trial-film";
 
 export function hasUserUsedFreeFilm(
   films: Pick<UserFilm, "durationSeconds" | "isFreeTrial">[]

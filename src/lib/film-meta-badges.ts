@@ -31,6 +31,9 @@ const STATUS_BADGE_BASE = "surface-3d--status";
 
 /** Pastille statut film (Mon espace). */
 export function filmStatusBadgeClassName(status: string): string {
-  const id = normalizeFilmStatus(status) ?? "preparing";
+  const id =
+    status === "awaiting_validation"
+      ? "awaiting_validation"
+      : (normalizeFilmStatus(status) ?? "preparing");
   return `${SURFACE_3D_STATUS} ${STATUS_BADGE_BASE}--${id}`;
 }

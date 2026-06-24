@@ -40,7 +40,7 @@ const PLAN_CONFIG: Record<
     eyebrow: "purchase.plans.film5min.eyebrow",
     durationShort: "purchase.plans.film5min.durationShort",
     filmCount: 1,
-    price: 49.99,
+    price: 59.99,
     perMinuteRate: "purchase.plans.film5min.perMinuteRate",
     features: [
       "purchase.plans.film5min.features.duration",
@@ -54,7 +54,7 @@ const PLAN_CONFIG: Record<
     eyebrow: "purchase.plans.film10min.eyebrow",
     durationShort: "purchase.plans.film10min.durationShort",
     filmCount: 1,
-    price: 74.99,
+    price: 99.99,
     perMinuteRate: "purchase.plans.film10min.perMinuteRate",
     features: [
       "purchase.plans.film10min.features.duration",
@@ -68,7 +68,7 @@ const PLAN_CONFIG: Record<
     eyebrow: "purchase.plans.pack3films.eyebrow",
     durationShort: "purchase.plans.pack3films.durationShort",
     filmCount: 3,
-    price: 149.99,
+    price: 199.99,
     perMinuteRate: "purchase.plans.pack3films.perMinuteRate",
     highlighted: true,
     promoLabel: "purchase.plans.pack3films.promoLabel",

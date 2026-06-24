@@ -41,6 +41,7 @@ const nextConfig: NextConfig = {
       { pathname: "/examples/**" },
       { pathname: "/uploads/**" },
       { pathname: "/brand/**" },
+      { pathname: "/images/**" },
     ],
   },
   async headers() {

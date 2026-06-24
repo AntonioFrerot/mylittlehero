@@ -4,6 +4,7 @@ import { AuthProvider } from "@/components/auth/AuthProvider";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { SupportChatLazy } from "@/components/support/SupportChatLazy";
 import { getSession } from "@/lib/auth/get-session";
+import { isAdminEmail } from "@/lib/auth/is-admin";
 import { BRAND_NAME, SITE_LOGO_SRC } from "@/lib/brand";
 import { getServerLocale, getServerTranslator } from "@/lib/i18n/server";
 import { getMessages } from "@/lib/i18n/translator";
@@ -51,6 +52,7 @@ export default async function RootLayout({
   const locale = await getServerLocale();
   const session = await getSession();
   const initialBalance = session ? await getTicketBalance(session.email) : null;
+  const initialIsAdmin = session ? isAdminEmail(session.email) : false;
 
   return (
     <html
@@ -62,6 +64,7 @@ export default async function RootLayout({
           <AuthProvider
             initialUser={session}
             initialBalance={initialBalance}
+            initialIsAdmin={initialIsAdmin}
           >
             <HashScrollHandler />
             {children}

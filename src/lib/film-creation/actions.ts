@@ -17,7 +17,7 @@ import { randomUUID } from "node:crypto";
 import { provisionStoryWorkspace } from "@/lib/story-generation/provision";
 import { scheduleStoryGeneration } from "@/lib/story-generation/schedule";
 import { attachStoryToFilms } from "@/lib/film-creation/catalog-films";
-import { readStoryManifest } from "@/lib/story-generation/manifest";
+import { readStoryManifest, readStoryResume } from "@/lib/story-generation/manifest";
 import { findUserByEmail } from "@/lib/auth/users-store";
 import {
   getTicketsRequiredForDuration,
@@ -27,7 +27,7 @@ import {
 } from "@/lib/purchases/ticket-rules";
 import { spendTicketsForFilm } from "@/lib/purchases/tickets";
 import { addUserFilm, getUserFilmById, listUserFilms, updateUserFilm } from "./store";
-import { hasUserUsedFreeFilm } from "./free-film";
+import { hasUserUsedFreeFilm, isUserFreeTrialFilm } from "./free-film";
 import type {
   FilmCharacterRef,
   FilmStyle,
@@ -107,16 +107,33 @@ export async function getMyFilmById(filmId: string): Promise<UserFilmWithStory |
   const film = await getUserFilmById(session.email, filmId);
   if (!film) return null;
 
-  const manifest = await readStoryManifest(session.email, film.id);
-  if (!manifest) return film;
+  const [manifest, resume] = await Promise.all([
+    readStoryManifest(session.email, film.id),
+    readStoryResume(session.email, film.id),
+  ]);
+  if (!manifest && !resume) return film;
 
   return {
     ...film,
-    storyGeneration: {
-      status: manifest.status,
-      ...(manifest.generationMode ? { mode: manifest.generationMode } : {}),
-      ...(manifest.generationError ? { error: manifest.generationError } : {}),
-    },
+    ...(resume ? { storyResume: resume } : {}),
+    ...(manifest?.generatedTitle
+      ? { storyGeneratedTitle: manifest.generatedTitle }
+      : {}),
+    ...(manifest?.storyValidatedAt
+      ? { storyValidatedAt: manifest.storyValidatedAt }
+      : {}),
+    ...(manifest?.regenerationUsed ? { storyRegenerationUsed: true } : {}),
+    ...(manifest
+      ? {
+          storyGeneration: {
+            status: manifest.status,
+            ...(manifest.generationMode ? { mode: manifest.generationMode } : {}),
+            ...(manifest.generationError
+              ? { error: manifest.generationError }
+              : {}),
+          },
+        }
+      : {}),
   };
 }
 
@@ -215,7 +232,7 @@ export async function saveFilmCreation(
 
   const film: UserFilm = {
     id: filmId,
-    title: buildLocalizedFilmTitle(themes, locale),
+    title: isFreeFilm ? "" : buildLocalizedFilmTitle(themes, locale),
     style,
     themes,
     durationSeconds,
@@ -230,15 +247,17 @@ export async function saveFilmCreation(
 
   await addUserFilm(session.email, film);
 
-  try {
-    await provisionStoryWorkspace(session.email, film);
-    scheduleStoryGeneration(session.email, film);
-  } catch (error) {
-    console.error("Story workspace provisioning failed", {
-      email: session.email,
-      filmId: film.id,
-      error,
-    });
+  if (!isFreeFilm) {
+    try {
+      await provisionStoryWorkspace(session.email, film);
+      scheduleStoryGeneration(session.email, film);
+    } catch (error) {
+      console.error("Story workspace provisioning failed", {
+        email: session.email,
+        filmId: film.id,
+        error,
+      });
+    }
   }
 
   revalidatePath("/mon-espace");
@@ -256,15 +275,28 @@ export async function deliverUserFilm(
   filmId: string,
   delivery: UserFilmUpdatePatch
 ): Promise<UserFilm | null> {
-  const film = await updateUserFilm(email, filmId, {
+  const existing = await getUserFilmById(email, filmId);
+  if (!existing) return null;
+
+  const patch: UserFilmUpdatePatch = {
     ...delivery,
     status: "ready",
-  });
+  };
+
+  if (isUserFreeTrialFilm(existing)) {
+    delete patch.posterSrc;
+    delete patch.videoPosterSrc;
+    delete patch.tagline;
+    patch.title = "";
+  }
+
+  const film = await updateUserFilm(email, filmId, patch);
   if (!film) return null;
 
   revalidatePath("/catalogue");
   revalidatePath("/mon-espace");
   revalidatePath(`/mon-espace/films/${filmId}`);
+  revalidatePath("/admin");
 
   return film;
 }

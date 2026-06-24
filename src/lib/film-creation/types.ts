@@ -84,6 +84,10 @@ export type UserFilm = {
 };
 
 export type UserFilmWithStory = UserFilm & {
+  storyResume?: string | null;
+  storyGeneratedTitle?: string | null;
+  storyValidatedAt?: string | null;
+  storyRegenerationUsed?: boolean;
   storyGeneration?: {
     status: StoryGenerationStatus;
     mode?: "openai" | "mock";

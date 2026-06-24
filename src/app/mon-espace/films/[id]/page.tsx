@@ -1,8 +1,10 @@
 import { Header } from "@/components/Header";
 import { FilmMetaBadges } from "@/components/films/FilmMetaBadges";
-import { FilmVideoMedia } from "@/components/films/FilmVideoMedia";
-import { UserFilmSummaryBlock } from "@/components/films/UserFilmSummaryBlock";
+import { UserFilmHeroSpotlight } from "@/components/films/UserFilmHeroSpotlight";
+import { UserFilmMedia } from "@/components/films/UserFilmMedia";
 import { getFilmDisplayPosterSrc } from "@/lib/browse-catalog";
+import { resolveFilmDisplayStatus, translateFilmDisplayStatus } from "@/lib/film-creation/film-display-status";
+import type { UserFilmWithStory } from "@/lib/film-creation/types";
 import {
   buildUserFilmPageCopy,
   getFilmDisplayTitle,
@@ -12,12 +14,11 @@ import {
   getFilmDurationSeconds,
 } from "@/lib/film-creation/duration";
 import { getUserFilmById } from "@/lib/film-creation/store";
+import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
 import { getSession } from "@/lib/auth/get-session";
 import { getUserLocale } from "@/lib/auth/users-store";
 import { BRAND_NAME } from "@/lib/brand";
-import {
-  normalizeFilmTheme,
-} from "@/lib/i18n/film-labels";
+import { normalizeFilmTheme } from "@/lib/i18n/film-labels";
 import { getServerTranslator } from "@/lib/i18n/server";
 import { readStoryManifest, readStoryResume, readStoryTagline } from "@/lib/story-generation/manifest";
 import { POSTER_DIMENSIONS } from "@/lib/hero-posters";
@@ -38,6 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!film) return { title: `Film — ${BRAND_NAME}` };
 
   const userLocale = await getUserLocale(session.email);
+  const { t } = await getServerTranslator();
   const manifest = await readStoryManifest(session.email, id);
   const displayTitle = getFilmDisplayTitle(
     film,
@@ -45,8 +47,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     manifest?.generatedTitle
   );
 
+  const metaTitle = displayTitle || t("space.freeTrialFilmMetaTitle");
+
   return {
-    title: `${displayTitle} — ${BRAND_NAME}`,
+    title: `${metaTitle} — ${BRAND_NAME}`,
   };
 }
 
@@ -73,7 +77,7 @@ export default async function UserFilmPage({ params }: PageProps) {
     userLocale,
     manifest?.generatedTitle
   );
-  const posterSrc = getFilmDisplayPosterSrc(film);
+  const isFreeTrial = isUserFreeTrialFilm(film);
   const durationSec = getFilmDurationSeconds(film);
   const durationLabel =
     durationSec != null
@@ -85,6 +89,37 @@ export default async function UserFilmPage({ params }: PageProps) {
   const badgeThemes = film.themes
     .map((theme) => normalizeFilmTheme(String(theme)))
     .filter((theme): theme is NonNullable<typeof theme> => theme != null);
+
+  const filmWithStory: UserFilmWithStory = {
+    ...film,
+    ...(resume ? { storyResume: resume } : {}),
+    ...(manifest?.generatedTitle
+      ? { storyGeneratedTitle: manifest.generatedTitle }
+      : {}),
+    ...(manifest?.storyValidatedAt
+      ? { storyValidatedAt: manifest.storyValidatedAt }
+      : {}),
+    ...(manifest?.regenerationUsed ? { storyRegenerationUsed: true } : {}),
+    ...(manifest
+      ? {
+          storyGeneration: {
+            status: manifest.status,
+            ...(manifest.generationMode
+              ? { mode: manifest.generationMode }
+              : {}),
+          },
+        }
+      : {}),
+  };
+  const displayStatus = resolveFilmDisplayStatus(filmWithStory);
+  const isReady = displayStatus === "ready";
+  const posterSrc = isFreeTrial
+    ? undefined
+    : film.posterSrc ?? (isReady ? undefined : getFilmDisplayPosterSrc(film));
+  const showInCreationMedia =
+    !isFreeTrial && !isReady && displayStatus === "preparing" && Boolean(pageCopy.synopsis);
+  const showVideoMedia =
+    !isFreeTrial && isReady && Boolean(film.posterSrc && film.videoSrc);
 
   return (
     <>
@@ -99,11 +134,15 @@ export default async function UserFilmPage({ params }: PageProps) {
           </Link>
 
           <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-gold-light/90">
-            {t("space.filmReadyEyebrow")}
+            {isFreeTrial
+              ? t("space.freeTrialFilmEyebrow")
+              : translateFilmDisplayStatus(displayStatus, userLocale)}
           </p>
-          <h1 className="font-display mt-2 text-2xl font-bold leading-tight text-cream sm:text-3xl md:text-4xl lg:text-5xl">
-            {displayTitle}
-          </h1>
+          {displayTitle ? (
+            <h1 className="font-display mt-2 text-2xl font-bold leading-tight text-cream sm:text-3xl md:text-4xl lg:text-5xl">
+              {displayTitle}
+            </h1>
+          ) : null}
           {pageCopy.tagline && (
             <p className="mt-2 max-w-2xl text-base leading-relaxed text-cream/75 sm:text-lg">
               {pageCopy.tagline}
@@ -120,11 +159,17 @@ export default async function UserFilmPage({ params }: PageProps) {
           )}
 
           <div className="mt-8 flex flex-col gap-6 sm:gap-8 lg:relative lg:gap-0">
-            <UserFilmSummaryBlock
-              className="order-2 lg:order-1 lg:max-w-[calc(100%-19.5rem)] xl:max-w-[calc(100%-20.5rem)]"
-              synopsisHeading={pageCopy.synopsisHeading}
-              synopsis={pageCopy.synopsis}
-            />
+            {pageCopy.synopsis ? (
+              <UserFilmHeroSpotlight
+                className="order-2 min-w-0 lg:order-1 lg:max-w-[calc(100%-19.5rem)] xl:max-w-[calc(100%-20.5rem)]"
+                photoSrc={pageCopy.heroPhotoSrc}
+                photoAlt={pageCopy.heroPhotoAlt}
+                label={pageCopy.heroName}
+                intro={pageCopy.intro}
+                lead={pageCopy.lead}
+                synopsis={pageCopy.synopsis}
+              />
+            ) : null}
 
             {posterSrc && (
               <aside className="order-1 mx-auto w-full max-w-[220px] shrink-0 sm:max-w-[260px] lg:absolute lg:bottom-0 lg:right-0 lg:order-2 lg:mx-0 lg:w-[280px] xl:w-[300px]">
@@ -144,17 +189,22 @@ export default async function UserFilmPage({ params }: PageProps) {
             )}
           </div>
 
-          {film.videoSrc && posterSrc && (
+          {showInCreationMedia || showVideoMedia ? (
             <div className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-cinema-surface shadow-glow-gold-subtle">
-              <FilmVideoMedia
+              <UserFilmMedia
                 posterSrc={posterSrc}
                 videoPosterSrc={film.videoPosterSrc}
                 videoSrc={film.videoSrc}
                 title={displayTitle}
                 posterAlt={t("space.filmPosterAlt", { title: displayTitle })}
+                inCreationLabel={
+                  showInCreationMedia
+                    ? t("space.filmInCreationLabel")
+                    : undefined
+                }
               />
             </div>
-          )}
+          ) : null}
         </div>
       </main>
     </>

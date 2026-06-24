@@ -38,6 +38,7 @@ export const fr = {
     createFilm: "Créer son film",
     openMenu: "Ouvrir le menu",
     closeMenu: "Fermer le menu",
+    admin: "Admin",
   },
   home: {
     heroBadge: "Films personnalisés",
@@ -141,6 +142,36 @@ export const fr = {
     signupUnavailable:
       "La création de compte n'est pas encore configurée sur ce serveur. Contactez le support.",
   },
+  admin: {
+    pageTitle: "Films en attente de création",
+    eyebrow: "Administration",
+    pageLead:
+      "Validez la livraison des films : ajoutez la vidéo YouTube et l'affiche pour le client.",
+    filmCount: "{count} film(s)",
+    empty: "Aucun film en attente de création pour le moment.",
+    awaitingTitle: "En attente",
+    awaitingEmpty: "Aucun film en attente pour le moment.",
+    completedTitle: "Terminés",
+    completedEmpty: "Aucun film livré pour le moment.",
+    resume: "Résumé",
+    mainCharacterPhoto: "Photo du personnage principal",
+    mainCharacter: "principal",
+    characterAge: "{age} ans",
+    validatedAt: "Validé le {date}",
+    allCharacters: "Personnages du film",
+    nothingSpecified: "Rien de spécifique",
+    deliveryTitle: "Livrer le film au client",
+    deliveryLead:
+      "Une fois envoyé, la vidéo et l'affiche apparaîtront sur la page du film du client.",
+    youtubeUrlLabel: "Lien YouTube (non répertorié)",
+    youtubeUrlHint: "Ex. https://www.youtube.com/watch?v=... ou https://youtu.be/...",
+    posterLabel: "Affiche du film",
+    posterHint: "JPG, PNG ou WebP — max. 5 Mo. Format portrait recommandé.",
+    deliverySubmit: "Envoyer au client",
+    deliverySubmitting: "Envoi en cours…",
+    deliveredVideo: "Vidéo :",
+    deliveredStatus: "Livré au client",
+  },
   space: {
     backHome: "← Retour à l'accueil",
     eyebrow: "Mon espace",
@@ -192,7 +223,7 @@ export const fr = {
     changePlan: "Changer d'abonnement",
     subscriptionCancelled: "Votre abonnement a été résilié.",
     accountLoadError: "Impossible de charger votre compte.",
-    charactersLabel: "Personnages :",
+    charactersLabel: "Personnage :",
     createdOn: "Créé le {date}",
     backToFilms: "← Mes films",
     filmReadyEyebrow: "Votre film est prêt",
@@ -207,8 +238,10 @@ export const fr = {
       "{name} est le héros de cette aventure, avec son visage et son prénom au cœur de l'histoire.",
     filmSynopsisPrefix: "Résumé :",
     filmSynopsisHeading: "Résumé :",
+    readSynopsisMore: "Lire la suite",
     filmSynopsisFallback:
       "Votre film personnalisé est prêt : lancez la vidéo ci-dessous pour vivre l'aventure.",
+    filmInCreationLabel: "En cours de création...",
     filmHeroPhotoAlt: "Photo de {name}, héros du film",
     filmHeroFallbackName: "votre petit héros",
     filmThemeIntro: {
@@ -236,9 +269,34 @@ export const fr = {
       alreadyDone: "L'histoire est déjà générée pour ce film.",
       alreadyRunning: "Une génération est déjà en cours pour ce film.",
       filmNotFound: "Film introuvable.",
+      freeTrialNotAvailable:
+        "La génération d'histoire n'est pas disponible pour l'essai gratuit de 15 secondes.",
       noApiKey:
         "Clé OpenAI manquante. Ajoutez OPENAI_API_KEY dans .env.local à la racine du projet, puis redémarrez npm run dev.",
     },
+    storyActions: {
+      validateButton: "Valider",
+      regenerateButton: "Regénérer",
+      confirmButton: "Confirmer",
+      cancelButton: "Annuler",
+      validateTitle: "Valider l'histoire",
+      validateMessage:
+        "Si vous validez, le film pourra commencer à se créer. Si vous ne souhaitez pas valider, vous avez le droit à une régénération en cliquant sur le bouton « Regénérer ».",
+      regenerateTitle: "Regénérer l'histoire",
+      regenerateMessage:
+        "Si vous confirmez, une nouvelle histoire sera créée. Vous n'avez droit qu'à une seule régénération.",
+      validateSuccess:
+        "Histoire validée. Le film est en cours de création.",
+      regenerateSuccess:
+        "Histoire régénérée. Le film est en cours de création.",
+      alreadyValidated: "Cette histoire a déjà été validée.",
+      regenerationUsed: "Vous avez déjà utilisé votre régénération.",
+      storyNotReady: "L'histoire n'est pas encore prête.",
+      pending: "En cours…",
+    },
+    freeTrialViewFilm: "Voir l'essai",
+    freeTrialFilmEyebrow: "Essai gratuit",
+    freeTrialFilmMetaTitle: "Essai gratuit",
     navLabel: "Sections de Mon espace",
     confirmCancelSubscription:
       "Confirmer la résiliation de votre abonnement ?",
@@ -379,7 +437,7 @@ export const fr = {
         name: "Découverte",
         subtitle: "Parfait pour une première aventure",
         eyebrow: "Entrée en douceur",
-        perMinuteRate: "1 min = 10 €",
+        perMinuteRate: "1 min = 12 €",
         durationShort: "5 min",
         durationPeek: "5 minutes",
         features: {
@@ -392,7 +450,7 @@ export const fr = {
         name: "Aventure",
         subtitle: "Une histoire plus riche et immersive",
         eyebrow: "Le choix équilibré",
-        perMinuteRate: "1 min = 7,5 €",
+        perMinuteRate: "1 min = 10 €",
         durationShort: "10 min",
         durationPeek: "10 minutes",
         features: {
@@ -405,7 +463,7 @@ export const fr = {
         name: "Famille",
         subtitle: "Trois films pour multiplier les moments magiques",
         eyebrow: "Meilleure valeur",
-        perMinuteRate: "1 min = 5 €",
+        perMinuteRate: "1 min = 6,67 €",
         durationShort: "10 min",
         durationPeek: "10 minutes",
         promoLabel: "2 achetés + 1 OFFERT",
@@ -420,14 +478,9 @@ export const fr = {
   checkout: {
     loading: "Redirection vers le paiement…",
     error: "Impossible de démarrer le paiement. Réessayez ou contactez le support.",
-    withdrawalWaiverBefore:
-      "Je demande expressément que l'exécution du contrat commence avant la fin du délai de rétractation de 14 jours (crédit de tickets ou activation de l'abonnement sur mon compte). Je reconnais perdre mon droit de rétractation dès le début de la production d'un film personnalisé, conformément à l'article L.221-28 du Code de la consommation. J'ai lu et j'accepte les",
-    withdrawalWaiverAfter: ".",
-    withdrawalWaiverRequired:
-      "Vous devez accepter la renonciation au droit de rétractation pour continuer.",
     resumeTitle: "Finaliser votre commande",
     resumeHint:
-      "Avant le paiement sécurisé, confirmez la renonciation au droit de rétractation pour les contenus numériques personnalisés.",
+      "Vous allez être redirigé vers le paiement sécurisé Stripe pour finaliser votre commande.",
     resumePay: "Continuer vers le paiement sécurisé",
     resumeDismiss: "Choisir une autre offre",
     successBadge: "Paiement confirmé",
@@ -513,11 +566,12 @@ export const fr = {
       themesChoose: "Choisir les thèmes...",
       themesValidate: "Valider",
       themesSelectedCount: "{count} thèmes sélectionnés",
-      characterLegend: "Quels personnages ?",
+      characterLegend: "Quel personnage ?",
       characterHint:
-        "Sélectionnez les personnages que vous souhaitez voir dans l'histoire. (Cliquez en premier sur le personnage principal)",
+        "Sélectionnez le personnage principal de l'histoire.",
       characterAria: "Personnages du film",
       mainCharacterBadge: "Principal",
+      selectedCharacterBadge: "SÉLECTIONNÉ",
       addCharacterLabel: "Nouveau personnage",
       addCharacterAria: "Créer un nouveau personnage",
       noCharacters: "Vous n'avez pas encore de personnage.",
@@ -566,12 +620,13 @@ export const fr = {
       preparing: "En préparation",
       generating: "Génération en cours",
       ready: "Prêt",
+      awaiting_validation: "En attente de validation",
     },
     errors: {
       loginRequired: "Connectez-vous pour créer votre film.",
       noCharacters: "Ajoutez au moins un personnage dans Mon espace avant de créer un film.",
       selectCharacter:
-        "Sélectionnez au moins un personnage pour cette histoire.",
+        "Sélectionnez un personnage pour cette histoire.",
       photoRequired: "Ajoutez une photo du visage pour : {names}.",
       styleRequired: "Choisissez un style de film.",
       themesRequired: "Sélectionnez au moins un thème.",

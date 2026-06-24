@@ -2,7 +2,7 @@ import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import type { UserFilm } from "@/lib/film-creation/types";
 import { getStorySceneCount } from "./scene-count";
-import type { GeneratedScene, StoryPlan } from "./generate";
+import type { GeneratedScene, StoryPlan, StoryTitleResume } from "./generate";
 import { STORY_MIN_SCENE_CHARS, STORY_MAX_SCENE_CHARS } from "./generate";
 import { getStyleScenePrefix } from "./style-scene-prefix";
 
@@ -28,6 +28,41 @@ function padSceneLength(text: string): string {
 function mainCharacterName(film: UserFilm): string {
   const main = film.characters.find((c) => c.isMain) ?? film.characters[0];
   return main?.prenom ?? "the hero";
+}
+
+export function generateMockTitleAndResume(
+  film: UserFilm,
+  locale: LocaleCode
+): StoryTitleResume {
+  const t = createTranslator(locale);
+  const hero = mainCharacterName(film);
+  const themeLabel = film.themes
+    .map((theme) => t(`filmCreation.themes.${theme}` as never))
+    .join(", ");
+  const styleLabel = t(`filmCreation.styles.${film.style}` as never);
+
+  const title =
+    locale === "en"
+      ? `${hero}'s ${themeLabel} journey`
+      : `${hero} — ${themeLabel}`;
+
+  const resume =
+    locale === "en"
+      ? `${hero} discovers a mysterious signal that leads to a ${themeLabel.toLowerCase()} quest. ` +
+        `With courage and heart, they face obstacles, learn to trust friends, and uncover a secret ` +
+        `that changes their world. The story ends with a joyful celebration and a quiet moment of pride. ` +
+        `Visual tone: ${styleLabel}. (Demo — add OPENAI_API_KEY for AI-generated title and summary.)`
+      : `${hero} découvre un signal mystérieux qui lance une quête ${themeLabel.toLowerCase()}. ` +
+        `Entre obstacles et découvertes, ${hero} apprend la confiance et révèle un secret qui change tout. ` +
+        `La fin mêle fête joyeuse et moment de fierté. Style : ${styleLabel}. ` +
+        `(Démo — ajoutez OPENAI_API_KEY pour un titre et un résumé générés par IA.)`;
+
+  const tagline =
+    locale === "en"
+      ? `A magical adventure with ${hero}`
+      : `Une aventure magique avec ${hero}`;
+
+  return { title, resume, tagline };
 }
 
 export function generateMockStoryPlan(
@@ -69,7 +104,12 @@ export function generateMockStoryPlan(
     return `Scène ${n} : ${hero} fait avancer l'intrigue (${themeLabel}) avec un objectif clair et une émotion nette.`;
   });
 
-  return { title, resume, sceneOutlines };
+  const tagline =
+    locale === "en"
+      ? `A magical adventure with ${hero}`
+      : `Une aventure magique avec ${hero}`;
+
+  return { title, resume, tagline, sceneOutlines };
 }
 
 export function generateMockSceneBatch(

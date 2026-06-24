@@ -141,3 +141,20 @@ export async function writeStoryResume(
     "utf8"
   );
 }
+
+export async function writeStoryTagline(
+  email: string,
+  filmId: string,
+  tagline: string
+): Promise<void> {
+  if (isDatabaseEnabled()) {
+    await patchStoryWorkspaceTextDb(email, filmId, { tagline });
+    return;
+  }
+
+  await writeFile(
+    path.join(getFilmStoryDir(email, filmId), "tagline.txt"),
+    `${tagline}\n`,
+    "utf8"
+  );
+}

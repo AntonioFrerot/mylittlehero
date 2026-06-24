@@ -7,7 +7,6 @@ type CheckoutSessionResult =
 export async function requestCheckoutSession(input: {
   planId: CheckoutPlanId;
   planType: CheckoutPlanType;
-  withdrawalWaiverAccepted: boolean;
 }): Promise<CheckoutSessionResult> {
   const response = await fetch("/api/stripe/checkout", {
     method: "POST",
