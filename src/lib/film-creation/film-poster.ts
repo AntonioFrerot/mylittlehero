@@ -5,6 +5,7 @@ import {
   isAllowedPhotoType,
   userPhotoDirKey,
 } from "@/lib/characters/photo";
+import { isBlobStorageEnabled } from "@/lib/storage/blob";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -14,10 +15,6 @@ const EXT_BY_MIME: Record<string, string> = {
   "image/png": ".png",
   "image/webp": ".webp",
 };
-
-function isBlobStorageEnabled(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
-}
 
 export async function saveFilmPoster(
   ownerEmail: string,

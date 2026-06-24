@@ -2,6 +2,7 @@ import { del, put } from "@vercel/blob";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { isHostedProduction } from "@/lib/db/client";
+import { isBlobStorageEnabled } from "@/lib/storage/blob";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_TYPES = new Set([
@@ -24,10 +25,6 @@ export function userPhotoDirKey(email: string): string {
 
 export function isAllowedPhotoType(type: string): boolean {
   return ALLOWED_TYPES.has(type);
-}
-
-function isBlobStorageEnabled(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
 }
 
 export async function saveCharacterPhoto(
