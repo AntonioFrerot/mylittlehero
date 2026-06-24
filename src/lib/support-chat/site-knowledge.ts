@@ -88,7 +88,7 @@ function buildUserContextBlock(
     ? [
         "═══ LOGGED-IN CUSTOMER CONTEXT (use when relevant) ═══",
         `• Name: ${userContext.name ?? "not provided"}`,
-        `• Film tickets balance: ${userContext.ticketBalance} (1 ticket = ${TICKET_MINUTES} min of film)`,
+        `• Film tickets balance: ${userContext.ticketBalance} (1 ticket = ${TICKET_MINUTES} min per film; max ${FILM_MAX_MINUTES} min/film — tickets are not stackable on one creation)`,
         `• Active subscription: ${userContext.hasActiveSubscription ? "yes" : "no"}${
           userContext.subscriptionPlanName ? ` (${userContext.subscriptionPlanName})` : ""
         }`,
@@ -103,7 +103,7 @@ function buildUserContextBlock(
     : [
         "═══ CONTEXTE CLIENT CONNECTÉ (à utiliser si pertinent) ═══",
         `• Prénom/nom : ${userContext.name ?? "non renseigné"}`,
-        `• Solde tickets film : ${userContext.ticketBalance} (1 ticket = ${TICKET_MINUTES} min de film)`,
+        `• Solde tickets film : ${userContext.ticketBalance} (1 ticket = ${TICKET_MINUTES} min par film ; max ${FILM_MAX_MINUTES} min/film — tickets non cumulables sur une seule création)`,
         `• Abonnement actif : ${userContext.hasActiveSubscription ? "oui" : "non"}${
           userContext.subscriptionPlanName ? ` (${userContext.subscriptionPlanName})` : ""
         }`,
@@ -154,8 +154,10 @@ ${stepsBlock()}
 ${themesBlock()}
 
 ═══ ${isEn ? "TICKETS & DURATION" : "TICKETS & DURÉE"} ═══
-• 1 ticket = ${TICKET_MINUTES} ${isEn ? "minutes" : "minutes"} ${isEn ? "of film" : "de film"}.
-• ${isEn ? "Paid durations" : "Durées payantes"} : ${FILM_MIN_MINUTES}–${FILM_MAX_MINUTES} min (${isEn ? "subscription" : "abonnement"} ${isEn ? "Standard tier" : "Essentiel"} : 2–5 min ; Premium/Unlimited : 2–10 min). One-off /achat : 5 min or 10 min packs.
+• 1 ticket = ${TICKET_MINUTES} ${isEn ? "minutes per film creation" : "minutes par création de film"} (${isEn ? "not stackable on a single film" : "pas cumulable sur un seul film"}).
+• ${isEn ? "Each film" : "Chaque film"} : ${isEn ? "max" : "durée max"} ${FILM_MAX_MINUTES} min. ${isEn ? "One-off /achat" : "Achats à l'unité /achat"} : 5 min (1 ticket) ${isEn ? "or" : "ou"} 10 min (2 tickets) ${isEn ? "per film" : "par film"}.
+• ${isEn ? "Tickets pay for separate films, not one longer film" : "Les tickets servent à créer plusieurs films séparés, pas à allonger un seul film"} : ${isEn ? "e.g. 10 tickets = 5 × 10 min films or 10 × 5 min films — never one 50 min film" : "ex. 10 tickets = 5 films de 10 min ou 10 films de 5 min — jamais un film de 50 min"}.
+• ${isEn ? "Subscription" : "Abonnement"} : ${FILM_MIN_MINUTES}–${FILM_MAX_MINUTES} min ${isEn ? "per film" : "par film"} (${isEn ? "Essentiel" : "Essentiel"} 2–5 min ; Premium/Unlimited 2–10 min). ${isEn ? "Subscribers do not spend tickets." : "Les abonnés ne consomment pas de tickets."}
 • ${isEn ? "Free trial" : "Essai gratuit"} : ${FREE_TRIAL_SECONDS} ${isEn ? "seconds" : "secondes"}, once per account.
 
 ═══ ${isEn ? "DELIVERY TIMES" : "DÉLAIS DE LIVRAISON"} ═══
@@ -224,7 +226,9 @@ export function getIntentAnswer(
         ? "Chaque personnage nécessite une photo du visage claire, un prénom et une taille en cm (âge optionnel). Gérez-les dans Mon espace → Les personnages ; sans photo, la création de film est bloquée."
         : "Dans Mon espace → Les personnages, ajoutez le petit héros, la famille ou un animal : photo du visage, prénom, taille en cm, âge optionnel.";
     case "duration":
-      return `À la création (/creer-film), vous choisissez entre ${FILM_MIN_MINUTES} et ${FILM_MAX_MINUTES} minutes. Selon l'abonnement : Essentiel autorise des films de 2 à 5 min, Premium de 2 à 10 min. Les offres à l'unité sur /achat proposent 5 min ou 10 min.`;
+      return `À la création (/creer-film), chaque film dure entre ${FILM_MIN_MINUTES} et ${FILM_MAX_MINUTES} minutes maximum (pas plus). Selon l'abonnement : Essentiel autorise 2 à 5 min par film, Premium de 2 à 10 min. Les achats à l'unité sur /achat : 5 min (1 ticket) ou 10 min (2 tickets) par film.`;
+    case "tickets":
+      return `Les tickets servent à payer la durée d'un film à chaque création : 1 ticket = 5 min, 2 tickets = 10 min (durée max par film). Ils ne se cumulent pas sur un seul film : avec 10 tickets vous pouvez créer 5 films de 10 minutes (ou 10 films de 5 min), pas un film de 50 minutes. Les tickets sont débités à chaque nouvelle création, selon la durée choisie pour ce film.`;
     case "trial":
       return `Cliquez sur « Essayer gratuitement » (accueil ou /creer) : créez un compte ou connectez-vous, puis accédez à /creer-film?essai=1 pour un film unique de ${FREE_TRIAL_SECONDS} secondes (une fois par compte).`;
     case "privacy":
@@ -327,6 +331,24 @@ export function buildSupportFaq(): FaqEntry[] {
       answer: getIntentAnswer("duration"),
     },
     {
+      id: "tickets",
+      keywords: [
+        "ticket",
+        "tickets",
+        "cumul",
+        "cumuler",
+        "combiner",
+        "empiler",
+        "50 min",
+        "50 minutes",
+        "solde",
+        "crédit",
+        "credit",
+        "combien de film",
+      ],
+      answer: getIntentAnswer("tickets"),
+    },
+    {
       id: "trial",
       keywords: ["essai", "gratuit", "gratuite", "test", "découvrir", "decouvrir"],
       answer: getIntentAnswer("trial"),
@@ -375,4 +397,4 @@ export function buildSupportFaq(): FaqEntry[] {
 }
 
 export const SUPPORT_WELCOME_MESSAGE =
-  "Bonjour ! Posez votre question sur les tarifs, la création du film, les personnages, les délais ou l'essai gratuit — je réponds à partir des infos MyLittleHero.";
+  "Bonjour ! Posez-moi toutes vos questions ici, je suis là pour vous aider.";

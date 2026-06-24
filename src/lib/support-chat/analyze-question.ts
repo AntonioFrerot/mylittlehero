@@ -6,6 +6,7 @@ export type SupportIntent =
   | "howto"
   | "characters"
   | "duration"
+  | "tickets"
   | "trial"
   | "privacy"
   | "example"
@@ -94,6 +95,21 @@ const INTENT_KEYWORDS: Record<Exclude<SupportIntent, "unknown" | "greeting" | "t
     "animal",
   ],
   duration: ["durée", "duree", "minutes", "min", "long", "court", "30", "15", "5 min"],
+  tickets: [
+    "ticket",
+    "tickets",
+    "cumul",
+    "cumuler",
+    "combiner",
+    "empiler",
+    "50 min",
+    "50 minutes",
+    "solde",
+    "crédit",
+    "credit",
+    "combien de film",
+    "plusieurs film",
+  ],
   trial: ["essai", "gratuit", "gratuite", "test", "découvrir", "decouvrir", "sans payer"],
   privacy: [
     "confidential",

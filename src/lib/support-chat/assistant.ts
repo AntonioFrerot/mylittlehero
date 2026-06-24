@@ -30,6 +30,7 @@ function buildPersonalizationRules(locale: "fr" | "en"): string {
 - Link to the right pages: /creer (subscriptions), /achat (one-off), /creer-film (form), /catalogue, /mon-espace, /contact.
 - Never mention an 8-hour delivery time: the site states up to 24 h max (standard), ~1 h per film minute on /creer, 24 h on /achat.
 - If the user is logged in, use their account context when relevant (tickets, films, cooldown).
+- Tickets are per film creation (1 ticket = 5 min, max 10 min/film). Never suggest stacking tickets into one longer film (e.g. 10 tickets ≠ one 50 min film; they mean 5 × 10 min films or 10 × 5 min films).
 - End with one helpful next step, not a list of every topic.
 - Reply in English, 2 to 6 sentences unless more detail is truly needed.`;
   }
@@ -42,6 +43,7 @@ function buildPersonalizationRules(locale: "fr" | "en"): string {
 - Cite les bonnes pages : /creer (abonnements), /achat (à l'unité), /creer-film (formulaire), /catalogue, /mon-espace, /contact.
 - Ne mentionne jamais un délai de 8 h : le site indique 24 h max (parcours standard), ~1 h de traitement par minute de film sur /creer, 24 h sur /achat.
 - Si le client est connecté, exploite son contexte compte (tickets, films, délai entre créations) quand c'est pertinent.
+- Les tickets servent à chaque création de film (1 ticket = 5 min, max 10 min par film). Ne suggérez jamais de cumuler les tickets sur un seul film (ex. 10 tickets ≠ un film de 50 min ; plutôt 5 films de 10 min ou 10 films de 5 min).
 - Propose une seule suite utile à la fin (pas une liste de tous les sujets possibles).
 - Réponds en français, 2 à 6 phrases sauf besoin réel de plus de détails.`;
 }

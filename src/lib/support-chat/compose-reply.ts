@@ -44,6 +44,8 @@ function closingForIntent(intent: SupportIntent): string {
       return "Le catalogue (/catalogue) permet de choisir un univers avant de créer le film.";
     case "monEspace":
       return "Rendez-vous sur /mon-espace pour gérer personnages et films.";
+    case "tickets":
+      return "Pour acheter des tickets ou un pack, rendez-vous sur /achat.";
     default:
       return "Dites-moi si vous voulez approfondir un point en particulier.";
   }

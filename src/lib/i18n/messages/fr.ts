@@ -10,7 +10,7 @@ export const fr = {
       "Connectez-vous ou créez un compte pour lancer votre essai gratuit.",
     creerTitle: "Créer son film — Offres",
     creerDescription:
-      "Choisissez votre formule ou essayez gratuitement un film personnalisé de 2 minutes.",
+      "Choisissez votre formule ou essayez gratuitement un film personnalisé de 15 secondes.",
     achatTitle: "Tarifs — Offres test",
     achatDescription:
       "Offres à l'unité pour tester de nouvelles formules de films personnalisés.",
@@ -48,13 +48,13 @@ export const fr = {
     heroLead:
       "Offrez à votre enfant son propre film personnalisé !",
     heroSub:
-      "Configurez un film en quelques clics ou personnalisez entièrement l'histoire selon vos envies, jusque dans les moindres détails.",
+      "Configurez un film en quelques clics ou personnalisez entièrement l'histoire selon vos envies, jusqu'aux moindres détails.",
     heroExamples: "Voir les exemples",
     catalogueEyebrow: "Le petit héros",
     catalogueTitleBefore: "Films d'exemple du",
     catalogueTitleHighlight: "petit Léo",
     catalogueSubtitle:
-      "Cinq films d'univers différents toujours avec Léo qui est devenu le personnage emblématique de sa famille.",
+      "Cinq films d'univers différents, tous avec Léo, devenu le personnage emblématique de sa famille.",
     posterAlt: "Affiche — {title}",
     howEyebrow: "Simple comme un rêve",
     howTitle: "Comment ça marche ?",
@@ -252,7 +252,7 @@ export const fr = {
     changePlan: "Changer d'abonnement",
     subscriptionCancelled: "Votre abonnement a été résilié.",
     accountLoadError: "Impossible de charger votre compte.",
-    charactersLabel: "Personnage :",
+    charactersLabel: "Personnages :",
     createdOn: "Créé le {date}",
     backToFilms: "← Mes films",
     filmReadyEyebrow: "Votre film est prêt",
@@ -305,13 +305,13 @@ export const fr = {
     },
     storyActions: {
       validateButton: "Valider",
-      regenerateButton: "Regénérer",
+      regenerateButton: "Régénérer",
       confirmButton: "Confirmer",
       cancelButton: "Annuler",
       validateTitle: "Valider l'histoire",
       validateMessage:
-        "Si vous validez, le film pourra commencer à se créer. Si vous ne souhaitez pas valider, vous avez le droit à une régénération en cliquant sur le bouton « Regénérer ».",
-      regenerateTitle: "Regénérer l'histoire",
+        "Si vous validez, le film pourra commencer à se créer. Si vous ne souhaitez pas valider, vous avez le droit à une régénération en cliquant sur le bouton « Régénérer ».",
+      regenerateTitle: "Régénérer l'histoire",
       regenerateMessage:
         "Si vous confirmez, une nouvelle histoire sera créée. Vous n'avez droit qu'à une seule régénération.",
       validateSuccess:
@@ -357,7 +357,7 @@ export const fr = {
     subtitle:
       "Parcourez les univers et créez le film de votre enfant, rangé par thème.",
     heroLead:
-      "Votre bibliothèque de films sur mesure, chaque rangée correspond à un univers narratif, prêt à accueillir vos créations.",
+      "Votre bibliothèque de films sur mesure : chaque rangée correspond à un univers narratif, prête à accueillir vos créations.",
     heroExamples: "Voir les films d'exemple",
     heroStepsTitle: "Comment utiliser le catalogue\u00a0?",
     heroStep1Title: "Choisissez un univers",

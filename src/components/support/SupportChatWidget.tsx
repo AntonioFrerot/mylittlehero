@@ -153,7 +153,7 @@ export function SupportChatWidget() {
                 Assistant MyLittleHero
               </p>
               <p className="text-[11px] text-cream/50">
-                Analyse votre question et répond sur mesure
+                Analyse votre question et y répond sur mesure
               </p>
             </div>
             <button

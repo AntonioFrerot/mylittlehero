@@ -154,8 +154,12 @@ export function Header() {
         </div>
 
         <div className="flex shrink-0 items-center gap-2 md:hidden">
-          {user ? <HeaderTicketCount className="header-ticket-count--mobile" /> : null}
-          {user ? <HeaderNotificationBell /> : null}
+          {user ? (
+            <div className="header-mobile-ticket-bell">
+              <HeaderTicketCount className="header-ticket-count--mobile" />
+              <HeaderNotificationBell className="notification-bell--header-mobile" />
+            </div>
+          ) : null}
           <button
             type="button"
             className={`${BTN_3D_ICON} h-11 w-11 rounded-lg text-cream`}
