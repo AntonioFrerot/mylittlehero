@@ -14,6 +14,7 @@ import {
   type FilmThemeId,
 } from "@/lib/i18n/film-labels";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { randomUUID } from "node:crypto";
 import { provisionStoryWorkspace } from "@/lib/story-generation/provision";
 import { scheduleStoryGeneration } from "@/lib/story-generation/schedule";
@@ -295,7 +296,7 @@ export async function saveFilmCreation(
   revalidatePath("/achat");
   revalidatePath("/catalogue");
 
-  return { success: t("filmCreation.success") };
+  redirect("/mon-espace?section=films");
 }
 
 /** Livraison d'un film terminé (affiche, vidéo, thèmes) → visible dans le catalogue. */

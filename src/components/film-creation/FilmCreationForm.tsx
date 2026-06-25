@@ -118,22 +118,6 @@ export function FilmCreationForm({
       clientError === insufficientTicketsMessage ||
       state.error === insufficientTicketsMessage);
 
-  if (state.success) {
-    return (
-      <div className="rounded-2xl border border-gold/30 bg-gold/5 p-8 text-center">
-        <p className="font-display text-xl font-semibold text-cream">
-          {t("common.thankYou")}
-        </p>
-        <p className="mt-3 text-cream/65">{state.success}</p>
-        <div className="mt-8 flex justify-center">
-          <Link href="/mon-espace?section=films" className={BTN_3D_PRIMARY_ACTION}>
-            {t("nav.mySpace")}
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <form
       action={formAction}
