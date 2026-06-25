@@ -87,6 +87,7 @@ export type UserFilmWithStory = UserFilm & {
   storyResume?: string | null;
   storyGeneratedTitle?: string | null;
   storyValidatedAt?: string | null;
+  storyGenerationCompletedAt?: string | null;
   storyRegenerationUsed?: boolean;
   storyGeneration?: {
     status: StoryGenerationStatus;

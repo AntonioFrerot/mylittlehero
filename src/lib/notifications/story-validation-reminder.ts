@@ -9,6 +9,7 @@ import {
   listStoryWorkspacesAwaitingValidationReminder,
   listStoryWorkspacesAwaitingValidationReminderForUser,
 } from "@/lib/story-generation/story-db";
+import { getSiteUrl } from "@/lib/site-url";
 import { createNotification } from "./store";
 
 export const STORY_VALIDATION_REMINDER_DELAY_MS = 5 * 60 * 1000;
@@ -138,12 +139,52 @@ export async function processStoryValidationReminders(): Promise<number> {
   return sent;
 }
 
-/** Marqueur : le rappel est déclenché par les visites API / pages (pas de timer serveur). */
+/** Planifie un rappel serveur (QStash) si configuré ; sinon le poll client prend le relais. */
 export function scheduleStoryValidationReminder(
-  _email: string,
-  _filmId: string
+  email: string,
+  filmId: string
 ): void {
-  // generationCompletedAt est enregistré à la fin de runStoryGeneration.
+  void scheduleStoryValidationReminderOnServer(email, filmId);
+}
+
+async function scheduleStoryValidationReminderOnServer(
+  email: string,
+  filmId: string
+): Promise<void> {
+  const qstashToken = process.env.QSTASH_TOKEN?.trim();
+  const secret = process.env.STORY_GENERATION_SECRET?.trim();
+  if (!qstashToken || !secret) return;
+
+  const targetUrl = `${getSiteUrl()}/api/story-validation-reminder`;
+  const publishUrl = `https://qstash.upstash.io/v2/publish/${encodeURIComponent(targetUrl)}`;
+
+  try {
+    const response = await fetch(publishUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${qstashToken}`,
+        "Content-Type": "application/json",
+        "Upstash-Delay": "5m",
+        "Upstash-Forward-x-story-generation-secret": secret,
+      },
+      body: JSON.stringify({ email, filmId }),
+    });
+
+    if (!response.ok) {
+      console.error("QStash story validation reminder failed", {
+        email,
+        filmId,
+        status: response.status,
+        body: await response.text().catch(() => ""),
+      });
+    }
+  } catch (error) {
+    console.error("QStash story validation reminder error", {
+      email,
+      filmId,
+      error,
+    });
+  }
 }
 
 export async function runStoryValidationReminderAfterDelay(

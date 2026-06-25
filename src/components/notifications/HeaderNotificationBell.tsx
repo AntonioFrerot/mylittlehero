@@ -6,6 +6,10 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { useAuthUser } from "@/hooks/use-auth-user";
+import {
+  NOTIFICATIONS_POLL_INTERVAL_MS,
+  NOTIFICATIONS_REFRESH_EVENT,
+} from "@/lib/notifications/refresh";
 import type { UserNotification } from "@/lib/notifications/types";
 
 type NotificationsResponse = {
@@ -76,8 +80,18 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
     void loadNotifications();
     const intervalId = window.setInterval(() => {
       void loadNotifications();
-    }, 45000);
-    return () => window.clearInterval(intervalId);
+    }, NOTIFICATIONS_POLL_INTERVAL_MS);
+
+    function handleRefresh() {
+      void loadNotifications();
+    }
+
+    window.addEventListener(NOTIFICATIONS_REFRESH_EVENT, handleRefresh);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener(NOTIFICATIONS_REFRESH_EVENT, handleRefresh);
+    };
   }, [user, loadNotifications]);
 
   useEffect(() => {

@@ -25,6 +25,9 @@ export async function attachStoryToFilms(
         ...(manifest?.storyValidatedAt
           ? { storyValidatedAt: manifest.storyValidatedAt }
           : {}),
+        ...(manifest?.generationCompletedAt
+          ? { storyGenerationCompletedAt: manifest.generationCompletedAt }
+          : {}),
         ...(manifest?.regenerationUsed
           ? { storyRegenerationUsed: true }
           : {}),

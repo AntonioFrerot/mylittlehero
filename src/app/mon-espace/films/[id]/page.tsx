@@ -105,6 +105,9 @@ export default async function UserFilmPage({ params }: PageProps) {
     ...(manifest?.storyValidatedAt
       ? { storyValidatedAt: manifest.storyValidatedAt }
       : {}),
+    ...(manifest?.generationCompletedAt
+      ? { storyGenerationCompletedAt: manifest.generationCompletedAt }
+      : {}),
     ...(manifest?.regenerationUsed ? { storyRegenerationUsed: true } : {}),
     ...(manifest
       ? {
