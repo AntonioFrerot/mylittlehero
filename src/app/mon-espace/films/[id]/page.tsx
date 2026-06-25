@@ -4,8 +4,8 @@ import { UserFilmHeroSpotlight } from "@/components/films/UserFilmHeroSpotlight"
 import { UserFilmMedia } from "@/components/films/UserFilmMedia";
 import { UserFilmPosterAwaitingPlaceholder } from "@/components/films/UserFilmPosterAwaitingPlaceholder";
 import { FilmStoryGenerationPoll } from "@/components/espace/FilmStoryGenerationPoll";
-import { getFilmDisplayPosterSrc } from "@/lib/browse-catalog";
 import { filmNeedsStoryPoll } from "@/lib/film-creation/story-poll";
+import { resolveUserFilmPageMedia } from "@/lib/film-creation/user-film-page-media";
 import { resolveFilmDisplayStatus, translateFilmDisplayStatus } from "@/lib/film-creation/film-display-status";
 import type { UserFilmWithStory } from "@/lib/film-creation/types";
 import {
@@ -121,24 +121,13 @@ export default async function UserFilmPage({ params }: PageProps) {
       : {}),
   };
   const displayStatus = resolveFilmDisplayStatus(filmWithStory);
-  const isReady = displayStatus === "ready";
-  const hasRealPoster = Boolean(film.posterSrc);
-  const showPosterAwaitingPlaceholder =
-    !isFreeTrial && !isReady && !hasRealPoster;
-  const posterSrc = isFreeTrial
-    ? undefined
-    : film.posterSrc ??
-      (isReady || showPosterAwaitingPlaceholder
-        ? undefined
-        : getFilmDisplayPosterSrc(film));
-  const showInCreationMedia =
-    !isFreeTrial &&
-    !isReady &&
-    (displayStatus === "preparing" ||
-      displayStatus === "awaiting_validation") &&
-    Boolean(pageCopy.synopsis);
-  const showVideoMedia =
-    !isFreeTrial && isReady && Boolean(film.posterSrc && film.videoSrc);
+  const pageMedia = resolveUserFilmPageMedia(film, isFreeTrial);
+  const {
+    showPosterPlaceholder,
+    showInCreationMedia,
+    showVideoMedia,
+    posterSrc,
+  } = pageMedia;
   const shouldPollStory = filmNeedsStoryPoll(filmWithStory);
 
   return (
@@ -192,9 +181,9 @@ export default async function UserFilmPage({ params }: PageProps) {
               />
             ) : null}
 
-            {showPosterAwaitingPlaceholder || posterSrc ? (
+            {!isFreeTrial ? (
               <aside className="order-1 mx-auto w-full max-w-[220px] shrink-0 sm:max-w-[260px] lg:absolute lg:bottom-0 lg:right-0 lg:order-2 lg:mx-0 lg:w-[280px] xl:w-[300px]">
-                {showPosterAwaitingPlaceholder ? (
+                {showPosterPlaceholder ? (
                   <UserFilmPosterAwaitingPlaceholder
                     ariaLabel={t("space.filmPosterAwaitingAria")}
                   />
