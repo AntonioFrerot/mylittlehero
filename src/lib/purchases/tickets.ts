@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
@@ -243,6 +244,9 @@ export async function getTicketBalance(userEmail: string): Promise<number> {
     .filter((entry) => entry.userEmail === email)
     .reduce((sum, entry) => sum + entry.delta, 0);
 }
+
+/** Dédupliqué par requête RSC (layout + Mon espace). */
+export const getTicketBalanceForUser = cache(getTicketBalance);
 
 export async function grantTicketsFromPurchase(input: {
   userEmail: string;

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { ensureSchema, getSql, isDatabaseEnabled } from "@/lib/db/client";
@@ -82,6 +83,9 @@ function sortFilms(films: UserFilm[]): UserFilm[] {
 export async function listUserFilms(email: string): Promise<UserFilm[]> {
   return sortFilms(await readFilms(email));
 }
+
+/** Dédupliqué par requête RSC (Mon espace, création film, etc.). */
+export const listUserFilmsForUser = cache(listUserFilms);
 
 export async function addUserFilm(email: string, film: UserFilm): Promise<UserFilm[]> {
   const normalized = normalizeEmail(email);

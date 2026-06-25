@@ -16,7 +16,6 @@ import {
   getFilmDurationSeconds,
 } from "@/lib/film-creation/duration";
 import { getUserFilmById } from "@/lib/film-creation/store";
-import { processStoryValidationRemindersForUser } from "@/lib/notifications/story-validation-reminder";
 import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
 import { getSession } from "@/lib/auth/get-session";
 import { getUserLocale } from "@/lib/auth/users-store";
@@ -68,8 +67,6 @@ export default async function UserFilmPage({ params }: PageProps) {
   const { id } = await params;
   const film = await getUserFilmById(session.email, id);
   if (!film) notFound();
-
-  await processStoryValidationRemindersForUser(session.email);
 
   const [storyData, userLocale] = await Promise.all([
     attachStoryToFilm(session.email, film),

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { isDatabaseEnabled } from "@/lib/db/client";
 import {
   listStoryWorkspacesDb,

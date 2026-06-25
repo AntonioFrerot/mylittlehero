@@ -1,21 +1,19 @@
 import { Header } from "@/components/Header";
+import { DEFAULT_ESPACE_SECTION, parseEspaceSection } from "@/lib/espace/sections";
+import { getSession } from "@/lib/auth/get-session";
+import { loadMonEspacePageData } from "@/lib/espace/load-page";
+import { getServerTranslator } from "@/lib/i18n/server";
+import { BRAND_NAME } from "@/lib/brand";
+import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+import Link from "next/link";
 import { AccountInformationsForm } from "@/components/espace/AccountInformationsForm";
 import { CharacterManager } from "@/components/espace/CharacterManager";
 import { MesFilmsList } from "@/components/espace/MesFilmsList";
 import { MonEspaceNav } from "@/components/espace/MonEspaceNav";
 import { Button } from "@/components/ui/Button";
-import { getMyAccountDetails } from "@/lib/auth/account-actions";
-import { getMyCharacters } from "@/lib/characters/actions";
-import { getMyFilmsWithStory } from "@/lib/film-creation/actions";
-import { getSession } from "@/lib/auth/get-session";
-import { processStoryValidationRemindersForUser } from "@/lib/notifications/story-validation-reminder";
-import { parseEspaceSection, MON_ESPACE_DEFAULT_PATH } from "@/lib/espace/sections";
-import { resolveCreerSonFilmHref } from "@/lib/navigation/creer-film.server";
-import { BRAND_NAME } from "@/lib/brand";
-import { getServerTranslator } from "@/lib/i18n/server";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import type { Metadata } from "next";
+
+export const revalidate = 30;
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getServerTranslator();
@@ -32,24 +30,18 @@ type PageProps = {
 export default async function MonEspacePage({ searchParams }: PageProps) {
   const session = await getSession();
   if (!session) {
-    redirect(`/connexion?redirect=${encodeURIComponent(MON_ESPACE_DEFAULT_PATH)}`);
+    redirect(
+      `/connexion?redirect=${encodeURIComponent("/mon-espace?section=films")}`
+    );
   }
 
-  const { t } = await getServerTranslator();
   const params = await searchParams;
-  if (!params.section) {
-    redirect(MON_ESPACE_DEFAULT_PATH);
-  }
-  const section = parseEspaceSection(params.section);
-  const createFilmHref = await resolveCreerSonFilmHref();
-
-  await processStoryValidationRemindersForUser(session.email);
-
-  const account =
-    section === "profil" ? await getMyAccountDetails() : null;
-  const characters =
-    section === "personnages" ? await getMyCharacters() : [];
-  const films = section === "films" ? await getMyFilmsWithStory() : [];
+  const section = parseEspaceSection(params.section ?? DEFAULT_ESPACE_SECTION);
+  const [{ t }, pageData] = await Promise.all([
+    getServerTranslator(),
+    loadMonEspacePageData(session.email, section),
+  ]);
+  const { createFilmHref, account, characters, films } = pageData;
 
   return (
     <>

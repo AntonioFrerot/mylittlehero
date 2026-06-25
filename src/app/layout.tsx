@@ -9,7 +9,7 @@ import { BRAND_NAME } from "@/lib/brand";
 import { getServerLocale, getServerTranslator } from "@/lib/i18n/server";
 import { getMessages } from "@/lib/i18n/translator";
 import { getSiteUrl } from "@/lib/site-url";
-import { getTicketBalance } from "@/lib/purchases/tickets";
+import { getTicketBalanceForUser } from "@/lib/purchases/tickets";
 import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 
@@ -49,7 +49,7 @@ export default async function RootLayout({
 }>) {
   const locale = await getServerLocale();
   const session = await getSession();
-  const initialBalance = session ? await getTicketBalance(session.email) : null;
+  const initialBalance = session ? await getTicketBalanceForUser(session.email) : null;
   const initialIsAdmin = session ? isAdminEmail(session.email) : false;
 
   return (
