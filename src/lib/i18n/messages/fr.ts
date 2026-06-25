@@ -200,6 +200,13 @@ export const fr = {
     viewFilms: "Voir mes films",
     filmReadyTitle: "Votre film « {title} » est disponible",
     filmReadyBody: "Regardez-le dès maintenant dans Mes films.",
+    adminFilmValidatedTitle: "Film à livrer — {client}",
+    adminFilmValidatedBody:
+      "« {title} » : le client a validé l'histoire et attend son film.",
+    adminFilmRegeneratedTitle: "Histoire régénérée — {client}",
+    adminFilmRegeneratedBody:
+      "« {title} » : le client a demandé une nouvelle histoire.",
+    adminViewQueue: "Voir l'administration",
   },
   space: {
     backHome: "← Retour à l'accueil",

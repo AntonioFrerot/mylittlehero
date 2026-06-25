@@ -1,4 +1,4 @@
-export type NotificationKind = "film_ready" | "admin";
+export type NotificationKind = "film_ready" | "admin" | "film_awaiting_admin";
 
 export type UserNotification = {
   id: string;

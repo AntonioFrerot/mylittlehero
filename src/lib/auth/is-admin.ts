@@ -2,7 +2,7 @@ import { normalizeEmail } from "@/lib/db/normalize-email";
 
 const DEFAULT_ADMIN_EMAILS = ["antonnbot2005@gmail.com"];
 
-function getAdminEmails(): string[] {
+export function getAdminEmails(): string[] {
   const fromEnv = process.env.ADMIN_EMAILS?.split(",")
     .map((email) => normalizeEmail(email))
     .filter(Boolean);

@@ -198,6 +198,13 @@ export const en = {
     viewFilms: "View my films",
     filmReadyTitle: "Your film « {title} » is available",
     filmReadyBody: "Watch it now in My films.",
+    adminFilmValidatedTitle: "Film to deliver — {client}",
+    adminFilmValidatedBody:
+      "« {title} »: the customer validated the story and is waiting for their film.",
+    adminFilmRegeneratedTitle: "Story regenerated — {client}",
+    adminFilmRegeneratedBody:
+      "« {title} »: the customer requested a new story.",
+    adminViewQueue: "Open admin",
   },
   space: {
     backHome: "← Back to home",
