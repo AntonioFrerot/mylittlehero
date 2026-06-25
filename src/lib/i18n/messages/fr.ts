@@ -291,8 +291,9 @@ export const fr = {
       musical: "Voici un film musical pour {name} :",
       animation: "Voici un film d'animation pour {name} :",
     },
-    storyStatusAwaiting: "Histoire : en attente de génération",
-    storyStatusGenerating: "Histoire : génération en cours…",
+    storyStatusAwaiting:
+      "Histoire : génération en cours, le résultat s'affichera ici automatiquement",
+    storyStatusGenerating: "Histoire : rédaction du scénario en cours…",
     storyStatusCompleted: "Histoire : scénario prêt",
     storyStatusCompletedMock: "Histoire : scénario démo prêt (sans OpenAI)",
     storyStatusFailed: "Histoire : génération échouée",

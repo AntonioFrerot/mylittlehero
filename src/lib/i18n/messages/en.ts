@@ -289,8 +289,9 @@ export const en = {
       musical: "Here is a musical film for {name}:",
       animation: "Here is an animated film for {name}:",
     },
-    storyStatusAwaiting: "Story: waiting to generate",
-    storyStatusGenerating: "Story: generating…",
+    storyStatusAwaiting:
+      "Story: generating — the result will appear here automatically",
+    storyStatusGenerating: "Story: writing the screenplay…",
     storyStatusCompleted: "Story: script ready",
     storyStatusCompletedMock: "Story: demo script ready (no OpenAI)",
     storyStatusFailed: "Story: generation failed",

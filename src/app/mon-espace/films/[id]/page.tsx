@@ -2,7 +2,9 @@ import { Header } from "@/components/Header";
 import { FilmMetaBadges } from "@/components/films/FilmMetaBadges";
 import { UserFilmHeroSpotlight } from "@/components/films/UserFilmHeroSpotlight";
 import { UserFilmMedia } from "@/components/films/UserFilmMedia";
+import { FilmStoryGenerationPoll } from "@/components/espace/FilmStoryGenerationPoll";
 import { getFilmDisplayPosterSrc } from "@/lib/browse-catalog";
+import { filmNeedsStoryPoll } from "@/lib/film-creation/story-poll";
 import { resolveFilmDisplayStatus, translateFilmDisplayStatus } from "@/lib/film-creation/film-display-status";
 import type { UserFilmWithStory } from "@/lib/film-creation/types";
 import {
@@ -120,9 +122,11 @@ export default async function UserFilmPage({ params }: PageProps) {
     !isFreeTrial && !isReady && displayStatus === "preparing" && Boolean(pageCopy.synopsis);
   const showVideoMedia =
     !isFreeTrial && isReady && Boolean(film.posterSrc && film.videoSrc);
+  const shouldPollStory = filmNeedsStoryPoll(filmWithStory);
 
   return (
     <>
+      <FilmStoryGenerationPoll active={shouldPollStory} />
       <Header />
       <main className="min-h-screen bg-cinema-black pb-16 safe-top-offset">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8">

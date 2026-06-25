@@ -14,7 +14,9 @@ import {
 } from "@/lib/film-creation/film-display-status";
 import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
 import { FilmStoryApprovalButtons } from "@/components/espace/FilmStoryApprovalButtons";
+import { FilmStoryGenerationPoll } from "@/components/espace/FilmStoryGenerationPoll";
 import { FilmStoryRetryButton } from "@/components/espace/FilmStoryRetryButton";
+import { filmNeedsStoryPoll } from "@/lib/film-creation/story-poll";
 import {
   filmDurationBadgeClassName,
   filmStatusBadgeClassName,
@@ -89,6 +91,7 @@ type MesFilmsListProps = {
 
 export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
   const { locale, t } = useLocale();
+  const shouldPollStories = films.some(filmNeedsStoryPoll);
 
   if (films.length === 0) {
     return (
@@ -110,7 +113,9 @@ export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
   }
 
   return (
-    <ul className="flex flex-col gap-[0.9rem]">
+    <>
+      <FilmStoryGenerationPoll active={shouldPollStories} />
+      <ul className="flex flex-col gap-[0.9rem]">
       {films.map((film) => {
         const isReady = normalizeFilmStatus(film.status) === "ready";
         const filmHref = `/mon-espace/films/${film.id}`;
@@ -256,5 +261,6 @@ export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
         );
       })}
     </ul>
+    </>
   );
 }

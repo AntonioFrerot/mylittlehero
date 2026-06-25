@@ -26,12 +26,16 @@ export function FilmStoryRetryButton({
     initialState
   );
 
-  if (storyStatus === "completed" || storyStatus === "generating") {
+  if (
+    storyStatus === "completed" ||
+    storyStatus === "generating" ||
+    storyStatus === "awaiting_generation"
+  ) {
     return null;
   }
 
   const label =
-    storyStatus === "failed" || storyStatus === "awaiting_generation"
+    storyStatus === "failed"
       ? t("space.storyRetry.retryButton")
       : t("space.storyRetry.button");
 
