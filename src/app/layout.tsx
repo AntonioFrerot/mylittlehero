@@ -8,6 +8,7 @@ import { isAdminEmail } from "@/lib/auth/is-admin";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerLocale, getServerTranslator } from "@/lib/i18n/server";
 import { getMessages } from "@/lib/i18n/translator";
+import { getSiteUrl } from "@/lib/site-url";
 import { getTicketBalance } from "@/lib/purchases/tickets";
 import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
@@ -35,6 +36,7 @@ export const viewport: Viewport = {
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getServerTranslator();
   return {
+    metadataBase: new URL(getSiteUrl()),
     title: `${BRAND_NAME} — ${t("meta.title")}`,
     description: t("meta.description"),
   };

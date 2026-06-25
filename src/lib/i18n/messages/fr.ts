@@ -677,7 +677,7 @@ export const fr = {
         "Vous devez attendre 24 h après votre dernière création avant d'en lancer une nouvelle.",
     },
     success:
-      "Votre film est en cours de création. Vous recevrez une notification lorsqu'il sera disponible dans votre espace.",
+      "Votre film est en attente de validation dans Mon espace.",
     successNoStoryAi:
       "Votre film est enregistré. La génération automatique de l'histoire nécessite OPENAI_API_KEY dans .env.local — configurez-la puis utilisez « Relancer la génération » dans Mes films.",
   },

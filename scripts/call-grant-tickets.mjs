@@ -9,7 +9,7 @@ if (!email || !Number.isFinite(tickets) || tickets <= 0) {
 const rawBase =
   process.env.NEXT_PUBLIC_APP_URL?.trim() ||
   process.env.VERCEL_URL?.trim() ||
-  "https://mylittlehero-sigma.vercel.app";
+  "https://formylittlehero.com";
 const base = (
   rawBase.startsWith("http") ? rawBase : `https://${rawBase}`
 ).replace(/\/$/, "");

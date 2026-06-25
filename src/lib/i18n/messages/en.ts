@@ -671,7 +671,7 @@ export const en = {
         "You must wait 24 hours after your last creation before starting a new one.",
     },
     success:
-      "Your film is being created. You'll receive a notification when it's available in your account.",
+      "Your film is pending validation in My account.",
     successNoStoryAi:
       "Your film has been saved. Automatic story generation needs OPENAI_API_KEY in .env.local — set it up, then use « Retry generation » in My films.",
   },

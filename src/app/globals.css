@@ -255,14 +255,6 @@ select:disabled,
       var(--shadow-glow-gold-soft);
   }
 
-  .film-story-actions__btn--validate {
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.45),
-      0 6px 18px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.22),
-      0 0 20px rgba(34, 197, 94, 0.28);
-  }
-
   .film-story-actions__btn--regenerate {
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.45),

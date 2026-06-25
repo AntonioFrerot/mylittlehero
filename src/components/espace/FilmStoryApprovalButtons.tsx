@@ -11,6 +11,7 @@ import {
   type StoryActionState,
 } from "@/lib/story-generation/actions";
 import type { StoryGenerationStatus } from "@/lib/story-generation/types";
+import styles from "./film-story-validate-attention.module.css";
 
 type FilmStoryApprovalButtonsProps = {
   filmHref: string;
@@ -55,7 +56,9 @@ export function FilmStoryApprovalButtons({
   const showApproval =
     storyStatus === "completed" && hasResume && !storyValidatedAt;
   const showRegenerate = showApproval && !storyRegenerationUsed;
-  const buttonCount = 1 + (showApproval ? 1 : 0) + (showRegenerate ? 1 : 0);
+  const showWatch = !showApproval;
+  const buttonCount =
+    (showWatch ? 1 : 0) + (showApproval ? 1 : 0) + (showRegenerate ? 1 : 0);
 
   useEffect(() => {
     if (validateState.success) {
@@ -82,20 +85,24 @@ export function FilmStoryApprovalButtons({
       <div
         className={`film-story-actions ${filmStoryActionsColsClass(buttonCount)}`}
       >
-        <Link
-          href={filmHref}
-          className="film-story-actions__btn film-story-actions__btn--watch"
-        >
-          {t("space.watchFilm")}
-        </Link>
-        {showApproval ? (
-          <button
-            type="button"
-            className="film-story-actions__btn film-story-actions__btn--validate"
-            onClick={() => setValidateOpen(true)}
+        {showWatch ? (
+          <Link
+            href={filmHref}
+            className="film-story-actions__btn film-story-actions__btn--watch"
           >
-            {t("space.storyActions.validateButton")}
-          </button>
+            {t("space.watchFilm")}
+          </Link>
+        ) : null}
+        {showApproval ? (
+          <div className={styles.wrap}>
+            <button
+              type="button"
+              className={`film-story-actions__btn film-story-actions__btn--validate ${styles.button}`}
+              onClick={() => setValidateOpen(true)}
+            >
+              {t("space.storyActions.validateButton")}
+            </button>
+          </div>
         ) : null}
         {showRegenerate ? (
           <button

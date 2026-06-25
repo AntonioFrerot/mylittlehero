@@ -8,6 +8,10 @@ import {
   detectCountryFromHeaders,
 } from "@/lib/i18n/country-locale";
 import { LOCALE_COOKIE, parseLocale } from "@/lib/i18n/locales";
+import {
+  CANONICAL_SITE_HOST,
+  isAlternateDeploymentHost,
+} from "@/lib/site-url";
 
 const protectedPaths = ["/mon-espace", "/creer-film", "/admin"];
 
@@ -24,7 +28,24 @@ function applyLocaleCookie(request: NextRequest, response: NextResponse) {
   });
 }
 
+function maybeCanonicalHostRedirect(request: NextRequest): NextResponse | null {
+  if (process.env.VERCEL_ENV !== "production") return null;
+
+  const host = request.headers.get("host") ?? "";
+  if (!isAlternateDeploymentHost(host)) return null;
+
+  const url = request.nextUrl.clone();
+  url.protocol = "https:";
+  url.host = CANONICAL_SITE_HOST;
+  const response = NextResponse.redirect(url, 308);
+  applyLocaleCookie(request, response);
+  return response;
+}
+
 export async function middleware(request: NextRequest) {
+  const canonicalRedirect = maybeCanonicalHostRedirect(request);
+  if (canonicalRedirect) return canonicalRedirect;
+
   const pathname = request.nextUrl.pathname;
   const isProtected = protectedPaths.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`)

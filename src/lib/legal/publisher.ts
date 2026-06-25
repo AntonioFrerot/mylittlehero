@@ -1,6 +1,6 @@
 import { BRAND_NAME } from "@/lib/brand";
 import { CONTACT_EMAIL } from "@/lib/contact/constants";
-import { getSiteUrl } from "@/lib/stripe/site-url";
+import { getSiteUrl } from "@/lib/site-url";
 
 const PLACEHOLDER = "[À COMPLÉTER]";
 

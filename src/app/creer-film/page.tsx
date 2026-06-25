@@ -38,8 +38,6 @@ export default async function CreerFilmPage() {
     redirect(PRICING_PATH);
   }
 
-  const greeting = session.name ?? session.email.split("@")[0];
-
   return (
     <>
       <Header />
@@ -58,9 +56,6 @@ export default async function CreerFilmPage() {
           <h1 className="font-display mt-2 text-3xl font-bold text-cream md:text-4xl">
             {t("filmCreation.title")}
           </h1>
-          <p className="mt-3 text-cream/60">
-            {t("filmCreation.greeting", { name: greeting })}
-          </p>
 
           <div className={`mt-8 ${SURFACE_3D_PANEL_LG} p-4 sm:mt-10 sm:p-6 md:p-8`}>
             <FilmCreationForm

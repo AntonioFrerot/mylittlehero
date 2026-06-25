@@ -7,6 +7,7 @@ import { saveNotificationImage } from "@/lib/notifications/admin-image";
 import { resolveAdminNotificationTargets } from "@/lib/notifications/admin-targets";
 import { createNotificationsForUsers } from "@/lib/notifications/store";
 import type { AdminNotificationTarget } from "@/lib/notifications/types";
+import { normalizeSiteHref } from "@/lib/site-url";
 
 export type AdminSendNotificationsState = {
   error?: string;
@@ -29,11 +30,7 @@ function parseTarget(value: unknown): AdminNotificationTarget | null {
 }
 
 function normalizeHref(value: string): string {
-  const trimmed = value.trim();
-  if (!trimmed) return "/mon-espace?section=films";
-  if (trimmed.startsWith("/")) return trimmed;
-  if (/^https?:\/\//i.test(trimmed)) return trimmed;
-  return `/${trimmed.replace(/^\/+/, "")}`;
+  return normalizeSiteHref(value);
 }
 
 export async function sendAdminNotifications(

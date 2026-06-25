@@ -1,16 +1,7 @@
 import type { UserFilm } from "@/lib/film-creation/types";
 import { isMockStoryGenerationEnabled } from "./mock-mode";
 import { runStoryGeneration } from "./run-generation";
-
-function resolveAppBaseUrl(): string {
-  const explicit = process.env.NEXT_PUBLIC_APP_URL?.trim();
-  if (explicit) return explicit.replace(/\/$/, "");
-
-  const vercel = process.env.VERCEL_URL?.trim();
-  if (vercel) return `https://${vercel}`;
-
-  return "http://localhost:3000";
-}
+import { getSiteUrl } from "@/lib/site-url";
 
 function runGenerationInBackground(email: string, filmId: string): void {
   void runStoryGeneration(email, filmId).catch((error) => {
@@ -35,7 +26,7 @@ export function scheduleStoryGeneration(email: string, film: UserFilm): void {
     return;
   }
 
-  const url = `${resolveAppBaseUrl()}/api/story-generation`;
+  const url = `${getSiteUrl()}/api/story-generation`;
   void fetch(url, {
     method: "POST",
     headers: {

@@ -20,7 +20,6 @@ import { YesNoTextField } from "@/components/film-creation/YesNoTextField";
 import { TicketCountPill } from "@/components/tickets/TicketCountPill";
 import {
   BTN_3D_PRIMARY_ACTION,
-  BTN_3D_SECONDARY_ACTION_LG,
   BTN_FILM_CREATE_SUBMIT,
 } from "@/lib/ui/button-3d-classes";
 import type { Character } from "@/lib/characters/types";
@@ -126,18 +125,9 @@ export function FilmCreationForm({
           {t("common.thankYou")}
         </p>
         <p className="mt-3 text-cream/65">{state.success}</p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Link
-            href="/mon-espace?section=films"
-            className={BTN_3D_PRIMARY_ACTION}
-          >
-            {t("filmCreation.form.viewFilms")}
-          </Link>
-          <Link
-            href="/mon-espace?section=personnages"
-            className={BTN_3D_SECONDARY_ACTION_LG}
-          >
-            {t("filmCreation.manageCharacters")}
+        <div className="mt-8 flex justify-center">
+          <Link href="/mon-espace?section=films" className={BTN_3D_PRIMARY_ACTION}>
+            {t("common.mySpace")}
           </Link>
         </div>
       </div>
