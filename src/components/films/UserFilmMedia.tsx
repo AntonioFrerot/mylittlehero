@@ -1,8 +1,7 @@
 import { ExampleFilmComingSoonOverlay } from "@/components/films/ExampleFilmComingSoonOverlay";
 import { FilmVideoMedia } from "@/components/films/FilmVideoMedia";
+import { SUPER_LEO_VIDEO_POSTER_SRC } from "@/lib/leo-example-posters";
 import Image from "next/image";
-
-const PREVIEW_IMAGE_SRC = "/posters/film-in-creation-preview.png?v=2";
 
 type UserFilmMediaProps = {
   posterSrc?: string;
@@ -25,9 +24,10 @@ export function UserFilmMedia({
     return (
       <div className="relative aspect-video w-full overflow-hidden bg-cinema-night">
         <Image
-          src={PREVIEW_IMAGE_SRC}
+          src={SUPER_LEO_VIDEO_POSTER_SRC}
           alt=""
           fill
+          unoptimized
           className="object-cover object-center scale-105 blur-[3px]"
           sizes="(max-width: 1024px) 100vw, 896px"
           priority

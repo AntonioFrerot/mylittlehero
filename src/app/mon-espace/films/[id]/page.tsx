@@ -31,6 +31,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 type PageProps = {
   params: Promise<{ id: string }>;
 };
@@ -125,7 +127,6 @@ export default async function UserFilmPage({ params }: PageProps) {
   const {
     showPosterPlaceholder,
     showInCreationMedia,
-    showVideoMedia,
     posterSrc,
   } = pageMedia;
   const shouldPollStory = filmNeedsStoryPoll(filmWithStory);
@@ -205,7 +206,7 @@ export default async function UserFilmPage({ params }: PageProps) {
             ) : null}
           </div>
 
-          {showInCreationMedia || showVideoMedia ? (
+          {!isFreeTrial ? (
             <div className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-cinema-surface shadow-glow-gold-subtle">
               <UserFilmMedia
                 posterSrc={posterSrc}
