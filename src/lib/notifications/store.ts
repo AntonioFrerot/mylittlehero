@@ -169,3 +169,20 @@ export async function markNotificationRead(
   `;
   return rows.length > 0;
 }
+
+export async function markAllNotificationsRead(email: string): Promise<number> {
+  if (!isDatabaseEnabled()) return 0;
+
+  await ensureSchema();
+  const db = getSql();
+  const userEmail = normalizeEmail(email);
+  const readAt = new Date().toISOString();
+  const rows = await db<{ id: string }[]>`
+    UPDATE notifications
+    SET read_at = ${readAt}
+    WHERE user_email = ${userEmail}
+      AND read_at IS NULL
+    RETURNING id
+  `;
+  return rows.length;
+}

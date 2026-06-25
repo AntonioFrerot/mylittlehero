@@ -68,6 +68,20 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
     }
   }, [user]);
 
+  const markVisibleNotificationsRead = useCallback(async () => {
+    const readAt = new Date().toISOString();
+    setNotifications((current) =>
+      current.map((item) => (item.readAt ? item : { ...item, readAt }))
+    );
+    setUnreadCount(0);
+
+    try {
+      await fetch("/api/notifications/read-all", { method: "POST" });
+    } catch {
+      void loadNotifications();
+    }
+  }, [loadNotifications]);
+
   useEffect(() => {
     if (!user) {
       setNotifications([]);
@@ -168,20 +182,6 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
     async (notification: UserNotification) => {
       setOpen(false);
 
-      if (!notification.readAt) {
-        setNotifications((current) =>
-          current.map((item) =>
-            item.id === notification.id
-              ? { ...item, readAt: new Date().toISOString() }
-              : item
-          )
-        );
-        setUnreadCount((count) => Math.max(0, count - 1));
-        void fetch(`/api/notifications/${notification.id}/read`, {
-          method: "POST",
-        });
-      }
-
       if (/^https?:\/\//i.test(notification.href)) {
         window.location.href = notification.href;
         return;
@@ -217,7 +217,10 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
             const next = !value;
             if (next) {
               setBadgeDismissed(true);
-              void loadNotifications();
+              void (async () => {
+                await loadNotifications();
+                await markVisibleNotificationsRead();
+              })();
             }
             return next;
           });
