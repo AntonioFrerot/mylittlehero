@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/get-session";
+import { processStoryValidationRemindersForUser } from "@/lib/notifications/story-validation-reminder";
 import {
   countUnreadNotifications,
   listNotificationsForUser,
@@ -10,6 +11,8 @@ export async function GET() {
   if (!session) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
+
+  await processStoryValidationRemindersForUser(session.email);
 
   const [notifications, unreadCount] = await Promise.all([
     listNotificationsForUser(session.email),

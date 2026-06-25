@@ -154,3 +154,39 @@ export async function listStoryWorkspacesAwaitingValidationReminder(
     manifest: row.manifest,
   }));
 }
+
+export async function listStoryWorkspacesAwaitingValidationReminderForUser(
+  email: string,
+  olderThanMs: number
+): Promise<StoryWorkspaceAwaitingReminder[]> {
+  if (!isDatabaseEnabled()) return [];
+
+  await ensureSchema();
+  const db = getSql();
+  const userEmail = normalizeEmail(email);
+  const cutoff = new Date(Date.now() - olderThanMs).toISOString();
+
+  const rows = await db<
+    {
+      user_email: string;
+      film_id: string;
+      manifest: StoryWorkspaceManifest;
+      resume: string;
+    }[]
+  >`
+    SELECT user_email, film_id, manifest, resume
+    FROM story_workspaces
+    WHERE user_email = ${userEmail}
+      AND manifest->>'status' = 'completed'
+      AND (manifest->>'storyValidatedAt') IS NULL
+      AND (manifest->>'generationCompletedAt') IS NOT NULL
+      AND (manifest->>'generationCompletedAt') <= ${cutoff}
+      AND LENGTH(TRIM(resume)) > 0
+  `;
+
+  return rows.map((row) => ({
+    userEmail: row.user_email,
+    filmId: row.film_id,
+    manifest: row.manifest,
+  }));
+}

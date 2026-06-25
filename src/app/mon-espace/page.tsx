@@ -8,6 +8,7 @@ import { getMyAccountDetails } from "@/lib/auth/account-actions";
 import { getMyCharacters } from "@/lib/characters/actions";
 import { getMyFilmsWithStory } from "@/lib/film-creation/actions";
 import { getSession } from "@/lib/auth/get-session";
+import { processStoryValidationRemindersForUser } from "@/lib/notifications/story-validation-reminder";
 import { parseEspaceSection, MON_ESPACE_DEFAULT_PATH } from "@/lib/espace/sections";
 import { resolveCreerSonFilmHref } from "@/lib/navigation/creer-film.server";
 import { BRAND_NAME } from "@/lib/brand";
@@ -41,6 +42,8 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
   }
   const section = parseEspaceSection(params.section);
   const createFilmHref = await resolveCreerSonFilmHref();
+
+  await processStoryValidationRemindersForUser(session.email);
 
   const account =
     section === "profil" ? await getMyAccountDetails() : null;

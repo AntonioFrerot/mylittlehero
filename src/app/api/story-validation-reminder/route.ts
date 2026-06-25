@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { runStoryValidationReminderAfterDelay } from "@/lib/notifications/story-validation-reminder";
 
-export const maxDuration = 360;
-
 type StoryValidationReminderBody = {
   email?: string;
   filmId?: string;
