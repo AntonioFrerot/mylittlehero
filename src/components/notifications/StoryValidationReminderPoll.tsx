@@ -3,10 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useAuthUser } from "@/hooks/use-auth-user";
-import {
-  requestNotificationsRefresh,
-  VALIDATION_REMINDER_STATUS_POLL_MS,
-} from "@/lib/notifications/refresh";
+import { requestNotificationsRefresh } from "@/lib/notifications/refresh";
 
 type PendingValidationReminder = {
   filmId: string;
@@ -95,13 +92,8 @@ export function StoryValidationReminderPoll() {
 
     void syncReminders();
 
-    const statusIntervalId = window.setInterval(() => {
-      void syncReminders();
-    }, VALIDATION_REMINDER_STATUS_POLL_MS);
-
     return () => {
       clearScheduledTimeouts();
-      window.clearInterval(statusIntervalId);
     };
   }, [clearScheduledTimeouts, syncReminders, user]);
 

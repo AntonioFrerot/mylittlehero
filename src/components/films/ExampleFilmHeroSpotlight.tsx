@@ -30,8 +30,7 @@ export function ExampleFilmHeroSpotlight({
               src={photoSrc}
               alt={photoAlt}
               fill
-              unoptimized
-              quality={100}
+              quality={90}
               className="object-cover object-[center_20%]"
               sizes="(max-width: 640px) 128px, 144px"
               priority

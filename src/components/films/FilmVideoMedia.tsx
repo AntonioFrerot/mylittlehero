@@ -43,7 +43,6 @@ export function FilmVideoMedia({
         className={thumbObjectClass}
         sizes="(max-width: 1024px) 100vw, 896px"
         priority
-        unoptimized={Boolean(videoPosterSrc)}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-cinema-black/80 via-cinema-black/20 to-cinema-black/10" />
     </div>

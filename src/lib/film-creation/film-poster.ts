@@ -5,16 +5,10 @@ import {
   isAllowedPhotoType,
   userPhotoDirKey,
 } from "@/lib/characters/photo";
+import { optimizeFilmPosterBuffer } from "@/lib/images/optimize-image";
 import { isBlobStorageEnabled } from "@/lib/storage/blob";
 
 const MAX_BYTES = 5 * 1024 * 1024;
-
-const EXT_BY_MIME: Record<string, string> = {
-  "image/jpeg": ".jpg",
-  "image/jpg": ".jpg",
-  "image/png": ".png",
-  "image/webp": ".webp",
-};
 
 export async function saveFilmPoster(
   ownerEmail: string,
@@ -34,15 +28,15 @@ export async function saveFilmPoster(
     return { ok: false, error: "Choisissez une image d'affiche." };
   }
 
-  const ext = EXT_BY_MIME[file.type] ?? ".jpg";
   const userKey = userPhotoDirKey(ownerEmail);
-  const filename = `${filmId}${ext}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
+  const filename = `${filmId}.jpg`;
+  const rawBuffer = Buffer.from(await file.arrayBuffer());
+  const buffer = await optimizeFilmPosterBuffer(rawBuffer);
 
   if (isBlobStorageEnabled()) {
     const blob = await put(`films/${userKey}/${filename}`, buffer, {
       access: "public",
-      contentType: file.type,
+      contentType: "image/jpeg",
       addRandomSuffix: false,
     });
     return { ok: true, posterSrc: blob.url };

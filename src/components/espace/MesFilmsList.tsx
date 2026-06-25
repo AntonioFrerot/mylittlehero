@@ -91,7 +91,7 @@ type MesFilmsListProps = {
 
 export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
   const { locale, t } = useLocale();
-  const shouldPollStories = films.some(filmNeedsStoryPoll);
+  const pollFilmIds = films.filter(filmNeedsStoryPoll).map((film) => film.id);
 
   if (films.length === 0) {
     return (
@@ -114,7 +114,7 @@ export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
 
   return (
     <>
-      <FilmStoryGenerationPoll active={shouldPollStories} />
+      <FilmStoryGenerationPoll filmIds={pollFilmIds} />
       <ul className="flex flex-col gap-[0.9rem]">
       {films.map((film) => {
         const isReady = normalizeFilmStatus(film.status) === "ready";

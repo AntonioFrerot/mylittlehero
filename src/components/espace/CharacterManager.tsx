@@ -21,7 +21,7 @@ import { formatCharacterAge } from "@/lib/characters/format";
 import type { Character } from "@/lib/characters/types";
 import {
   CHARACTER_AVATAR_IMAGE_QUALITY,
-  isUserCharacterPhoto,
+  isBlobPreviewPhoto,
 } from "@/lib/characters/user-photo";
 
 const initialState: CharacterFormState = {};
@@ -157,7 +157,7 @@ export function CharacterManager({
                           className="object-cover"
                           sizes="112px"
                           quality={CHARACTER_AVATAR_IMAGE_QUALITY}
-                          unoptimized={isUserCharacterPhoto(character.photoSrc)}
+                          unoptimized={isBlobPreviewPhoto(character.photoSrc)}
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center text-sm text-cream/30">

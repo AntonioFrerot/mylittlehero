@@ -2,6 +2,7 @@ import { del, put } from "@vercel/blob";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { isHostedProduction } from "@/lib/db/client";
+import { optimizeCharacterPhotoBuffer } from "@/lib/images/optimize-image";
 import { isBlobStorageEnabled } from "@/lib/storage/blob";
 
 const MAX_BYTES = 5 * 1024 * 1024;
@@ -11,13 +12,6 @@ const ALLOWED_TYPES = new Set([
   "image/png",
   "image/webp",
 ]);
-
-const EXT_BY_MIME: Record<string, string> = {
-  "image/jpeg": ".jpg",
-  "image/jpg": ".jpg",
-  "image/png": ".png",
-  "image/webp": ".webp",
-};
 
 export function userPhotoDirKey(email: string): string {
   return email.toLowerCase().replace(/[^a-z0-9]+/g, "_");
@@ -45,16 +39,16 @@ export async function saveCharacterPhoto(
     return { ok: false, error: "Choisissez une photo du visage." };
   }
 
-  const ext = EXT_BY_MIME[file.type] ?? ".jpg";
   const userKey = userPhotoDirKey(email);
-  const filename = `${characterId}${ext}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
+  const filename = `${characterId}.jpg`;
+  const rawBuffer = Buffer.from(await file.arrayBuffer());
+  const buffer = await optimizeCharacterPhotoBuffer(rawBuffer);
 
   if (isBlobStorageEnabled()) {
     try {
       const blob = await put(`characters/${userKey}/${filename}`, buffer, {
         access: "public",
-        contentType: file.type,
+        contentType: "image/jpeg",
         addRandomSuffix: false,
       });
       return { ok: true, photoSrc: blob.url };

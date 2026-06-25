@@ -7,7 +7,6 @@ import { FilmStoryGenerationPoll } from "@/components/espace/FilmStoryGeneration
 import { filmNeedsStoryPoll } from "@/lib/film-creation/story-poll";
 import { resolveUserFilmPageMedia } from "@/lib/film-creation/user-film-page-media";
 import { resolveFilmDisplayStatus, translateFilmDisplayStatus } from "@/lib/film-creation/film-display-status";
-import type { UserFilmWithStory } from "@/lib/film-creation/types";
 import {
   buildUserFilmPageCopy,
   getFilmDisplayTitle,
@@ -24,14 +23,14 @@ import { getUserLocale } from "@/lib/auth/users-store";
 import { BRAND_NAME } from "@/lib/brand";
 import { normalizeFilmTheme } from "@/lib/i18n/film-labels";
 import { getServerTranslator } from "@/lib/i18n/server";
-import { readStoryManifest, readStoryResume, readStoryTagline } from "@/lib/story-generation/manifest";
+import { attachStoryToFilm } from "@/lib/film-creation/catalog-films";
 import { POSTER_DIMENSIONS } from "@/lib/hero-posters";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -46,7 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const userLocale = await getUserLocale(session.email);
   const { t } = await getServerTranslator();
-  const manifest = await readStoryManifest(session.email, id);
+  const { manifest } = await attachStoryToFilm(session.email, film);
   const displayTitle = getFilmDisplayTitle(
     film,
     userLocale,
@@ -72,12 +71,11 @@ export default async function UserFilmPage({ params }: PageProps) {
 
   await processStoryValidationRemindersForUser(session.email);
 
-  const [resume, tagline, manifest, userLocale] = await Promise.all([
-    readStoryResume(session.email, id),
-    readStoryTagline(session.email, id),
-    readStoryManifest(session.email, id),
+  const [storyData, userLocale] = await Promise.all([
+    attachStoryToFilm(session.email, film),
     getUserLocale(session.email),
   ]);
+  const { filmWithStory, resume, tagline, manifest } = storyData;
   const { t } = await getServerTranslator();
   const pageCopy = buildUserFilmPageCopy(film, userLocale, resume, tagline);
   const displayTitle = getFilmDisplayTitle(
@@ -98,30 +96,6 @@ export default async function UserFilmPage({ params }: PageProps) {
     .map((theme) => normalizeFilmTheme(String(theme)))
     .filter((theme): theme is NonNullable<typeof theme> => theme != null);
 
-  const filmWithStory: UserFilmWithStory = {
-    ...film,
-    ...(resume ? { storyResume: resume } : {}),
-    ...(manifest?.generatedTitle
-      ? { storyGeneratedTitle: manifest.generatedTitle }
-      : {}),
-    ...(manifest?.storyValidatedAt
-      ? { storyValidatedAt: manifest.storyValidatedAt }
-      : {}),
-    ...(manifest?.generationCompletedAt
-      ? { storyGenerationCompletedAt: manifest.generationCompletedAt }
-      : {}),
-    ...(manifest?.regenerationUsed ? { storyRegenerationUsed: true } : {}),
-    ...(manifest
-      ? {
-          storyGeneration: {
-            status: manifest.status,
-            ...(manifest.generationMode
-              ? { mode: manifest.generationMode }
-              : {}),
-          },
-        }
-      : {}),
-  };
   const displayStatus = resolveFilmDisplayStatus(filmWithStory);
   const pageMedia = resolveUserFilmPageMedia(film, isFreeTrial);
   const {
@@ -133,7 +107,9 @@ export default async function UserFilmPage({ params }: PageProps) {
 
   return (
     <>
-      <FilmStoryGenerationPoll active={shouldPollStory} />
+      <FilmStoryGenerationPoll
+        filmIds={shouldPollStory ? [id] : []}
+      />
       <Header />
       <main className="min-h-screen bg-cinema-black pb-16 safe-top-offset">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
@@ -216,7 +192,9 @@ export default async function UserFilmPage({ params }: PageProps) {
                 posterAlt={t("space.filmPosterAlt", { title: displayTitle })}
                 inCreationLabel={
                   showInCreationMedia
-                    ? t("space.filmInCreationLabel")
+                    ? displayStatus === "awaiting_validation"
+                      ? t("space.filmAwaitingValidationLabel")
+                      : t("space.filmInCreationLabel")
                     : undefined
                 }
               />

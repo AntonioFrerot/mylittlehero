@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { SUPER_LEO_POSTER_SRC } from "@/lib/leo-example-posters";
+import { FILM_POSTER_AWAITING_PREVIEW_SRC } from "@/lib/leo-example-posters";
+import { BLURRED_PLACEHOLDER_IMAGE_QUALITY } from "@/lib/images/image-quality";
 
 type UserFilmPosterAwaitingPlaceholderProps = {
   ariaLabel: string;
@@ -15,10 +16,10 @@ export function UserFilmPosterAwaitingPlaceholder({
       aria-label={ariaLabel}
     >
       <Image
-        src={SUPER_LEO_POSTER_SRC}
+        src={FILM_POSTER_AWAITING_PREVIEW_SRC}
         alt=""
         fill
-        unoptimized
+        quality={BLURRED_PLACEHOLDER_IMAGE_QUALITY}
         className="object-cover object-center scale-105 blur-[3px]"
         sizes="(max-width: 1024px) 280px, 300px"
         priority

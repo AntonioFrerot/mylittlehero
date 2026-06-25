@@ -280,6 +280,7 @@ export const en = {
     filmSynopsisFallback:
       "Your personalised film is ready — press play below to enjoy the adventure.",
     filmInCreationLabel: "Being created...",
+    filmAwaitingValidationLabel: "Awaiting validation...",
     filmHeroPhotoAlt: "Photo of {name}, hero of the film",
     filmHeroFallbackName: "your little hero",
     filmThemeIntro: {

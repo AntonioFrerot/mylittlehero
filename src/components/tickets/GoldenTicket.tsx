@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { SITE_TICKET_SRC } from "@/lib/brand";
+import { SITE_TICKET_IMAGE_HEIGHT, SITE_TICKET_IMAGE_WIDTH, SITE_TICKET_SRC } from "@/lib/brand";
 
 type GoldenTicketSize = "header" | "pill" | "card" | "button";
 
@@ -33,10 +33,10 @@ export function GoldenTicket({
         <Image
           src={SITE_TICKET_SRC}
           alt=""
-          width={347}
-          height={449}
+          width={SITE_TICKET_IMAGE_WIDTH}
+          height={SITE_TICKET_IMAGE_HEIGHT}
           className="gold-ticket__img"
-          unoptimized
+          sizes="56px"
         />
       </span>
       <span className="gold-ticket__value">{label ?? count}</span>

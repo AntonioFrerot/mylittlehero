@@ -1,6 +1,7 @@
 import { ExampleFilmComingSoonOverlay } from "@/components/films/ExampleFilmComingSoonOverlay";
 import { FilmVideoMedia } from "@/components/films/FilmVideoMedia";
-import { SUPER_LEO_VIDEO_POSTER_SRC } from "@/lib/leo-example-posters";
+import { FILM_IN_CREATION_PREVIEW_SRC } from "@/lib/leo-example-posters";
+import { BLURRED_PLACEHOLDER_IMAGE_QUALITY } from "@/lib/images/image-quality";
 import Image from "next/image";
 
 type UserFilmMediaProps = {
@@ -24,10 +25,10 @@ export function UserFilmMedia({
     return (
       <div className="relative aspect-video w-full overflow-hidden bg-cinema-night">
         <Image
-          src={SUPER_LEO_VIDEO_POSTER_SRC}
+          src={FILM_IN_CREATION_PREVIEW_SRC}
           alt=""
           fill
-          unoptimized
+          quality={BLURRED_PLACEHOLDER_IMAGE_QUALITY}
           className="object-cover object-center scale-105 blur-[3px]"
           sizes="(max-width: 1024px) 100vw, 896px"
           priority

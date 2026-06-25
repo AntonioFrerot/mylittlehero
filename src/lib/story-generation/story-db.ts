@@ -9,6 +9,63 @@ type StoryWorkspaceRow = {
   tagline: string;
 };
 
+export type { StoryWorkspaceRow };
+
+export async function listStoryWorkspacesDb(
+  email: string,
+  filmIds?: string[]
+): Promise<Map<string, StoryWorkspaceRow>> {
+  await ensureSchema();
+  const db = getSql();
+  const userEmail = normalizeEmail(email);
+  const result = new Map<string, StoryWorkspaceRow>();
+
+  if (filmIds != null && filmIds.length === 0) {
+    return result;
+  }
+
+  const rows =
+    filmIds != null && filmIds.length > 0
+      ? await db<
+          {
+            film_id: string;
+            manifest: StoryWorkspaceManifest;
+            title: string;
+            resume: string;
+            tagline: string;
+          }[]
+        >`
+          SELECT film_id, manifest, title, resume, tagline
+          FROM story_workspaces
+          WHERE user_email = ${userEmail}
+            AND film_id = ANY(${filmIds})
+        `
+      : await db<
+          {
+            film_id: string;
+            manifest: StoryWorkspaceManifest;
+            title: string;
+            resume: string;
+            tagline: string;
+          }[]
+        >`
+          SELECT film_id, manifest, title, resume, tagline
+          FROM story_workspaces
+          WHERE user_email = ${userEmail}
+        `;
+
+  for (const row of rows) {
+    result.set(row.film_id, {
+      manifest: row.manifest,
+      title: row.title,
+      resume: row.resume,
+      tagline: row.tagline,
+    });
+  }
+
+  return result;
+}
+
 export async function readStoryWorkspaceDb(
   email: string,
   filmId: string

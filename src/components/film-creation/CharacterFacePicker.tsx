@@ -10,7 +10,7 @@ import type { Character } from "@/lib/characters/types";
 import {
   CHARACTER_AVATAR_IMAGE_QUALITY,
   CHARACTER_PICKER_AVATAR_SIZES,
-  isUserCharacterPhoto,
+  isBlobPreviewPhoto,
 } from "@/lib/characters/user-photo";
 
 const SCROLL_CARD_COUNT = 3;
@@ -179,7 +179,7 @@ export function CharacterFacePicker({
                           className="object-cover"
                           sizes={CHARACTER_PICKER_AVATAR_SIZES}
                           quality={CHARACTER_AVATAR_IMAGE_QUALITY}
-                          unoptimized={isUserCharacterPhoto(character.photoSrc)}
+                          unoptimized={isBlobPreviewPhoto(character.photoSrc)}
                         />
                         <span className={SURFACE_3D_CHECK_BADGE} aria-hidden>
                           ✓

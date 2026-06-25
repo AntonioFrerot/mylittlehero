@@ -1,5 +1,8 @@
 import Image from "next/image";
-import { isUserCharacterPhoto } from "@/lib/characters/user-photo";
+import {
+  CHARACTER_AVATAR_IMAGE_QUALITY,
+  isBlobPreviewPhoto,
+} from "@/lib/characters/user-photo";
 
 type UserFilmHeroSpotlightProps = {
   className?: string;
@@ -32,8 +35,8 @@ export function UserFilmHeroSpotlight({
                 src={photoSrc}
                 alt={photoAlt}
                 fill
-                unoptimized={isUserCharacterPhoto(photoSrc)}
-                quality={100}
+                quality={CHARACTER_AVATAR_IMAGE_QUALITY}
+                unoptimized={isBlobPreviewPhoto(photoSrc)}
                 className="object-cover object-[center_20%]"
                 sizes="(max-width: 640px) 128px, 144px"
                 priority

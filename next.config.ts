@@ -15,12 +15,12 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/images/film-poster-awaiting-preview.png",
-        destination: "/posters/film-poster-awaiting-preview.png",
+        destination: "/posters/film-poster-awaiting-preview.jpg",
         permanent: true,
       },
       {
         source: "/images/film-in-creation-preview.png",
-        destination: "/posters/film-in-creation-preview.png",
+        destination: "/posters/film-in-creation-preview.jpg",
         permanent: true,
       },
     ];
@@ -35,6 +35,8 @@ const nextConfig: NextConfig = {
     root: process.cwd(),
   },
   images: {
+    formats: ["image/avif", "image/webp"],
+    qualities: [65, 70, 75, 90, 92],
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       {

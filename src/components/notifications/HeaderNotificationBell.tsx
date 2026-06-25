@@ -2,14 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { useAuthUser } from "@/hooks/use-auth-user";
-import {
-  NOTIFICATIONS_POLL_INTERVAL_MS,
-  NOTIFICATIONS_REFRESH_EVENT,
-} from "@/lib/notifications/refresh";
+import { NOTIFICATIONS_REFRESH_EVENT } from "@/lib/notifications/refresh";
 import type { UserNotification } from "@/lib/notifications/types";
 
 type NotificationsResponse = {
@@ -44,6 +41,7 @@ type HeaderNotificationBellProps = {
 export function HeaderNotificationBell({ className = "" }: HeaderNotificationBellProps) {
   const { locale, t } = useLocale();
   const user = useAuthUser();
+  const pathname = usePathname();
   const router = useRouter();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -77,11 +75,6 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
       setBadgeDismissed(false);
       return;
     }
-    void loadNotifications();
-    const intervalId = window.setInterval(() => {
-      void loadNotifications();
-    }, NOTIFICATIONS_POLL_INTERVAL_MS);
-
     function handleRefresh() {
       void loadNotifications();
     }
@@ -89,10 +82,14 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
     window.addEventListener(NOTIFICATIONS_REFRESH_EVENT, handleRefresh);
 
     return () => {
-      window.clearInterval(intervalId);
       window.removeEventListener(NOTIFICATIONS_REFRESH_EVENT, handleRefresh);
     };
   }, [user, loadNotifications]);
+
+  useEffect(() => {
+    if (!user) return;
+    void loadNotifications();
+  }, [pathname, user, loadNotifications]);
 
   useEffect(() => {
     if (unreadCount > prevUnreadRef.current) {

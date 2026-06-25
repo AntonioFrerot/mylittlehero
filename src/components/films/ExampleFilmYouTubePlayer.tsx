@@ -51,7 +51,6 @@ export function ExampleFilmYouTubePlayer({
         src={posterSrc}
         alt={posterAlt}
         fill
-        unoptimized
         className="object-cover object-center"
         sizes="(max-width: 1024px) 100vw, 896px"
         priority

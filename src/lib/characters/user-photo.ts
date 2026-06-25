@@ -1,4 +1,9 @@
-/** Photos uploadées par l'utilisateur — servies telles quelles pour éviter la double compression. */
+/** Photos uploadées — servies via l'optimiseur Next.js (WebP/AVIF + taille d'affichage). */
+export function isBlobPreviewPhoto(photoSrc: string): boolean {
+  return photoSrc.startsWith("blob:");
+}
+
+/** @deprecated Utiliser isBlobPreviewPhoto — seules les prévisualisations blob: restent non optimisées. */
 export function isUserCharacterPhoto(photoSrc: string): boolean {
   return (
     photoSrc.startsWith("/uploads/") ||

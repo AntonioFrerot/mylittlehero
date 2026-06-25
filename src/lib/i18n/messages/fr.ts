@@ -282,6 +282,7 @@ export const fr = {
     filmSynopsisFallback:
       "Votre film personnalisé est prêt : lancez la vidéo ci-dessous pour vivre l'aventure.",
     filmInCreationLabel: "En cours de création...",
+    filmAwaitingValidationLabel: "En attente de validation...",
     filmHeroPhotoAlt: "Photo de {name}, héros du film",
     filmHeroFallbackName: "votre petit héros",
     filmThemeIntro: {

@@ -66,6 +66,7 @@ export async function runStoryGeneration(
 
     try {
       revalidatePath("/mon-espace");
+      revalidatePath(`/mon-espace/films/${filmId}`);
     } catch {
       // Hors contexte Next.js (ex. script CLI) : les fichiers sont déjà écrits.
     }
@@ -80,6 +81,12 @@ export async function runStoryGeneration(
       generationError: message,
       generationMode: getStoryGenerationMode(),
     });
+    try {
+      revalidatePath("/mon-espace");
+      revalidatePath(`/mon-espace/films/${filmId}`);
+    } catch {
+      // Hors contexte Next.js
+    }
     return { ok: false, error: message };
   }
 }
