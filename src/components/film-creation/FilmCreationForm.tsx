@@ -127,7 +127,7 @@ export function FilmCreationForm({
         <p className="mt-3 text-cream/65">{state.success}</p>
         <div className="mt-8 flex justify-center">
           <Link href="/mon-espace?section=films" className={BTN_3D_PRIMARY_ACTION}>
-            {t("common.mySpace")}
+            {t("nav.mySpace")}
           </Link>
         </div>
       </div>
