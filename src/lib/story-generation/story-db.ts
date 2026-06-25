@@ -122,14 +122,36 @@ export type StoryWorkspaceAwaitingReminder = {
   manifest: StoryWorkspaceManifest;
 };
 
-export async function listStoryWorkspacesAwaitingValidationReminder(
-  olderThanMs: number
+export async function listStoryWorkspacesWithActiveValidationReminder(
+  email?: string
 ): Promise<StoryWorkspaceAwaitingReminder[]> {
   if (!isDatabaseEnabled()) return [];
 
   await ensureSchema();
   const db = getSql();
-  const cutoff = new Date(Date.now() - olderThanMs).toISOString();
+
+  if (email) {
+    const userEmail = normalizeEmail(email);
+    const rows = await db<
+      {
+        user_email: string;
+        film_id: string;
+        manifest: StoryWorkspaceManifest;
+        resume: string;
+      }[]
+    >`
+      SELECT user_email, film_id, manifest, resume
+      FROM story_workspaces
+      WHERE user_email = ${userEmail}
+        AND (manifest->>'storyValidatedAt') IS NULL
+    `;
+
+    return rows.map((row) => ({
+      userEmail: row.user_email,
+      filmId: row.film_id,
+      manifest: row.manifest,
+    }));
+  }
 
   const rows = await db<
     {
@@ -141,11 +163,7 @@ export async function listStoryWorkspacesAwaitingValidationReminder(
   >`
     SELECT user_email, film_id, manifest, resume
     FROM story_workspaces
-    WHERE manifest->>'status' = 'completed'
-      AND (manifest->>'storyValidatedAt') IS NULL
-      AND (manifest->>'generationCompletedAt') IS NOT NULL
-      AND (manifest->>'generationCompletedAt') <= ${cutoff}
-      AND LENGTH(TRIM(resume)) > 0
+    WHERE (manifest->>'storyValidatedAt') IS NULL
   `;
 
   return rows.map((row) => ({
@@ -155,71 +173,24 @@ export async function listStoryWorkspacesAwaitingValidationReminder(
   }));
 }
 
+/** @deprecated Utiliser listStoryWorkspacesWithActiveValidationReminder */
+export async function listStoryWorkspacesAwaitingValidationReminder(
+  _olderThanMs: number
+): Promise<StoryWorkspaceAwaitingReminder[]> {
+  return listStoryWorkspacesWithActiveValidationReminder();
+}
+
+/** @deprecated Utiliser listStoryWorkspacesWithActiveValidationReminder */
 export async function listStoryWorkspacesAwaitingValidationReminderForUser(
   email: string,
-  olderThanMs: number
+  _olderThanMs: number
 ): Promise<StoryWorkspaceAwaitingReminder[]> {
-  if (!isDatabaseEnabled()) return [];
-
-  await ensureSchema();
-  const db = getSql();
-  const userEmail = normalizeEmail(email);
-  const cutoff = new Date(Date.now() - olderThanMs).toISOString();
-
-  const rows = await db<
-    {
-      user_email: string;
-      film_id: string;
-      manifest: StoryWorkspaceManifest;
-      resume: string;
-    }[]
-  >`
-    SELECT user_email, film_id, manifest, resume
-    FROM story_workspaces
-    WHERE user_email = ${userEmail}
-      AND manifest->>'status' = 'completed'
-      AND (manifest->>'storyValidatedAt') IS NULL
-      AND (manifest->>'generationCompletedAt') IS NOT NULL
-      AND (manifest->>'generationCompletedAt') <= ${cutoff}
-      AND LENGTH(TRIM(resume)) > 0
-  `;
-
-  return rows.map((row) => ({
-    userEmail: row.user_email,
-    filmId: row.film_id,
-    manifest: row.manifest,
-  }));
+  return listStoryWorkspacesWithActiveValidationReminder(email);
 }
 
+/** @deprecated Utiliser listStoryWorkspacesWithActiveValidationReminder */
 export async function listStoryWorkspacesAwaitingClientValidation(
   email: string
 ): Promise<StoryWorkspaceAwaitingReminder[]> {
-  if (!isDatabaseEnabled()) return [];
-
-  await ensureSchema();
-  const db = getSql();
-  const userEmail = normalizeEmail(email);
-
-  const rows = await db<
-    {
-      user_email: string;
-      film_id: string;
-      manifest: StoryWorkspaceManifest;
-      resume: string;
-    }[]
-  >`
-    SELECT user_email, film_id, manifest, resume
-    FROM story_workspaces
-    WHERE user_email = ${userEmail}
-      AND manifest->>'status' = 'completed'
-      AND (manifest->>'storyValidatedAt') IS NULL
-      AND (manifest->>'generationCompletedAt') IS NOT NULL
-      AND LENGTH(TRIM(resume)) > 0
-  `;
-
-  return rows.map((row) => ({
-    userEmail: row.user_email,
-    filmId: row.film_id,
-    manifest: row.manifest,
-  }));
+  return listStoryWorkspacesWithActiveValidationReminder(email);
 }

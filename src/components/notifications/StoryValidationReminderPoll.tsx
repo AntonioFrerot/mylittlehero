@@ -10,7 +10,7 @@ import {
 
 type PendingValidationReminder = {
   filmId: string;
-  generationCompletedAt: string;
+  timerStartedAt: string;
   dueAt: string;
   isDue: boolean;
 };
@@ -19,9 +19,13 @@ type PendingValidationRemindersResponse = {
   reminders: PendingValidationReminder[];
 };
 
-async function triggerReminderCheck(): Promise<void> {
+async function sendValidationReminder(filmId: string): Promise<void> {
   try {
-    const response = await fetch("/api/notifications", { cache: "no-store" });
+    const response = await fetch("/api/story-validation-reminder/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ filmId }),
+    });
     if (!response.ok) return;
     requestNotificationsRefresh();
   } catch {
@@ -47,19 +51,19 @@ export function StoryValidationReminderPoll() {
 
       for (const reminder of reminders) {
         if (reminder.isDue) {
-          void triggerReminderCheck();
+          void sendValidationReminder(reminder.filmId);
           continue;
         }
 
         const dueAtMs = new Date(reminder.dueAt).getTime();
         const delayMs = dueAtMs - Date.now();
         if (delayMs <= 0) {
-          void triggerReminderCheck();
+          void sendValidationReminder(reminder.filmId);
           continue;
         }
 
         const timeoutId = window.setTimeout(() => {
-          void triggerReminderCheck();
+          void sendValidationReminder(reminder.filmId);
         }, delayMs);
         timeoutIdsRef.current.push(timeoutId);
       }

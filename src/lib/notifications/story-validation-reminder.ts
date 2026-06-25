@@ -5,11 +5,8 @@ import { getFilmDisplayTitle } from "@/lib/film-creation/user-film-page";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { readStoryManifest, readStoryResume } from "@/lib/story-generation/manifest";
-import {
-  listStoryWorkspacesAwaitingValidationReminder,
-  listStoryWorkspacesAwaitingValidationReminderForUser,
-} from "@/lib/story-generation/story-db";
-import { getSiteUrl } from "@/lib/site-url";
+import type { StoryWorkspaceManifest } from "@/lib/story-generation/types";
+import { listStoryWorkspacesWithActiveValidationReminder } from "@/lib/story-generation/story-db";
 import { createNotification } from "./store";
 
 export const STORY_VALIDATION_REMINDER_DELAY_MS = 5 * 60 * 1000;
@@ -20,46 +17,66 @@ function getMainCharacterPhoto(film: UserFilm): string | undefined {
   return main?.photoSrc;
 }
 
-function reminderReferenceId(filmId: string, generationCompletedAt: string): string {
-  return `validate_reminder:${filmId}:${generationCompletedAt}`;
+function reminderReferenceId(filmId: string, timerStartedAt: string): string {
+  return `validate_reminder:${filmId}:${timerStartedAt}`;
+}
+
+export function getValidationReminderStartedAt(
+  manifest: StoryWorkspaceManifest
+): string | undefined {
+  return manifest.validationReminderStartedAt?.trim() || manifest.createdAt?.trim();
+}
+
+export function getValidationReminderDueAt(
+  manifest: StoryWorkspaceManifest
+): number | null {
+  const startedAt = getValidationReminderStartedAt(manifest);
+  if (!startedAt) return null;
+
+  const startedMs = new Date(startedAt).getTime();
+  if (Number.isNaN(startedMs)) return null;
+
+  return startedMs + STORY_VALIDATION_REMINDER_DELAY_MS;
+}
+
+export function isValidationReminderDue(
+  manifest: StoryWorkspaceManifest
+): boolean {
+  const dueAt = getValidationReminderDueAt(manifest);
+  if (dueAt == null) return false;
+  return Date.now() >= dueAt;
 }
 
 export async function filmStillAwaitingClientValidation(
   email: string,
   filmId: string
-): Promise<{ awaiting: boolean; generationCompletedAt?: string }> {
+): Promise<{ awaiting: boolean; timerStartedAt?: string }> {
   const manifest = await readStoryManifest(email, filmId);
-  if (!manifest || manifest.status !== "completed") {
+  if (!manifest || manifest.storyValidatedAt) {
     return { awaiting: false };
   }
-  if (manifest.storyValidatedAt) {
+
+  const timerStartedAt = getValidationReminderStartedAt(manifest);
+  if (!timerStartedAt) {
     return { awaiting: false };
   }
-  if (!manifest.generationCompletedAt) {
-    return { awaiting: false };
+
+  if (manifest.status !== "completed") {
+    return { awaiting: false, timerStartedAt };
   }
 
   const resume = await readStoryResume(email, filmId);
   if (!resume?.trim()) {
-    return { awaiting: false };
+    return { awaiting: false, timerStartedAt };
   }
 
-  return {
-    awaiting: true,
-    generationCompletedAt: manifest.generationCompletedAt,
-  };
-}
-
-function isReminderDue(generationCompletedAt: string): boolean {
-  const completedAt = new Date(generationCompletedAt).getTime();
-  if (Number.isNaN(completedAt)) return false;
-  return Date.now() - completedAt >= STORY_VALIDATION_REMINDER_DELAY_MS;
+  return { awaiting: true, timerStartedAt };
 }
 
 export async function createStoryValidationReminderNotification(
   email: string,
   filmId: string,
-  generationCompletedAt: string
+  timerStartedAt: string
 ): Promise<boolean> {
   const film = await getUserFilmById(email, filmId);
   if (!film) return false;
@@ -80,39 +97,41 @@ export async function createStoryValidationReminderNotification(
     body: t("notifications.filmValidateReminderBody"),
     imageSrc: getMainCharacterPhoto(film),
     href: "/mon-espace?section=films",
-    referenceId: reminderReferenceId(filmId, generationCompletedAt),
+    referenceId: reminderReferenceId(filmId, timerStartedAt),
   });
 
   return notification != null;
 }
 
-async function trySendReminderForFilm(
+export async function trySendValidationReminderForFilm(
   email: string,
   filmId: string
 ): Promise<boolean> {
-  const { awaiting, generationCompletedAt } =
-    await filmStillAwaitingClientValidation(email, filmId);
-  if (!awaiting || !generationCompletedAt) return false;
-  if (!isReminderDue(generationCompletedAt)) return false;
+  const manifest = await readStoryManifest(email, filmId);
+  if (!manifest || manifest.storyValidatedAt) return false;
+  if (!isValidationReminderDue(manifest)) return false;
+
+  const { awaiting, timerStartedAt } = await filmStillAwaitingClientValidation(
+    email,
+    filmId
+  );
+  if (!awaiting || !timerStartedAt) return false;
 
   return createStoryValidationReminderNotification(
     email,
     filmId,
-    generationCompletedAt
+    timerStartedAt
   );
 }
 
 export async function processStoryValidationRemindersForUser(
   email: string
 ): Promise<number> {
-  const workspaces = await listStoryWorkspacesAwaitingValidationReminderForUser(
-    email,
-    STORY_VALIDATION_REMINDER_DELAY_MS
-  );
+  const workspaces = await listStoryWorkspacesWithActiveValidationReminder(email);
 
   let sent = 0;
   for (const workspace of workspaces) {
-    const created = await trySendReminderForFilm(
+    const created = await trySendValidationReminderForFilm(
       workspace.userEmail,
       workspace.filmId
     );
@@ -123,13 +142,12 @@ export async function processStoryValidationRemindersForUser(
 }
 
 export async function processStoryValidationReminders(): Promise<number> {
-  const workspaces = await listStoryWorkspacesAwaitingValidationReminder(
-    STORY_VALIDATION_REMINDER_DELAY_MS
-  );
+  const workspaces =
+    await listStoryWorkspacesWithActiveValidationReminder();
 
   let sent = 0;
   for (const workspace of workspaces) {
-    const created = await trySendReminderForFilm(
+    const created = await trySendValidationReminderForFilm(
       workspace.userEmail,
       workspace.filmId
     );
@@ -137,59 +155,4 @@ export async function processStoryValidationReminders(): Promise<number> {
   }
 
   return sent;
-}
-
-/** Planifie un rappel serveur (QStash) si configuré ; sinon le poll client prend le relais. */
-export function scheduleStoryValidationReminder(
-  email: string,
-  filmId: string
-): void {
-  void scheduleStoryValidationReminderOnServer(email, filmId);
-}
-
-async function scheduleStoryValidationReminderOnServer(
-  email: string,
-  filmId: string
-): Promise<void> {
-  const qstashToken = process.env.QSTASH_TOKEN?.trim();
-  const secret = process.env.STORY_GENERATION_SECRET?.trim();
-  if (!qstashToken || !secret) return;
-
-  const targetUrl = `${getSiteUrl()}/api/story-validation-reminder`;
-  const publishUrl = `https://qstash.upstash.io/v2/publish/${encodeURIComponent(targetUrl)}`;
-
-  try {
-    const response = await fetch(publishUrl, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${qstashToken}`,
-        "Content-Type": "application/json",
-        "Upstash-Delay": "5m",
-        "Upstash-Forward-x-story-generation-secret": secret,
-      },
-      body: JSON.stringify({ email, filmId }),
-    });
-
-    if (!response.ok) {
-      console.error("QStash story validation reminder failed", {
-        email,
-        filmId,
-        status: response.status,
-        body: await response.text().catch(() => ""),
-      });
-    }
-  } catch (error) {
-    console.error("QStash story validation reminder error", {
-      email,
-      filmId,
-      error,
-    });
-  }
-}
-
-export async function runStoryValidationReminderAfterDelay(
-  email: string,
-  filmId: string
-): Promise<boolean> {
-  return trySendReminderForFilm(email, filmId);
 }

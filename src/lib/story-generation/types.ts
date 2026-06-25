@@ -25,6 +25,8 @@ export type StoryWorkspaceManifest = {
   generationError?: string;
   generationCompletedAt?: string;
   generationMode?: "openai" | "mock";
+  /** Début du délai de 5 min avant rappel de validation (création ou régénération). */
+  validationReminderStartedAt?: string;
   /** Le client a validé le titre et le résumé — le film peut être produit. */
   storyValidatedAt?: string;
   /** Une seule régénération autorisée avant validation. */

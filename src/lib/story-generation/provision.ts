@@ -37,6 +37,7 @@ export async function provisionStoryWorkspace(
     provisionalTitle: film.title,
     promptPath: path.relative(process.cwd(), RESUME_TITRE_PROMPT_PATH),
     status: "awaiting_generation",
+    validationReminderStartedAt: film.createdAt,
   };
 
   if (isDatabaseEnabled()) {

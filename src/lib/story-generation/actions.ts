@@ -122,15 +122,15 @@ export async function regenerateStoryForFilm(
   }
 
   const provisionalTitle = buildLocalizedFilmTitle(film.themes, locale);
-  const validatedAt = new Date().toISOString();
+  const regenStartedAt = new Date().toISOString();
 
   await patchStoryManifest(email, film.id, {
     status: "awaiting_generation",
     regenerationUsed: true,
-    storyValidatedAt: validatedAt,
     generatedTitle: undefined,
     generationError: undefined,
     generationCompletedAt: undefined,
+    validationReminderStartedAt: regenStartedAt,
   });
   await writeStoryResume(email, film.id, "");
   await writeStoryTagline(email, film.id, "");
@@ -144,7 +144,7 @@ export async function regenerateStoryForFilm(
   scheduleStoryGeneration(email, film);
 
   try {
-    await notifyAdminsFilmAwaiting(email, film, "regenerated", validatedAt);
+    await notifyAdminsFilmAwaiting(email, film, "regenerated", regenStartedAt);
   } catch (error) {
     console.error("Admin film awaiting notification failed (regenerate)", {
       email,

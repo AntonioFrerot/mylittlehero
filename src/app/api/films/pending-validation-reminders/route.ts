@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/get-session";
-import { STORY_VALIDATION_REMINDER_DELAY_MS } from "@/lib/notifications/story-validation-reminder";
-import { listStoryWorkspacesAwaitingClientValidation } from "@/lib/story-generation/story-db";
+import {
+  getValidationReminderDueAt,
+  getValidationReminderStartedAt,
+  isValidationReminderDue,
+  trySendValidationReminderForFilm,
+} from "@/lib/notifications/story-validation-reminder";
+import { listStoryWorkspacesWithActiveValidationReminder } from "@/lib/story-generation/story-db";
 
 export async function GET() {
   const session = await getSession();
@@ -9,28 +14,23 @@ export async function GET() {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 
-  const workspaces = await listStoryWorkspacesAwaitingClientValidation(
+  const workspaces = await listStoryWorkspacesWithActiveValidationReminder(
     session.email
   );
 
   const reminders = workspaces
     .map((workspace) => {
-      const generationCompletedAt =
-        workspace.manifest.generationCompletedAt?.trim();
-      if (!generationCompletedAt) return null;
+      const timerStartedAt = getValidationReminderStartedAt(workspace.manifest);
+      if (!timerStartedAt) return null;
 
-      const completedAt = new Date(generationCompletedAt).getTime();
-      if (Number.isNaN(completedAt)) return null;
-
-      const dueAt = new Date(
-        completedAt + STORY_VALIDATION_REMINDER_DELAY_MS
-      ).toISOString();
+      const dueAtMs = getValidationReminderDueAt(workspace.manifest);
+      if (dueAtMs == null) return null;
 
       return {
         filmId: workspace.filmId,
-        generationCompletedAt,
-        dueAt,
-        isDue: Date.now() >= completedAt + STORY_VALIDATION_REMINDER_DELAY_MS,
+        timerStartedAt,
+        dueAt: new Date(dueAtMs).toISOString(),
+        isDue: isValidationReminderDue(workspace.manifest),
       };
     })
     .filter((reminder): reminder is NonNullable<typeof reminder> => reminder != null);
