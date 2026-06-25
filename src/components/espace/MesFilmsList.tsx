@@ -14,7 +14,7 @@ import {
 } from "@/lib/film-creation/film-display-status";
 import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
 import { FilmStoryApprovalButtons } from "@/components/espace/FilmStoryApprovalButtons";
-import { FilmStoryGenerationPoll } from "@/components/espace/FilmStoryGenerationPoll";
+import { FilmStoryGenerationPollLazy } from "@/components/espace/FilmStoryGenerationPollLazy";
 import { FilmStoryRetryButton } from "@/components/espace/FilmStoryRetryButton";
 import { filmNeedsStoryPoll } from "@/lib/film-creation/story-poll";
 import {
@@ -114,7 +114,7 @@ export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
 
   return (
     <>
-      <FilmStoryGenerationPoll filmIds={pollFilmIds} />
+      <FilmStoryGenerationPollLazy filmIds={pollFilmIds} />
       <ul className="flex flex-col gap-[0.9rem]">
       {films.map((film) => {
         const isReady = normalizeFilmStatus(film.status) === "ready";

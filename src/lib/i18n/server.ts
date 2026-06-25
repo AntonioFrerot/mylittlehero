@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { cookies, headers } from "next/headers";
 import { getSession } from "@/lib/auth/get-session";
-import { findUserByEmail } from "@/lib/auth/users-store";
+import { findUserByEmailForUser } from "@/lib/auth/users-store";
 import {
   countryToLocale,
   detectCountryFromHeaders,
@@ -23,7 +23,7 @@ function readUserLocale(
 export const getServerLocale = cache(async (): Promise<LocaleCode> => {
   const session = await getSession();
   if (session) {
-    const user = await findUserByEmail(session.email);
+    const user = await findUserByEmailForUser(session.email);
     const userLocale = readUserLocale(user);
     if (userLocale) return userLocale;
   }

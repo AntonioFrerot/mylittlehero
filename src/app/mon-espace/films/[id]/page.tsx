@@ -3,7 +3,7 @@ import { FilmMetaBadges } from "@/components/films/FilmMetaBadges";
 import { UserFilmHeroSpotlight } from "@/components/films/UserFilmHeroSpotlight";
 import { UserFilmMedia } from "@/components/films/UserFilmMedia";
 import { UserFilmPosterAwaitingPlaceholder } from "@/components/films/UserFilmPosterAwaitingPlaceholder";
-import { FilmStoryGenerationPoll } from "@/components/espace/FilmStoryGenerationPoll";
+import { FilmStoryGenerationPollLazy } from "@/components/espace/FilmStoryGenerationPollLazy";
 import { filmNeedsStoryPoll } from "@/lib/film-creation/story-poll";
 import { resolveUserFilmPageMedia } from "@/lib/film-creation/user-film-page-media";
 import { resolveFilmDisplayStatus, translateFilmDisplayStatus } from "@/lib/film-creation/film-display-status";
@@ -104,7 +104,7 @@ export default async function UserFilmPage({ params }: PageProps) {
 
   return (
     <>
-      <FilmStoryGenerationPoll
+      <FilmStoryGenerationPollLazy
         filmIds={shouldPollStory ? [id] : []}
       />
       <Header />

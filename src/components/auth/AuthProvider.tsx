@@ -14,6 +14,7 @@ import type { SessionUser } from "@/lib/auth/session";
 type AuthContextValue = {
   user: SessionUser | null | undefined;
   balance: number | null;
+  balanceLoaded: boolean;
   isAdmin: boolean;
   refresh: () => Promise<void>;
 };
@@ -23,27 +24,18 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 type AuthProviderProps = {
   children: ReactNode;
   initialUser: SessionUser | null;
-  initialBalance: number | null;
   initialIsAdmin?: boolean;
 };
 
 export function AuthProvider({
   children,
   initialUser,
-  initialBalance,
   initialIsAdmin = false,
 }: AuthProviderProps) {
   const [user, setUser] = useState<SessionUser | null | undefined>(initialUser);
-  const [balance, setBalance] = useState<number | null>(() =>
-    initialUser ? initialBalance : null
-  );
+  const [balance, setBalance] = useState<number | null>(null);
+  const [balanceLoaded, setBalanceLoaded] = useState(!initialUser);
   const [isAdmin, setIsAdmin] = useState(initialIsAdmin);
-
-  useEffect(() => {
-    setUser(initialUser);
-    setBalance(initialUser ? initialBalance : null);
-    setIsAdmin(initialIsAdmin);
-  }, [initialUser, initialBalance, initialIsAdmin]);
 
   const refresh = useCallback(async () => {
     try {
@@ -57,19 +49,35 @@ export function AuthProvider({
       if (!data.user) {
         setBalance(null);
         setIsAdmin(false);
+        setBalanceLoaded(true);
         return;
       }
       setBalance(typeof data.balance === "number" ? data.balance : 0);
       setIsAdmin(Boolean(data.isAdmin));
+      setBalanceLoaded(true);
     } catch {
       setUser(null);
       setBalance(null);
+      setBalanceLoaded(true);
     }
   }, []);
 
+  useEffect(() => {
+    setUser(initialUser);
+    setIsAdmin(initialIsAdmin);
+    if (!initialUser) {
+      setBalance(null);
+      setBalanceLoaded(true);
+      return;
+    }
+
+    setBalanceLoaded(false);
+    void refresh();
+  }, [initialUser, initialIsAdmin, refresh]);
+
   const value = useMemo(
-    () => ({ user, balance, isAdmin, refresh }),
-    [user, balance, isAdmin, refresh]
+    () => ({ user, balance, balanceLoaded, isAdmin, refresh }),
+    [user, balance, balanceLoaded, isAdmin, refresh]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -92,10 +100,11 @@ export function useIsAdmin() {
 }
 
 export function useTicketBalance() {
-  const { user, balance, refresh } = useAuthContext();
+  const { user, balance, balanceLoaded, refresh } = useAuthContext();
+
   return {
     balance: user ? balance : null,
     refresh,
-    isLoading: user === undefined,
+    isLoading: Boolean(user) && !balanceLoaded,
   };
 }

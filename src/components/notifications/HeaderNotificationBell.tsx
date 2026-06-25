@@ -38,6 +38,8 @@ type HeaderNotificationBellProps = {
   className?: string;
 };
 
+const PATHNAME_SYNC_DEBOUNCE_MS = 4000;
+
 export function HeaderNotificationBell({ className = "" }: HeaderNotificationBellProps) {
   const { locale, t } = useLocale();
   const user = useAuthUser();
@@ -46,6 +48,7 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const prevUnreadRef = useRef(0);
+  const pathnameSyncReadyRef = useRef(false);
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<UserNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -87,21 +90,17 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
       setNotifications([]);
       setUnreadCount(0);
       setBadgeDismissed(false);
+      pathnameSyncReadyRef.current = false;
       return;
     }
+
+    pathnameSyncReadyRef.current = false;
+
     function handleRefresh() {
       void loadNotifications();
     }
 
     window.addEventListener(NOTIFICATIONS_REFRESH_EVENT, handleRefresh);
-
-    return () => {
-      window.removeEventListener(NOTIFICATIONS_REFRESH_EVENT, handleRefresh);
-    };
-  }, [user, loadNotifications]);
-
-  useEffect(() => {
-    if (!user) return;
 
     let cancelled = false;
 
@@ -122,7 +121,23 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
     return () => {
       cancelled = true;
       cancelScheduled?.();
+      window.removeEventListener(NOTIFICATIONS_REFRESH_EVENT, handleRefresh);
     };
+  }, [user, loadNotifications]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    if (!pathnameSyncReadyRef.current) {
+      pathnameSyncReadyRef.current = true;
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      void loadNotifications();
+    }, PATHNAME_SYNC_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timeoutId);
   }, [pathname, user, loadNotifications]);
 
   useEffect(() => {

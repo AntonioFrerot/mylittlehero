@@ -9,7 +9,6 @@ import { BRAND_NAME } from "@/lib/brand";
 import { getServerLocale, getServerTranslator } from "@/lib/i18n/server";
 import { getMessages } from "@/lib/i18n/translator";
 import { getSiteUrl } from "@/lib/site-url";
-import { getTicketBalanceForUser } from "@/lib/purchases/tickets";
 import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 
@@ -47,9 +46,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = await getServerLocale();
-  const session = await getSession();
-  const initialBalance = session ? await getTicketBalanceForUser(session.email) : null;
+  const [locale, session] = await Promise.all([getServerLocale(), getSession()]);
   const initialIsAdmin = session ? isAdminEmail(session.email) : false;
 
   return (
@@ -59,11 +56,7 @@ export default async function RootLayout({
     >
       <body className="min-h-screen bg-cinema-black font-sans text-cream antialiased">
         <LocaleProvider locale={locale} messages={getMessages(locale)}>
-          <AuthProvider
-            initialUser={session}
-            initialBalance={initialBalance}
-            initialIsAdmin={initialIsAdmin}
-          >
+          <AuthProvider initialUser={session} initialIsAdmin={initialIsAdmin}>
             <HashScrollHandler />
             {children}
             <SupportChatLazy />

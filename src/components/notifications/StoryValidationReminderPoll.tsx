@@ -30,10 +30,13 @@ async function sendValidationReminder(filmId: string): Promise<void> {
   }
 }
 
+const PATHNAME_SYNC_DEBOUNCE_MS = 5000;
+
 export function StoryValidationReminderPoll() {
   const user = useAuthUser();
   const pathname = usePathname();
   const timeoutIdsRef = useRef<number[]>([]);
+  const pathnameSyncReadyRef = useRef(false);
 
   const clearScheduledTimeouts = useCallback(() => {
     for (const timeoutId of timeoutIdsRef.current) {
@@ -87,9 +90,11 @@ export function StoryValidationReminderPoll() {
   useEffect(() => {
     if (!user) {
       clearScheduledTimeouts();
+      pathnameSyncReadyRef.current = false;
       return;
     }
 
+    pathnameSyncReadyRef.current = false;
     void syncReminders();
 
     return () => {
@@ -99,7 +104,17 @@ export function StoryValidationReminderPoll() {
 
   useEffect(() => {
     if (!user) return;
-    void syncReminders();
+
+    if (!pathnameSyncReadyRef.current) {
+      pathnameSyncReadyRef.current = true;
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      void syncReminders();
+    }, PATHNAME_SYNC_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timeoutId);
   }, [pathname, syncReminders, user]);
 
   return null;
