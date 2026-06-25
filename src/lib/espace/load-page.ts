@@ -1,5 +1,5 @@
 import { getMyAccountDetails } from "@/lib/auth/account-actions";
-import { findUserByEmail } from "@/lib/auth/users-store";
+import { findUserByEmailForUser } from "@/lib/auth/users-store";
 import { getMyCharacters } from "@/lib/characters/actions";
 import { attachStoryToFilms } from "@/lib/film-creation/catalog-films";
 import { isFreeFilmAvailableForEmail } from "@/lib/film-creation/free-film";
@@ -24,7 +24,7 @@ export type MonEspacePageData = {
 async function resolveCreateFilmHrefForEmail(email: string): Promise<string> {
   const [balance, user, films, freeFilmAvailable] = await Promise.all([
     getTicketBalanceForUser(email),
-    findUserByEmail(email),
+    findUserByEmailForUser(email),
     listUserFilmsForUser(email),
     isFreeFilmAvailableForEmail(email),
   ]);

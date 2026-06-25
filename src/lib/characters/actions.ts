@@ -13,7 +13,7 @@ import {
   deleteCharacterPhotoFile,
   saveCharacterPhoto,
 } from "./photo";
-import { deleteCharacter, listCharacters, saveCharacter } from "./store";
+import { deleteCharacter, listCharacters, listCharactersForUser, saveCharacter } from "./store";
 import { formatCharacterAge } from "./format";
 import type { Character } from "./types";
 
@@ -66,7 +66,7 @@ function parseTailleCm(
 export async function getMyCharacters(): Promise<Character[]> {
   const session = await getSession();
   if (!session) return [];
-  return listCharacters(session.email);
+  return listCharactersForUser(session.email);
 }
 
 export async function upsertCharacter(

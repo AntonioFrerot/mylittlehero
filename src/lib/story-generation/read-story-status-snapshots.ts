@@ -11,6 +11,11 @@ import {
 } from "@/lib/story-generation/manifest";
 import type { FilmStoryStatusSnapshot } from "@/lib/story-generation/story-status";
 
+/** Une requête DB par utilisateur et par requête RSC (Mon espace, page film, etc.). */
+const listStoryWorkspacesForUser = cache((email: string) =>
+  listStoryWorkspacesDb(email)
+);
+
 export async function readStoryStatusSnapshots(
   email: string,
   filmIds: string[]
@@ -18,7 +23,7 @@ export async function readStoryStatusSnapshots(
   if (filmIds.length === 0) return [];
 
   if (isDatabaseEnabled()) {
-    const workspaces = await listStoryWorkspacesDb(email, filmIds);
+    const workspaces = await listStoryWorkspacesForUser(email);
     return filmIds.map((filmId) => {
       const workspace = workspaces.get(filmId);
       const resume = workspace?.resume.trim() ?? "";
@@ -60,7 +65,7 @@ export async function readStoryWorkspacesBatch(
   if (filmIds.length === 0) return result;
 
   if (isDatabaseEnabled()) {
-    const workspaces = await listStoryWorkspacesDb(email, filmIds);
+    const workspaces = await listStoryWorkspacesForUser(email);
     for (const filmId of filmIds) {
       const workspace = workspaces.get(filmId);
       if (!workspace) {

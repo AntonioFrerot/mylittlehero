@@ -88,7 +88,27 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
 
   useEffect(() => {
     if (!user) return;
-    void loadNotifications();
+
+    let cancelled = false;
+
+    const sync = () => {
+      if (!cancelled) void loadNotifications();
+    };
+
+    let cancelScheduled: (() => void) | undefined;
+
+    if (typeof window.requestIdleCallback === "function") {
+      const idleId = window.requestIdleCallback(sync, { timeout: 1500 });
+      cancelScheduled = () => window.cancelIdleCallback(idleId);
+    } else {
+      const timeoutId = window.setTimeout(sync, 150);
+      cancelScheduled = () => window.clearTimeout(timeoutId);
+    }
+
+    return () => {
+      cancelled = true;
+      cancelScheduled?.();
+    };
   }, [pathname, user, loadNotifications]);
 
   useEffect(() => {

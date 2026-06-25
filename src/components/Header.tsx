@@ -7,8 +7,7 @@ import { useEffect, useState } from "react";
 import { HeaderAuth } from "@/components/auth/HeaderAuth";
 import { MobileNavMenu } from "@/components/MobileNavMenu";
 import { HeaderTicketCount } from "@/components/tickets/HeaderTicketCount";
-import { HeaderNotificationBell } from "@/components/notifications/HeaderNotificationBell";
-import { StoryValidationReminderPoll } from "@/components/notifications/StoryValidationReminderPoll";
+import { HeaderNotificationBellLazy, StoryValidationReminderPollLazy } from "@/components/notifications/HeaderUserServices";
 import { useAuthUser, useIsAdmin } from "@/components/auth/AuthProvider";
 import { useLocale } from "@/components/LocaleProvider";
 import { BRAND_NAME, SITE_LOGO_SRC } from "@/lib/brand";
@@ -96,7 +95,7 @@ export function Header() {
       }`}
       style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
     >
-      {user ? <StoryValidationReminderPoll /> : null}
+      {user ? <StoryValidationReminderPollLazy /> : null}
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-3 px-4 md:grid md:h-16 md:grid-cols-[auto_1fr_auto] md:items-center md:gap-4 md:px-8 lg:px-10">
         <Link
           href="/"
@@ -159,7 +158,7 @@ export function Header() {
           {user ? (
             <div className="header-mobile-ticket-bell">
               <HeaderTicketCount className="header-ticket-count--mobile" />
-              <HeaderNotificationBell className="notification-bell--header-mobile" />
+              <HeaderNotificationBellLazy className="notification-bell--header-mobile" />
             </div>
           ) : null}
           <button

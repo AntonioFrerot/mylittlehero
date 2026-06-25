@@ -25,7 +25,8 @@ function rel(filePath) {
 function isVideoPoster(relPath) {
   return (
     relPath.includes("-video-poster") ||
-    relPath === "posters/film-in-creation-preview.png"
+    relPath === "posters/film-in-creation-preview.png" ||
+    relPath === "posters/film-in-creation-preview.jpg"
   );
 }
 

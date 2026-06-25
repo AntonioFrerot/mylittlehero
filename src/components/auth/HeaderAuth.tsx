@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/Button";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { HeaderTicketCount } from "@/components/tickets/HeaderTicketCount";
-import { HeaderNotificationBell } from "@/components/notifications/HeaderNotificationBell";
+import { HeaderNotificationBellLazy } from "@/components/notifications/HeaderUserServices";
 import { useLocale } from "@/components/LocaleProvider";
 import { MON_ESPACE_DEFAULT_PATH } from "@/lib/espace/sections";
 import { useAuthUser } from "@/hooks/use-auth-user";
@@ -26,7 +26,7 @@ export function HeaderAuth() {
           {t("nav.mySpace")}
         </Button>
         <LogoutButton />
-        <HeaderNotificationBell />
+        <HeaderNotificationBellLazy />
       </div>
     );
   }

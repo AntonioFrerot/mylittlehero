@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
@@ -106,6 +107,9 @@ export async function findUserByEmail(
   }
   return findUserByEmailFile(normalized);
 }
+
+/** Dédupliqué par requête RSC (layout, Mon espace, etc.). */
+export const findUserByEmailForUser = cache(findUserByEmail);
 
 export type RegisterUserError = "invalid_email" | "email_exists" | "unavailable";
 

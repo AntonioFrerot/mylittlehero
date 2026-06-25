@@ -1,5 +1,6 @@
+import { cache } from "react";
 import type { UserFilm } from "./types";
-import { listUserFilms } from "./store";
+import { listUserFilmsForUser } from "./store";
 import {
   FREE_FILM_DURATION_SECONDS,
   isFreeTrialFilmDuration,
@@ -18,10 +19,12 @@ export function hasUserUsedFreeFilm(
   );
 }
 
-export async function isFreeFilmAvailableForEmail(email: string): Promise<boolean> {
-  const films = await listUserFilms(email);
+async function isFreeFilmAvailable(email: string): Promise<boolean> {
+  const films = await listUserFilmsForUser(email);
   return !hasUserUsedFreeFilm(films);
 }
+
+export const isFreeFilmAvailableForEmail = cache(isFreeFilmAvailable);
 
 export function isFreeFilmDuration(durationSeconds: number): boolean {
   return isFreeTrialFilmDuration(durationSeconds);

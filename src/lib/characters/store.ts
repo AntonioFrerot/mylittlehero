@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { ensureSchema, getSql, isDatabaseEnabled } from "@/lib/db/client";
@@ -109,6 +110,8 @@ function sortCharacters(characters: Character[]): Character[] {
 export async function listCharacters(email: string): Promise<Character[]> {
   return sortCharacters(await readCharacters(email));
 }
+
+export const listCharactersForUser = cache(listCharacters);
 
 export async function saveCharacter(
   email: string,

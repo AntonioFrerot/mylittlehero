@@ -220,13 +220,15 @@ async function migrateLegacyFilmCredits(userEmail: string): Promise<void> {
   }
 }
 
+const migrateLegacyFilmCreditsForUser = cache(migrateLegacyFilmCredits);
+
 export async function getTicketBalance(userEmail: string): Promise<number> {
   if (isHostedProduction() && !isDatabaseEnabled()) {
     return 0;
   }
 
   const email = normalizeEmail(userEmail);
-  await migrateLegacyFilmCredits(email);
+  await migrateLegacyFilmCreditsForUser(email);
 
   if (isDatabaseEnabled()) {
     await ensureSchema();
