@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
         destination: "/films/leo-ice-moon",
         permanent: true,
       },
+      {
+        source: "/images/film-poster-awaiting-preview.png",
+        destination: "/posters/film-poster-awaiting-preview.png",
+        permanent: true,
+      },
+      {
+        source: "/images/film-in-creation-preview.png",
+        destination: "/posters/film-in-creation-preview.png",
+        permanent: true,
+      },
     ];
   },
   experimental: {

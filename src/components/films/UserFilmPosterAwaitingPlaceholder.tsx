@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-const POSTER_PLACEHOLDER_SRC = "/images/film-poster-awaiting-preview.png?v=2";
+const POSTER_PLACEHOLDER_SRC = "/posters/film-poster-awaiting-preview.png?v=3";
 
 type UserFilmPosterAwaitingPlaceholderProps = {
   ariaLabel: string;

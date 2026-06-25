@@ -2,7 +2,7 @@ import { ExampleFilmComingSoonOverlay } from "@/components/films/ExampleFilmComi
 import { FilmVideoMedia } from "@/components/films/FilmVideoMedia";
 import Image from "next/image";
 
-const PREVIEW_IMAGE_SRC = "/images/film-in-creation-preview.png";
+const PREVIEW_IMAGE_SRC = "/posters/film-in-creation-preview.png?v=2";
 
 type UserFilmMediaProps = {
   posterSrc?: string;
