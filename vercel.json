@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/story-validation-reminders",
+      "schedule": "* * * * *"
+    }
+  ]
+}

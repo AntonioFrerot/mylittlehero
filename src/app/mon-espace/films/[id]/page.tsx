@@ -2,6 +2,7 @@ import { Header } from "@/components/Header";
 import { FilmMetaBadges } from "@/components/films/FilmMetaBadges";
 import { UserFilmHeroSpotlight } from "@/components/films/UserFilmHeroSpotlight";
 import { UserFilmMedia } from "@/components/films/UserFilmMedia";
+import { UserFilmPosterAwaitingPlaceholder } from "@/components/films/UserFilmPosterAwaitingPlaceholder";
 import { FilmStoryGenerationPoll } from "@/components/espace/FilmStoryGenerationPoll";
 import { getFilmDisplayPosterSrc } from "@/lib/browse-catalog";
 import { filmNeedsStoryPoll } from "@/lib/film-creation/story-poll";
@@ -115,11 +116,21 @@ export default async function UserFilmPage({ params }: PageProps) {
   };
   const displayStatus = resolveFilmDisplayStatus(filmWithStory);
   const isReady = displayStatus === "ready";
+  const hasRealPoster = Boolean(film.posterSrc);
+  const showPosterAwaitingPlaceholder =
+    !isFreeTrial && !isReady && !hasRealPoster;
   const posterSrc = isFreeTrial
     ? undefined
-    : film.posterSrc ?? (isReady ? undefined : getFilmDisplayPosterSrc(film));
+    : film.posterSrc ??
+      (isReady || showPosterAwaitingPlaceholder
+        ? undefined
+        : getFilmDisplayPosterSrc(film));
   const showInCreationMedia =
-    !isFreeTrial && !isReady && displayStatus === "preparing" && Boolean(pageCopy.synopsis);
+    !isFreeTrial &&
+    !isReady &&
+    (displayStatus === "preparing" ||
+      displayStatus === "awaiting_validation") &&
+    Boolean(pageCopy.synopsis);
   const showVideoMedia =
     !isFreeTrial && isReady && Boolean(film.posterSrc && film.videoSrc);
   const shouldPollStory = filmNeedsStoryPoll(filmWithStory);
@@ -175,22 +186,28 @@ export default async function UserFilmPage({ params }: PageProps) {
               />
             ) : null}
 
-            {posterSrc && (
+            {showPosterAwaitingPlaceholder || posterSrc ? (
               <aside className="order-1 mx-auto w-full max-w-[220px] shrink-0 sm:max-w-[260px] lg:absolute lg:bottom-0 lg:right-0 lg:order-2 lg:mx-0 lg:w-[280px] xl:w-[300px]">
-                <div className="poster-card relative poster-aspect-box w-full overflow-hidden rounded-xl shadow-poster ring-1 ring-gold/30">
-                  <Image
-                    src={posterSrc}
-                    alt={t("space.filmPosterAlt", { title: displayTitle })}
-                    width={POSTER_DIMENSIONS.width}
-                    height={POSTER_DIMENSIONS.height}
-                    sizes="(max-width: 1024px) 280px, 300px"
-                    quality={90}
-                    className="object-cover object-center"
-                    priority
+                {showPosterAwaitingPlaceholder ? (
+                  <UserFilmPosterAwaitingPlaceholder
+                    ariaLabel={t("space.filmPosterAwaitingAria")}
                   />
-                </div>
+                ) : (
+                  <div className="poster-card relative aspect-[2/3] w-full overflow-hidden rounded-xl shadow-poster ring-1 ring-gold/30">
+                    <Image
+                      src={posterSrc!}
+                      alt={t("space.filmPosterAlt", { title: displayTitle })}
+                      width={POSTER_DIMENSIONS.width}
+                      height={POSTER_DIMENSIONS.height}
+                      sizes="(max-width: 1024px) 280px, 300px"
+                      quality={90}
+                      className="object-cover object-center"
+                      priority
+                    />
+                  </div>
+                )}
               </aside>
-            )}
+            ) : null}
           </div>
 
           {showInCreationMedia || showVideoMedia ? (

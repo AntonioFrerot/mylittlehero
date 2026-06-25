@@ -198,6 +198,9 @@ export const en = {
     viewFilms: "View my films",
     filmReadyTitle: "Your film « {title} » is available",
     filmReadyBody: "Watch it now in My films.",
+    filmValidateReminderTitle: "Approve the story for « {title} »",
+    filmValidateReminderBody:
+      "Your screenplay is ready. Approve it in My films to start creating your film.",
     adminFilmValidatedTitle: "Film to deliver — {client}",
     adminFilmValidatedBody:
       "« {title} »: the customer validated the story and is waiting for their film.",
@@ -262,6 +265,7 @@ export const en = {
     backToFilms: "← My films",
     filmReadyEyebrow: "Your film is ready",
     filmPosterAlt: "Poster for {title}",
+    filmPosterAwaitingAria: "Poster being created",
     filmStyleLabel: "Visual style:",
     watchFilm: "Watch",
     shareFilm: "Share",

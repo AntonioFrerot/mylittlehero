@@ -200,6 +200,9 @@ export const fr = {
     viewFilms: "Voir mes films",
     filmReadyTitle: "Votre film « {title} » est disponible",
     filmReadyBody: "Regardez-le dès maintenant dans Mes films.",
+    filmValidateReminderTitle: "Validez l'histoire de « {title} »",
+    filmValidateReminderBody:
+      "Votre scénario est prêt. Validez-le dans Mes films pour lancer la création de votre film.",
     adminFilmValidatedTitle: "Film à livrer — {client}",
     adminFilmValidatedBody:
       "« {title} » : le client a validé l'histoire et attend son film.",
@@ -264,6 +267,7 @@ export const fr = {
     backToFilms: "← Mes films",
     filmReadyEyebrow: "Votre film est prêt",
     filmPosterAlt: "Affiche du film {title}",
+    filmPosterAwaitingAria: "Affiche en cours de création",
     filmStyleLabel: "Style graphique :",
     watchFilm: "Regarder",
     shareFilm: "Partager",

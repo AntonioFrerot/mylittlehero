@@ -1,4 +1,8 @@
-export type NotificationKind = "film_ready" | "admin" | "film_awaiting_admin";
+export type NotificationKind =
+  | "film_ready"
+  | "film_validate_reminder"
+  | "admin"
+  | "film_awaiting_admin";
 
 export type UserNotification = {
   id: string;

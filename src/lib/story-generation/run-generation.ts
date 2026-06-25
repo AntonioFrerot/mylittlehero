@@ -9,6 +9,7 @@ import { getStoryGenerationMode, isMockStoryGenerationEnabled } from "./mock-mod
 import { patchStoryManifest, readStoryManifest } from "./manifest";
 import { persistTitleAndResume } from "./persist-story";
 import { provisionStoryWorkspace } from "./provision";
+import { scheduleStoryValidationReminder } from "@/lib/notifications/story-validation-reminder";
 
 export async function runStoryGeneration(
   email: string,
@@ -63,6 +64,8 @@ export async function runStoryGeneration(
       generationError: undefined,
       generationMode: getStoryGenerationMode(),
     });
+
+    scheduleStoryValidationReminder(email, filmId);
 
     try {
       revalidatePath("/mon-espace");
