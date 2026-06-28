@@ -11,10 +11,29 @@ import {
 } from "@/lib/story-generation/manifest";
 import type { FilmStoryStatusSnapshot } from "@/lib/story-generation/story-status";
 
-/** Une requête DB par utilisateur et par requête RSC (Mon espace, page film, etc.). */
-const listStoryWorkspacesForUser = cache((email: string) =>
-  listStoryWorkspacesDb(email)
+function filmIdsCacheKey(filmIds: string[]): string {
+  return [...filmIds].sort().join(",");
+}
+
+const listStoryWorkspacesForFilms = cache(
+  (email: string, filmIdsKey: string) => {
+    const filmIds = filmIdsKey ? filmIdsKey.split(",") : [];
+    return listStoryWorkspacesDb(email, filmIds);
+  }
 );
+
+async function loadStoryWorkspacesMap(
+  email: string,
+  filmIds: string[]
+): Promise<Map<string, StoryWorkspaceRow>> {
+  if (filmIds.length === 0) return new Map();
+
+  if (isDatabaseEnabled()) {
+    return listStoryWorkspacesForFilms(email, filmIdsCacheKey(filmIds));
+  }
+
+  return new Map();
+}
 
 export async function readStoryStatusSnapshots(
   email: string,
@@ -23,7 +42,7 @@ export async function readStoryStatusSnapshots(
   if (filmIds.length === 0) return [];
 
   if (isDatabaseEnabled()) {
-    const workspaces = await listStoryWorkspacesForUser(email);
+    const workspaces = await loadStoryWorkspacesMap(email, filmIds);
     return filmIds.map((filmId) => {
       const workspace = workspaces.get(filmId);
       const resume = workspace?.resume.trim() ?? "";
@@ -65,7 +84,7 @@ export async function readStoryWorkspacesBatch(
   if (filmIds.length === 0) return result;
 
   if (isDatabaseEnabled()) {
-    const workspaces = await listStoryWorkspacesForUser(email);
+    const workspaces = await loadStoryWorkspacesMap(email, filmIds);
     for (const filmId of filmIds) {
       const workspace = workspaces.get(filmId);
       if (!workspace) {

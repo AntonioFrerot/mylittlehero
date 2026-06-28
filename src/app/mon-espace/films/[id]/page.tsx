@@ -15,7 +15,7 @@ import {
   formatFilmDurationSeconds,
   getFilmDurationSeconds,
 } from "@/lib/film-creation/duration";
-import { getUserFilmById } from "@/lib/film-creation/store";
+import { getUserFilmByIdForUser } from "@/lib/film-creation/store";
 import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
 import { getSession } from "@/lib/auth/get-session";
 import { getUserLocale } from "@/lib/auth/users-store";
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const session = await getSession();
   if (!session) return { title: `Film — ${BRAND_NAME}` };
   const { id } = await params;
-  const film = await getUserFilmById(session.email, id);
+  const film = await getUserFilmByIdForUser(session.email, id);
   if (!film) return { title: `Film — ${BRAND_NAME}` };
 
   const userLocale = await getUserLocale(session.email);
@@ -65,7 +65,7 @@ export default async function UserFilmPage({ params }: PageProps) {
   }
 
   const { id } = await params;
-  const film = await getUserFilmById(session.email, id);
+  const film = await getUserFilmByIdForUser(session.email, id);
   if (!film) notFound();
 
   const [storyData, userLocale] = await Promise.all([

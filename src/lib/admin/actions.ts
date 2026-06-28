@@ -72,3 +72,47 @@ export async function deliverFilmToClient(
 
   return { success: "Film livré au client." };
 }
+
+export type AdminGrantTicketsState = {
+  error?: string;
+  success?: string;
+};
+
+export async function grantTicketsToUser(
+  _prev: AdminGrantTicketsState,
+  formData: FormData
+): Promise<AdminGrantTicketsState> {
+  const session = await requireAdminSession();
+  if (!session) {
+    return { error: "Accès refusé." };
+  }
+
+  const emailRaw = formData.get("email");
+  const ticketsRaw = formData.get("tickets");
+
+  if (typeof emailRaw !== "string" || !emailRaw.trim().includes("@")) {
+    return { error: "Indiquez une adresse e-mail valide." };
+  }
+
+  const tickets = Number(ticketsRaw);
+  if (!Number.isFinite(tickets) || tickets <= 0) {
+    return { error: "Indiquez un nombre de tickets positif." };
+  }
+
+  const { grantAdminTickets } = await import("@/lib/purchases/tickets");
+  const result = await grantAdminTickets({
+    userEmail: emailRaw.trim(),
+    tickets: Math.floor(tickets),
+  });
+
+  if (!result.ok) {
+    return { error: result.error };
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/mon-espace");
+
+  return {
+    success: `${Math.floor(tickets)} ticket(s) ajouté(s). Nouveau solde : ${result.balance}.`,
+  };
+}

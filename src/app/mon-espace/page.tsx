@@ -1,4 +1,5 @@
 import { Header } from "@/components/Header";
+import { MonEspaceShell } from "@/components/espace/MonEspaceShell";
 import { DEFAULT_ESPACE_SECTION, parseEspaceSection } from "@/lib/espace/sections";
 import { getSession } from "@/lib/auth/get-session";
 import { loadMonEspacePageData } from "@/lib/espace/load-page";
@@ -7,11 +8,6 @@ import { BRAND_NAME } from "@/lib/brand";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AccountInformationsForm } from "@/components/espace/AccountInformationsForm";
-import { CharacterManager } from "@/components/espace/CharacterManager";
-import { MesFilmsList } from "@/components/espace/MesFilmsList";
-import { MonEspaceNav } from "@/components/espace/MonEspaceNav";
-import { Button } from "@/components/ui/Button";
 
 export const revalidate = 30;
 
@@ -39,9 +35,8 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
   const section = parseEspaceSection(params.section ?? DEFAULT_ESPACE_SECTION);
   const [{ t }, pageData] = await Promise.all([
     getServerTranslator(),
-    loadMonEspacePageData(session.email, section),
+    loadMonEspacePageData(session.email),
   ]);
-  const { createFilmHref, account, characters, films } = pageData;
 
   return (
     <>
@@ -74,81 +69,7 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
           </div>
         </section>
 
-        <div className="mon-espace-content mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
-          <div className="mt-2 grid gap-6 sm:mt-4 lg:grid-cols-[220px_1fr] lg:gap-10">
-            <MonEspaceNav active={section} />
-
-            <div className="min-w-0">
-              {section === "profil" ? (
-                <>
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                      <h2 className="font-display text-xl font-semibold text-cream md:text-2xl">
-                        {t("space.profileTitle")}
-                      </h2>
-                      <p className="mt-2 max-w-xl text-sm text-cream/60 md:text-base">
-                        {t("space.profileDesc")}
-                      </p>
-                    </div>
-                    <Button
-                      href={createFilmHref}
-                      variant="primary"
-                      className="w-full !text-sm shrink-0 sm:w-auto"
-                    >
-                      {t("space.createFilm")}
-                    </Button>
-                  </div>
-                  <div className="mt-8">
-                    {account ? (
-                      <AccountInformationsForm account={account} />
-                    ) : (
-                      <p className="text-sm text-cream/55">
-                        {t("space.accountLoadError")}
-                      </p>
-                    )}
-                  </div>
-                </>
-              ) : section === "personnages" ? (
-                <CharacterManager
-                  initialCharacters={characters}
-                  createFilmHref={createFilmHref}
-                />
-              ) : (
-                <>
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                      <h2 className="font-display text-xl font-semibold text-cream md:text-2xl">
-                        {t("space.filmsTitle")}
-                      </h2>
-                      <p className="mt-2 max-w-xl text-sm text-cream/60 md:text-base">
-                        {t("space.filmsDesc")}
-                      </p>
-                    </div>
-                    <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-                      <Button
-                        href="/catalogue"
-                        variant="secondary"
-                        className="w-full !text-sm shrink-0 sm:w-auto"
-                      >
-                        {t("space.browseCatalog")}
-                      </Button>
-                      <Button
-                        href={createFilmHref}
-                        variant="primary"
-                        className="w-full !text-sm shrink-0 sm:w-auto"
-                      >
-                        {t("space.createFilm")}
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="mt-8">
-                    <MesFilmsList films={films} createFilmHref={createFilmHref} />
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+        <MonEspaceShell initialSection={section} data={pageData} />
       </main>
     </>
   );

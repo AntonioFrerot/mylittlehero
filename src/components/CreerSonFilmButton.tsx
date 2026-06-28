@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button";
+import { getSession } from "@/lib/auth/get-session";
 import { getServerTranslator } from "@/lib/i18n/server";
-import { resolveCreerSonFilmHref } from "@/lib/navigation/creer-film.server";
+import { getCreerSonFilmHref } from "@/lib/navigation/creer-film";
 
 type CreerSonFilmButtonProps = {
   variant?: "primary" | "secondary" | "ghost";
@@ -13,8 +14,11 @@ export async function CreerSonFilmButton({
   glow = "soft",
   className = "",
 }: CreerSonFilmButtonProps) {
-  const href = await resolveCreerSonFilmHref();
-  const { t } = await getServerTranslator();
+  const [session, { t }] = await Promise.all([
+    getSession(),
+    getServerTranslator(),
+  ]);
+  const href = getCreerSonFilmHref(Boolean(session));
 
   return (
     <Button href={href} variant={variant} glow={glow} className={className}>

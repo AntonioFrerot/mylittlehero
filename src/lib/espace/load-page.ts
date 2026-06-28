@@ -12,7 +12,6 @@ import {
   PRICING_PATH,
 } from "@/lib/navigation/creer-film";
 import { getTicketBalanceForUser } from "@/lib/purchases/tickets";
-import type { EspaceSection } from "@/lib/espace/sections";
 
 export type MonEspacePageData = {
   createFilmHref: string;
@@ -21,48 +20,28 @@ export type MonEspacePageData = {
   films: UserFilmWithStory[];
 };
 
-async function resolveCreateFilmHrefForEmail(email: string): Promise<string> {
-  const [balance, user, films, freeFilmAvailable] = await Promise.all([
-    getTicketBalanceForUser(email),
-    findUserByEmailForUser(email),
-    listUserFilmsForUser(email),
-    isFreeFilmAvailableForEmail(email),
-  ]);
+export async function loadMonEspacePageData(
+  email: string
+): Promise<MonEspacePageData> {
+  const [account, characters, filmsRaw, balance, user, freeFilmAvailable] =
+    await Promise.all([
+      getMyAccountDetails(),
+      getMyCharacters(),
+      listUserFilmsForUser(email),
+      getTicketBalanceForUser(email),
+      findUserByEmailForUser(email),
+      isFreeFilmAvailableForEmail(email),
+    ]);
 
-  const summary = {
+  const films = await attachStoryToFilms(email, filmsRaw);
+
+  const createFilmHref = canCreateFilm({
     balance,
     hasActiveSubscription: Boolean(user?.subscriptionPlanId),
-    hasCreatedFilms: films.length > 0,
     freeFilmAvailable,
-  };
+  })
+    ? CREER_FILM_PATH
+    : PRICING_PATH;
 
-  return canCreateFilm(summary) ? CREER_FILM_PATH : PRICING_PATH;
-}
-
-export async function loadMonEspacePageData(
-  email: string,
-  section: EspaceSection
-): Promise<MonEspacePageData> {
-  if (section === "profil") {
-    const [account, createFilmHref] = await Promise.all([
-      getMyAccountDetails(),
-      resolveCreateFilmHrefForEmail(email),
-    ]);
-    return { createFilmHref, account, characters: [], films: [] };
-  }
-
-  if (section === "personnages") {
-    const [characters, createFilmHref] = await Promise.all([
-      getMyCharacters(),
-      resolveCreateFilmHrefForEmail(email),
-    ]);
-    return { createFilmHref, account: null, characters, films: [] };
-  }
-
-  const [films, createFilmHref] = await Promise.all([
-    listUserFilmsForUser(email).then((items) => attachStoryToFilms(email, items)),
-    resolveCreateFilmHrefForEmail(email),
-  ]);
-
-  return { createFilmHref, account: null, characters: [], films };
+  return { createFilmHref, account, characters, films };
 }

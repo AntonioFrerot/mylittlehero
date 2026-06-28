@@ -190,6 +190,13 @@ export const fr = {
     notificationsImageHint: "JPG, PNG ou WebP — max. 5 Mo.",
     notificationsSubmit: "Envoyer la notification",
     notificationsSubmitting: "Envoi en cours…",
+    grantTicketsTitle: "Accorder des tickets",
+    grantTicketsLead:
+      "Ajoute des tickets film à un compte client (base de données en ligne).",
+    grantTicketsEmailLabel: "E-mail du client",
+    grantTicketsCountLabel: "Nombre de tickets",
+    grantTicketsSubmit: "Accorder les tickets",
+    grantTicketsSubmitting: "Accord en cours…",
   },
   notifications: {
     bellAria: "Notifications ({count} non lue(s))",

@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header";
 import { AdminFilmsList } from "@/components/admin/AdminFilmsList";
+import { AdminGrantTicketsForm } from "@/components/admin/AdminGrantTicketsForm";
 import { AdminNotificationsForm } from "@/components/admin/AdminNotificationsForm";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { listAdminFilmsByStatus } from "@/lib/film-creation/admin-films";
@@ -16,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AdminPage() {
-  await requireAdmin();
+  const session = await requireAdmin();
   const { t, locale } = await getServerTranslator();
   const { awaiting, completed } = await listAdminFilmsByStatus();
 
@@ -39,6 +40,7 @@ export default async function AdminPage() {
         </section>
 
         <div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-6 md:px-8 md:py-10">
+          <AdminGrantTicketsForm defaultEmail={session.email} />
           <AdminNotificationsForm />
           <AdminFilmsList
             awaiting={awaiting}

@@ -105,9 +105,27 @@ export async function getUserFilmById(
   email: string,
   filmId: string
 ): Promise<UserFilm | null> {
-  const films = await readFilms(email);
+  const normalized = normalizeEmail(email);
+
+  if (isDatabaseEnabled()) {
+    await ensureSchema();
+    const db = getSql();
+    const rows = await db<{ data: UserFilm }[]>`
+      SELECT data FROM films
+      WHERE user_email = ${normalized} AND id = ${filmId}
+      LIMIT 1
+    `;
+    return rows[0] ? normalizeFilm(rows[0].data) : null;
+  }
+
+  const films = await readFilmsFile(normalized);
   return films.find((film) => film.id === filmId) ?? null;
 }
+
+/** Dédupliqué par requête RSC (metadata + page film). */
+export const getUserFilmByIdForUser = cache(
+  (email: string, filmId: string) => getUserFilmById(email, filmId)
+);
 
 export async function updateUserFilm(
   email: string,
