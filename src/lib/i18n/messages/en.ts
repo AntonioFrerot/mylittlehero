@@ -330,11 +330,11 @@ export const en = {
         "If you approve, your film can start being created. If you do not wish to approve, you may regenerate once using the Regenerate button.",
       regenerateTitle: "Regenerate story",
       regenerateMessage:
-        "If you confirm, a new story will be created. You are only allowed one regeneration.",
+        "If you confirm, a new story will be created and approved automatically. You are only allowed one regeneration.",
       validateSuccess:
         "Story approved. Your film is being created.",
       regenerateSuccess:
-        "Story regenerated. Your film is being created.",
+        "New story being created. It will be approved automatically.",
       alreadyValidated: "This story has already been approved.",
       regenerationUsed: "You have already used your regeneration.",
       storyNotReady: "The story is not ready yet.",

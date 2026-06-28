@@ -333,11 +333,11 @@ export const fr = {
         "Si vous validez, le film pourra commencer à se créer. Si vous ne souhaitez pas valider, vous avez le droit à une régénération en cliquant sur le bouton « Régénérer ».",
       regenerateTitle: "Régénérer l'histoire",
       regenerateMessage:
-        "Si vous confirmez, une nouvelle histoire sera créée. Vous n'avez droit qu'à une seule régénération.",
+        "Si vous confirmez, une nouvelle histoire sera créée et validée automatiquement. Vous n'avez droit qu'à une seule régénération.",
       validateSuccess:
         "Histoire validée. Le film est en cours de création.",
       regenerateSuccess:
-        "Histoire régénérée. Le film est en cours de création.",
+        "Nouvelle histoire en cours de création. Elle sera validée automatiquement.",
       alreadyValidated: "Cette histoire a déjà été validée.",
       regenerationUsed: "Vous avez déjà utilisé votre régénération.",
       storyNotReady: "L'histoire n'est pas encore prête.",

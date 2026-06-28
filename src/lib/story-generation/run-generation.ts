@@ -7,6 +7,7 @@ import { generateTitleAndResume } from "./generate";
 import { generateMockTitleAndResume } from "./generate-mock";
 import { getStoryGenerationMode, isMockStoryGenerationEnabled } from "./mock-mode";
 import { patchStoryManifest, readStoryManifest } from "./manifest";
+import { markStoryValidated } from "./mark-story-validated";
 import { persistTitleAndResume } from "./persist-story";
 import { provisionStoryWorkspace } from "./provision";
 
@@ -64,9 +65,21 @@ export async function runStoryGeneration(
       generationMode: getStoryGenerationMode(),
     });
 
+    const completedManifest = await readStoryManifest(email, filmId);
+    if (
+      completedManifest?.regenerationUsed &&
+      !completedManifest.storyValidatedAt
+    ) {
+      const validatedFilm = await getUserFilmById(email, filmId);
+      if (validatedFilm) {
+        await markStoryValidated(email, validatedFilm);
+      }
+    }
+
     try {
       revalidatePath("/mon-espace");
       revalidatePath(`/mon-espace/films/${filmId}`);
+      revalidatePath("/admin");
     } catch {
       // Hors contexte Next.js (ex. script CLI) : les fichiers sont déjà écrits.
     }

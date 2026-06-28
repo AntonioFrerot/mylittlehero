@@ -13,6 +13,7 @@ import {
   writeStoryTagline,
   writeStoryTitle,
 } from "./manifest";
+import { markStoryValidated } from "./mark-story-validated";
 import { runStoryGeneration } from "./run-generation";
 import { notifyAdminsFilmAwaiting } from "@/lib/notifications/notify-admins-film-awaiting";
 import { scheduleStoryGeneration } from "./schedule";
@@ -73,21 +74,7 @@ export async function validateStoryForFilm(
     return { error: t("space.storyActions.alreadyValidated") };
   }
 
-  const storyValidatedAt = new Date().toISOString();
-  await patchStoryManifest(email, film.id, {
-    storyValidatedAt,
-  });
-  await updateUserFilm(email, film.id, { status: "generating" });
-
-  try {
-    await notifyAdminsFilmAwaiting(email, film, "validated", storyValidatedAt);
-  } catch (error) {
-    console.error("Admin film awaiting notification failed (validate)", {
-      email,
-      filmId: film.id,
-      error,
-    });
-  }
+  await markStoryValidated(email, film);
 
   revalidatePath("/mon-espace");
   revalidatePath(`/mon-espace/films/${film.id}`);
