@@ -50,6 +50,17 @@ function CloseIcon({ className }: { className?: string }) {
   );
 }
 
+const CONVERSATION_STORAGE_KEY = "support-chat-conversation-id";
+
+function getOrCreateConversationId(): string {
+  if (typeof window === "undefined") return "";
+  const existing = sessionStorage.getItem(CONVERSATION_STORAGE_KEY);
+  if (existing) return existing;
+  const id = crypto.randomUUID();
+  sessionStorage.setItem(CONVERSATION_STORAGE_KEY, id);
+  return id;
+}
+
 export function SupportChatWidget() {
   const { locale } = useLocale();
   const [open, setOpen] = useState(false);
@@ -97,16 +108,25 @@ export function SupportChatWidget() {
       const response = await fetch("/api/support-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: apiMessages, locale }),
+        body: JSON.stringify({
+          messages: apiMessages,
+          locale,
+          conversationId: getOrCreateConversationId(),
+        }),
       });
 
       const data = (await response.json()) as {
         reply?: string;
         error?: string;
+        conversationId?: string;
       };
 
       if (!response.ok) {
         throw new Error(data.error ?? "Erreur réseau");
+      }
+
+      if (data.conversationId && typeof window !== "undefined") {
+        sessionStorage.setItem(CONVERSATION_STORAGE_KEY, data.conversationId);
       }
 
       setMessages((prev) => [

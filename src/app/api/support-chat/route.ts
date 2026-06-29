@@ -1,6 +1,8 @@
 import { buildSupportUserContext } from "@/lib/support-chat/build-user-context";
 import { generateSupportReply } from "@/lib/support-chat/assistant";
+import { appendSupportChatExchange } from "@/lib/support-chat/store";
 import type { ChatMessage } from "@/lib/support-chat/types";
+import { getSession } from "@/lib/auth/get-session";
 import { parseLocale } from "@/lib/i18n/locales";
 import { NextResponse } from "next/server";
 
@@ -61,12 +63,26 @@ export async function POST(request: Request) {
   }
 
   const locale = parseLocale((body as { locale?: unknown }).locale) ?? "fr";
+  const conversationId =
+    typeof (body as { conversationId?: unknown }).conversationId === "string"
+      ? (body as { conversationId: string }).conversationId.trim().slice(0, 64)
+      : undefined;
   const userContext = await buildSupportUserContext(locale);
+  const session = await getSession();
 
   const { reply, source } = await generateSupportReply(messages, {
     locale,
     userContext,
   });
 
-  return NextResponse.json({ reply, source });
+  const saved = await appendSupportChatExchange({
+    conversationId,
+    userEmail: session?.email ?? userContext?.email ?? null,
+    userName: session?.name ?? userContext?.name ?? null,
+    locale,
+    userMessage: last.content,
+    assistantReply: reply,
+  });
+
+  return NextResponse.json({ reply, source, conversationId: saved.id });
 }

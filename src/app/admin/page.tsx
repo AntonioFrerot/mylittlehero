@@ -1,9 +1,12 @@
 import { Header } from "@/components/Header";
-import { AdminFilmsList } from "@/components/admin/AdminFilmsList";
-import { AdminGrantTicketsForm } from "@/components/admin/AdminGrantTicketsForm";
-import { AdminNotificationsForm } from "@/components/admin/AdminNotificationsForm";
+import { AdminShell } from "@/components/admin/AdminShell";
+import { loadAdminAnalyticsStats } from "@/lib/analytics/load-admin-stats";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { listAdminFilmsByStatus } from "@/lib/film-creation/admin-films";
+import {
+  groupConversationsByClient,
+  listSupportChatConversationsForAdmin,
+} from "@/lib/support-chat/store";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
 import type { Metadata } from "next";
@@ -20,13 +23,17 @@ export default async function AdminPage() {
   const session = await requireAdmin();
   const { t, locale } = await getServerTranslator();
   const { awaiting, completed } = await listAdminFilmsByStatus();
+  const supportChatClients = groupConversationsByClient(
+    await listSupportChatConversationsForAdmin()
+  );
+  const analyticsStats = await loadAdminAnalyticsStats(locale, "week");
 
   return (
     <>
       <Header />
       <main className="min-h-screen bg-cinema-black pb-20">
         <section className="safe-top-offset border-b border-white/5 bg-cinema-night/60">
-          <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 md:px-8 md:py-12">
+          <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:px-8 md:py-12">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-light/80">
               {t("admin.eyebrow")}
             </p>
@@ -39,15 +46,14 @@ export default async function AdminPage() {
           </div>
         </section>
 
-        <div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-6 md:px-8 md:py-10">
-          <AdminGrantTicketsForm defaultEmail={session.email} />
-          <AdminNotificationsForm />
-          <AdminFilmsList
-            awaiting={awaiting}
-            completed={completed}
-            locale={locale}
-          />
-        </div>
+        <AdminShell
+          defaultEmail={session.email}
+          locale={locale}
+          awaiting={awaiting}
+          completed={completed}
+          supportChatClients={supportChatClients}
+          analyticsStats={analyticsStats}
+        />
       </main>
     </>
   );

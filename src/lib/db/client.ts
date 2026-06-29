@@ -161,6 +161,60 @@ async function runSchema(): Promise<void> {
     CREATE INDEX IF NOT EXISTS notifications_user_email_created_idx
     ON notifications (user_email, created_at DESC)
   `;
+
+  await db`
+    CREATE TABLE IF NOT EXISTS support_chat_conversations (
+      id TEXT PRIMARY KEY,
+      user_email TEXT,
+      user_name TEXT,
+      locale TEXT NOT NULL DEFAULT 'fr',
+      messages JSONB NOT NULL DEFAULT '[]'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL,
+      updated_at TIMESTAMPTZ NOT NULL
+    )
+  `;
+
+  await db`
+    CREATE INDEX IF NOT EXISTS support_chat_conversations_user_email_idx
+    ON support_chat_conversations (user_email)
+  `;
+
+  await db`
+    CREATE INDEX IF NOT EXISTS support_chat_conversations_updated_at_idx
+    ON support_chat_conversations (updated_at DESC)
+  `;
+
+  await db`
+    CREATE TABLE IF NOT EXISTS site_visits (
+      id TEXT PRIMARY KEY,
+      visited_at TIMESTAMPTZ NOT NULL,
+      path TEXT NOT NULL,
+      visitor_id TEXT NOT NULL,
+      user_email TEXT,
+      country TEXT,
+      region TEXT,
+      city TEXT,
+      timezone TEXT,
+      latitude DOUBLE PRECISION,
+      longitude DOUBLE PRECISION,
+      locale TEXT,
+      device_type TEXT NOT NULL,
+      browser TEXT,
+      os TEXT,
+      referer TEXT,
+      user_agent TEXT
+    )
+  `;
+
+  await db`
+    CREATE INDEX IF NOT EXISTS site_visits_visited_at_idx
+    ON site_visits (visited_at DESC)
+  `;
+
+  await db`
+    CREATE INDEX IF NOT EXISTS site_visits_country_idx
+    ON site_visits (country)
+  `;
 }
 
 export async function ensureSchema(): Promise<void> {
