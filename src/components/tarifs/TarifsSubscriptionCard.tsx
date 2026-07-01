@@ -76,34 +76,43 @@ export function TarifsSubscriptionCard({ plan, locale }: TarifsSubscriptionCardP
         <div className="tarifs-plan-card__price-block">
           {isYearly && plan.yearlyBreakdown ? (
             <>
-              <div className="tarifs-plan-card__price-row">
-                <span className="tarifs-plan-card__price">{plan.yearlyBreakdown.monthlyPrice}</span>
-                <span className="tarifs-plan-card__period">{t("tarifsPage.periodMonthly")}</span>
+              <div className="tarifs-plan-card__price-stack">
+                <div className="tarifs-plan-card__compare-row">
+                  <span className="tarifs-plan-card__compare-price">
+                    {plan.yearlyBreakdown.compareMonthlyPrice}
+                  </span>
+                  <span className="tarifs-plan-card__savings-pill">
+                    <SavingsGiftIcon />
+                    {t("tarifsPage.billingToggle.savingsBadge", {
+                      percent: plan.yearlyBreakdown.savingsPercent,
+                    })}
+                  </span>
+                </div>
+                <div className="tarifs-plan-card__price-row">
+                  <span className="tarifs-plan-card__price">
+                    {plan.yearlyBreakdown.monthlyPrice}
+                  </span>
+                  <span className="tarifs-plan-card__period">
+                    {t("tarifsPage.periodMonthly")}
+                  </span>
+                </div>
               </div>
 
-              <div className="tarifs-plan-card__yearly-row">
-                <span className="tarifs-plan-card__compare-price">
-                  {plan.yearlyBreakdown.compareAnnualPrice}
-                </span>
-                <span className="tarifs-plan-card__annual-price">
-                  {plan.yearlyBreakdown.annualPrice}
-                  <span className="tarifs-plan-card__annual-period">
-                    {t("tarifsPage.periodYearly")}
-                  </span>
-                </span>
-                <span className="tarifs-plan-card__savings-pill">
-                  <SavingsGiftIcon />
-                  {t("tarifsPage.billingToggle.savingsBadge", {
-                    percent: plan.yearlyBreakdown.savingsPercent,
-                  })}
-                </span>
-              </div>
+              <p className="tarifs-plan-card__commitment-hint">
+                {t("tarifsPage.yearlyCommitmentHint")}
+              </p>
             </>
           ) : (
-            <div className="tarifs-plan-card__price-row">
-              <span className="tarifs-plan-card__price">{plan.price}</span>
-              <span className="tarifs-plan-card__period">{plan.period}</span>
-            </div>
+            <>
+              <div className="tarifs-plan-card__price-row">
+                <span className="tarifs-plan-card__price">{plan.price}</span>
+                <span className="tarifs-plan-card__period">{plan.period}</span>
+              </div>
+
+              <p className="tarifs-plan-card__commitment-hint">
+                {t("tarifsPage.monthlyCommitmentHint")}
+              </p>
+            </>
           )}
 
           <TarifsPerFilmRow label={plan.perFilmPrice} position="below" />

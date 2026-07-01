@@ -39,6 +39,9 @@ export function TarifsBillingToggle({
 }: TarifsBillingToggleProps) {
   const { t } = useLocale();
   const isYearly = value === "yearly";
+  const savingsLabel = t("tarifsPage.billingToggle.savingsBadge", {
+    percent: savingsPercent,
+  });
 
   return (
     <div
@@ -67,21 +70,17 @@ export function TarifsBillingToggle({
         type="button"
         role="radio"
         aria-checked={isYearly}
+        aria-label={t("tarifsPage.billingToggle.yearlyAria", {
+          percent: savingsPercent,
+        })}
         className={`tarifs-billing-toggle__option tarifs-billing-toggle__option--yearly ${
           isYearly ? "tarifs-billing-toggle__option--active" : ""
         }`}
         onClick={() => onChange("yearly")}
       >
-        <span>{t("tarifsPage.billingToggle.yearly")}</span>
-        <span
-          className={`tarifs-billing-toggle__savings ${
-            isYearly
-              ? "tarifs-billing-toggle__savings--on-gold"
-              : "tarifs-billing-toggle__savings--promo"
-          }`}
-        >
+        <span className="tarifs-billing-toggle__yearly-label">
           <GiftIcon />
-          {t("tarifsPage.billingToggle.savingsBadge", { percent: savingsPercent })}
+          {savingsLabel}
         </span>
       </button>
     </div>

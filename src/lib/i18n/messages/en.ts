@@ -546,16 +546,21 @@ export const en = {
     perFilmUnit: "1 film = {amount}",
     mostPopular: "The weekly ritual",
     bestValue: "Best value",
-    billingYearly: "Yearly subscription",
-    billingMonthly: "Monthly subscription",
+    billingYearly: "Monthly · 1-year commitment",
+    billingMonthly: "Monthly · no commitment",
     paymentNotice:
       "Secure card payment via Stripe. You will be redirected to the checkout page.",
     periodMonthly: "/ month",
     periodYearly: "/ year",
+    yearlyCommitmentHint: "Billed monthly, 12-month commitment.",
+    monthlyCommitmentHint: "Billed monthly, no commitment.",
     monthlyEquivalent: "Equivalent to {amount} / month",
     savingsLabel: "Save {amount} per year (−{percent} %)",
     features: {
       filmDuration: "5 minutes of film",
+      filmDurationPremium: "4 x 5 minutes of film",
+      filmDurationYearlyEssentiel: "12 x 5 minutes of film",
+      filmDurationYearlyPremium: "48 x 5 minutes of film",
       fullCustom: "Full customisation",
       delivery24h: "Delivery within 24 h",
       supportStandard: "Customer support",
@@ -565,7 +570,8 @@ export const en = {
     billingToggle: {
       label: "Choose billing cycle",
       monthly: "Monthly",
-      yearly: "Yearly",
+      yearly: "With commitment",
+      yearlyAria: "With commitment, save {percent} %",
       savingsBadge: "Save {percent} %",
     },
     nav: {
@@ -579,7 +585,7 @@ export const en = {
       monthlyLead:
         "One film a month for a special moment, or a new story every week for the keenest adventurers.",
       yearlyLead:
-        "Commit for the year and get the best price per film — perfect so you never miss a special occasion.",
+        "12-month commitment with monthly billing — the best price per film, without paying upfront for the full year.",
       ticketsStep: "02 — Tickets",
       ticketsTitle: "Tickets",
       ticketsLead: "No subscription: buy tickets and create a film whenever inspiration strikes.",

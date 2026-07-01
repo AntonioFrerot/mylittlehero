@@ -553,16 +553,21 @@ export const fr = {
     perFilmUnit: "1 film = {amount}",
     mostPopular: "Le rdv de la semaine",
     bestValue: "Meilleur rapport",
-    billingYearly: "Abonnement annuel",
-    billingMonthly: "Abonnement mensuel",
+    billingYearly: "Mensuel · engagement 1 an",
+    billingMonthly: "Mensuel · sans engagement",
     paymentNotice:
       "Paiement sécurisé par carte bancaire (Stripe). Vous serez redirigé vers une page de paiement.",
     periodMonthly: "/ mois",
     periodYearly: "/ an",
+    yearlyCommitmentHint: "Facturation mensuelle, engagement 12 mois.",
+    monthlyCommitmentHint: "Facturation mensuelle, sans engagement.",
     monthlyEquivalent: "Soit {amount} / mois",
     savingsLabel: "Économisez {amount} par an (−{percent} %)",
     features: {
       filmDuration: "5 minutes de film",
+      filmDurationPremium: "4 x 5 minutes de film",
+      filmDurationYearlyEssentiel: "12 x 5 minutes de film",
+      filmDurationYearlyPremium: "48 x 5 minutes de film",
       fullCustom: "Personnalisation complète",
       delivery24h: "Réception sous 24 h",
       supportStandard: "Support client",
@@ -572,7 +577,8 @@ export const fr = {
     billingToggle: {
       label: "Choisir la facturation",
       monthly: "Mensuel",
-      yearly: "Annuel",
+      yearly: "Avec engagement",
+      yearlyAria: "Avec engagement, économisez {percent} %",
       savingsBadge: "Économisez {percent} %",
     },
     nav: {
@@ -586,7 +592,7 @@ export const fr = {
       monthlyLead:
         "Un film par mois pour un moment privilégié, ou une histoire chaque semaine pour les plus gourmands.",
       yearlyLead:
-        "Engagez-vous sur l'année et bénéficiez du meilleur prix au film — idéal pour ne jamais manquer une occasion.",
+        "Engagement sur 12 mois avec facturation mensuelle — le meilleur prix au film, sans payer d'un seul bloc.",
       ticketsStep: "02 — Tickets",
       ticketsTitle: "Tickets",
       ticketsLead: "Sans abonnement : achetez des tickets et créez un film quand l'envie vous prend.",

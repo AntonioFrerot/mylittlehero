@@ -513,15 +513,16 @@ select:disabled,
 .tarifs-billing-toggle {
   --toggle-pad: 0.3125rem;
   --toggle-inner: calc(100% - 2 * var(--toggle-pad));
-  --monthly-share: calc(var(--toggle-inner) * 1 / 2.8);
-  --yearly-share: calc(var(--toggle-inner) * 1.8 / 2.8);
+  --monthly-share: calc(var(--toggle-inner) * 1 / 2.15);
+  --yearly-share: calc(var(--toggle-inner) * 1.15 / 2.15);
 
   position: relative;
   display: inline-grid;
-  grid-template-columns: 1fr 1.8fr;
+  grid-template-columns: 1fr 1.15fr;
   align-items: center;
-  width: 100%;
-  max-width: 24rem;
+  width: fit-content;
+  max-width: min(100%, 28rem);
+  min-width: min(100%, 19rem);
   margin-inline: auto;
   padding: var(--toggle-pad);
   border-radius: 9999px;
@@ -535,7 +536,7 @@ select:disabled,
 
 @media (min-width: 480px) {
   .tarifs-billing-toggle {
-    max-width: 28rem;
+    max-width: min(100%, 30rem);
   }
 }
 
@@ -590,12 +591,25 @@ select:disabled,
 .tarifs-billing-toggle__option--yearly {
   grid-column: 2;
   grid-row: 1;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0.6875rem 0.75rem;
+}
+
+.tarifs-billing-toggle__yearly-label {
+  display: inline-flex;
+  flex-direction: row;
   flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
   gap: 0.375rem;
-  padding: 0.5rem 0.625rem;
+  white-space: nowrap;
+}
+
+.tarifs-billing-toggle__yearly-label svg {
+  flex-shrink: 0;
+  display: block;
 }
 
 @media (min-width: 480px) {
@@ -608,8 +622,7 @@ select:disabled,
   }
 
   .tarifs-billing-toggle__option--yearly {
-    gap: 0.5rem;
-    padding: 0.5625rem 0.75rem;
+    padding: 0.75rem 1rem;
   }
 }
 
@@ -1161,6 +1174,33 @@ select:disabled,
   font-size: 0.875rem;
   font-weight: 600;
   color: rgba(232, 197, 71, 0.9);
+}
+
+.tarifs-plan-card__price-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.tarifs-plan-card__compare-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.625rem;
+}
+
+.tarifs-plan-card__price-stack .tarifs-plan-card__compare-price {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.tarifs-plan-card__commitment-hint {
+  margin-top: 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(245, 240, 230, 0.45);
+  line-height: 1.35;
 }
 
 .tarifs-plan-card__yearly-row {

@@ -36,8 +36,7 @@ export type TarifsSubscriptionPlan = {
   features: { id: TarifsPlanFeatureId; label: string; included: boolean }[];
   yearlyBreakdown?: {
     monthlyPrice: string;
-    compareAnnualPrice: string;
-    annualPrice: string;
+    compareMonthlyPrice: string;
     savingsPercent: number;
   };
   highlighted?: boolean;
@@ -82,6 +81,20 @@ const PLAN_FEATURE_IDS: Record<TarifsSubscriptionId, TarifsPlanFeatureId[]> = {
 
 const PLAN_EXCLUDED_FEATURE_IDS: Partial<Record<TarifsSubscriptionId, TarifsPlanFeatureId[]>> = {
   "monthly-1-film": ["accumulateFilms"],
+};
+
+const PLAN_FEATURE_LABEL_OVERRIDES: Partial<
+  Record<TarifsSubscriptionId, Partial<Record<TarifsPlanFeatureId, TranslationKey>>>
+> = {
+  "monthly-1-weekly": {
+    filmDuration: "tarifsPage.features.filmDurationPremium",
+  },
+  "yearly-12-films": {
+    filmDuration: "tarifsPage.features.filmDurationYearlyEssentiel",
+  },
+  "yearly-48-films": {
+    filmDuration: "tarifsPage.features.filmDurationYearlyPremium",
+  },
 };
 
 const SUBSCRIPTION_CONFIG: Record<
@@ -151,19 +164,29 @@ function formatPerFilmUnit(
   });
 }
 
+function featureLabelKey(
+  planId: TarifsSubscriptionId,
+  featureId: TarifsPlanFeatureId
+): TranslationKey {
+  return (
+    PLAN_FEATURE_LABEL_OVERRIDES[planId]?.[featureId] ??
+    (`tarifsPage.features.${featureId}` as TranslationKey)
+  );
+}
+
 function buildPlanFeatures(
   id: TarifsSubscriptionId,
   t: ReturnType<typeof createTranslator>
 ): { id: TarifsPlanFeatureId; label: string; included: boolean }[] {
   const included = PLAN_FEATURE_IDS[id].map((featureId) => ({
     id: featureId,
-    label: t(`tarifsPage.features.${featureId}`),
+    label: t(featureLabelKey(id, featureId)),
     included: true,
   }));
 
   const excluded = (PLAN_EXCLUDED_FEATURE_IDS[id] ?? []).map((featureId) => ({
     id: featureId,
-    label: t(`tarifsPage.features.${featureId}`),
+    label: t(featureLabelKey(id, featureId)),
     included: false,
   }));
 
@@ -248,10 +271,11 @@ export function getTarifsSubscriptionPlans(locale: LocaleCode): TarifsSubscripti
         config.compareMonthly && config.monthlyEquivalent && config.billing === "yearly"
           ? {
               monthlyPrice: formatMoney(config.monthlyEquivalent, locale),
-              compareAnnualPrice: formatMoney(config.compareMonthly * 12, locale),
-              annualPrice: formatMoney(config.price, locale),
+              compareMonthlyPrice: formatMoney(config.compareMonthly, locale),
               savingsPercent: Math.round(
-                ((config.compareMonthly * 12 - config.price) / (config.compareMonthly * 12)) * 100
+                ((config.compareMonthly - config.monthlyEquivalent) /
+                  config.compareMonthly) *
+                  100
               ),
             }
           : undefined,
@@ -299,8 +323,10 @@ export function getTarifsMaxYearlySavingsPercent(): number {
     })
     .map((id) => {
       const config = SUBSCRIPTION_CONFIG[id];
-      const annualIfMonthly = config.compareMonthly! * 12;
-      return Math.round(((annualIfMonthly - config.price) / annualIfMonthly) * 100);
+      return Math.round(
+        ((config.compareMonthly! - config.monthlyEquivalent!) / config.compareMonthly!) *
+          100
+      );
     });
 
   return percents.length > 0 ? Math.max(...percents) : 0;
