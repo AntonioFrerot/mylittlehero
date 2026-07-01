@@ -82,9 +82,7 @@ export function buildUserFilmPageCopy(
     : t("space.filmIntro", { name: heroName });
 
   if (isUserFreeTrialFilm(film)) {
-    const synopsisBody =
-      film.additionalInfo?.trim() || t("space.freeTrialFilmSynopsisFallback");
-    const synopsis = `${t("space.filmSynopsisHeading")} ${synopsisBody}`;
+    const synopsis = `${t("space.filmSynopsisHeading")} ${t("space.freeTrialFilmSynopsisFallback")}`;
 
     return {
       tagline: t("space.freeTrialFilmTagline"),

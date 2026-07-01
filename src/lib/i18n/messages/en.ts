@@ -415,7 +415,7 @@ export const en = {
     freeTrialFilmTagline:
       "Your personalised 15-second free trial is being prepared.",
     freeTrialFilmSynopsisFallback:
-      "Our team is preparing your trial film. It will appear here as soon as it is ready.",
+      "No summary for 15-second trials.",
     navLabel: "My account sections",
     confirmCancelSubscription: "Confirm cancellation of your subscription?",
   },

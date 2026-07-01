@@ -420,7 +420,7 @@ export const fr = {
     freeTrialFilmTagline:
       "Votre essai gratuit personnalisé de 15 secondes est en cours de préparation.",
     freeTrialFilmSynopsisFallback:
-      "Notre équipe prépare votre film d'essai. Il sera disponible ici dès qu'il sera prêt.",
+      "Aucun résumé pour les essais de 15 secondes.",
     navLabel: "Sections de Mon espace",
     confirmCancelSubscription:
       "Confirmer la résiliation de votre abonnement ?",
