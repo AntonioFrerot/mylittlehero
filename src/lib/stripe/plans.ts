@@ -9,6 +9,9 @@ const PURCHASE_PRICE_ENV: Record<PurchasePlanId, string> = {
   "film-5min": "STRIPE_PRICE_FILM_5MIN",
   "film-10min": "STRIPE_PRICE_FILM_10MIN",
   "pack-3films": "STRIPE_PRICE_PACK_3FILMS",
+  "ticket-1": "STRIPE_PRICE_TICKET_1",
+  "ticket-3": "STRIPE_PRICE_TICKET_3",
+  "ticket-10": "STRIPE_PRICE_TICKET_10",
 };
 
 const SUBSCRIPTION_PRICE_ENV: Record<PricingPlanId, string> = {

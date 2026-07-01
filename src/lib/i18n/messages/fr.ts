@@ -11,6 +11,9 @@ export const fr = {
     creerTitle: "Créer son film — Offres",
     creerDescription:
       "Choisissez votre formule ou essayez gratuitement un film personnalisé de 15 secondes.",
+    tarifsTitle: "Tarifs — Abonnements",
+    tarifsDescription:
+      "Découvrez nos formules d'abonnement pour créer des films personnalisés.",
     achatTitle: "Tarifs — Offres test",
     achatDescription:
       "Offres à l'unité pour tester de nouvelles formules de films personnalisés.",
@@ -174,11 +177,15 @@ export const fr = {
     mainCharacter: "principal",
     characterAge: "{age} ans",
     validatedAt: "Validé le {date}",
+    createdAt: "Créé le {date}",
+    freeTrialBadge: "Essai gratuit",
     allCharacters: "Personnages du film",
     nothingSpecified: "Rien de spécifique",
     deliveryTitle: "Livrer le film au client",
     deliveryLead:
       "Une fois envoyé, la vidéo et l'affiche apparaîtront sur la page du film du client.",
+    deliveryLeadFreeTrial:
+      "Une fois envoyé, la vidéo YouTube apparaîtra dans l'espace du client.",
     youtubeUrlLabel: "Lien YouTube (non répertorié)",
     youtubeUrlHint: "Ex. https://www.youtube.com/watch?v=... ou https://youtu.be/...",
     posterLabel: "Affiche du film",
@@ -277,6 +284,9 @@ export const fr = {
     adminFilmRegeneratedTitle: "Histoire régénérée — {client}",
     adminFilmRegeneratedBody:
       "« {title} » : le client a demandé une nouvelle histoire.",
+    adminFreeTrialCreatedTitle: "Essai gratuit à livrer — {client}",
+    adminFreeTrialCreatedBody:
+      "{character} · {themes} · {duration} — le client attend son film d'essai de 15 s.",
     adminViewQueue: "Voir l'administration",
   },
   space: {
@@ -407,6 +417,10 @@ export const fr = {
     freeTrialViewFilm: "Voir l'essai",
     freeTrialFilmEyebrow: "Essai gratuit",
     freeTrialFilmMetaTitle: "Essai gratuit",
+    freeTrialFilmTagline:
+      "Votre essai gratuit personnalisé de 15 secondes est en cours de préparation.",
+    freeTrialFilmSynopsisFallback:
+      "Notre équipe prépare votre film d'essai. Il sera disponible ici dès qu'il sera prêt.",
     navLabel: "Sections de Mon espace",
     confirmCancelSubscription:
       "Confirmer la résiliation de votre abonnement ?",
@@ -522,6 +536,85 @@ export const fr = {
           duration: "Durée : 2 à 10 minutes (au choix)",
           custom: "Personnalisation complète",
         },
+      },
+    },
+  },
+  tarifsPage: {
+    backHome: "← Retour à l'accueil",
+    heroEyebrow: "Tarifs & formules",
+    title: "Créer le film de votre enfant",
+    subtitle:
+      "Choisissez l'abonnement qui vous correspond.",
+    valueProposition:
+      "Chaque formule inclut un film personnalisé avec le prénom et les passions de votre enfant — prêt à regarder dans votre espace, quand vous voulez.",
+    filmsPerYear: "films / an",
+    filmsQuota: "films / mois",
+    choosePlan: "S'abonner",
+    perFilmUnit: "1 film = {amount}",
+    mostPopular: "Le rdv de la semaine",
+    bestValue: "Meilleur rapport",
+    billingYearly: "Abonnement annuel",
+    billingMonthly: "Abonnement mensuel",
+    paymentNotice:
+      "Paiement sécurisé par carte bancaire (Stripe). Vous serez redirigé vers une page de paiement.",
+    periodMonthly: "/ mois",
+    periodYearly: "/ an",
+    monthlyEquivalent: "Soit {amount} / mois",
+    savingsLabel: "Économisez {amount} par an (−{percent} %)",
+    features: {
+      filmDuration: "5 minutes de film",
+      fullCustom: "Personnalisation complète",
+      delivery24h: "Réception sous 24 h",
+      supportStandard: "Support client",
+      supportPriority: "Support client prioritaire",
+      accumulateFilms: "Cumuler pour un film plus long",
+    },
+    billingToggle: {
+      label: "Choisir la facturation",
+      monthly: "Mensuel",
+      yearly: "Annuel",
+      savingsBadge: "Économisez {percent} %",
+    },
+    nav: {
+      label: "Navigation des offres",
+      subscriptions: "Abonnements",
+      tickets: "Tickets",
+    },
+    sections: {
+      subscriptionsStep: "01 — Abonnements",
+      subscriptionsTitle: "Choisissez votre abonnement",
+      monthlyLead:
+        "Un film par mois pour un moment privilégié, ou une histoire chaque semaine pour les plus gourmands.",
+      yearlyLead:
+        "Engagez-vous sur l'année et bénéficiez du meilleur prix au film — idéal pour ne jamais manquer une occasion.",
+      ticketsStep: "02 — Tickets",
+      ticketsTitle: "Tickets",
+      ticketsLead: "Sans abonnement : achetez des tickets et créez un film quand l'envie vous prend.",
+    },
+    tickets: {
+      eyebrow: "À l'unité",
+      countOne: "1 ticket",
+      countMany: "{count} tickets",
+      oneFilmEach: "1 ticket = 5 minutes de film",
+      buy: "Acheter",
+    },
+    plans: {
+      monthly1Film: {
+        name: "Essentiel",
+        films: "1 film / mois",
+      },
+      monthlyWeekly: {
+        name: "Premium",
+        films: "1 film / semaine",
+        tagline: "Le rdv de la semaine",
+      },
+      yearly12Films: {
+        name: "Essentiel",
+        films: "1 film / mois",
+      },
+      yearly48Films: {
+        name: "Premium",
+        films: "1 film / semaine",
       },
     },
   },

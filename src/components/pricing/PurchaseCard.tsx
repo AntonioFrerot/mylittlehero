@@ -1,4 +1,4 @@
-import type { PurchasePlan, PurchasePlanId } from "@/lib/i18n/purchase-catalog";
+import type { PurchasePlan, AchatPurchasePlanId } from "@/lib/i18n/purchase-catalog";
 import { PurchaseOfferBody } from "@/components/pricing/PurchaseOfferBody";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import {
@@ -7,7 +7,7 @@ import {
   SURFACE_3D_PURCHASE_INNER_FEATURED,
 } from "@/lib/ui/button-3d-classes";
 
-const PLAN_ACCENT: Record<PurchasePlanId, string> = {
+const PLAN_ACCENT: Record<AchatPurchasePlanId, string> = {
   "film-5min": "purchase-offer--amber",
   "film-10min": "purchase-offer--violet",
   "pack-3films": "purchase-offer--gold",

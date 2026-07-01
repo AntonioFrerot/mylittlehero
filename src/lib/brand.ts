@@ -14,6 +14,11 @@ export const SITE_TICKET_SRC = "/brand/ticket.png?v=9";
 export const SITE_TICKET_IMAGE_WIDTH = 87;
 export const SITE_TICKET_IMAGE_HEIGHT = 112;
 
+/** Ticket 3D — page /tarifs (cartes packs). */
+export const SITE_TICKET_TARIFS_SRC = "/brand/ticket-tarifs.png?v=1";
+export const SITE_TICKET_TARIFS_WIDTH = 500;
+export const SITE_TICKET_TARIFS_HEIGHT = 500;
+
 export function pageTitle(pageLabel: string): string {
   return `${pageLabel} — ${BRAND_NAME}`;
 }

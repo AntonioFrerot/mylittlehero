@@ -49,7 +49,7 @@ export function getFilmDisplayTitle(
   generatedTitle?: string | null
 ): string {
   if (isUserFreeTrialFilm(film)) {
-    return "";
+    return buildLocalizedFilmTitle(film.themes, userLocale);
   }
 
   if (generatedTitle?.trim()) {
@@ -71,18 +71,6 @@ export function buildUserFilmPageCopy(
 ) {
   const t = createTranslator(userLocale);
 
-  if (isUserFreeTrialFilm(film)) {
-    return {
-      tagline: undefined,
-      intro: "",
-      lead: "",
-      heroName: "",
-      heroPhotoSrc: undefined as string | undefined,
-      heroPhotoAlt: "",
-      synopsis: "",
-    };
-  }
-
   const main = getMainCharacter(film);
   const heroName = main?.prenom ?? t("space.filmHeroFallbackName");
   const primaryTheme = film.themes
@@ -92,6 +80,22 @@ export function buildUserFilmPageCopy(
   const intro = primaryTheme
     ? t(themeIntroKey(primaryTheme), { name: heroName })
     : t("space.filmIntro", { name: heroName });
+
+  if (isUserFreeTrialFilm(film)) {
+    const synopsisBody =
+      film.additionalInfo?.trim() || t("space.freeTrialFilmSynopsisFallback");
+    const synopsis = `${t("space.filmSynopsisHeading")} ${synopsisBody}`;
+
+    return {
+      tagline: t("space.freeTrialFilmTagline"),
+      intro,
+      lead: t("space.filmLead", { name: heroName }),
+      heroName,
+      heroPhotoSrc: main?.photoSrc,
+      heroPhotoAlt: t("space.filmHeroPhotoAlt", { name: heroName }),
+      synopsis,
+    };
+  }
 
   const synopsisBody = stripSynopsisPrefix(
     resume?.trim() || film.additionalInfo?.trim() || t("space.filmSynopsisFallback")

@@ -13,10 +13,12 @@ export function resolveUserFilmPageMedia(
   isFreeTrial: boolean
 ): UserFilmPageMediaState {
   if (isFreeTrial) {
+    const hasAdminVideo = Boolean(film.videoSrc?.trim());
+
     return {
-      showPosterPlaceholder: false,
-      showInCreationMedia: false,
-      showVideoMedia: false,
+      showPosterPlaceholder: !hasAdminVideo,
+      showInCreationMedia: !hasAdminVideo,
+      showVideoMedia: hasAdminVideo,
       posterSrc: undefined,
     };
   }

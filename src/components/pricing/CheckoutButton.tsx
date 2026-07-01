@@ -6,6 +6,7 @@ import { useLocale } from "@/components/LocaleProvider";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { requestCheckoutSession } from "@/lib/stripe/start-checkout-client";
 import type { CheckoutPlanId, CheckoutPlanType } from "@/lib/stripe/plans";
+import { resolvePurchasePricingPath, resolveSubscriptionPricingPath } from "@/lib/navigation/subscription-pricing";
 
 type CheckoutButtonProps = {
   planId: CheckoutPlanId;
@@ -16,7 +17,10 @@ type CheckoutButtonProps = {
 };
 
 function getLoginRedirect(planType: CheckoutPlanType, planId: CheckoutPlanId): string {
-  const base = planType === "purchase" ? "/achat" : "/creer";
+  const base =
+    planType === "purchase"
+      ? resolvePurchasePricingPath(window.location.pathname)
+      : resolveSubscriptionPricingPath(window.location.pathname);
   return `${base}?checkout=${encodeURIComponent(planId)}`;
 }
 
@@ -54,6 +58,10 @@ export function CheckoutButton({
     const result = await requestCheckoutSession({
       planId,
       planType,
+      returnPath:
+        planType === "subscription"
+          ? resolveSubscriptionPricingPath(window.location.pathname)
+          : resolvePurchasePricingPath(window.location.pathname),
     });
 
     if (!result.ok) {

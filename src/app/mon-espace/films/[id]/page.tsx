@@ -98,6 +98,7 @@ export default async function UserFilmPage({ params }: PageProps) {
   const {
     showPosterPlaceholder,
     showInCreationMedia,
+    showVideoMedia,
     posterSrc,
   } = pageMedia;
   const shouldPollStory = filmNeedsStoryPoll(filmWithStory);
@@ -118,9 +119,7 @@ export default async function UserFilmPage({ params }: PageProps) {
           </Link>
 
           <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-gold-light/90">
-            {isFreeTrial
-              ? t("space.freeTrialFilmEyebrow")
-              : translateFilmDisplayStatus(displayStatus, userLocale)}
+            {translateFilmDisplayStatus(displayStatus, userLocale)}
           </p>
           {displayTitle ? (
             <h1 className="font-display mt-2 text-2xl font-bold leading-tight text-cream sm:text-3xl md:text-4xl lg:text-5xl">
@@ -155,7 +154,7 @@ export default async function UserFilmPage({ params }: PageProps) {
               />
             ) : null}
 
-            {!isFreeTrial ? (
+            {(showPosterPlaceholder || posterSrc) ? (
               <aside className="order-1 mx-auto w-full max-w-[220px] shrink-0 sm:max-w-[260px] lg:absolute lg:bottom-0 lg:right-0 lg:order-2 lg:mx-0 lg:w-[280px] xl:w-[300px]">
                 {showPosterPlaceholder ? (
                   <UserFilmPosterAwaitingPlaceholder
@@ -179,19 +178,21 @@ export default async function UserFilmPage({ params }: PageProps) {
             ) : null}
           </div>
 
-          {!isFreeTrial ? (
+          {(showVideoMedia || showInCreationMedia) ? (
             <div className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-cinema-surface shadow-glow-gold-subtle">
               <UserFilmMedia
                 posterSrc={posterSrc}
                 videoPosterSrc={film.videoPosterSrc}
                 videoSrc={film.videoSrc}
-                title={displayTitle}
-                posterAlt={t("space.filmPosterAlt", { title: displayTitle })}
+                title={displayTitle || t("space.freeTrialFilmMetaTitle")}
+                posterAlt={t("space.filmPosterAlt", {
+                  title: displayTitle || t("space.freeTrialFilmMetaTitle"),
+                })}
                 inCreationLabel={
                   showInCreationMedia
-                    ? displayStatus === "awaiting_validation"
-                      ? t("space.filmAwaitingValidationLabel")
-                      : t("space.filmInCreationLabel")
+                    ? isFreeTrial || displayStatus !== "awaiting_validation"
+                      ? t("space.filmInCreationLabel")
+                      : t("space.filmAwaitingValidationLabel")
                     : undefined
                 }
               />

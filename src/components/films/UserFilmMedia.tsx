@@ -2,6 +2,7 @@ import { ExampleFilmComingSoonOverlay } from "@/components/films/ExampleFilmComi
 import { FilmVideoMedia } from "@/components/films/FilmVideoMedia";
 import { FILM_IN_CREATION_PREVIEW_SRC } from "@/lib/leo-example-posters";
 import { BLURRED_PLACEHOLDER_IMAGE_QUALITY } from "@/lib/images/image-quality";
+import { getYouTubeThumbnailUrl } from "@/lib/youtube";
 import Image from "next/image";
 
 type UserFilmMediaProps = {
@@ -43,13 +44,17 @@ export function UserFilmMedia({
     );
   }
 
-  if (!posterSrc) {
+  const resolvedPosterSrc =
+    posterSrc?.trim() ||
+    (videoSrc ? getYouTubeThumbnailUrl(videoSrc) ?? undefined : undefined);
+
+  if (!resolvedPosterSrc) {
     return null;
   }
 
   return (
     <FilmVideoMedia
-      posterSrc={posterSrc}
+      posterSrc={resolvedPosterSrc}
       videoPosterSrc={videoPosterSrc}
       videoSrc={videoSrc}
       title={title}

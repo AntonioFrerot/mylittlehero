@@ -5,6 +5,8 @@ import { getSession } from "@/lib/auth/get-session";
 import { isAdminEmail } from "@/lib/auth/is-admin";
 import { deliverUserFilm } from "@/lib/film-creation/actions";
 import { saveFilmPoster } from "@/lib/film-creation/film-poster";
+import { getUserFilmById } from "@/lib/film-creation/store";
+import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
 import { isYouTubeUrl } from "@/lib/youtube";
 
 export type AdminDeliverFilmState = {
@@ -46,20 +48,44 @@ export async function deliverFilmToClient(
   if (!isYouTubeUrl(videoSrc)) {
     return { error: "Le lien doit être une URL YouTube valide." };
   }
-  if (!(poster instanceof File) || poster.size === 0) {
+
+  const existingFilm = await getUserFilmById(ownerEmail.trim(), filmId.trim());
+  if (!existingFilm) {
+    return { error: "Film introuvable." };
+  }
+
+  const isFreeTrial = isUserFreeTrialFilm(existingFilm);
+  const posterFile = poster instanceof File && poster.size > 0 ? poster : null;
+
+  if (!isFreeTrial && !posterFile) {
     return { error: "Ajoutez l'affiche du film." };
   }
 
-  const savedPoster = await saveFilmPoster(ownerEmail.trim(), filmId.trim(), poster);
-  if (!savedPoster.ok) {
-    return { error: savedPoster.error };
+  let delivery: {
+    videoSrc: string;
+    posterSrc?: string;
+    videoPosterSrc?: string;
+  } = {
+    videoSrc: videoSrc.trim(),
+  };
+
+  if (!isFreeTrial && posterFile) {
+    const savedPoster = await saveFilmPoster(
+      ownerEmail.trim(),
+      filmId.trim(),
+      posterFile
+    );
+    if (!savedPoster.ok) {
+      return { error: savedPoster.error };
+    }
+    delivery = {
+      ...delivery,
+      posterSrc: savedPoster.posterSrc,
+      videoPosterSrc: savedPoster.posterSrc,
+    };
   }
 
-  const film = await deliverUserFilm(ownerEmail.trim(), filmId.trim(), {
-    posterSrc: savedPoster.posterSrc,
-    videoPosterSrc: savedPoster.posterSrc,
-    videoSrc: videoSrc.trim(),
-  });
+  const film = await deliverUserFilm(ownerEmail.trim(), filmId.trim(), delivery);
 
   if (!film) {
     return { error: "Film introuvable ou déjà livré." };

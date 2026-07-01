@@ -277,6 +277,22 @@ export async function saveFilmCreation(
 
   await addUserFilm(session.email, film);
 
+  if (isFreeFilm) {
+    try {
+      const { notifyAdminsFreeTrialCreated } = await import(
+        "@/lib/notifications/notify-admins-free-trial-created"
+      );
+      await notifyAdminsFreeTrialCreated(session.email, film);
+    } catch (error) {
+      console.error("Free trial admin notification failed", {
+        email: session.email,
+        filmId: film.id,
+        error,
+      });
+    }
+    revalidatePath("/admin");
+  }
+
   if (!isFreeFilm) {
     try {
       await provisionStoryWorkspace(session.email, film);
@@ -293,6 +309,7 @@ export async function saveFilmCreation(
   revalidatePath("/mon-espace");
   revalidatePath("/creer-film");
   revalidatePath("/creer");
+  revalidatePath("/tarifs");
   revalidatePath("/achat");
   revalidatePath("/catalogue");
 

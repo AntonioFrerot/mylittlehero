@@ -9,6 +9,7 @@ import { useActionState, useEffect } from "react";
 type AdminDeliverFilmFormProps = {
   ownerEmail: string;
   filmId: string;
+  isFreeTrial?: boolean;
 };
 
 const initialState: AdminDeliverFilmState = {};
@@ -16,6 +17,7 @@ const initialState: AdminDeliverFilmState = {};
 export function AdminDeliverFilmForm({
   ownerEmail,
   filmId,
+  isFreeTrial = false,
 }: AdminDeliverFilmFormProps) {
   const { t } = useLocale();
   const router = useRouter();
@@ -38,11 +40,16 @@ export function AdminDeliverFilmForm({
     >
       <input type="hidden" name="ownerEmail" value={ownerEmail} />
       <input type="hidden" name="filmId" value={filmId} />
+      {isFreeTrial ? (
+        <input type="hidden" name="isFreeTrial" value="1" />
+      ) : null}
 
       <h3 className="text-sm font-semibold text-cream">
         {t("admin.deliveryTitle")}
       </h3>
-      <p className="mt-1 text-xs text-cream/55">{t("admin.deliveryLead")}</p>
+      <p className="mt-1 text-xs text-cream/55">
+        {isFreeTrial ? t("admin.deliveryLeadFreeTrial") : t("admin.deliveryLead")}
+      </p>
 
       <div className="mt-4 space-y-4">
         <label className="block">
@@ -61,21 +68,23 @@ export function AdminDeliverFilmForm({
           </span>
         </label>
 
-        <label className="block">
-          <span className="text-xs font-medium uppercase tracking-wide text-cream/45">
-            {t("admin.posterLabel")}
-          </span>
-          <input
-            type="file"
-            name="poster"
-            accept="image/jpeg,image/png,image/webp"
-            required
-            className="mt-2 block w-full text-sm text-cream/70 file:mr-3 file:rounded-md file:border-0 file:bg-gold/20 file:px-3 file:py-2 file:text-sm file:font-medium file:text-cream hover:file:bg-gold/30"
-          />
-          <span className="mt-1 block text-xs text-cream/45">
-            {t("admin.posterHint")}
-          </span>
-        </label>
+        {!isFreeTrial ? (
+          <label className="block">
+            <span className="text-xs font-medium uppercase tracking-wide text-cream/45">
+              {t("admin.posterLabel")}
+            </span>
+            <input
+              type="file"
+              name="poster"
+              accept="image/jpeg,image/png,image/webp"
+              required
+              className="mt-2 block w-full text-sm text-cream/70 file:mr-3 file:rounded-md file:border-0 file:bg-gold/20 file:px-3 file:py-2 file:text-sm file:font-medium file:text-cream hover:file:bg-gold/30"
+            />
+            <span className="mt-1 block text-xs text-cream/45">
+              {t("admin.posterHint")}
+            </span>
+          </label>
+        ) : null}
       </div>
 
       {state.error ? (

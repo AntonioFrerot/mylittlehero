@@ -6,6 +6,7 @@ import { useLocale } from "@/components/LocaleProvider";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { requestCheckoutSession } from "@/lib/stripe/start-checkout-client";
 import type { CheckoutPlanId, CheckoutPlanType } from "@/lib/stripe/plans";
+import { resolvePurchasePricingPath, resolveSubscriptionPricingPath } from "@/lib/navigation/subscription-pricing";
 import { SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
 
 type CheckoutLauncherProps = {
@@ -17,7 +18,14 @@ function isCheckoutPlanId(
   value: string
 ): value is CheckoutPlanId {
   if (planType === "purchase") {
-    return ["film-5min", "film-10min", "pack-3films"].includes(value);
+    return [
+      "film-5min",
+      "film-10min",
+      "pack-3films",
+      "ticket-1",
+      "ticket-3",
+      "ticket-10",
+    ].includes(value);
   }
   return [
     "standard-monthly",
@@ -67,6 +75,10 @@ export function CheckoutLauncher({ planType }: CheckoutLauncherProps) {
     const result = await requestCheckoutSession({
       planId,
       planType,
+      returnPath:
+        planType === "subscription"
+          ? resolveSubscriptionPricingPath(window.location.pathname)
+          : resolvePurchasePricingPath(window.location.pathname),
     });
 
     if (!result.ok) {

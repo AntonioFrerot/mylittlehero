@@ -2,10 +2,12 @@ import type { LocaleCode } from "./locales";
 import { createTranslator } from "./translator";
 import type { TranslationKey } from "./translator";
 
-export type PurchasePlanId = "film-5min" | "film-10min" | "pack-3films";
+export type AchatPurchasePlanId = "film-5min" | "film-10min" | "pack-3films";
+export type TarifsTicketPlanId = "ticket-1" | "ticket-3" | "ticket-10";
+export type PurchasePlanId = AchatPurchasePlanId | TarifsTicketPlanId;
 
 export type PurchasePlan = {
-  id: PurchasePlanId;
+  id: AchatPurchasePlanId;
   name: string;
   subtitle: string;
   price: string;
@@ -20,7 +22,7 @@ export type PurchasePlan = {
 };
 
 const PLAN_CONFIG: Record<
-  PurchasePlanId,
+  AchatPurchasePlanId,
   {
     name: TranslationKey;
     subtitle: TranslationKey;
@@ -93,7 +95,7 @@ function formatMoney(amount: number, locale: LocaleCode): string {
 export function getPurchasePlans(locale: LocaleCode): PurchasePlan[] {
   const t = createTranslator(locale);
 
-  return (Object.keys(PLAN_CONFIG) as PurchasePlanId[]).map((id) => {
+  return (Object.keys(PLAN_CONFIG) as AchatPurchasePlanId[]).map((id) => {
     const config = PLAN_CONFIG[id];
     return {
       id,

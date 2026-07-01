@@ -16,13 +16,12 @@ export type AdminFilmsByStatus = {
 };
 
 function isFilmAwaitingCreation(film: UserFilmWithStory): boolean {
-  if (isUserFreeTrialFilm(film)) return false;
   if (normalizeFilmStatus(film.status) === "ready") return false;
+  if (isUserFreeTrialFilm(film)) return true;
   return Boolean(film.storyValidatedAt?.trim());
 }
 
 function isFilmCompleted(film: UserFilmWithStory): boolean {
-  if (isUserFreeTrialFilm(film)) return false;
   return normalizeFilmStatus(film.status) === "ready";
 }
 

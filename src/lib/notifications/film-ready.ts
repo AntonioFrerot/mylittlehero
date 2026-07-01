@@ -5,6 +5,7 @@ import { readStoryManifest } from "@/lib/story-generation/manifest";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { createNotification } from "./store";
+import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
 
 export async function createFilmReadyNotification(
   userEmail: string,
@@ -13,11 +14,14 @@ export async function createFilmReadyNotification(
   const locale = (await getUserLocale(userEmail)) as LocaleCode;
   const t = createTranslator(locale);
   const manifest = await readStoryManifest(userEmail, film.id);
-  const displayTitle = getFilmDisplayTitle(
+  let displayTitle = getFilmDisplayTitle(
     film,
     locale,
     manifest?.generatedTitle
   );
+  if (!displayTitle && isUserFreeTrialFilm(film)) {
+    displayTitle = t("space.freeTrialFilmMetaTitle");
+  }
 
   await createNotification({
     userEmail,

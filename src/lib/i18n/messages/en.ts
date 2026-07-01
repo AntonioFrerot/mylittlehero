@@ -11,6 +11,9 @@ export const en = {
     creerTitle: "Create a film — Plans",
     creerDescription:
       "Choose your plan or try a free 2-minute personalised film.",
+    tarifsTitle: "Pricing — Subscriptions",
+    tarifsDescription:
+      "Explore our subscription plans for personalised films.",
     achatTitle: "Purchase — Test offers",
     achatDescription:
       "One-off offers to test new personalised film packages.",
@@ -172,11 +175,15 @@ export const en = {
     mainCharacter: "main",
     characterAge: "Age {age}",
     validatedAt: "Validated on {date}",
+    createdAt: "Created on {date}",
+    freeTrialBadge: "Free trial",
     allCharacters: "Film characters",
     nothingSpecified: "Nothing specific",
     deliveryTitle: "Deliver film to client",
     deliveryLead:
       "Once sent, the video and poster will appear on the client's film page.",
+    deliveryLeadFreeTrial:
+      "Once sent, the YouTube video will appear in the client's account.",
     youtubeUrlLabel: "YouTube link (unlisted)",
     youtubeUrlHint: "E.g. https://www.youtube.com/watch?v=... or https://youtu.be/...",
     posterLabel: "Film poster",
@@ -272,6 +279,9 @@ export const en = {
     adminFilmRegeneratedTitle: "Story regenerated — {client}",
     adminFilmRegeneratedBody:
       "« {title} »: the customer requested a new story.",
+    adminFreeTrialCreatedTitle: "Free trial to deliver — {client}",
+    adminFreeTrialCreatedBody:
+      "{character} · {themes} · {duration} — the customer is waiting for their 15 s trial film.",
     adminViewQueue: "Open admin",
   },
   space: {
@@ -402,6 +412,10 @@ export const en = {
     freeTrialViewFilm: "View trial",
     freeTrialFilmEyebrow: "Free trial",
     freeTrialFilmMetaTitle: "Free trial",
+    freeTrialFilmTagline:
+      "Your personalised 15-second free trial is being prepared.",
+    freeTrialFilmSynopsisFallback:
+      "Our team is preparing your trial film. It will appear here as soon as it is ready.",
     navLabel: "My account sections",
     confirmCancelSubscription: "Confirm cancellation of your subscription?",
   },
@@ -516,6 +530,84 @@ export const en = {
           duration: "Duration: 2 to 10 minutes (your choice)",
           custom: "Full customisation",
         },
+      },
+    },
+  },
+  tarifsPage: {
+    backHome: "← Back to home",
+    heroEyebrow: "Pricing & plans",
+    title: "Create your child's film",
+    subtitle: "Choose the subscription that's right for you.",
+    valueProposition:
+      "Every plan includes a personalised film with your child's name and passions — ready to watch in your account, whenever you like.",
+    filmsPerYear: "films / year",
+    filmsQuota: "films / month",
+    choosePlan: "Subscribe",
+    perFilmUnit: "1 film = {amount}",
+    mostPopular: "The weekly ritual",
+    bestValue: "Best value",
+    billingYearly: "Yearly subscription",
+    billingMonthly: "Monthly subscription",
+    paymentNotice:
+      "Secure card payment via Stripe. You will be redirected to the checkout page.",
+    periodMonthly: "/ month",
+    periodYearly: "/ year",
+    monthlyEquivalent: "Equivalent to {amount} / month",
+    savingsLabel: "Save {amount} per year (−{percent} %)",
+    features: {
+      filmDuration: "5 minutes of film",
+      fullCustom: "Full customisation",
+      delivery24h: "Delivery within 24 h",
+      supportStandard: "Customer support",
+      supportPriority: "Priority customer support",
+      accumulateFilms: "Save up for a longer film",
+    },
+    billingToggle: {
+      label: "Choose billing cycle",
+      monthly: "Monthly",
+      yearly: "Yearly",
+      savingsBadge: "Save {percent} %",
+    },
+    nav: {
+      label: "Browse plans",
+      subscriptions: "Subscriptions",
+      tickets: "Tickets",
+    },
+    sections: {
+      subscriptionsStep: "01 — Subscriptions",
+      subscriptionsTitle: "Choose your subscription",
+      monthlyLead:
+        "One film a month for a special moment, or a new story every week for the keenest adventurers.",
+      yearlyLead:
+        "Commit for the year and get the best price per film — perfect so you never miss a special occasion.",
+      ticketsStep: "02 — Tickets",
+      ticketsTitle: "Tickets",
+      ticketsLead: "No subscription: buy tickets and create a film whenever inspiration strikes.",
+    },
+    tickets: {
+      eyebrow: "One-off",
+      countOne: "1 ticket",
+      countMany: "{count} tickets",
+      oneFilmEach: "1 ticket = 5 minutes of film",
+      buy: "Buy",
+    },
+    plans: {
+      monthly1Film: {
+        name: "Essential",
+        films: "1 film / month",
+      },
+      monthlyWeekly: {
+        name: "Premium",
+        films: "1 film / week",
+        tagline: "The weekly ritual",
+      },
+      yearly12Films: {
+        name: "Essential",
+        films: "1 film / month",
+      },
+      yearly48Films: {
+        name: "Premium",
+        films: "1 film / week",
       },
     },
   },

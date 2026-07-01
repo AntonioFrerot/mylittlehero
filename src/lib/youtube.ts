@@ -37,6 +37,12 @@ export function getYouTubeWatchUrl(url: string): string | null {
   return `https://www.youtube.com/watch?v=${videoId}`;
 }
 
+export function getYouTubeThumbnailUrl(url: string): string | null {
+  const videoId = parseYouTubeVideoId(url);
+  if (!videoId) return null;
+  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+}
+
 export type YouTubeEmbedOptions = {
   autoplay?: boolean;
   origin?: string;

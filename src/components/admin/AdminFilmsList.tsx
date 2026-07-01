@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AdminDeliverFilmForm } from "@/components/admin/AdminDeliverFilmForm";
 import type { AdminFilmEntry } from "@/lib/film-creation/admin-films";
+import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
 import { formatFilmDuration } from "@/lib/film-creation/types";
 import { getFilmDisplayTitle } from "@/lib/film-creation/user-film-page";
 import {
@@ -38,15 +39,14 @@ function AdminFilmDetails({
   locale: LocaleCode;
 }) {
   const t = createTranslator(locale);
+  const isFreeTrial = isUserFreeTrialFilm(film);
   const main =
     film.characters.find((character) => character.isMain) ??
     film.characters[0] ??
     null;
-  const title = getFilmDisplayTitle(
-    film,
-    locale,
-    film.storyGeneratedTitle ?? film.title
-  );
+  const title =
+    getFilmDisplayTitle(film, locale, film.storyGeneratedTitle ?? film.title) ||
+    (isFreeTrial ? t("space.freeTrialFilmMetaTitle") : "");
   const resume = film.storyResume?.trim() ?? "";
   const themes = film.themes
     .map((theme) => translateFilmTheme(String(theme) as FilmThemeId, locale))
@@ -88,6 +88,11 @@ function AdminFilmDetails({
               <p className="text-sm italic text-gold-light/90">{film.tagline}</p>
             ) : null}
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-cream/55">
+              {isFreeTrial ? (
+                <span className="rounded-full border border-gold/30 bg-gold/10 px-2 py-0.5 text-gold-light">
+                  {t("admin.freeTrialBadge")}
+                </span>
+              ) : null}
               {themes ? <span>{themes}</span> : null}
               {film.durationSeconds ? (
                 <span>{formatFilmDuration(film.durationSeconds)}</span>
@@ -96,6 +101,12 @@ function AdminFilmDetails({
                 <span>
                   {t("admin.validatedAt", {
                     date: formatDate(film.storyValidatedAt, locale),
+                  })}
+                </span>
+              ) : isFreeTrial ? (
+                <span>
+                  {t("admin.createdAt", {
+                    date: formatDate(film.createdAt, locale),
                   })}
                 </span>
               ) : null}
@@ -163,11 +174,17 @@ function AdminAwaitingFilmCard({
   film: AdminFilmEntry;
   locale: LocaleCode;
 }) {
+  const isFreeTrial = isUserFreeTrialFilm(film);
+
   return (
     <article className="rounded-2xl border border-white/10 bg-cinema-night/80 p-5 shadow-lg shadow-black/20 md:p-6">
       <AdminFilmDetails film={film} locale={locale} />
       <div className="mt-6 border-t border-white/8 pt-6">
-        <AdminDeliverFilmForm ownerEmail={film.ownerEmail} filmId={film.id} />
+        <AdminDeliverFilmForm
+          ownerEmail={film.ownerEmail}
+          filmId={film.id}
+          isFreeTrial={isFreeTrial}
+        />
       </div>
     </article>
   );
@@ -181,11 +198,10 @@ function AdminCompletedFilmCard({
   locale: LocaleCode;
 }) {
   const t = createTranslator(locale);
-  const title = getFilmDisplayTitle(
-    film,
-    locale,
-    film.storyGeneratedTitle ?? film.title
-  );
+  const isFreeTrial = isUserFreeTrialFilm(film);
+  const title =
+    getFilmDisplayTitle(film, locale, film.storyGeneratedTitle ?? film.title) ||
+    (isFreeTrial ? t("space.freeTrialFilmMetaTitle") : "");
 
   return (
     <article className="rounded-2xl border border-white/10 bg-cinema-night/60 p-5 md:p-6">

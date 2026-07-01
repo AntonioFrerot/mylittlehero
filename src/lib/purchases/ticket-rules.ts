@@ -16,6 +16,9 @@ export const PLAN_TICKET_GRANTS: Record<PurchasePlanId, number> = {
   "film-5min": 1,
   "film-10min": 2,
   "pack-3films": 6,
+  "ticket-1": 1,
+  "ticket-3": 3,
+  "ticket-10": 10,
 };
 
 export function getTicketsRequiredForDuration(durationSeconds: number): number {

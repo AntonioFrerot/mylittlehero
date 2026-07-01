@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { SITE_TICKET_IMAGE_HEIGHT, SITE_TICKET_IMAGE_WIDTH, SITE_TICKET_SRC } from "@/lib/brand";
 
-type GoldenTicketSize = "header" | "pill" | "card" | "button";
+type GoldenTicketSize = "header" | "pill" | "card" | "button" | "plan";
 
 type GoldenTicketProps = {
   count: number;
@@ -16,6 +16,7 @@ const SIZE_CLASS: Record<GoldenTicketSize, string> = {
   pill: "gold-ticket--pill",
   card: "gold-ticket--card",
   button: "gold-ticket--button",
+  plan: "gold-ticket--plan",
 };
 
 export function GoldenTicket({

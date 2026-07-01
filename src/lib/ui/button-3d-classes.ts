@@ -178,3 +178,10 @@ export const SURFACE_3D_PURCHASE_MOBILE_SHELL_FEATURED =
 
 export const SURFACE_3D_PURCHASE_BANNER =
   "btn-3d btn-3d--primary purchase-offer__banner";
+
+/** Cartes plans — page /tarifs */
+export const SURFACE_3D_TARIFS_PLAN =
+  "btn-3d btn-3d--secondary tarifs-plan-card--3d transition-[border-color,box-shadow,transform] duration-300";
+
+export const SURFACE_3D_TARIFS_PLAN_FEATURED =
+  "btn-3d btn-3d--secondary btn-3d--glow-subtle tarifs-plan-card--3d transition-[border-color,box-shadow,transform] duration-300";
