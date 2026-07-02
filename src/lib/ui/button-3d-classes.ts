@@ -4,6 +4,9 @@ const GLOW_SOFT = "btn-3d--glow-soft";
 const GLOW_FULL = "btn-3d--glow-full";
 const GLOW_SUBTLE = "btn-3d--glow-subtle";
 
+export const BTN_ABONNEMENTS_GOLD_CTA =
+  "abonnements-gold-cta tarifs-plan-card__cta w-full !rounded-xl !px-4 !py-3.5 !text-sm font-semibold";
+
 export const BTN_3D_PRIMARY =
   `btn-3d btn-3d--primary ${GLOW_SOFT} font-semibold hover:brightness-110 hover:scale-[1.02] active:scale-[0.98]`;
 

@@ -5,7 +5,7 @@ import type { AbonnementsSampleOffer } from "@/lib/i18n/tarifs-catalog";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { SITE_JETON_HEIGHT, SITE_JETON_SRC, SITE_JETON_WIDTH } from "@/lib/brand";
-import { SURFACE_3D_TARIFS_PLAN } from "@/lib/ui/button-3d-classes";
+import { BTN_ABONNEMENTS_GOLD_CTA, SURFACE_3D_TARIFS_PLAN } from "@/lib/ui/button-3d-classes";
 
 type AbonnementsSampleBlockProps = {
   offer: AbonnementsSampleOffer;
@@ -50,24 +50,26 @@ export function AbonnementsSampleBlock({ offer, locale }: AbonnementsSampleBlock
           </div>
         </div>
 
-        <div className="tarifs-plan-card__price-block tarifs-ticket-card__price-block text-center">
-          <TarifsPerFilmRow
-            label={t("abonnementsPage.sampleBlock.duration")}
-            centered
-          />
-          <span className="tarifs-plan-card__price">{offer.price}</span>
+        <div className="tarifs-sample-strip__aside">
+          <div className="tarifs-plan-card__price-block tarifs-ticket-card__price-block text-center">
+            <TarifsPerFilmRow
+              label={t("abonnementsPage.sampleBlock.duration")}
+              centered
+            />
+            <span className="tarifs-plan-card__price">{offer.price}</span>
+          </div>
+
+          <div className="tarifs-plan-card__spacer" aria-hidden />
+
+            <CheckoutButton
+              planId={offer.stripePlanId}
+              planType="purchase"
+              variant="primary"
+              className={BTN_ABONNEMENTS_GOLD_CTA}
+            >
+            {t("abonnementsPage.sampleBlock.buy")}
+          </CheckoutButton>
         </div>
-
-        <div className="tarifs-plan-card__spacer" aria-hidden />
-
-        <CheckoutButton
-          planId={offer.stripePlanId}
-          planType="purchase"
-          variant="secondary"
-          className="tarifs-plan-card__cta w-full !rounded-xl !px-4 !py-3.5 !text-sm !border-white/12 !bg-white/[0.03]"
-        >
-          {t("abonnementsPage.sampleBlock.buy")}
-        </CheckoutButton>
       </div>
     </article>
   );

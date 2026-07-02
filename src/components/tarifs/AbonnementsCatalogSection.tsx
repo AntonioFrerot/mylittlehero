@@ -52,7 +52,7 @@ export function AbonnementsCatalogSection({
         <div key="tickets" className="abonnements-catalog__tickets-stack">
           <div className="tarifs-tickets__grid abonnements-catalog__tickets-grid grid gap-6 sm:grid-cols-2 lg:grid-cols-6 lg:gap-8">
             {ticketPlans.map((plan) => (
-              <TarifsTicketCard key={plan.id} plan={plan} locale={locale} />
+              <TarifsTicketCard key={plan.id} plan={plan} locale={locale} goldCheckout />
             ))}
             <div className="abonnements-catalog__sample-slot">
               <AbonnementsSampleBlock offer={sampleOffer} locale={locale} />
@@ -70,6 +70,7 @@ export function AbonnementsCatalogSection({
               plan={plan}
               locale={locale}
               showYearlySavings={false}
+              goldCheckout
             />
           ))}
         </div>

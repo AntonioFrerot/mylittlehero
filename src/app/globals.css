@@ -727,7 +727,75 @@ select:disabled,
   }
 }
 
-/* Page abonnements — espacements catalogue */
+/* Page abonnements — bouton doré (référence capture) */
+.abonnements-page .abonnements-gold-cta.btn-3d,
+.abonnements-page .abonnements-gold-cta.btn-3d--primary {
+  border: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: #d4ad3a !important;
+  background-image: linear-gradient(
+    180deg,
+    #f3d67a 0%,
+    #ebc94f 24%,
+    #d9b23f 58%,
+    #b8892a 100%
+  ) !important;
+  color: #14120e !important;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em;
+  text-shadow: none;
+  border-radius: 0.75rem !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.16),
+    0 2px 5px rgba(0, 0, 0, 0.34) !important;
+  transform: none !important;
+  filter: none !important;
+  transition:
+    background-image 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.abonnements-page .abonnements-gold-cta.btn-3d:hover,
+.abonnements-page .abonnements-gold-cta.btn-3d--primary:hover {
+  filter: none !important;
+  background-image: linear-gradient(
+    180deg,
+    #f6dc84 0%,
+    #efd15a 24%,
+    #deb84a 58%,
+    #c29432 100%
+  ) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.14),
+    0 3px 7px rgba(0, 0, 0, 0.38) !important;
+  transform: none !important;
+}
+
+.abonnements-page .abonnements-gold-cta.btn-3d:active,
+.abonnements-page .abonnements-gold-cta.btn-3d--primary:active {
+  background-image: linear-gradient(
+    180deg,
+    #e4bc4c 0%,
+    #d4ad3a 45%,
+    #a67d24 100%
+  ) !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.22),
+    0 1px 3px rgba(0, 0, 0, 0.28) !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+.abonnements-page .abonnements-gold-cta.btn-3d:disabled,
+.abonnements-page .abonnements-gold-cta.btn-3d--primary:disabled {
+  opacity: 0.55;
+  filter: saturate(0.75) !important;
+}
+
 .abonnements-catalog .tarifs-subscriptions__toolbar {
   gap: 1.5rem;
 }
@@ -887,6 +955,10 @@ select:disabled,
   .abonnements-catalog__tickets-grid .tarifs-ticket-card__visual {
     min-height: 11.75rem;
   }
+
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-ticket-card__visual {
+    min-height: 0;
+  }
 }
 
 .abonnements-catalog__tickets-grid .tarifs-ticket-card__icon-wrap {
@@ -952,67 +1024,153 @@ select:disabled,
   }
 
   .abonnements-catalog__tickets-grid {
-    gap: 1rem;
+    gap: 1.125rem;
   }
 
   .abonnements-catalog__tickets-grid .tarifs-plan-card {
-    padding: 1.125rem 1.25rem 1.25rem;
+    padding: 1.25rem 1.375rem 1.375rem;
+    border-radius: 1.5rem;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.42),
+      0 14px 34px rgba(0, 0, 0, 0.36),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .abonnements-catalog__tickets-grid .tarifs-plan-card:hover,
+  .abonnements-catalog__tickets-grid .tarifs-plan-card--featured:hover {
+    transform: none;
+  }
+
+  .abonnements-catalog__tickets-grid .tarifs-plan-card--featured {
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.42),
+      0 16px 38px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(201, 162, 39, 0.24),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  .abonnements-catalog__tickets-grid .tarifs-plan-card--featured .tarifs-plan-card__badge {
+    top: -0.75rem;
+    padding: 0.375rem 0.875rem;
+    box-shadow:
+      0 6px 18px rgba(201, 162, 39, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.38);
   }
 
   .abonnements-catalog__tickets-grid .tarifs-plan-card__inner {
-    padding-top: 0.25rem;
+    padding-top: 0.3125rem;
   }
 
   .abonnements-catalog__tickets-grid .tarifs-plan-card__eyebrow {
     min-height: 0;
-    margin-bottom: 0.125rem;
+    margin-bottom: 0.25rem;
+    font-size: 0.625rem;
+    letter-spacing: 0.2em;
+    color: rgba(232, 197, 71, 0.85);
   }
 
   .abonnements-catalog__tickets-grid .tarifs-ticket-card__visual {
-    margin-top: 0.25rem;
-    min-height: 7.25rem;
+    margin-top: 0.375rem;
+    min-height: 7.5rem;
+    padding-bottom: 0.125rem;
   }
 
   .abonnements-catalog__tickets-grid .tarifs-ticket-card__icon-wrap {
-    width: 5.5rem;
-    height: 5.5rem;
+    width: 5.75rem;
+    height: 5.75rem;
+  }
+
+  .abonnements-catalog__tickets-grid .tarifs-ticket-card__icon-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 2%;
+    z-index: 0;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(232, 197, 71, 0.16) 0%,
+      rgba(232, 197, 71, 0.05) 48%,
+      transparent 72%
+    );
+    pointer-events: none;
+  }
+
+  .abonnements-catalog__tickets-grid .tarifs-ticket-card__icon-front,
+  .abonnements-catalog__tickets-grid .tarifs-ticket-card__icon-layer {
+    z-index: 1;
   }
 
   .abonnements-catalog__tickets-grid .tarifs-ticket-card__title {
-    margin-top: 0.5rem;
+    margin-top: 0.625rem;
     min-height: 0;
-    font-size: 1.25rem;
+    font-size: 1.3125rem;
     line-height: 1.2;
     text-align: center;
+    color: rgb(248, 244, 236);
   }
 
   .abonnements-catalog__tickets-grid .tarifs-ticket-card__subtitle {
-    margin-top: 0.125rem;
+    margin-top: 0.1875rem;
     min-height: 0;
     font-size: 0.8125rem;
-    line-height: 1.3;
+    line-height: 1.35;
     text-align: center;
+    color: rgba(245, 240, 230, 0.58);
   }
 
   .abonnements-catalog__tickets-grid .tarifs-ticket-card__price-block {
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
+    margin-top: 0.625rem;
+    padding-top: 0.75rem;
     min-height: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: none;
+    position: relative;
+  }
+
+  .abonnements-catalog__tickets-grid .tarifs-ticket-card__price-block::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 8%;
+    right: 8%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1) 18%,
+      rgba(232, 197, 71, 0.22) 50%,
+      rgba(255, 255, 255, 0.1) 82%,
+      transparent
+    );
+    pointer-events: none;
   }
 
   .abonnements-catalog__tickets-grid .tarifs-plan-card__per-film-row {
     min-height: 0;
-    margin-bottom: 0.3125rem;
+    margin-bottom: 0.375rem;
   }
 
   .abonnements-catalog__tickets-grid .tarifs-plan-card__per-film {
     font-size: 0.6875rem;
-    padding: 0.3125rem 0.625rem;
+    padding: 0.375rem 0.75rem;
+    border-color: rgba(201, 162, 39, 0.48);
+    background: linear-gradient(
+      180deg,
+      rgba(201, 162, 39, 0.26) 0%,
+      rgba(201, 162, 39, 0.11) 100%
+    );
+    box-shadow:
+      0 2px 10px rgba(0, 0, 0, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
 
   .abonnements-catalog__tickets-grid .tarifs-plan-card__price {
-    font-size: 2.125rem;
+    font-size: 2.25rem;
+    color: rgb(250, 246, 238);
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.28);
+  }
+
+  .abonnements-catalog__tickets-grid .tarifs-plan-card--featured .tarifs-plan-card__price {
+    text-shadow: 0 0 22px rgba(232, 197, 71, 0.16);
   }
 
   .abonnements-catalog__tickets-grid .tarifs-plan-card__spacer {
@@ -1021,9 +1179,10 @@ select:disabled,
     max-height: 1rem;
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-plan-card__cta {
-    padding-top: 0.6875rem !important;
-    padding-bottom: 0.6875rem !important;
+  .abonnements-catalog__tickets-grid .abonnements-gold-cta {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+    border-radius: 0.75rem !important;
   }
 
   .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-plan-card__per-film {
@@ -1032,9 +1191,23 @@ select:disabled,
     line-height: 1.25;
   }
 
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-sample-strip__aside {
+    display: contents;
+  }
+
   .abonnements-catalog__tickets-grid .tarifs-sample-strip__copy {
     width: 100%;
     text-align: center;
+  }
+
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip__icon-wrap::before {
+    inset: 0;
+    background: radial-gradient(
+      circle,
+      rgba(232, 197, 71, 0.2) 0%,
+      rgba(232, 197, 71, 0.06) 48%,
+      transparent 72%
+    );
   }
 }
 
@@ -1048,104 +1221,122 @@ select:disabled,
   }
 
   .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-plan-card__inner {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 13.75rem;
-    grid-template-rows: auto auto;
-    align-items: center;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
     position: relative;
     padding: 0 !important;
-    min-height: 6.75rem;
+    min-height: 0;
     height: auto !important;
   }
 
   .tarifs-sample-strip__eyebrow {
     position: absolute;
-    top: calc(0.75rem + 7px);
-    left: 1.5rem;
-    right: 1.5rem;
+    top: calc(0.625rem + 7px);
+    left: 1.25rem;
+    right: auto;
     z-index: 1;
     margin: 0;
     width: auto;
     text-align: left;
   }
 
-  .tarifs-sample-strip .tarifs-ticket-card__visual {
-    grid-column: 1;
-    grid-row: 1 / -1;
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-ticket-card__visual {
     display: flex;
+    flex: 1;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    gap: 1.125rem;
+    gap: 0.875rem;
     margin-top: 0;
     min-height: 0;
-    padding: 1.125rem 1.5rem;
+    min-width: 0;
+    padding: 0.875rem 1rem 0.875rem 1.25rem;
+    text-align: left;
   }
 
   .tarifs-sample-strip__copy {
     min-width: 0;
   }
 
-  .tarifs-sample-strip .tarifs-ticket-card__title {
-    margin-top: 0.3125rem;
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-ticket-card__title {
+    margin-top: 0;
     min-height: 0;
-    font-size: 1.3125rem;
+    font-size: 1.25rem;
     line-height: 1.2;
     text-align: left;
   }
 
-  .tarifs-sample-strip .tarifs-ticket-card__subtitle {
-    margin-top: 0.25rem;
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-ticket-card__subtitle {
+    margin-top: 0.1875rem;
     min-height: 0;
     font-size: 0.8125rem;
-    line-height: 1.45;
+    line-height: 1.4;
     text-align: left;
   }
 
-  .tarifs-sample-strip .tarifs-ticket-card__price-block {
-    grid-column: 2;
-    grid-row: 1;
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-sample-strip__aside {
     position: relative;
-    margin-top: 0;
-    padding: 1.125rem 1.375rem 0;
-    min-height: 0;
-    border-top: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 15rem;
+    min-width: 15rem;
+    padding: 0.875rem 1.25rem;
   }
 
-  .tarifs-sample-strip .tarifs-ticket-card__price-block::before {
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-sample-strip__aside::before {
     content: "";
     position: absolute;
-    top: 1.125rem;
-    bottom: 1.125rem;
+    top: 0.875rem;
+    bottom: 0.875rem;
     left: 0;
     width: 1px;
     pointer-events: none;
     background: rgba(255, 255, 255, 0.06);
   }
 
-  .tarifs-sample-strip .tarifs-plan-card__per-film-row {
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-ticket-card__price-block {
+    margin-top: 0;
+    padding: 0;
     min-height: 0;
-    margin-bottom: 0.4375rem;
+    border-top: none;
+    width: 100%;
   }
 
-  .tarifs-sample-strip .tarifs-plan-card__price {
-    font-size: 2.375rem;
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-plan-card__per-film-row {
+    min-height: 0;
+    margin-bottom: 0.375rem;
   }
 
-  .tarifs-sample-strip .tarifs-plan-card__spacer {
-    display: none;
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-plan-card__per-film {
+    white-space: normal;
+    text-align: center;
+    line-height: 1.25;
+    font-size: 0.6875rem;
+    padding: 0.3125rem 0.625rem;
   }
 
-  .tarifs-sample-strip .tarifs-plan-card__cta {
-    grid-column: 2;
-    grid-row: 2;
-    align-self: start;
-    width: calc(100% - 2.75rem);
-    justify-self: center;
-    margin-top: 0.75rem !important;
-    margin-bottom: 1.125rem;
-    padding-top: 0.75rem !important;
-    padding-bottom: 0.75rem !important;
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-plan-card__price {
+    font-size: 2.25rem;
+    line-height: 1;
+  }
+
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-plan-card__spacer {
+    display: block;
+    flex: 0 0 auto;
+    min-height: 0.625rem;
+    max-height: 0.625rem;
+  }
+
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-plan-card__cta {
+    width: 100%;
+    margin-top: 0 !important;
+    margin-bottom: 0;
+    padding-top: 0.6875rem !important;
+    padding-bottom: 0.6875rem !important;
   }
 }
 
@@ -1159,9 +1350,9 @@ select:disabled,
 }
 
 @media (min-width: 768px) {
-  .tarifs-sample-strip__icon-wrap {
-    width: 3.75rem;
-    height: 3.75rem;
+  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-sample-strip__icon-wrap {
+    width: 3.25rem;
+    height: 3.25rem;
   }
 }
 

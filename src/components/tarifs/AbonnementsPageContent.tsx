@@ -15,7 +15,7 @@ export async function AbonnementsPageContent() {
   const sampleOffer = getAbonnementsSampleOffer(locale);
 
   return (
-    <div className="tarifs-page relative min-h-screen pb-20 safe-top-offset md:pb-28">
+    <div className="abonnements-page tarifs-page relative min-h-screen pb-20 safe-top-offset md:pb-28">
       <CheckoutLauncher planType="subscription" />
       <CheckoutLauncher planType="purchase" />
       <div className="tarifs-page__glow tarifs-page__glow--left" aria-hidden />

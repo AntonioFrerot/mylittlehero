@@ -5,6 +5,7 @@ import { CheckoutButton } from "@/components/pricing/CheckoutButton";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import {
+  BTN_ABONNEMENTS_GOLD_CTA,
   SURFACE_3D_TARIFS_PLAN,
   SURFACE_3D_TARIFS_PLAN_FEATURED,
 } from "@/lib/ui/button-3d-classes";
@@ -17,6 +18,7 @@ import {
 type TarifsTicketCardProps = {
   plan: TarifsTicketPlan;
   locale: LocaleCode;
+  goldCheckout?: boolean;
 };
 
 function TarifsTicketIcon({ count }: { count: number }) {
@@ -51,7 +53,7 @@ function TarifsTicketIcon({ count }: { count: number }) {
   );
 }
 
-export function TarifsTicketCard({ plan, locale }: TarifsTicketCardProps) {
+export function TarifsTicketCard({ plan, locale, goldCheckout = false }: TarifsTicketCardProps) {
   const t = createTranslator(locale);
 
   return (
@@ -85,10 +87,14 @@ export function TarifsTicketCard({ plan, locale }: TarifsTicketCardProps) {
         <CheckoutButton
           planId={plan.stripePlanId}
           planType="purchase"
-          variant={plan.highlighted ? "primary" : "secondary"}
-          className={`tarifs-plan-card__cta w-full !rounded-xl !px-4 !py-3.5 !text-sm ${
-            plan.highlighted ? "" : "!border-white/12 !bg-white/[0.03]"
-          }`}
+          variant={goldCheckout || plan.highlighted ? "primary" : "secondary"}
+          className={
+            goldCheckout
+              ? BTN_ABONNEMENTS_GOLD_CTA
+              : `tarifs-plan-card__cta w-full !rounded-xl !px-4 !py-3.5 !text-sm ${
+                  plan.highlighted ? "" : "!border-white/12 !bg-white/[0.03]"
+                }`
+          }
         >
           {t("tarifsPage.tickets.buy")}
         </CheckoutButton>

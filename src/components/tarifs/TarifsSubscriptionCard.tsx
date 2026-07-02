@@ -6,6 +6,7 @@ import { GoldenTicket } from "@/components/tickets/GoldenTicket";
 import { createTranslator } from "@/lib/i18n/translator";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import {
+  BTN_ABONNEMENTS_GOLD_CTA,
   SURFACE_3D_TARIFS_PLAN,
   SURFACE_3D_TARIFS_PLAN_FEATURED,
 } from "@/lib/ui/button-3d-classes";
@@ -14,6 +15,7 @@ type TarifsSubscriptionCardProps = {
   plan: TarifsSubscriptionPlan;
   locale: LocaleCode;
   showYearlySavings?: boolean;
+  goldCheckout?: boolean;
 };
 
 function SavingsGiftIcon() {
@@ -42,6 +44,7 @@ export function TarifsSubscriptionCard({
   plan,
   locale,
   showYearlySavings = true,
+  goldCheckout = false,
 }: TarifsSubscriptionCardProps) {
   const t = createTranslator(locale);
   const isYearly = plan.billing === "yearly";
@@ -132,10 +135,14 @@ export function TarifsSubscriptionCard({
         <CheckoutButton
           planId={plan.stripePlanId}
           planType="subscription"
-          variant={plan.highlighted ? "primary" : "secondary"}
-          className={`tarifs-plan-card__cta w-full !rounded-xl !px-4 !py-3.5 !text-sm ${
-            plan.highlighted ? "" : "!border-0 !bg-white/[0.06]"
-          }`}
+          variant={goldCheckout || plan.highlighted ? "primary" : "secondary"}
+          className={
+            goldCheckout
+              ? BTN_ABONNEMENTS_GOLD_CTA
+              : `tarifs-plan-card__cta w-full !rounded-xl !px-4 !py-3.5 !text-sm ${
+                  plan.highlighted ? "" : "!border-0 !bg-white/[0.06]"
+                }`
+          }
         >
           {t("tarifsPage.choosePlan")}
         </CheckoutButton>
