@@ -13,6 +13,7 @@ import {
   translateFilmDisplayStatus,
 } from "@/lib/film-creation/film-display-status";
 import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
+import { isUserSampleFilm } from "@/lib/film-creation/is-sample-film";
 import { FilmStoryApprovalButtons } from "@/components/espace/FilmStoryApprovalButtons";
 import { FilmStoryGenerationPollLazy } from "@/components/espace/FilmStoryGenerationPollLazy";
 import { FilmStoryRetryButton } from "@/components/espace/FilmStoryRetryButton";
@@ -59,7 +60,7 @@ function getFilmListSynopsis(
   film: UserFilmWithStory,
   t: ReturnType<typeof useLocale>["t"]
 ): { heading?: string; text: string; pending?: boolean } | null {
-  if (isUserFreeTrialFilm(film)) {
+  if (isUserFreeTrialFilm(film) || isUserSampleFilm(film)) {
     return null;
   }
 
@@ -120,6 +121,8 @@ export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
         const isReady = normalizeFilmStatus(film.status) === "ready";
         const filmHref = `/mon-espace/films/${film.id}`;
         const isFreeTrial = isUserFreeTrialFilm(film);
+        const isSample = isUserSampleFilm(film);
+        const isShortPreview = isFreeTrial || isSample;
         const displayTitle = getFilmDisplayTitle(
           film,
           locale,
@@ -133,7 +136,7 @@ export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
             <div className="flex flex-col">
               <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    {!isFreeTrial ? (
+                    {!isShortPreview ? (
                       <h3 className="font-display text-lg font-semibold text-cream md:text-xl">
                         <Link
                           href={filmHref}
@@ -147,7 +150,9 @@ export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
                         href={filmHref}
                         className="text-sm font-medium text-gold-light transition-colors hover:text-gold"
                       >
-                        {t("space.freeTrialViewFilm")}
+                        {isSample
+                          ? t("space.sampleViewFilm")
+                          : t("space.freeTrialViewFilm")}
                       </Link>
                     )}
                     <span className={getStatusStyle(displayStatus)}>
@@ -238,7 +243,7 @@ export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
                       ) : null}
                     </>
                   ) : null}
-                  {!isFreeTrial ? (
+                  {!isShortPreview ? (
                     <FilmStoryRetryButton
                       filmId={film.id}
                       storyStatus={film.storyGeneration?.status}

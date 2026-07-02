@@ -61,6 +61,7 @@ export default async function CreerFilmPage() {
             <FilmCreationForm
               characters={characters}
               ticketBalance={ticketSummary?.balance ?? 0}
+              jetonBalance={ticketSummary?.jetonBalance ?? 0}
               hasActiveSubscription={ticketSummary?.hasActiveSubscription ?? false}
               freeFilmAvailable={ticketSummary?.freeFilmAvailable ?? false}
               cooldownEndsAt={creationCooldown.endsAt}

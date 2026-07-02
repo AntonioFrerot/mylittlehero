@@ -19,6 +19,11 @@ export const SITE_TICKET_TARIFS_SRC = "/brand/ticket-tarifs.png?v=1";
 export const SITE_TICKET_TARIFS_WIDTH = 500;
 export const SITE_TICKET_TARIFS_HEIGHT = 500;
 
+/** Jeton 3D — échantillons 30 s. */
+export const SITE_JETON_SRC = "/brand/jeton.png?v=2";
+export const SITE_JETON_WIDTH = 500;
+export const SITE_JETON_HEIGHT = 500;
+
 export function pageTitle(pageLabel: string): string {
   return `${pageLabel} — ${BRAND_NAME}`;
 }

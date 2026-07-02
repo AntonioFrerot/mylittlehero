@@ -5,6 +5,8 @@ import { useTicketBalance } from "@/hooks/use-ticket-balance";
 import {
   getTicketsRequiredForDuration,
   isFreeTrialFilmDuration,
+  isSampleFilmDuration,
+  JETONS_REQUIRED_FOR_SAMPLE,
 } from "@/lib/purchases/ticket-rules";
 import Link from "next/link";
 import { useLocale } from "@/components/LocaleProvider";
@@ -29,6 +31,7 @@ const initialState: FilmCreationFormState = {};
 type FilmCreationFormProps = {
   characters: Character[];
   ticketBalance: number;
+  jetonBalance: number;
   hasActiveSubscription: boolean;
   freeFilmAvailable: boolean;
   cooldownEndsAt?: string | null;
@@ -37,6 +40,7 @@ type FilmCreationFormProps = {
 export function FilmCreationForm({
   characters,
   ticketBalance,
+  jetonBalance,
   hasActiveSubscription,
   freeFilmAvailable,
   cooldownEndsAt = null,
@@ -57,24 +61,36 @@ export function FilmCreationForm({
 
   const isFreeFilm =
     durationSeconds != null && isFreeTrialFilmDuration(durationSeconds);
+  const isSampleFilm =
+    durationSeconds != null && isSampleFilmDuration(durationSeconds);
   const ticketsRequired =
     durationSeconds != null
-      ? isFreeFilm
+      ? isFreeFilm || isSampleFilm
         ? 0
         : getTicketsRequiredForDuration(durationSeconds)
       : 0;
   const insufficientTickets =
     durationSeconds != null &&
     !isFreeFilm &&
+    !isSampleFilm &&
     !hasActiveSubscription &&
     effectiveTicketBalance < ticketsRequired;
+  const insufficientJetons =
+    isSampleFilm && jetonBalance < JETONS_REQUIRED_FOR_SAMPLE;
   const showSubmitCostBadge =
-    durationSeconds != null && (isFreeFilm || !hasActiveSubscription);
+    durationSeconds != null &&
+    (isFreeFilm || isSampleFilm || !hasActiveSubscription);
 
   function ticketCostLabel(count: number): string {
     return count === 1
       ? t("filmCreation.form.oneTicket")
       : t("filmCreation.form.ticketsCount", { count });
+  }
+
+  function jetonCostLabel(count: number): string {
+    return count === 1
+      ? t("filmCreation.form.oneJeton")
+      : t("filmCreation.form.jetonsCount", { count });
   }
 
   const eligibleCharacters = characters.filter((c) => c.photoSrc);
@@ -95,6 +111,9 @@ export function FilmCreationForm({
     if (insufficientTickets) {
       return t("filmCreation.errors.insufficientTickets");
     }
+    if (insufficientJetons) {
+      return t("filmCreation.errors.insufficientJetons");
+    }
     if (cooldownActive) {
       return t("filmCreation.errors.cooldownActive");
     }
@@ -111,9 +130,16 @@ export function FilmCreationForm({
     setClientError(null);
   }
 
+  const insufficientJetonsMessage = t("filmCreation.errors.insufficientJetons");
+  const showJetonPurchaseCta =
+    insufficientJetons ||
+    clientError === insufficientJetonsMessage ||
+    state.error === insufficientJetonsMessage;
+
   const insufficientTicketsMessage = t("filmCreation.errors.insufficientTickets");
   const showTicketPurchaseCta =
     !hasActiveSubscription &&
+    !showJetonPurchaseCta &&
     (insufficientTickets ||
       clientError === insufficientTicketsMessage ||
       state.error === insufficientTicketsMessage);
@@ -176,6 +202,7 @@ export function FilmCreationForm({
         value={durationSeconds}
         onChange={setDurationSeconds}
         freeFilmAvailable={freeFilmAvailable}
+        jetonBalance={jetonBalance}
       />
 
       <YesNoTextField
@@ -196,7 +223,17 @@ export function FilmCreationForm({
         hint={t("filmCreation.form.storyHint")}
       />
 
-      {showTicketPurchaseCta ? (
+      {showJetonPurchaseCta ? (
+        <div className="rounded-xl border border-amber-500/35 bg-amber-950/30 px-4 py-4 text-center">
+          <p className="text-sm text-amber-100/95">{insufficientJetonsMessage}</p>
+          <Link
+            href="/abonnements"
+            className={`mt-4 inline-flex ${BTN_3D_PRIMARY_ACTION}`}
+          >
+            {t("filmCreation.errors.samplePurchaseCta")}
+          </Link>
+        </div>
+      ) : showTicketPurchaseCta ? (
         <div className="rounded-xl border border-amber-500/35 bg-amber-950/30 px-4 py-4 text-center">
           <p className="text-sm text-amber-100/95">{insufficientTicketsMessage}</p>
           <Link
@@ -223,9 +260,9 @@ export function FilmCreationForm({
             type="submit"
             disabled={pending || eligibleCharacters.length === 0}
             className={`${BTN_FILM_CREATE_SUBMIT}${
-              insufficientTickets ? " film-create-submit--blocked" : ""
+              insufficientTickets || insufficientJetons ? " film-create-submit--blocked" : ""
             }${!showSubmitCostBadge || pending ? " film-create-submit--solo" : ""}`}
-            aria-disabled={insufficientTickets || undefined}
+            aria-disabled={insufficientTickets || insufficientJetons || undefined}
           >
             {pending ? (
               <span className="film-create-submit__pending">
@@ -236,13 +273,17 @@ export function FilmCreationForm({
                 <span className="film-create-submit__label">
                   {t("filmCreation.form.submit")}
                 </span>
-                {!hasActiveSubscription && durationSeconds != null && !isFreeFilm ? (
+                {!hasActiveSubscription && durationSeconds != null && !isFreeFilm && !isSampleFilm ? (
                   <span className="film-create-submit__cost">
                     <TicketCountPill
                       count={ticketsRequired}
                       size="onPrimary"
                       label={ticketCostLabel(ticketsRequired)}
                     />
+                  </span>
+                ) : durationSeconds != null && isSampleFilm ? (
+                  <span className="film-create-submit__cost film-create-submit__cost--sample">
+                    {jetonCostLabel(JETONS_REQUIRED_FOR_SAMPLE)}
                   </span>
                 ) : durationSeconds != null && isFreeFilm ? (
                   <span className="film-create-submit__cost film-create-submit__cost--free">

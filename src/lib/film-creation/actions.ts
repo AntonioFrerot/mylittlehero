@@ -26,7 +26,10 @@ import {
   isAllowedFilmDuration,
   isFreeTrialFilmDuration,
   isPaidFilmDuration,
+  isSampleFilmDuration,
+  JETONS_REQUIRED_FOR_SAMPLE,
 } from "@/lib/purchases/ticket-rules";
+import { spendJetonsForFilm } from "@/lib/purchases/jetons";
 import { spendTicketsForFilm } from "@/lib/purchases/tickets";
 import { addUserFilm, getUserFilmById, listUserFilms, updateUserFilm } from "./store";
 import { hasUserUsedFreeFilm, isUserFreeTrialFilm } from "./free-film";
@@ -87,7 +90,7 @@ function parseDuration(value: unknown): number | null {
   if (typeof value !== "string" || !value.trim()) return null;
   const seconds = Number(value);
   if (!Number.isFinite(seconds)) return null;
-  if (isFreeTrialFilmDuration(seconds)) return seconds;
+  if (isFreeTrialFilmDuration(seconds) || isSampleFilmDuration(seconds)) return seconds;
   if (!isValidFilmDurationSeconds(seconds)) return null;
   return seconds;
 }
@@ -227,6 +230,7 @@ export async function saveFilmCreation(
   }
 
   const isFreeFilm = isFreeTrialFilmDuration(durationSeconds);
+  const isSampleFilm = isSampleFilmDuration(durationSeconds);
 
   if (isFreeFilm) {
     if (hasUserUsedFreeFilm(existingFilms)) {
@@ -242,7 +246,17 @@ export async function saveFilmCreation(
   const ticketsRequired = getTicketsRequiredForDuration(durationSeconds);
   const filmId = randomUUID();
 
-  if (!isFreeFilm) {
+  if (isSampleFilm) {
+    const spendResult = await spendJetonsForFilm({
+      userEmail: session.email,
+      filmId,
+      jetons: JETONS_REQUIRED_FOR_SAMPLE,
+    });
+
+    if (!spendResult.ok) {
+      return { error: t("filmCreation.errors.insufficientJetons") };
+    }
+  } else if (!isFreeFilm) {
     if (!isPaidFilmDuration(durationSeconds)) {
       return { error: t("filmCreation.errors.durationRequired") };
     }
@@ -262,11 +276,12 @@ export async function saveFilmCreation(
 
   const film: UserFilm = {
     id: filmId,
-    title: isFreeFilm ? "" : buildLocalizedFilmTitle(themes, locale),
+    title: isFreeFilm || isSampleFilm ? "" : buildLocalizedFilmTitle(themes, locale),
     style,
     themes,
     durationSeconds,
     ...(isFreeFilm ? { isFreeTrial: true } : {}),
+    ...(isSampleFilm ? { isSample: true } : {}),
     characters: selectedCharacters,
     language: filmLanguage,
     avoid,
@@ -293,7 +308,7 @@ export async function saveFilmCreation(
     revalidatePath("/admin");
   }
 
-  if (!isFreeFilm) {
+  if (!isFreeFilm && !isSampleFilm) {
     try {
       await provisionStoryWorkspace(session.email, film);
       scheduleStoryGeneration(session.email, film);
@@ -310,6 +325,7 @@ export async function saveFilmCreation(
   revalidatePath("/creer-film");
   revalidatePath("/creer");
   revalidatePath("/tarifs");
+  revalidatePath("/abonnements");
   revalidatePath("/achat");
   revalidatePath("/catalogue");
 

@@ -14,6 +14,9 @@ export const fr = {
     tarifsTitle: "Tarifs — Abonnements",
     tarifsDescription:
       "Découvrez nos formules d'abonnement pour créer des films personnalisés.",
+    abonnementsTitle: "Abonnements",
+    abonnementsDescription:
+      "Découvrez nos formules d'abonnement pour créer des films personnalisés.",
     achatTitle: "Tarifs — Offres test",
     achatDescription:
       "Offres à l'unité pour tester de nouvelles formules de films personnalisés.",
@@ -421,6 +424,13 @@ export const fr = {
       "Votre essai gratuit personnalisé de 15 secondes est en cours de préparation.",
     freeTrialFilmSynopsisFallback:
       "Aucun résumé pour les essais de 15 secondes.",
+    sampleViewFilm: "Voir l'échantillon",
+    sampleFilmEyebrow: "Échantillon",
+    sampleFilmMetaTitle: "Échantillon 30 s",
+    sampleFilmTagline:
+      "Votre échantillon personnalisé de 30 secondes est en cours de préparation.",
+    sampleFilmSynopsisFallback:
+      "Aucun résumé pour les échantillons de 30 secondes.",
     navLabel: "Sections de Mon espace",
     confirmCancelSubscription:
       "Confirmer la résiliation de votre abonnement ?",
@@ -624,6 +634,29 @@ export const fr = {
       },
     },
   },
+  abonnementsPage: {
+    heroEyebrow: "Tarifs",
+    title: "Créer le film de votre enfant",
+    subtitle:
+      "Achetez des tickets à l'unité ou souscrivez un abonnement avec engagement.",
+    catalogToggle: {
+      label: "Choisir tickets ou abonnements",
+      tickets: "Tickets",
+      subscriptions: "Abonnements",
+    },
+    catalogIntro: {
+      subscriptionsTitle: "Abonnements",
+      subscriptionsLead: "Choisissez l'abonnement qui vous correspond.",
+    },
+    sampleBlock: {
+      eyebrow: "Échantillon",
+      title: "Échantillon de 30 secondes",
+      lead: "Parfait pour tester sans vous ruiner !",
+      duration: "1 jeton = 30 secondes de film",
+      priceLabel: "Prix",
+      buy: "Acheter",
+    },
+  },
   purchase: {
     backHome: "← Retour à l'accueil",
     title: "Tarifs",
@@ -796,8 +829,11 @@ export const fr = {
       durationChoose: "Choisir une durée…",
       oneTicket: "1 ticket",
       ticketsCount: "{count} tickets",
+      oneJeton: "1 jeton",
+      jetonsCount: "{count} jetons",
       durationFreeBadge: "Gratuit",
       durationFreeOnce: "Tester avec un petit échantillon gratuit",
+      durationSampleNote: "Échantillon payant pour découvrir le rendu",
       avoidQuestion: "Souhaitez-vous éviter quelque chose dans ce film ?",
       avoidPlaceholder: "Ex. pas d'araignées, pas de scènes trop effrayantes…",
       avoidHint: "Monstres, araignées, situations stressantes, etc.",
@@ -845,6 +881,8 @@ export const fr = {
       durationRequired: "Choisissez la durée du film.",
       freeFilmAlreadyUsed: "Vous avez déjà utilisé votre film gratuit de 15 secondes.",
       insufficientTickets: "Vous n'avez pas assez de tickets pour cette durée.",
+      insufficientJetons: "Vous n'avez pas assez de jetons pour cet échantillon.",
+      samplePurchaseCta: "Acheter un échantillon",
       purchaseCta: "Voir les tarifs",
       cooldownActive:
         "Vous devez attendre 24 h après votre dernière création avant d'en lancer une nouvelle.",

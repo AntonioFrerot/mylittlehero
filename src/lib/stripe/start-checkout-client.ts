@@ -1,5 +1,5 @@
 import type { CheckoutPlanId, CheckoutPlanType } from "@/lib/stripe/plans";
-import type { SubscriptionPricingPath } from "@/lib/navigation/subscription-pricing";
+import type { SubscriptionPricingPath, PurchasePricingPath } from "@/lib/navigation/subscription-pricing";
 
 type CheckoutSessionResult =
   | { ok: true; url: string }
@@ -8,7 +8,7 @@ type CheckoutSessionResult =
 export async function requestCheckoutSession(input: {
   planId: CheckoutPlanId;
   planType: CheckoutPlanType;
-  returnPath?: SubscriptionPricingPath | "/tarifs" | "/achat";
+  returnPath?: SubscriptionPricingPath | PurchasePricingPath;
 }): Promise<CheckoutSessionResult> {
   const response = await fetch("/api/stripe/checkout", {
     method: "POST",

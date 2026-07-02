@@ -1,7 +1,7 @@
 import { ensureSchema, getSql, isDatabaseEnabled } from "@/lib/db/client";
 import { normalizeEmail } from "@/lib/db/normalize-email";
 import { attachStoryToFilms } from "./catalog-films";
-import { isUserFreeTrialFilm } from "./is-free-trial-film";
+import { isUserShortPreviewFilm } from "./is-short-preview-film";
 import { listUserFilms } from "./store";
 import type { UserFilmWithStory } from "./types";
 import { normalizeFilmStatus } from "@/lib/i18n/film-labels";
@@ -17,7 +17,7 @@ export type AdminFilmsByStatus = {
 
 function isFilmAwaitingCreation(film: UserFilmWithStory): boolean {
   if (normalizeFilmStatus(film.status) === "ready") return false;
-  if (isUserFreeTrialFilm(film)) return true;
+  if (isUserShortPreviewFilm(film)) return true;
   return Boolean(film.storyValidatedAt?.trim());
 }
 

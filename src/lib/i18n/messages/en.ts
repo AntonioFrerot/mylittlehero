@@ -14,6 +14,9 @@ export const en = {
     tarifsTitle: "Pricing — Subscriptions",
     tarifsDescription:
       "Explore our subscription plans for personalised films.",
+    abonnementsTitle: "Subscriptions",
+    abonnementsDescription:
+      "Explore our subscription plans for personalised films.",
     achatTitle: "Purchase — Test offers",
     achatDescription:
       "One-off offers to test new personalised film packages.",
@@ -416,6 +419,13 @@ export const en = {
       "Your personalised 15-second free trial is being prepared.",
     freeTrialFilmSynopsisFallback:
       "No summary for 15-second trials.",
+    sampleViewFilm: "View sample",
+    sampleFilmEyebrow: "Sample",
+    sampleFilmMetaTitle: "30s sample",
+    sampleFilmTagline:
+      "Your personalised 30-second sample is being prepared.",
+    sampleFilmSynopsisFallback:
+      "No summary for 30-second samples.",
     navLabel: "My account sections",
     confirmCancelSubscription: "Confirm cancellation of your subscription?",
   },
@@ -617,6 +627,29 @@ export const en = {
       },
     },
   },
+  abonnementsPage: {
+    heroEyebrow: "Pricing",
+    title: "Create your child's film",
+    subtitle:
+      "Buy tickets one at a time or subscribe with a commitment plan.",
+    catalogToggle: {
+      label: "Choose tickets or subscriptions",
+      tickets: "Tickets",
+      subscriptions: "Subscriptions",
+    },
+    catalogIntro: {
+      subscriptionsTitle: "Subscriptions",
+      subscriptionsLead: "Choose the subscription that suits you.",
+    },
+    sampleBlock: {
+      eyebrow: "Sample",
+      title: "30-second sample",
+      lead: "Perfect for trying it out without breaking the bank!",
+      duration: "1 token = 30 seconds of film",
+      priceLabel: "Price",
+      buy: "Buy",
+    },
+  },
   purchase: {
     backHome: "← Back to home",
     title: "Purchase",
@@ -788,8 +821,11 @@ export const en = {
       durationChoose: "Choose a duration…",
       oneTicket: "1 ticket",
       ticketsCount: "{count} tickets",
+      oneJeton: "1 token",
+      jetonsCount: "{count} tokens",
       durationFreeBadge: "Free",
       durationFreeOnce: "One-time offer per account",
+      durationSampleNote: "Paid sample to preview the result",
       avoidQuestion: "Would you like to avoid anything in this film?",
       avoidPlaceholder: "E.g. no spiders, no overly scary scenes…",
       avoidHint: "Monsters, spiders, stressful situations, etc.",
@@ -835,6 +871,8 @@ export const en = {
       durationRequired: "Choose the film duration.",
       freeFilmAlreadyUsed: "You have already used your free 15-second film.",
       insufficientTickets: "You don't have enough tickets for this duration.",
+      insufficientJetons: "You don't have enough tokens for this sample.",
+      samplePurchaseCta: "Buy a sample",
       purchaseCta: "View pricing",
       cooldownActive:
         "You must wait 24 hours after your last creation before starting a new one.",

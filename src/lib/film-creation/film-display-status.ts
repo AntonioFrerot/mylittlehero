@@ -1,5 +1,5 @@
 import type { UserFilmWithStory } from "@/lib/film-creation/types";
-import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
+import { isUserShortPreviewFilm } from "@/lib/film-creation/is-short-preview-film";
 import {
   normalizeFilmStatus,
   type FilmStatusId,
@@ -12,7 +12,7 @@ export type FilmDisplayStatusId = FilmStatusId | "awaiting_validation";
 export function resolveFilmDisplayStatus(
   film: UserFilmWithStory
 ): FilmDisplayStatusId {
-  if (isUserFreeTrialFilm(film)) {
+  if (isUserShortPreviewFilm(film)) {
     return normalizeFilmStatus(film.status) ?? "preparing";
   }
 

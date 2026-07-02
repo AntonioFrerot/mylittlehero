@@ -6,7 +6,7 @@ import { isAdminEmail } from "@/lib/auth/is-admin";
 import { deliverUserFilm } from "@/lib/film-creation/actions";
 import { saveFilmPoster } from "@/lib/film-creation/film-poster";
 import { getUserFilmById } from "@/lib/film-creation/store";
-import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
+import { isUserShortPreviewFilm } from "@/lib/film-creation/is-short-preview-film";
 import { isYouTubeUrl } from "@/lib/youtube";
 
 export type AdminDeliverFilmState = {
@@ -54,7 +54,7 @@ export async function deliverFilmToClient(
     return { error: "Film introuvable." };
   }
 
-  const isFreeTrial = isUserFreeTrialFilm(existingFilm);
+  const isFreeTrial = isUserShortPreviewFilm(existingFilm);
   const posterFile = poster instanceof File && poster.size > 0 ? poster : null;
 
   if (!isFreeTrial && !posterFile) {

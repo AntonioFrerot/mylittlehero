@@ -16,7 +16,7 @@ import {
   getFilmDurationSeconds,
 } from "@/lib/film-creation/duration";
 import { getUserFilmByIdForUser } from "@/lib/film-creation/store";
-import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
+import { isUserShortPreviewFilm } from "@/lib/film-creation/is-short-preview-film";
 import { getSession } from "@/lib/auth/get-session";
 import { getUserLocale } from "@/lib/auth/users-store";
 import { BRAND_NAME } from "@/lib/brand";
@@ -80,7 +80,7 @@ export default async function UserFilmPage({ params }: PageProps) {
     userLocale,
     manifest?.generatedTitle
   );
-  const isFreeTrial = isUserFreeTrialFilm(film);
+  const isShortPreview = isUserShortPreviewFilm(film);
   const durationSec = getFilmDurationSeconds(film);
   const durationLabel =
     durationSec != null
@@ -94,7 +94,7 @@ export default async function UserFilmPage({ params }: PageProps) {
     .filter((theme): theme is NonNullable<typeof theme> => theme != null);
 
   const displayStatus = resolveFilmDisplayStatus(filmWithStory);
-  const pageMedia = resolveUserFilmPageMedia(film, isFreeTrial);
+  const pageMedia = resolveUserFilmPageMedia(film, isShortPreview);
   const {
     showPosterPlaceholder,
     showInCreationMedia,
@@ -190,7 +190,7 @@ export default async function UserFilmPage({ params }: PageProps) {
                 })}
                 inCreationLabel={
                   showInCreationMedia
-                    ? isFreeTrial || displayStatus !== "awaiting_validation"
+                    ? isShortPreview || displayStatus !== "awaiting_validation"
                       ? t("space.filmInCreationLabel")
                       : t("space.filmAwaitingValidationLabel")
                     : undefined

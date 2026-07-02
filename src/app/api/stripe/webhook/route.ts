@@ -7,6 +7,8 @@ import {
   markCheckoutSessionProcessed,
 } from "@/lib/purchases/tickets";
 import type { PurchasePlanId } from "@/lib/i18n/purchase-catalog";
+import { isJetonPurchasePlanId } from "@/lib/i18n/purchase-catalog";
+import { grantJetonsFromPurchase } from "@/lib/purchases/jetons";
 import { getStripe, isStripeConfigured } from "@/lib/stripe/client";
 
 export const runtime = "nodejs";
@@ -41,9 +43,18 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
+  if (isJetonPurchasePlanId(planId)) {
+    await grantJetonsFromPurchase({
+      userEmail,
+      planId,
+      stripeSessionId: sessionId,
+    });
+    return;
+  }
+
   await grantTicketsFromPurchase({
     userEmail,
-    planId: planId as PurchasePlanId,
+    planId: planId as Exclude<PurchasePlanId, "jeton-1">,
     stripeSessionId: sessionId,
   });
 }

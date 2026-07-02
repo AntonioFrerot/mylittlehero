@@ -10,7 +10,8 @@ import {
   isHostedProduction,
 } from "@/lib/db/client";
 import { normalizeEmail } from "@/lib/db/normalize-email";
-import type { PurchasePlanId } from "@/lib/i18n/purchase-catalog";
+import type { PurchasePlanId, JetonPurchasePlanId } from "@/lib/i18n/purchase-catalog";
+import { isJetonPurchasePlanId } from "@/lib/i18n/purchase-catalog";
 import {
   PLAN_TICKET_GRANTS,
   TICKET_DURATION_SECONDS,
@@ -252,7 +253,7 @@ export const getTicketBalanceForUser = cache(getTicketBalance);
 
 export async function grantTicketsFromPurchase(input: {
   userEmail: string;
-  planId: PurchasePlanId;
+  planId: Exclude<PurchasePlanId, JetonPurchasePlanId>;
   stripeSessionId: string;
 }): Promise<{ ok: true; ticketsGranted: number } | { ok: false; error: string }> {
   if (isHostedProduction() && !isDatabaseEnabled()) {
@@ -350,6 +351,8 @@ export async function grantAdminTickets(input: {
   return { ok: true, balance };
 }
 
-export function getPlanTicketGrant(planId: PurchasePlanId): number {
+export function getPlanTicketGrant(
+  planId: Exclude<PurchasePlanId, JetonPurchasePlanId>
+): number {
   return PLAN_TICKET_GRANTS[planId];
 }

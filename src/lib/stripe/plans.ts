@@ -12,6 +12,7 @@ const PURCHASE_PRICE_ENV: Record<PurchasePlanId, string> = {
   "ticket-1": "STRIPE_PRICE_TICKET_1",
   "ticket-3": "STRIPE_PRICE_TICKET_3",
   "ticket-10": "STRIPE_PRICE_TICKET_10",
+  "jeton-1": "STRIPE_PRICE_JETON_1",
 };
 
 const SUBSCRIPTION_PRICE_ENV: Record<PricingPlanId, string> = {

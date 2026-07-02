@@ -13,6 +13,7 @@ import {
 type TarifsSubscriptionCardProps = {
   plan: TarifsSubscriptionPlan;
   locale: LocaleCode;
+  showYearlySavings?: boolean;
 };
 
 function SavingsGiftIcon() {
@@ -37,7 +38,11 @@ function SavingsGiftIcon() {
   );
 }
 
-export function TarifsSubscriptionCard({ plan, locale }: TarifsSubscriptionCardProps) {
+export function TarifsSubscriptionCard({
+  plan,
+  locale,
+  showYearlySavings = true,
+}: TarifsSubscriptionCardProps) {
   const t = createTranslator(locale);
   const isYearly = plan.billing === "yearly";
 
@@ -77,17 +82,19 @@ export function TarifsSubscriptionCard({ plan, locale }: TarifsSubscriptionCardP
           {isYearly && plan.yearlyBreakdown ? (
             <>
               <div className="tarifs-plan-card__price-stack">
-                <div className="tarifs-plan-card__compare-row">
-                  <span className="tarifs-plan-card__compare-price">
-                    {plan.yearlyBreakdown.compareMonthlyPrice}
-                  </span>
-                  <span className="tarifs-plan-card__savings-pill">
-                    <SavingsGiftIcon />
-                    {t("tarifsPage.billingToggle.savingsBadge", {
-                      percent: plan.yearlyBreakdown.savingsPercent,
-                    })}
-                  </span>
-                </div>
+                {showYearlySavings ? (
+                  <div className="tarifs-plan-card__compare-row">
+                    <span className="tarifs-plan-card__compare-price">
+                      {plan.yearlyBreakdown.compareMonthlyPrice}
+                    </span>
+                    <span className="tarifs-plan-card__savings-pill">
+                      <SavingsGiftIcon />
+                      {t("tarifsPage.billingToggle.savingsBadge", {
+                        percent: plan.yearlyBreakdown.savingsPercent,
+                      })}
+                    </span>
+                  </div>
+                ) : null}
                 <div className="tarifs-plan-card__price-row">
                   <span className="tarifs-plan-card__price">
                     {plan.yearlyBreakdown.monthlyPrice}

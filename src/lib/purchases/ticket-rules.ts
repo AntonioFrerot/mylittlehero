@@ -1,4 +1,4 @@
-import type { PurchasePlanId } from "@/lib/i18n/purchase-catalog";
+import type { PurchasePlanId, JetonPurchasePlanId } from "@/lib/i18n/purchase-catalog";
 
 /** 1 ticket = 5 minutes de film. */
 export const TICKET_DURATION_SECONDS = 5 * 60;
@@ -6,13 +6,21 @@ export const TICKET_DURATION_SECONDS = 5 * 60;
 /** Durée du film gratuit unique (essai). */
 export const FREE_FILM_DURATION_SECONDS = 15;
 
+/** Durée d'un échantillon payant (jeton). */
+export const SAMPLE_FILM_DURATION_SECONDS = 30;
+
+export const JETONS_REQUIRED_FOR_SAMPLE = 1;
+
 export const PAID_FILM_DURATION_SECONDS = [5 * 60, 10 * 60] as const;
 
 export function isPaidFilmDuration(seconds: number): boolean {
   return (PAID_FILM_DURATION_SECONDS as readonly number[]).includes(seconds);
 }
 
-export const PLAN_TICKET_GRANTS: Record<PurchasePlanId, number> = {
+export const PLAN_TICKET_GRANTS: Record<
+  Exclude<PurchasePlanId, JetonPurchasePlanId>,
+  number
+> = {
   "film-5min": 1,
   "film-10min": 2,
   "pack-3films": 6,
@@ -30,10 +38,15 @@ export function isFreeTrialFilmDuration(durationSeconds: number): boolean {
   return durationSeconds === FREE_FILM_DURATION_SECONDS;
 }
 
+export function isSampleFilmDuration(durationSeconds: number): boolean {
+  return durationSeconds === SAMPLE_FILM_DURATION_SECONDS;
+}
+
 export function isAllowedFilmDuration(durationSeconds: number): boolean {
   return (
     isPaidFilmDuration(durationSeconds) ||
-    isFreeTrialFilmDuration(durationSeconds)
+    isFreeTrialFilmDuration(durationSeconds) ||
+    isSampleFilmDuration(durationSeconds)
   );
 }
 

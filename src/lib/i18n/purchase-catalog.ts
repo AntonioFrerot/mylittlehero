@@ -4,7 +4,12 @@ import type { TranslationKey } from "./translator";
 
 export type AchatPurchasePlanId = "film-5min" | "film-10min" | "pack-3films";
 export type TarifsTicketPlanId = "ticket-1" | "ticket-3" | "ticket-10";
-export type PurchasePlanId = AchatPurchasePlanId | TarifsTicketPlanId;
+export type JetonPurchasePlanId = "jeton-1";
+export type PurchasePlanId = AchatPurchasePlanId | TarifsTicketPlanId | JetonPurchasePlanId;
+
+export function isJetonPurchasePlanId(planId: string): planId is JetonPurchasePlanId {
+  return planId === "jeton-1";
+}
 
 export type PurchasePlan = {
   id: AchatPurchasePlanId;

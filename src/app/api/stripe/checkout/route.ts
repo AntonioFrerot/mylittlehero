@@ -9,6 +9,7 @@ import {
 import { getSiteUrl } from "@/lib/stripe/site-url";
 import {
   isSubscriptionPricingPath,
+  isTarifsPricingPath,
   resolveSubscriptionPricingPath,
 } from "@/lib/navigation/subscription-pricing";
 
@@ -20,8 +21,8 @@ type CheckoutBody = {
   returnPath?: string;
 };
 
-function isPurchasePricingPath(path: string): path is "/tarifs" | "/achat" {
-  return path === "/tarifs" || path === "/achat";
+function isPurchasePricingPath(path: string): boolean {
+  return isTarifsPricingPath(path) || path === "/achat";
 }
 
 function resolveReturnPath(

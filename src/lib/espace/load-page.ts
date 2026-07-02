@@ -11,6 +11,7 @@ import {
   CREER_FILM_PATH,
   PRICING_PATH,
 } from "@/lib/navigation/creer-film";
+import { getJetonBalanceForUser } from "@/lib/purchases/jetons";
 import { getTicketBalanceForUser } from "@/lib/purchases/tickets";
 
 export type MonEspacePageData = {
@@ -23,12 +24,13 @@ export type MonEspacePageData = {
 export async function loadMonEspacePageData(
   email: string
 ): Promise<MonEspacePageData> {
-  const [account, characters, filmsRaw, balance, user, freeFilmAvailable] =
+  const [account, characters, filmsRaw, balance, jetonBalance, user, freeFilmAvailable] =
     await Promise.all([
       getMyAccountDetails(),
       getMyCharacters(),
       listUserFilmsForUser(email),
       getTicketBalanceForUser(email),
+      getJetonBalanceForUser(email),
       findUserByEmailForUser(email),
       isFreeFilmAvailableForEmail(email),
     ]);
@@ -37,6 +39,7 @@ export async function loadMonEspacePageData(
 
   const createFilmHref = canCreateFilm({
     balance,
+    jetonBalance,
     hasActiveSubscription: Boolean(user?.subscriptionPlanId),
     freeFilmAvailable,
   })

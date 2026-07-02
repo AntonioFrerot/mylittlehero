@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { getUserFilmById } from "@/lib/film-creation/store";
-import { isUserFreeTrialFilm } from "@/lib/film-creation/free-film";
+import { isUserShortPreviewFilm } from "@/lib/film-creation/is-short-preview-film";
 import { getUserLocale } from "@/lib/auth/users-store";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { generateTitleAndResume } from "./generate";
@@ -22,7 +22,7 @@ export async function runStoryGeneration(
     return { ok: false, error: "Film introuvable" };
   }
 
-  if (isUserFreeTrialFilm(film)) {
+  if (isUserShortPreviewFilm(film)) {
     return { ok: true };
   }
 

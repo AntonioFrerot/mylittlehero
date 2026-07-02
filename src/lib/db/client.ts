@@ -143,6 +143,22 @@ async function runSchema(): Promise<void> {
   `;
 
   await db`
+    CREATE TABLE IF NOT EXISTS film_jeton_ledger (
+      id TEXT PRIMARY KEY,
+      user_email TEXT NOT NULL REFERENCES users(email) ON DELETE CASCADE,
+      delta INT NOT NULL,
+      kind TEXT NOT NULL,
+      reference_id TEXT,
+      created_at TIMESTAMPTZ NOT NULL
+    )
+  `;
+
+  await db`
+    CREATE INDEX IF NOT EXISTS film_jeton_ledger_user_email_idx
+    ON film_jeton_ledger (user_email)
+  `;
+
+  await db`
     CREATE TABLE IF NOT EXISTS notifications (
       id TEXT PRIMARY KEY,
       user_email TEXT NOT NULL REFERENCES users(email) ON DELETE CASCADE,

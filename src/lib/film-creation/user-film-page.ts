@@ -1,5 +1,6 @@
 import type { UserFilm } from "@/lib/film-creation/types";
 import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
+import { isUserSampleFilm } from "@/lib/film-creation/is-sample-film";
 import {
   buildLegacyLocalizedFilmTitle,
   buildLocalizedFilmTitle,
@@ -48,7 +49,7 @@ export function getFilmDisplayTitle(
   userLocale: LocaleCode,
   generatedTitle?: string | null
 ): string {
-  if (isUserFreeTrialFilm(film)) {
+  if (isUserFreeTrialFilm(film) || isUserSampleFilm(film)) {
     return buildLocalizedFilmTitle(film.themes, userLocale);
   }
 
@@ -86,6 +87,20 @@ export function buildUserFilmPageCopy(
 
     return {
       tagline: t("space.freeTrialFilmTagline"),
+      intro,
+      lead: t("space.filmLead", { name: heroName }),
+      heroName,
+      heroPhotoSrc: main?.photoSrc,
+      heroPhotoAlt: t("space.filmHeroPhotoAlt", { name: heroName }),
+      synopsis,
+    };
+  }
+
+  if (isUserSampleFilm(film)) {
+    const synopsis = `${t("space.filmSynopsisHeading")} ${t("space.sampleFilmSynopsisFallback")}`;
+
+    return {
+      tagline: t("space.sampleFilmTagline"),
       intro,
       lead: t("space.filmLead", { name: heroName }),
       heroName,

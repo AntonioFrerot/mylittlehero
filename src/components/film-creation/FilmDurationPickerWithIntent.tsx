@@ -8,6 +8,7 @@ type FilmDurationPickerWithIntentProps = {
   value: number | null;
   onChange: (seconds: number) => void;
   freeFilmAvailable: boolean;
+  jetonBalance?: number;
 };
 
 function FilmDurationPickerInner(props: FilmDurationPickerWithIntentProps) {

@@ -7,6 +7,7 @@ export const CREER_FILM_CONNEXION_REDIRECT =
 
 export type CreateFilmEligibility = {
   balance: number;
+  jetonBalance: number;
   hasActiveSubscription: boolean;
   freeFilmAvailable: boolean;
 };
@@ -19,6 +20,7 @@ export function canCreateFilm(summary: CreateFilmEligibility): boolean {
   return (
     summary.hasActiveSubscription ||
     summary.freeFilmAvailable ||
-    summary.balance > 0
+    summary.balance > 0 ||
+    summary.jetonBalance > 0
   );
 }

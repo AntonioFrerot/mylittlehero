@@ -65,6 +65,8 @@ export type UserFilm = {
   durationSeconds?: number;
   /** Film gratuit unique (15 s). */
   isFreeTrial?: boolean;
+  /** Échantillon payant (30 s, 1 jeton). */
+  isSample?: boolean;
   /** @deprecated Ancien champ en minutes entières */
   durationMinutes?: number;
   characters: FilmCharacterRef[];

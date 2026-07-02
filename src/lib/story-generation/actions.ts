@@ -2,7 +2,7 @@
 
 import { getSession } from "@/lib/auth/get-session";
 import { getUserFilmById, updateUserFilm } from "@/lib/film-creation/store";
-import { isUserFreeTrialFilm } from "@/lib/film-creation/free-film";
+import { isUserShortPreviewFilm } from "@/lib/film-creation/is-short-preview-film";
 import { buildLocalizedFilmTitle } from "@/lib/i18n/film-labels";
 import { getServerTranslator } from "@/lib/i18n/server";
 import { revalidatePath } from "next/cache";
@@ -45,7 +45,7 @@ async function resolveOwnedFilm(
     return { ok: false, error: t("space.storyRetry.filmNotFound") };
   }
 
-  if (isUserFreeTrialFilm(film)) {
+  if (isUserShortPreviewFilm(film)) {
     return { ok: false, error: t("space.storyRetry.freeTrialNotAvailable") };
   }
 
@@ -167,7 +167,7 @@ export async function retryStoryGeneration(
     return { error: t("space.storyRetry.filmNotFound") };
   }
 
-  if (isUserFreeTrialFilm(film)) {
+  if (isUserShortPreviewFilm(film)) {
     return { error: t("space.storyRetry.freeTrialNotAvailable") };
   }
 

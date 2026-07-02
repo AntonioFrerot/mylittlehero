@@ -54,6 +54,13 @@ export type TarifsTicketPlan = {
   highlighted?: boolean;
 };
 
+export type AbonnementsSampleOffer = {
+  id: "jeton-1";
+  stripePlanId: "jeton-1";
+  price: string;
+  priceValue: number;
+};
+
 const PLAN_FEATURE_IDS: Record<TarifsSubscriptionId, TarifsPlanFeatureId[]> = {
   "monthly-1-film": ["filmDuration", "fullCustom", "delivery24h", "supportStandard"],
   "monthly-1-weekly": [
@@ -97,26 +104,47 @@ const PLAN_FEATURE_LABEL_OVERRIDES: Partial<
   },
 };
 
-const SUBSCRIPTION_CONFIG: Record<
-  TarifsSubscriptionId,
-  {
-    stripePlanId: PricingPlanId;
-    name: TranslationKey;
-    filmsLabel: TranslationKey;
-    tagline?: TranslationKey;
-    price: number;
-    monthlyEquivalent?: number;
-    compareMonthly?: number;
-    quotaHighlight: number;
-    billing: "monthly" | "yearly";
-    highlighted?: boolean;
-  }
+export type TarifsPricingContext = "tarifs" | "abonnements";
+
+type SubscriptionPlanConfig = {
+  stripePlanId: PricingPlanId;
+  name: TranslationKey;
+  filmsLabel: TranslationKey;
+  tagline?: TranslationKey;
+  price: number;
+  monthlyEquivalent?: number;
+  compareMonthly?: number;
+  perFilmUnit?: number;
+  quotaHighlight: number;
+  billing: "monthly" | "yearly";
+  highlighted?: boolean;
+};
+
+const ABONNEMENTS_YEARLY_OVERRIDES: Partial<
+  Record<
+    TarifsSubscriptionId,
+    Pick<SubscriptionPlanConfig, "monthlyEquivalent" | "perFilmUnit" | "price">
+  >
 > = {
+  "yearly-12-films": {
+    monthlyEquivalent: 39.99,
+    perFilmUnit: 39.99,
+    price: 39.99 * 12,
+  },
+  "yearly-48-films": {
+    monthlyEquivalent: 149.99,
+    perFilmUnit: 149.99 / 4,
+    price: 149.99 * 12,
+  },
+};
+
+const SUBSCRIPTION_CONFIG: Record<TarifsSubscriptionId, SubscriptionPlanConfig> = {
   "monthly-1-film": {
     stripePlanId: "standard-monthly",
     name: "tarifsPage.plans.monthly1Film.name",
     filmsLabel: "tarifsPage.plans.monthly1Film.films",
     price: 74.99,
+    perFilmUnit: 74.99,
     billing: "monthly",
     quotaHighlight: 1,
   },
@@ -135,7 +163,8 @@ const SUBSCRIPTION_CONFIG: Record<
     name: "tarifsPage.plans.yearly12Films.name",
     filmsLabel: "tarifsPage.plans.yearly12Films.films",
     price: 449.99,
-    monthlyEquivalent: 37.5,
+    monthlyEquivalent: 37.49,
+    perFilmUnit: 37.49,
     compareMonthly: 74.99,
     billing: "yearly",
     quotaHighlight: 12,
@@ -199,6 +228,7 @@ const TICKET_CONFIG: Record<
     stripePlanId: TarifsTicketPlanId;
     ticketCount: number;
     price: number;
+    perFilmUnit?: number;
     highlighted?: boolean;
   }
 > = {
@@ -208,8 +238,17 @@ const TICKET_CONFIG: Record<
     stripePlanId: "ticket-10",
     ticketCount: 10,
     price: 749.99,
+    perFilmUnit: 74.99,
     highlighted: true,
   },
+};
+
+const ABONNEMENTS_TICKET_OVERRIDES: Partial<
+  Record<TarifsTicketId, { price: number; perFilmUnit?: number }>
+> = {
+  "ticket-1": { price: 74.99 },
+  "ticket-3": { price: 199.99 },
+  "ticket-10": { price: 499.99, perFilmUnit: 49.99 },
 };
 
 function formatMoney(amount: number, locale: LocaleCode): string {
@@ -237,11 +276,47 @@ function buildSavingsLabel(
   });
 }
 
-export function getTarifsSubscriptionPlans(locale: LocaleCode): TarifsSubscriptionPlan[] {
+function resolveSubscriptionConfig(
+  id: TarifsSubscriptionId,
+  context: TarifsPricingContext
+): SubscriptionPlanConfig {
+  const config = SUBSCRIPTION_CONFIG[id];
+  if (context !== "abonnements") return config;
+
+  const override = ABONNEMENTS_YEARLY_OVERRIDES[id];
+  if (!override) return config;
+
+  return {
+    ...config,
+    ...override,
+  };
+}
+
+function resolveTicketConfig(
+  id: TarifsTicketId,
+  context: TarifsPricingContext
+): (typeof TICKET_CONFIG)[TarifsTicketId] {
+  const config = TICKET_CONFIG[id];
+  if (context !== "abonnements") return config;
+
+  const override = ABONNEMENTS_TICKET_OVERRIDES[id];
+  if (!override) return config;
+
+  return {
+    ...config,
+    ...override,
+    perFilmUnit: override.perFilmUnit ?? override.price / config.ticketCount,
+  };
+}
+
+export function getTarifsSubscriptionPlans(
+  locale: LocaleCode,
+  context: TarifsPricingContext = "tarifs"
+): TarifsSubscriptionPlan[] {
   const t = createTranslator(locale);
 
   return (Object.keys(SUBSCRIPTION_CONFIG) as TarifsSubscriptionId[]).map((id) => {
-    const config = SUBSCRIPTION_CONFIG[id];
+    const config = resolveSubscriptionConfig(id, context);
     return {
       id,
       stripePlanId: config.stripePlanId,
@@ -261,7 +336,11 @@ export function getTarifsSubscriptionPlans(locale: LocaleCode): TarifsSubscripti
             amount: formatMoney(config.monthlyEquivalent, locale),
           })
         : undefined,
-      perFilmPrice: formatPerFilmUnit(config.price / config.quotaHighlight, locale, t),
+      perFilmPrice: formatPerFilmUnit(
+        config.perFilmUnit ?? config.price / config.quotaHighlight,
+        locale,
+        t
+      ),
       savingsLabel:
         config.compareMonthly && config.billing === "yearly"
           ? buildSavingsLabel(config.compareMonthly, config.price, locale, t)
@@ -285,11 +364,14 @@ export function getTarifsSubscriptionPlans(locale: LocaleCode): TarifsSubscripti
   });
 }
 
-export function getTarifsTicketPlans(locale: LocaleCode): TarifsTicketPlan[] {
+export function getTarifsTicketPlans(
+  locale: LocaleCode,
+  context: TarifsPricingContext = "tarifs"
+): TarifsTicketPlan[] {
   const t = createTranslator(locale);
 
   return (Object.keys(TICKET_CONFIG) as TarifsTicketId[]).map((id) => {
-    const config = TICKET_CONFIG[id];
+    const config = resolveTicketConfig(id, context);
     return {
       id,
       stripePlanId: config.stripePlanId,
@@ -300,18 +382,32 @@ export function getTarifsTicketPlans(locale: LocaleCode): TarifsTicketPlan[] {
       ticketCount: config.ticketCount,
       price: formatMoney(config.price, locale),
       priceValue: config.price,
-      perFilmPrice: formatPerFilmUnit(config.price / config.ticketCount, locale, t),
+      perFilmPrice: formatPerFilmUnit(
+        config.perFilmUnit ?? config.price / config.ticketCount,
+        locale,
+        t
+      ),
       highlighted: config.highlighted,
     };
   });
 }
 
-export function getTarifsMonthlyPlans(locale: LocaleCode): TarifsSubscriptionPlan[] {
-  return getTarifsSubscriptionPlans(locale).filter((plan) => plan.billing === "monthly");
+export function getTarifsMonthlyPlans(
+  locale: LocaleCode,
+  context: TarifsPricingContext = "tarifs"
+): TarifsSubscriptionPlan[] {
+  return getTarifsSubscriptionPlans(locale, context).filter(
+    (plan) => plan.billing === "monthly"
+  );
 }
 
-export function getTarifsYearlyPlans(locale: LocaleCode): TarifsSubscriptionPlan[] {
-  return getTarifsSubscriptionPlans(locale).filter((plan) => plan.billing === "yearly");
+export function getTarifsYearlyPlans(
+  locale: LocaleCode,
+  context: TarifsPricingContext = "tarifs"
+): TarifsSubscriptionPlan[] {
+  return getTarifsSubscriptionPlans(locale, context).filter(
+    (plan) => plan.billing === "yearly"
+  );
 }
 
 /** Max % saved vs paying monthly for 12 months (shown on the billing toggle badge). */
@@ -330,4 +426,14 @@ export function getTarifsMaxYearlySavingsPercent(): number {
     });
 
   return percents.length > 0 ? Math.max(...percents) : 0;
+}
+
+export function getAbonnementsSampleOffer(locale: LocaleCode): AbonnementsSampleOffer {
+  const priceValue = 8.99;
+  return {
+    id: "jeton-1",
+    stripePlanId: "jeton-1",
+    price: formatMoney(priceValue, locale),
+    priceValue,
+  };
 }

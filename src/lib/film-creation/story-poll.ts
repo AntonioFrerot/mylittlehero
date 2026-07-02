@@ -1,5 +1,5 @@
 import type { UserFilmWithStory } from "@/lib/film-creation/types";
-import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
+import { isUserShortPreviewFilm } from "@/lib/film-creation/is-short-preview-film";
 import type { StoryGenerationStatus } from "@/lib/story-generation/types";
 
 const ACTIVE_STORY_STATUSES = new Set<StoryGenerationStatus>([
@@ -8,7 +8,7 @@ const ACTIVE_STORY_STATUSES = new Set<StoryGenerationStatus>([
 ]);
 
 export function filmNeedsStoryPoll(film: UserFilmWithStory): boolean {
-  if (isUserFreeTrialFilm(film)) return false;
+  if (isUserShortPreviewFilm(film)) return false;
 
   const status = film.storyGeneration?.status;
   if (status === "failed" || status === "completed") return false;

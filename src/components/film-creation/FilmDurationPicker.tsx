@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import { useLocale } from "@/components/LocaleProvider";
-import { SITE_TICKET_IMAGE_HEIGHT, SITE_TICKET_IMAGE_WIDTH, SITE_TICKET_SRC } from "@/lib/brand";
+import { SITE_JETON_HEIGHT, SITE_JETON_SRC, SITE_JETON_WIDTH, SITE_TICKET_IMAGE_HEIGHT, SITE_TICKET_IMAGE_WIDTH, SITE_TICKET_SRC } from "@/lib/brand";
 import { formatFilmDurationSeconds } from "@/lib/film-creation/duration";
 import {
   FREE_FILM_DURATION_SECONDS,
   getTicketsRequiredForDuration,
+  JETONS_REQUIRED_FOR_SAMPLE,
   PAID_FILM_DURATION_SECONDS,
+  SAMPLE_FILM_DURATION_SECONDS,
 } from "@/lib/purchases/ticket-rules";
 
 type FilmDurationPickerProps = {
@@ -15,6 +17,7 @@ type FilmDurationPickerProps = {
   onChange: (seconds: number) => void;
   freeFilmAvailable?: boolean;
   freeTrialIntent?: boolean;
+  jetonBalance?: number;
 };
 
 export function FilmDurationPicker({
@@ -22,6 +25,7 @@ export function FilmDurationPicker({
   onChange,
   freeFilmAvailable = false,
   freeTrialIntent = false,
+  jetonBalance = 0,
 }: FilmDurationPickerProps) {
   const { locale, t } = useLocale();
   const displayLocale = locale === "fr" ? "fr" : "en";
@@ -34,6 +38,12 @@ export function FilmDurationPicker({
     return count === 1
       ? t("filmCreation.form.oneTicket")
       : t("filmCreation.form.ticketsCount", { count });
+  }
+
+  function jetonLabel(count: number): string {
+    return count === 1
+      ? t("filmCreation.form.oneJeton")
+      : t("filmCreation.form.jetonsCount", { count });
   }
 
   return (
@@ -88,6 +98,49 @@ export function FilmDurationPicker({
             );
           })}
         </div>
+
+        {jetonBalance > 0 ? (
+          <label
+            className={`duration-option duration-option--sample ${
+              value === SAMPLE_FILM_DURATION_SECONDS ? "duration-option--active" : ""
+            }`}
+          >
+            <input
+              type="radio"
+              name="durationChoice"
+              value={SAMPLE_FILM_DURATION_SECONDS}
+              checked={value === SAMPLE_FILM_DURATION_SECONDS}
+              onChange={() => selectDuration(SAMPLE_FILM_DURATION_SECONDS)}
+              className="sr-only"
+            />
+
+            <div className="duration-option__main">
+              <span className="duration-option__value">
+                {formatFilmDurationSeconds(SAMPLE_FILM_DURATION_SECONDS, displayLocale)}
+              </span>
+            </div>
+
+            <p className="duration-option__free-note">
+              {t("filmCreation.form.durationSampleNote")}
+            </p>
+
+            <div className="duration-option__footer">
+              <span className="duration-option__ticket-icon gold-ticket__icon">
+                <Image
+                  src={SITE_JETON_SRC}
+                  alt=""
+                  width={SITE_JETON_WIDTH}
+                  height={SITE_JETON_HEIGHT}
+                  className="gold-ticket__img duration-option__jeton-img"
+                  sizes="56px"
+                />
+              </span>
+              <span className="duration-option__cost">
+                {jetonLabel(JETONS_REQUIRED_FOR_SAMPLE)}
+              </span>
+            </div>
+          </label>
+        ) : null}
 
         {freeFilmAvailable && freeTrialIntent ? (
           <label
