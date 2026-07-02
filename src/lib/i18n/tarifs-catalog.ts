@@ -132,9 +132,9 @@ const ABONNEMENTS_YEARLY_OVERRIDES: Partial<
     price: 39.99 * 12,
   },
   "yearly-48-films": {
-    monthlyEquivalent: 149.99,
-    perFilmUnit: 149.99 / 4,
-    price: 149.99 * 12,
+    monthlyEquivalent: 139.99,
+    perFilmUnit: 34.99,
+    price: 139.99 * 12,
   },
 };
 
