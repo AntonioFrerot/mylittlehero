@@ -133,7 +133,7 @@ const ABONNEMENTS_YEARLY_OVERRIDES: Partial<
   },
   "yearly-48-films": {
     monthlyEquivalent: 149.99,
-    perFilmUnit: 34.99,
+    perFilmUnit: 34.61,
     price: 149.99 * 12,
     quotaHighlight: 52,
   },
