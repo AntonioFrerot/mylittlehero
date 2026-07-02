@@ -3,6 +3,7 @@ import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { ensureSchema, getSql, isDatabaseEnabled } from "@/lib/db/client";
 import { normalizeEmail } from "@/lib/db/normalize-email";
+import { getArrivalCalendarDayKey } from "./arrival-day";
 import type { SiteVisit } from "./types";
 
 const DATA_FILE = path.join(process.cwd(), "data", "site-visits.json");
@@ -125,6 +126,38 @@ export async function recordSiteVisit(input: RecordSiteVisitInput): Promise<Site
   visits.push(entry);
   await writeVisitsFile(visits);
   return entry;
+}
+
+export async function hasArrivalByVisitorToday(visitorId: string): Promise<boolean> {
+  const todayKey = getArrivalCalendarDayKey();
+
+  if (isDatabaseEnabled()) {
+    await ensureSchema();
+    const db = getSql();
+    const rows = await db<{ id: string }[]>`
+      SELECT id FROM site_visits
+      WHERE visitor_id = ${visitorId}
+        AND (visited_at AT TIME ZONE 'Europe/Paris')::date =
+            (NOW() AT TIME ZONE 'Europe/Paris')::date
+      LIMIT 1
+    `;
+    return rows.length > 0;
+  }
+
+  const visits = await readVisitsFile();
+  return visits.some(
+    (visit) =>
+      visit.visitorId === visitorId &&
+      getArrivalCalendarDayKey(new Date(visit.visitedAt)) === todayKey
+  );
+}
+
+/** @deprecated Utiliser hasArrivalByVisitorToday */
+export async function hasRecentArrivalByVisitor(
+  visitorId: string,
+  _withinMs: number
+): Promise<boolean> {
+  return hasArrivalByVisitorToday(visitorId);
 }
 
 export async function listSiteVisitsBetween(from: Date, to: Date): Promise<SiteVisit[]> {

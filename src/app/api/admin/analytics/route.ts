@@ -1,5 +1,4 @@
-import { getSession } from "@/lib/auth/get-session";
-import { isAdminEmail } from "@/lib/auth/is-admin";
+import { requireAdminApi } from "@/lib/admin/require-admin-api";
 import {
   buildAdminAnalyticsStats,
   getAnalyticsLocale,
@@ -12,10 +11,8 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
-  const session = await getSession();
-  if (!session || !isAdminEmail(session.email)) {
-    return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
-  }
+  const auth = await requireAdminApi();
+  if (auth instanceof NextResponse) return auth;
 
   const { searchParams } = new URL(request.url);
   const period = parseAnalyticsPeriod(searchParams.get("period"));

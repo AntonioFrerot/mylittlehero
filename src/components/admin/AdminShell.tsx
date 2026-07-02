@@ -1,32 +1,85 @@
 "use client";
 
-import { useCallback, useEffect, useState, type ReactNode } from "react";
-import { AdminAnalyticsDashboard } from "@/components/admin/AdminAnalyticsDashboard";
-import { AdminClientsList } from "@/components/admin/AdminClientsList";
-import { AdminFilmsList } from "@/components/admin/AdminFilmsList";
-import { AdminGrantTicketsForm } from "@/components/admin/AdminGrantTicketsForm";
-import { AdminNotificationsForm } from "@/components/admin/AdminNotificationsForm";
-import { AdminSupportChatList } from "@/components/admin/AdminSupportChatList";
-import type { AdminClientEntry } from "@/lib/admin/clients";
-import type { AdminAnalyticsStats } from "@/lib/analytics/types";
-import type { AdminFilmEntry } from "@/lib/film-creation/admin-films";
+import dynamic from "next/dynamic";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import type { AdminClientSummary } from "@/lib/admin/clients";
+import type { AdminDashboardSummary } from "@/lib/admin/summary";
+import type { AdminFilmsByStatus } from "@/lib/film-creation/admin-films";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import type { AdminSupportChatClient } from "@/lib/support-chat/store";
 import { useLocale } from "@/components/LocaleProvider";
+
+const AdminFilmsList = dynamic(
+  () =>
+    import("@/components/admin/AdminFilmsList").then((module) => ({
+      default: module.AdminFilmsList,
+    })),
+  { loading: () => <AdminSectionSkeleton /> }
+);
+
+const AdminClientsList = dynamic(
+  () =>
+    import("@/components/admin/AdminClientsList").then((module) => ({
+      default: module.AdminClientsList,
+    })),
+  { loading: () => <AdminSectionSkeleton /> }
+);
+
+const AdminGrantTicketsForm = dynamic(
+  () =>
+    import("@/components/admin/AdminGrantTicketsForm").then((module) => ({
+      default: module.AdminGrantTicketsForm,
+    })),
+  { loading: () => <AdminSectionSkeleton /> }
+);
+
+const AdminNotificationsForm = dynamic(
+  () =>
+    import("@/components/admin/AdminNotificationsForm").then((module) => ({
+      default: module.AdminNotificationsForm,
+    })),
+  { loading: () => <AdminSectionSkeleton /> }
+);
+
+const AdminSupportChatList = dynamic(
+  () =>
+    import("@/components/admin/AdminSupportChatList").then((module) => ({
+      default: module.AdminSupportChatList,
+    })),
+  { loading: () => <AdminSectionSkeleton /> }
+);
+
+const AdminAnalyticsDashboard = dynamic(
+  () =>
+    import("@/components/admin/AdminAnalyticsDashboard").then((module) => ({
+      default: module.AdminAnalyticsDashboard,
+    })),
+  { loading: () => <AdminSectionSkeleton /> }
+);
 
 export type AdminSectionId = "films" | "clients" | "stats";
 
 type AdminShellProps = {
   defaultEmail: string;
   locale: LocaleCode;
-  awaiting: AdminFilmEntry[];
-  completed: AdminFilmEntry[];
-  adminClients: AdminClientEntry[];
-  supportChatClients: AdminSupportChatClient[];
-  analyticsStats: AdminAnalyticsStats;
 };
 
 const SECTION_IDS: AdminSectionId[] = ["films", "clients", "stats"];
+
+type SectionData = {
+  films?: AdminFilmsByStatus;
+  clients?: AdminClientSummary[];
+  supportChat?: AdminSupportChatClient[];
+};
+
+function AdminSectionSkeleton() {
+  const { t } = useLocale();
+  return (
+    <p className="rounded-2xl border border-dashed border-white/15 bg-cinema-night/50 px-6 py-10 text-center text-sm text-cream/55">
+      {t("admin.sectionLoading")}
+    </p>
+  );
+}
 
 function parseSectionHash(hash: string): AdminSectionId | null {
   const value = hash.replace(/^#/, "");
@@ -101,18 +154,18 @@ function CategoryPanel({
   return <div className="space-y-8">{children}</div>;
 }
 
-export function AdminShell({
-  defaultEmail,
-  locale,
-  awaiting,
-  completed,
-  adminClients,
-  supportChatClients,
-  analyticsStats,
-}: AdminShellProps) {
+export function AdminShell({ defaultEmail, locale }: AdminShellProps) {
   const { t } = useLocale();
   const [activeSection, setActiveSection] = useState<AdminSectionId>("films");
   const [grantEmail, setGrantEmail] = useState(defaultEmail);
+  const [summary, setSummary] = useState<AdminDashboardSummary | null>(null);
+  const [sectionData, setSectionData] = useState<SectionData>({});
+  const [loadedSections, setLoadedSections] = useState<
+    Partial<Record<AdminSectionId, boolean>>
+  >({});
+  const [loadingSection, setLoadingSection] = useState<AdminSectionId | null>(null);
+  const [sectionError, setSectionError] = useState<string | null>(null);
+  const loadingRef = useRef<Partial<Record<AdminSectionId, boolean>>>({});
 
   const syncFromHash = useCallback(() => {
     const section = parseSectionHash(window.location.hash);
@@ -125,6 +178,59 @@ export function AdminShell({
     return () => window.removeEventListener("hashchange", syncFromHash);
   }, [syncFromHash]);
 
+  useEffect(() => {
+    void fetch("/api/admin/summary")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: AdminDashboardSummary | null) => {
+        if (data) setSummary(data);
+      })
+      .catch(() => {});
+  }, []);
+
+  const loadSection = useCallback(async (section: AdminSectionId) => {
+    if (section === "stats" || loadedSections[section] || loadingRef.current[section]) {
+      return;
+    }
+
+    loadingRef.current[section] = true;
+    setLoadingSection(section);
+    setSectionError(null);
+
+    try {
+      if (section === "films") {
+        const response = await fetch("/api/admin/films");
+        if (!response.ok) throw new Error("fetch_failed");
+        const films = (await response.json()) as AdminFilmsByStatus;
+        setSectionData((current) => ({ ...current, films }));
+      }
+
+      if (section === "clients") {
+        const [clientsResponse, supportResponse] = await Promise.all([
+          fetch("/api/admin/clients"),
+          fetch("/api/admin/support-chat"),
+        ]);
+        if (!clientsResponse.ok || !supportResponse.ok) {
+          throw new Error("fetch_failed");
+        }
+        const clients = (await clientsResponse.json()) as AdminClientSummary[];
+        const supportChat =
+          (await supportResponse.json()) as AdminSupportChatClient[];
+        setSectionData((current) => ({ ...current, clients, supportChat }));
+      }
+
+      setLoadedSections((current) => ({ ...current, [section]: true }));
+    } catch {
+      setSectionError(t("admin.sectionLoadError"));
+    } finally {
+      loadingRef.current[section] = false;
+      setLoadingSection(null);
+    }
+  }, [loadedSections, t]);
+
+  useEffect(() => {
+    void loadSection(activeSection);
+  }, [activeSection, loadSection]);
+
   const selectSection = (section: AdminSectionId) => {
     setActiveSection(section);
     window.history.replaceState(null, "", `#${section}`);
@@ -135,13 +241,13 @@ export function AdminShell({
       id: "films" as const,
       label: t("admin.navFilms"),
       description: t("admin.navFilmsHint"),
-      badge: awaiting.length,
+      badge: summary?.awaitingFilmsCount,
     },
     {
       id: "clients" as const,
       label: t("admin.navClients"),
       description: t("admin.navClientsHint"),
-      badge: adminClients.length,
+      badge: summary?.clientCount,
     },
     {
       id: "stats" as const,
@@ -149,6 +255,10 @@ export function AdminShell({
       description: t("admin.navStatsHint"),
     },
   ];
+
+  const films = sectionData.films;
+  const clients = sectionData.clients;
+  const supportChatClients = sectionData.supportChat;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:px-8 md:py-10">
@@ -172,16 +282,26 @@ export function AdminShell({
         </aside>
 
         <div className="min-w-0 flex-1">
+          {sectionError ? (
+            <p className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              {sectionError}
+            </p>
+          ) : null}
+
           <CategoryPanel id="films" active={activeSection}>
             <CategoryHeader
               title={t("admin.categoryFilmsTitle")}
               lead={t("admin.categoryFilmsLead")}
             />
-            <AdminFilmsList
-              awaiting={awaiting}
-              completed={completed}
-              locale={locale}
-            />
+            {loadingSection === "films" && !films ? (
+              <AdminSectionSkeleton />
+            ) : films ? (
+              <AdminFilmsList
+                awaiting={films.awaiting}
+                completed={films.completed}
+                locale={locale}
+              />
+            ) : null}
           </CategoryPanel>
 
           <CategoryPanel id="clients" active={activeSection}>
@@ -189,16 +309,25 @@ export function AdminShell({
               title={t("admin.categoryClientsTitle")}
               lead={t("admin.categoryClientsLead")}
             />
-            <div className="space-y-8">
-              <AdminClientsList
-                clients={adminClients}
-                locale={locale}
-                onSelectEmail={setGrantEmail}
-              />
-              <AdminGrantTicketsForm key={grantEmail} defaultEmail={grantEmail} />
-              <AdminNotificationsForm />
-              <AdminSupportChatList clients={supportChatClients} locale={locale} />
-            </div>
+            {loadingSection === "clients" && !clients ? (
+              <AdminSectionSkeleton />
+            ) : clients ? (
+              <div className="space-y-8">
+                <AdminClientsList
+                  clients={clients}
+                  locale={locale}
+                  onSelectEmail={setGrantEmail}
+                />
+                <AdminGrantTicketsForm key={grantEmail} defaultEmail={grantEmail} />
+                <AdminNotificationsForm />
+                {supportChatClients ? (
+                  <AdminSupportChatList
+                    clients={supportChatClients}
+                    locale={locale}
+                  />
+                ) : null}
+              </div>
+            ) : null}
           </CategoryPanel>
 
           <CategoryPanel id="stats" active={activeSection}>
@@ -206,7 +335,7 @@ export function AdminShell({
               title={t("admin.categoryStatsTitle")}
               lead={t("admin.categoryStatsLead")}
             />
-            <AdminAnalyticsDashboard initialStats={analyticsStats} />
+            <AdminAnalyticsDashboard />
           </CategoryPanel>
         </div>
       </div>

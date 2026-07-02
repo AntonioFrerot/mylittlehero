@@ -70,7 +70,7 @@ export function HeroPosterMosaic() {
                   src={getHeroPosterSrc(asset)}
                   alt={title}
                   fill
-                  quality={70}
+                  quality={40}
                   sizes="(max-width: 767px) 17vw, 12vw"
                   className="object-cover object-center"
                   priority={isLcpCandidate}

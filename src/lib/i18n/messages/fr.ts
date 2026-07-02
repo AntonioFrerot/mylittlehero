@@ -250,6 +250,8 @@ export const fr = {
     clientsNoFilms: "Aucun film créé.",
     clientsUntitledFilm: "Sans titre",
     clientsSampleFilm: "Échantillon",
+    sectionLoading: "Chargement…",
+    sectionLoadError: "Impossible de charger cette section. Réessayez.",
     supportChatTitle: "Historiques chatbot",
     supportChatLead:
       "Conversations du support avec les clients connectés, regroupées par compte.",
@@ -265,8 +267,8 @@ export const fr = {
     analyticsPeriodWeek: "7 jours",
     analyticsPeriodMonth: "30 jours",
     analyticsPeriodYear: "12 mois",
-    analyticsPageViews: "Pages vues",
-    analyticsPageViewsHint: "Nombre total de pages consultées sur la période",
+    analyticsPageViews: "Arrivées",
+    analyticsPageViewsHint: "Une arrivée par visiteur et par jour (minuit à minuit, heure de Paris)",
     analyticsUniqueVisitors: "Visiteurs uniques",
     analyticsUniqueVisitorsHint:
       "Chaque visiteur n'est compté qu'une fois sur la période",

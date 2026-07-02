@@ -38,6 +38,27 @@ export async function getAnalyticsCollectSecret(): Promise<string | undefined> {
 
 export async function isAuthorizedAnalyticsCollect(request: Request): Promise<boolean> {
   const secret = await getAnalyticsCollectSecret();
+  if (secret && request.headers.get("x-analytics-secret") === secret) {
+    return true;
+  }
+
+  const secFetchSite = request.headers.get("sec-fetch-site");
+  if (secFetchSite === "same-origin" || secFetchSite === "none") {
+    return true;
+  }
+
+  const origin = request.headers.get("origin");
+  const host = request.headers.get("host");
+  if (origin && host) {
+    try {
+      if (new URL(origin).host === host.split(":")[0]) {
+        return true;
+      }
+    } catch {
+      // ignore invalid origin
+    }
+  }
+
   if (!secret) return process.env.NODE_ENV === "development";
-  return request.headers.get("x-analytics-secret") === secret;
+  return false;
 }

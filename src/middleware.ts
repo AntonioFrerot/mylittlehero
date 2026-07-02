@@ -4,7 +4,6 @@ import { isAdminEmail } from "@/lib/auth/is-admin";
 import { SESSION_COOKIE } from "@/lib/auth/session";
 import { verifySessionToken } from "@/lib/auth/session-token";
 import { VISITOR_COOKIE } from "@/lib/analytics/constants";
-import { getAnalyticsCollectSecret } from "@/lib/analytics/collect-secret";
 import { shouldRecordVisitEnvironment } from "@/lib/analytics/filter-visits";
 import { shouldTrackVisit } from "@/lib/analytics/parse-visit";
 import type { SessionUser } from "@/lib/auth/session";
@@ -47,9 +46,9 @@ function maybeCanonicalHostRedirect(request: NextRequest): NextResponse | null {
   return response;
 }
 
-function applyVisitorCookie(request: NextRequest, response: NextResponse): string {
+function applyVisitorCookie(request: NextRequest, response: NextResponse): void {
   const existing = request.cookies.get(VISITOR_COOKIE)?.value?.trim();
-  if (existing) return existing;
+  if (existing) return;
 
   const visitorId = crypto.randomUUID();
   response.cookies.set(VISITOR_COOKIE, visitorId, {
@@ -57,48 +56,6 @@ function applyVisitorCookie(request: NextRequest, response: NextResponse): strin
     maxAge: 60 * 60 * 24 * 365,
     sameSite: "lax",
   });
-  return visitorId;
-}
-
-async function trackVisitAsync(request: NextRequest, visitorId: string) {
-  if (!shouldRecordVisitEnvironment(request.nextUrl.hostname)) return;
-
-  const secret = await getAnalyticsCollectSecret();
-  const url = new URL("/api/analytics/collect", request.nextUrl.origin);
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    host: request.headers.get("host") ?? "",
-    "x-forwarded-host": request.headers.get("x-forwarded-host") ?? "",
-    cookie: request.headers.get("cookie") ?? "",
-    "user-agent": request.headers.get("user-agent") ?? "",
-    referer: request.headers.get("referer") ?? "",
-  };
-
-  for (const name of [
-    "x-forwarded-for",
-    "x-vercel-ip-country",
-    "x-vercel-ip-country-region",
-    "x-vercel-ip-city",
-    "x-vercel-ip-timezone",
-    "x-vercel-ip-latitude",
-    "x-vercel-ip-longitude",
-    "cf-ipcountry",
-  ]) {
-    const value = request.headers.get(name);
-    if (value) headers[name] = value;
-  }
-
-  if (secret) headers["x-analytics-secret"] = secret;
-
-  void fetch(url, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({
-      path: request.nextUrl.pathname,
-      search: request.nextUrl.search || undefined,
-      visitorId,
-    }),
-  }).catch(() => {});
 }
 
 function finalizeResponse(
@@ -115,8 +72,7 @@ function finalizeResponse(
     shouldRecordVisitEnvironment(request.nextUrl.hostname) &&
     !(session && isAdminEmail(session.email))
   ) {
-    const visitorId = applyVisitorCookie(request, response);
-    trackVisitAsync(request, visitorId);
+    applyVisitorCookie(request, response);
   }
 
   return response;

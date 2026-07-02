@@ -1,13 +1,6 @@
 import { Header } from "@/components/Header";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { loadAdminAnalyticsStats } from "@/lib/analytics/load-admin-stats";
-import { listAdminClients } from "@/lib/admin/clients";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { listAdminFilmsByStatus } from "@/lib/film-creation/admin-films";
-import {
-  groupConversationsByClient,
-  listSupportChatConversationsForAdmin,
-} from "@/lib/support-chat/store";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
 import type { Metadata } from "next";
@@ -23,12 +16,6 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AdminPage() {
   const session = await requireAdmin();
   const { t, locale } = await getServerTranslator();
-  const { awaiting, completed } = await listAdminFilmsByStatus();
-  const adminClients = await listAdminClients(locale);
-  const supportChatClients = groupConversationsByClient(
-    await listSupportChatConversationsForAdmin()
-  );
-  const analyticsStats = await loadAdminAnalyticsStats(locale, "week");
 
   return (
     <>
@@ -48,15 +35,7 @@ export default async function AdminPage() {
           </div>
         </section>
 
-        <AdminShell
-          defaultEmail={session.email}
-          locale={locale}
-          awaiting={awaiting}
-          completed={completed}
-          adminClients={adminClients}
-          supportChatClients={supportChatClients}
-          analyticsStats={analyticsStats}
-        />
+        <AdminShell defaultEmail={session.email} locale={locale} />
       </main>
     </>
   );

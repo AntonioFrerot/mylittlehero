@@ -1,13 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import type { AdminClientEntry } from "@/lib/admin/clients";
+import { useState } from "react";
+import type {
+  AdminClientDetails,
+  AdminClientSummary,
+} from "@/lib/admin/clients";
 import { translateFilmStatus } from "@/lib/i18n/film-labels";
 import type { LocaleCode } from "@/lib/i18n/locales";
-import { createTranslator } from "@/lib/i18n/translator";
+import { useLocale } from "@/components/LocaleProvider";
 
 type AdminClientsListProps = {
-  clients: AdminClientEntry[];
+  clients: AdminClientSummary[];
   locale: LocaleCode;
   onSelectEmail?: (email: string) => void;
 };
@@ -32,12 +36,171 @@ function StatPill({ label, value }: { label: string; value: string | number }) {
   );
 }
 
+function ClientDetailsPanel({
+  email,
+  locale,
+  characterCount,
+  filmCount,
+}: {
+  email: string;
+  locale: LocaleCode;
+  characterCount: number;
+  filmCount: number;
+}) {
+  const { t } = useLocale();
+  const [details, setDetails] = useState<AdminClientDetails | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const ensureDetails = async () => {
+    if (details || loading) return;
+    setLoading(true);
+    setError(false);
+    try {
+      const response = await fetch(
+        `/api/admin/clients?email=${encodeURIComponent(email)}`
+      );
+      if (!response.ok) throw new Error("fetch_failed");
+      setDetails((await response.json()) as AdminClientDetails);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="divide-y divide-white/8">
+      <details
+        className="group"
+        onToggle={(event) => {
+          if ((event.currentTarget as HTMLDetailsElement).open) {
+            void ensureDetails();
+          }
+        }}
+      >
+        <summary className="cursor-pointer list-none px-4 py-3 transition-colors hover:bg-white/[0.03] md:px-5 [&::-webkit-details-marker]:hidden">
+          <span className="text-sm font-medium text-cream/85">
+            {t("admin.clientsCharactersSection", { count: characterCount })}
+          </span>
+        </summary>
+
+        <div className="space-y-4 border-t border-white/8 bg-cinema-black/30 px-4 py-4 md:px-5">
+          {loading ? (
+            <p className="text-sm text-cream/50">{t("admin.sectionLoading")}</p>
+          ) : error ? (
+            <p className="text-sm text-red-200/90">{t("admin.sectionLoadError")}</p>
+          ) : !details || details.characters.length === 0 ? (
+            <p className="text-sm text-cream/50">{t("admin.clientsNoCharacters")}</p>
+          ) : (
+            details.characters.map((character) => (
+              <div
+                key={character.id}
+                className="flex flex-col gap-3 rounded-xl border border-white/8 bg-black/20 p-3 sm:flex-row sm:items-start"
+              >
+                {character.photoSrc ? (
+                  <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-black/40">
+                    <Image
+                      src={character.photoSrc}
+                      alt={character.prenom}
+                      fill
+                      className="object-contain"
+                      sizes="80px"
+                    />
+                  </div>
+                ) : null}
+
+                <div className="min-w-0 flex-1 space-y-2">
+                  <div>
+                    <p className="font-medium text-cream">{character.prenom}</p>
+                    <p className="text-xs text-cream/50">
+                      {[
+                        character.age
+                          ? t("admin.characterAge", { age: character.age })
+                          : null,
+                        character.taille,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                  </div>
+
+                  {character.audioSrc ? (
+                    <audio
+                      controls
+                      src={character.audioSrc}
+                      className="w-full max-w-xs"
+                      preload="metadata"
+                    />
+                  ) : (
+                    <p className="text-xs text-amber-200/80">
+                      {t("admin.missingCharacterAudio")}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </details>
+
+      <details
+        className="group"
+        onToggle={(event) => {
+          if ((event.currentTarget as HTMLDetailsElement).open) {
+            void ensureDetails();
+          }
+        }}
+      >
+        <summary className="cursor-pointer list-none px-4 py-3 transition-colors hover:bg-white/[0.03] md:px-5 [&::-webkit-details-marker]:hidden">
+          <span className="text-sm font-medium text-cream/85">
+            {t("admin.clientsFilmsSection", { count: filmCount })}
+          </span>
+        </summary>
+
+        <div className="border-t border-white/8 bg-cinema-black/30 px-4 py-4 md:px-5">
+          {loading ? (
+            <p className="text-sm text-cream/50">{t("admin.sectionLoading")}</p>
+          ) : error ? (
+            <p className="text-sm text-red-200/90">{t("admin.sectionLoadError")}</p>
+          ) : !details || details.films.length === 0 ? (
+            <p className="text-sm text-cream/50">{t("admin.clientsNoFilms")}</p>
+          ) : (
+            <ul className="space-y-2">
+              {details.films.map((film) => (
+                <li
+                  key={film.id}
+                  className="rounded-xl border border-white/8 bg-black/20 px-3 py-2.5 text-sm"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-medium text-cream/90">
+                      {film.title.trim() || t("admin.clientsUntitledFilm")}
+                    </span>
+                    <span className="text-xs text-cream/45">
+                      {formatDate(film.createdAt, locale)}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-cream/55">
+                    {translateFilmStatus(film.status, locale)}
+                    {film.isFreeTrial ? ` · ${t("admin.freeTrialBadge")}` : ""}
+                    {film.isSample ? ` · ${t("admin.clientsSampleFilm")}` : ""}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </details>
+    </div>
+  );
+}
+
 export function AdminClientsList({
   clients,
   locale,
   onSelectEmail,
 }: AdminClientsListProps) {
-  const t = createTranslator(locale);
+  const { t } = useLocale();
 
   return (
     <section className="space-y-4">
@@ -136,114 +299,12 @@ export function AdminClientsList({
                 </div>
               </header>
 
-              <div className="divide-y divide-white/8">
-                <details className="group">
-                  <summary className="cursor-pointer list-none px-4 py-3 transition-colors hover:bg-white/[0.03] md:px-5 [&::-webkit-details-marker]:hidden">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="text-sm font-medium text-cream/85">
-                        {t("admin.clientsCharactersSection", {
-                          count: client.characterCount,
-                        })}
-                      </span>
-                    </div>
-                  </summary>
-
-                  <div className="space-y-4 border-t border-white/8 bg-cinema-black/30 px-4 py-4 md:px-5">
-                    {client.characters.length === 0 ? (
-                      <p className="text-sm text-cream/50">
-                        {t("admin.clientsNoCharacters")}
-                      </p>
-                    ) : (
-                      client.characters.map((character) => (
-                        <div
-                          key={character.id}
-                          className="flex flex-col gap-3 rounded-xl border border-white/8 bg-black/20 p-3 sm:flex-row sm:items-start"
-                        >
-                          {character.photoSrc ? (
-                            <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-black/40">
-                              <Image
-                                src={character.photoSrc}
-                                alt={character.prenom}
-                                fill
-                                className="object-contain"
-                                sizes="80px"
-                              />
-                            </div>
-                          ) : null}
-
-                          <div className="min-w-0 flex-1 space-y-2">
-                            <div>
-                              <p className="font-medium text-cream">{character.prenom}</p>
-                              <p className="text-xs text-cream/50">
-                                {[
-                                  character.age
-                                    ? t("admin.characterAge", { age: character.age })
-                                    : null,
-                                  character.taille,
-                                ]
-                                  .filter(Boolean)
-                                  .join(" · ")}
-                              </p>
-                            </div>
-
-                            {character.audioSrc ? (
-                              <audio
-                                controls
-                                src={character.audioSrc}
-                                className="w-full max-w-xs"
-                                preload="metadata"
-                              />
-                            ) : (
-                              <p className="text-xs text-amber-200/80">
-                                {t("admin.missingCharacterAudio")}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </details>
-
-                <details className="group">
-                  <summary className="cursor-pointer list-none px-4 py-3 transition-colors hover:bg-white/[0.03] md:px-5 [&::-webkit-details-marker]:hidden">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="text-sm font-medium text-cream/85">
-                        {t("admin.clientsFilmsSection", { count: client.filmCount })}
-                      </span>
-                    </div>
-                  </summary>
-
-                  <div className="border-t border-white/8 bg-cinema-black/30 px-4 py-4 md:px-5">
-                    {client.films.length === 0 ? (
-                      <p className="text-sm text-cream/50">{t("admin.clientsNoFilms")}</p>
-                    ) : (
-                      <ul className="space-y-2">
-                        {client.films.map((film) => (
-                          <li
-                            key={film.id}
-                            className="rounded-xl border border-white/8 bg-black/20 px-3 py-2.5 text-sm"
-                          >
-                            <div className="flex flex-wrap items-center justify-between gap-2">
-                              <span className="font-medium text-cream/90">
-                                {film.title.trim() || t("admin.clientsUntitledFilm")}
-                              </span>
-                              <span className="text-xs text-cream/45">
-                                {formatDate(film.createdAt, locale)}
-                              </span>
-                            </div>
-                            <p className="mt-1 text-xs text-cream/55">
-                              {translateFilmStatus(film.status, locale)}
-                              {film.isFreeTrial ? ` · ${t("admin.freeTrialBadge")}` : ""}
-                              {film.isSample ? ` · ${t("admin.clientsSampleFilm")}` : ""}
-                            </p>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </details>
-              </div>
+              <ClientDetailsPanel
+                email={client.email}
+                locale={locale}
+                characterCount={client.characterCount}
+                filmCount={client.filmCount}
+              />
             </article>
           ))}
         </div>

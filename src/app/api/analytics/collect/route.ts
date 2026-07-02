@@ -4,7 +4,7 @@ import { isAdminEmail } from "@/lib/auth/is-admin";
 import { isAuthorizedAnalyticsCollect } from "@/lib/analytics/collect-secret";
 import { parseVisitFromRequest, shouldTrackVisit } from "@/lib/analytics/parse-visit";
 import { isNoiseVisitPath, shouldRecordVisitEnvironment } from "@/lib/analytics/filter-visits";
-import { recordSiteVisit } from "@/lib/analytics/store";
+import { hasArrivalByVisitorToday, recordSiteVisit } from "@/lib/analytics/store";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -62,6 +62,10 @@ export async function POST(request: Request) {
   const session = await verifySessionToken(token ? decodeURIComponent(token) : undefined);
   if (session && isAdminEmail(session.email)) {
     return NextResponse.json({ ok: true, skipped: "admin" });
+  }
+
+  if (await hasArrivalByVisitorToday(visitorId)) {
+    return NextResponse.json({ ok: true, skipped: "already_today" });
   }
 
   const parsed = parseVisitFromRequest({

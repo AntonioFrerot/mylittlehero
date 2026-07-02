@@ -25,15 +25,19 @@ type AuthProviderProps = {
   children: ReactNode;
   initialUser: SessionUser | null;
   initialIsAdmin?: boolean;
+  initialBalance?: number | null;
 };
 
 export function AuthProvider({
   children,
   initialUser,
   initialIsAdmin = false,
+  initialBalance = null,
 }: AuthProviderProps) {
   const [user, setUser] = useState<SessionUser | null | undefined>(initialUser);
-  const [balance, setBalance] = useState<number | null>(null);
+  const [balance, setBalance] = useState<number | null>(
+    initialUser ? initialBalance : null
+  );
   const [balanceLoaded, setBalanceLoaded] = useState(!initialUser);
   const [isAdmin, setIsAdmin] = useState(initialIsAdmin);
 
@@ -71,9 +75,9 @@ export function AuthProvider({
       return;
     }
 
-    setBalanceLoaded(false);
-    void refresh();
-  }, [initialUser, initialIsAdmin, refresh]);
+    setBalance(initialBalance);
+    setBalanceLoaded(true);
+  }, [initialUser, initialIsAdmin, initialBalance]);
 
   const value = useMemo(
     () => ({ user, balance, balanceLoaded, isAdmin, refresh }),

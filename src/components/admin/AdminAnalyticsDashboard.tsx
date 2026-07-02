@@ -7,7 +7,46 @@ import { SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
 import { useLocale } from "@/components/LocaleProvider";
 
 type AdminAnalyticsDashboardProps = {
-  initialStats: AdminAnalyticsStats;
+  initialPeriod?: AnalyticsPeriod;
+};
+
+const EMPTY_STATS: AdminAnalyticsStats = {
+  period: "week",
+  from: new Date().toISOString(),
+  to: new Date().toISOString(),
+  totals: {
+    pageViews: 0,
+    sessions: 0,
+    uniqueVisitors: 0,
+    uniqueUsers: 0,
+    purchases: 0,
+    totalRevenue: 0,
+    averageOrderValue: 0,
+    conversionRate: 0,
+    sessionConversionRate: 0,
+    checkoutConversionRate: 0,
+    bounceRate: 0,
+    returningVisitorRate: 0,
+    avgPagesPerVisitor: 0,
+    avgPagesPerSession: 0,
+    checkoutVisitors: 0,
+  },
+  series: [],
+  countries: [],
+  cities: [],
+  regions: [],
+  pages: [],
+  landingPages: [],
+  devices: [],
+  browsers: [],
+  operatingSystems: [],
+  referrers: [],
+  timezones: [],
+  utmSources: [],
+  salesByPlan: [],
+  salesBySource: [],
+  recentVisits: [],
+  funnel: [],
 };
 
 const PERIODS: AnalyticsPeriod[] = ["day", "week", "month", "year"];
@@ -166,11 +205,13 @@ function RankedList({
   );
 }
 
-export function AdminAnalyticsDashboard({ initialStats }: AdminAnalyticsDashboardProps) {
+export function AdminAnalyticsDashboard({
+  initialPeriod = "week",
+}: AdminAnalyticsDashboardProps = {}) {
   const { locale, t } = useLocale();
-  const [period, setPeriod] = useState<AnalyticsPeriod>(initialStats.period);
-  const [stats, setStats] = useState(initialStats);
-  const [loading, setLoading] = useState(false);
+  const [period, setPeriod] = useState<AnalyticsPeriod>(initialPeriod);
+  const [stats, setStats] = useState<AdminAnalyticsStats>(EMPTY_STATS);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const loadStats = useCallback(async (nextPeriod: AnalyticsPeriod) => {
@@ -190,10 +231,8 @@ export function AdminAnalyticsDashboard({ initialStats }: AdminAnalyticsDashboar
   }, [t]);
 
   useEffect(() => {
-    if (period === initialStats.period) {
-      setStats(initialStats);
-    }
-  }, [initialStats, period]);
+    void loadStats(initialPeriod);
+  }, [initialPeriod, loadStats]);
 
   const periodLabel = useMemo(
     () => ({

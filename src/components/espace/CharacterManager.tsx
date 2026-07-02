@@ -13,7 +13,7 @@ import { useLocale } from "@/components/LocaleProvider";
 import { Button } from "@/components/ui/Button";
 import { RequiredFieldLabel } from "@/components/ui/RequiredFieldLabel";
 import { CharacterPhotoUpload } from "@/components/espace/CharacterPhotoUpload";
-import { CharacterAudioUpload } from "@/components/espace/CharacterAudioUpload";
+import dynamic from "next/dynamic";
 import {
   removeCharacter,
   upsertCharacter,
@@ -25,6 +25,19 @@ import {
   CHARACTER_AVATAR_IMAGE_QUALITY,
   isBlobPreviewPhoto,
 } from "@/lib/characters/user-photo";
+
+const CharacterAudioUpload = dynamic(
+  () =>
+    import("@/components/espace/CharacterAudioUpload").then(
+      (module) => module.CharacterAudioUpload
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-24 animate-pulse rounded-xl border border-white/10 bg-cinema-night/60" />
+    ),
+  }
+);
 
 const initialState: CharacterFormState = {};
 
