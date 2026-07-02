@@ -232,13 +232,13 @@ const TICKET_CONFIG: Record<
     highlighted?: boolean;
   }
 > = {
-  "ticket-1": { stripePlanId: "ticket-1", ticketCount: 1, price: 99.99 },
-  "ticket-3": { stripePlanId: "ticket-3", ticketCount: 3, price: 249.99 },
+  "ticket-1": { stripePlanId: "ticket-1", ticketCount: 1, price: 59.99 },
+  "ticket-3": { stripePlanId: "ticket-3", ticketCount: 3, price: 149.99, perFilmUnit: 49.99 },
   "ticket-10": {
     stripePlanId: "ticket-10",
     ticketCount: 10,
-    price: 749.99,
-    perFilmUnit: 74.99,
+    price: 399.99,
+    perFilmUnit: 39.99,
     highlighted: true,
   },
 };
@@ -246,9 +246,9 @@ const TICKET_CONFIG: Record<
 const ABONNEMENTS_TICKET_OVERRIDES: Partial<
   Record<TarifsTicketId, { price: number; perFilmUnit?: number }>
 > = {
-  "ticket-1": { price: 74.99 },
-  "ticket-3": { price: 199.99 },
-  "ticket-10": { price: 499.99, perFilmUnit: 49.99 },
+  "ticket-1": { price: 59.99 },
+  "ticket-3": { price: 149.99, perFilmUnit: 49.99 },
+  "ticket-10": { price: 399.99, perFilmUnit: 39.99 },
 };
 
 function formatMoney(amount: number, locale: LocaleCode): string {
