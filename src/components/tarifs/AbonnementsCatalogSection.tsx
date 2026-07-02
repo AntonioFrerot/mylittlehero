@@ -60,19 +60,23 @@ export function AbonnementsCatalogSection({
           </div>
         </div>
       ) : (
-        <div
-          key="subscriptions"
-          className="tarifs-subscriptions__grid abonnements-catalog__subscriptions-grid grid gap-6 md:grid-cols-2 md:items-stretch md:gap-8"
-        >
-          {yearlyPlans.map((plan) => (
-            <TarifsSubscriptionCard
-              key={plan.id}
-              plan={plan}
-              locale={locale}
-              showYearlySavings={false}
-              goldCheckout
-            />
-          ))}
+        <div key="subscriptions" className="abonnements-catalog__subscriptions-stack">
+          <div className="tarifs-subscriptions__grid abonnements-catalog__subscriptions-grid grid gap-6 md:grid-cols-2 md:items-stretch md:gap-8">
+            {yearlyPlans.map((plan) => (
+              <TarifsSubscriptionCard
+                key={plan.id}
+                plan={plan}
+                locale={locale}
+                showYearlySavings={false}
+                goldCheckout
+              />
+            ))}
+          </div>
+          <div className="abonnements-catalog__subscriptions-sample-grid grid gap-6 lg:grid-cols-6 lg:gap-8">
+            <div className="abonnements-catalog__sample-slot abonnements-catalog__sample-slot--subscriptions-desktop">
+              <AbonnementsSampleBlock offer={sampleOffer} locale={locale} />
+            </div>
+          </div>
         </div>
       )}
     </section>

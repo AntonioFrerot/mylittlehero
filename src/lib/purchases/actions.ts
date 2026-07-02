@@ -5,6 +5,7 @@ import { findUserByEmail } from "@/lib/auth/users-store";
 import { isFreeFilmAvailableForEmail } from "@/lib/film-creation/free-film";
 import { listUserFilmsForUser } from "@/lib/film-creation/store";
 import { getJetonBalanceForUser } from "@/lib/purchases/jetons";
+import { userHasAnySitePurchase } from "@/lib/purchases/purchase-history";
 import { getTicketBalanceForUser } from "@/lib/purchases/tickets";
 
 export type FilmTicketSummary = {
@@ -34,4 +35,10 @@ export async function getMyFilmTicketSummary(): Promise<FilmTicketSummary | null
     hasCreatedFilms: films.length > 0,
     freeFilmAvailable,
   };
+}
+
+export async function checkUserHasSitePurchase(): Promise<boolean> {
+  const session = await getSession();
+  if (!session) return false;
+  return userHasAnySitePurchase(session.email);
 }

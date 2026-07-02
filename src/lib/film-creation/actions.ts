@@ -211,6 +211,15 @@ export async function saveFilmCreation(
     };
   }
 
+  const withoutAudio = selectedCharacters.filter((c) => !c.audioSrc);
+  if (withoutAudio.length > 0) {
+    return {
+      error: t("filmCreation.errors.audioRequired", {
+        names: withoutAudio.map((c) => c.prenom).join(", "),
+      }),
+    };
+  }
+
   if (themes.length === 0) {
     return { error: t("filmCreation.errors.themesRequired") };
   }
@@ -393,6 +402,7 @@ function resolveFilmCharacters(
       id: c.id,
       prenom: c.prenom,
       ...(c.photoSrc ? { photoSrc: c.photoSrc } : {}),
+      ...(c.audioSrc ? { audioSrc: c.audioSrc } : {}),
       ...(c.age ? { age: formatCharacterAge(c.age) ?? c.age } : {}),
       ...(c.taille ? { taille: `${c.taille} cm` } : {}),
       ...(c.id === mainCharacterId ? { isMain: true } : {}),

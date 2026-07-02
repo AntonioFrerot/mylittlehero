@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { BTN_3D_SECONDARY_ACTION } from "@/lib/ui/button-3d-classes";
 import { useLocale } from "@/components/LocaleProvider";
+import { RequiredFieldLabel } from "@/components/ui/RequiredFieldLabel";
 
 type CharacterPhotoUploadProps = {
   currentPhotoSrc?: string;
@@ -31,7 +32,7 @@ export function CharacterPhotoUpload({
 
   return (
     <div className="flex flex-col gap-3">
-      <span className="text-sm text-cream/70">{t("characters.photoLabel")}</span>
+      <RequiredFieldLabel>{t("characters.photoLabel")}</RequiredFieldLabel>
 
       <div className="flex items-center gap-4">
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-gold/30 bg-cinema-black shadow-glow-gold-subtle">

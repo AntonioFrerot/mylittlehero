@@ -123,7 +123,7 @@ type SubscriptionPlanConfig = {
 const ABONNEMENTS_YEARLY_OVERRIDES: Partial<
   Record<
     TarifsSubscriptionId,
-    Pick<SubscriptionPlanConfig, "monthlyEquivalent" | "perFilmUnit" | "price">
+    Partial<Pick<SubscriptionPlanConfig, "monthlyEquivalent" | "perFilmUnit" | "price" | "quotaHighlight">>
   >
 > = {
   "yearly-12-films": {
@@ -132,9 +132,18 @@ const ABONNEMENTS_YEARLY_OVERRIDES: Partial<
     price: 39.99 * 12,
   },
   "yearly-48-films": {
-    monthlyEquivalent: 139.99,
+    monthlyEquivalent: 149.99,
     perFilmUnit: 34.99,
-    price: 139.99 * 12,
+    price: 149.99 * 12,
+    quotaHighlight: 52,
+  },
+};
+
+const ABONNEMENTS_FEATURE_LABEL_OVERRIDES: Partial<
+  Record<TarifsSubscriptionId, Partial<Record<TarifsPlanFeatureId, TranslationKey>>>
+> = {
+  "yearly-48-films": {
+    filmDuration: "abonnementsPage.premiumYearly.filmDuration",
   },
 };
 
@@ -195,8 +204,14 @@ function formatPerFilmUnit(
 
 function featureLabelKey(
   planId: TarifsSubscriptionId,
-  featureId: TarifsPlanFeatureId
+  featureId: TarifsPlanFeatureId,
+  context: TarifsPricingContext = "tarifs"
 ): TranslationKey {
+  if (context === "abonnements") {
+    const abonnementsOverride = ABONNEMENTS_FEATURE_LABEL_OVERRIDES[planId]?.[featureId];
+    if (abonnementsOverride) return abonnementsOverride;
+  }
+
   return (
     PLAN_FEATURE_LABEL_OVERRIDES[planId]?.[featureId] ??
     (`tarifsPage.features.${featureId}` as TranslationKey)
@@ -205,17 +220,18 @@ function featureLabelKey(
 
 function buildPlanFeatures(
   id: TarifsSubscriptionId,
-  t: ReturnType<typeof createTranslator>
+  t: ReturnType<typeof createTranslator>,
+  context: TarifsPricingContext = "tarifs"
 ): { id: TarifsPlanFeatureId; label: string; included: boolean }[] {
   const included = PLAN_FEATURE_IDS[id].map((featureId) => ({
     id: featureId,
-    label: t(featureLabelKey(id, featureId)),
+    label: t(featureLabelKey(id, featureId, context)),
     included: true,
   }));
 
   const excluded = (PLAN_EXCLUDED_FEATURE_IDS[id] ?? []).map((featureId) => ({
     id: featureId,
-    label: t(featureLabelKey(id, featureId)),
+    label: t(featureLabelKey(id, featureId, context)),
     included: false,
   }));
 
@@ -345,7 +361,7 @@ export function getTarifsSubscriptionPlans(
         config.compareMonthly && config.billing === "yearly"
           ? buildSavingsLabel(config.compareMonthly, config.price, locale, t)
           : undefined,
-      features: buildPlanFeatures(id, t),
+      features: buildPlanFeatures(id, t, context),
       yearlyBreakdown:
         config.compareMonthly && config.monthlyEquivalent && config.billing === "yearly"
           ? {

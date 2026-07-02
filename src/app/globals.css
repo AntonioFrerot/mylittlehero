@@ -729,7 +729,9 @@ select:disabled,
 
 /* Page abonnements — bouton doré (référence capture) */
 .abonnements-page .abonnements-gold-cta.btn-3d,
-.abonnements-page .abonnements-gold-cta.btn-3d--primary {
+.abonnements-page .abonnements-gold-cta.btn-3d--primary,
+.welcome-sample-offer-modal .abonnements-gold-cta.btn-3d,
+.welcome-sample-offer-modal .abonnements-gold-cta.btn-3d--primary {
   border: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -759,7 +761,9 @@ select:disabled,
 }
 
 .abonnements-page .abonnements-gold-cta.btn-3d:hover,
-.abonnements-page .abonnements-gold-cta.btn-3d--primary:hover {
+.abonnements-page .abonnements-gold-cta.btn-3d--primary:hover,
+.welcome-sample-offer-modal .abonnements-gold-cta.btn-3d:hover,
+.welcome-sample-offer-modal .abonnements-gold-cta.btn-3d--primary:hover {
   filter: none !important;
   background-image: linear-gradient(
     180deg,
@@ -776,7 +780,9 @@ select:disabled,
 }
 
 .abonnements-page .abonnements-gold-cta.btn-3d:active,
-.abonnements-page .abonnements-gold-cta.btn-3d--primary:active {
+.abonnements-page .abonnements-gold-cta.btn-3d--primary:active,
+.welcome-sample-offer-modal .abonnements-gold-cta.btn-3d:active,
+.welcome-sample-offer-modal .abonnements-gold-cta.btn-3d--primary:active {
   background-image: linear-gradient(
     180deg,
     #e4bc4c 0%,
@@ -791,7 +797,9 @@ select:disabled,
 }
 
 .abonnements-page .abonnements-gold-cta.btn-3d:disabled,
-.abonnements-page .abonnements-gold-cta.btn-3d--primary:disabled {
+.abonnements-page .abonnements-gold-cta.btn-3d--primary:disabled,
+.welcome-sample-offer-modal .abonnements-gold-cta.btn-3d:disabled,
+.welcome-sample-offer-modal .abonnements-gold-cta.btn-3d--primary:disabled {
   opacity: 0.55;
   filter: saturate(0.75) !important;
 }
@@ -892,8 +900,24 @@ select:disabled,
 }
 
 @media (min-width: 1024px) {
-  .abonnements-catalog__sample-slot {
+  .abonnements-catalog__tickets-grid > .abonnements-catalog__sample-slot,
+  .abonnements-catalog__subscriptions-sample-grid > .abonnements-catalog__sample-slot--subscriptions-desktop {
     grid-column: 2 / 6;
+  }
+}
+
+.abonnements-catalog__subscriptions-sample-grid {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .abonnements-catalog__subscriptions-sample-grid {
+    display: grid;
+    margin-top: 2rem;
+  }
+
+  .abonnements-catalog__sample-slot--subscriptions-desktop {
+    display: block;
   }
 }
 
@@ -956,7 +980,7 @@ select:disabled,
     min-height: 11.75rem;
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-ticket-card__visual {
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-ticket-card__visual {
     min-height: 0;
   }
 }
@@ -1220,7 +1244,7 @@ select:disabled,
     padding: 0;
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-plan-card__inner {
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-plan-card__inner {
     display: flex;
     flex-direction: row;
     align-items: stretch;
@@ -1232,8 +1256,8 @@ select:disabled,
 
   .tarifs-sample-strip__eyebrow {
     position: absolute;
-    top: calc(0.625rem + 7px);
-    left: 1.25rem;
+    top: calc(0.625rem + 10px);
+    left: calc(1.25rem + 6px);
     right: auto;
     z-index: 1;
     margin: 0;
@@ -1241,17 +1265,17 @@ select:disabled,
     text-align: left;
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-ticket-card__visual {
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-ticket-card__visual {
     display: flex;
     flex: 1;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    gap: 0.875rem;
+    gap: 1.125rem;
     margin-top: 0;
     min-height: 0;
     min-width: 0;
-    padding: 0.875rem 1rem 0.875rem 1.25rem;
+    padding: 1.25rem 1.25rem 1.25rem 1.5rem;
     text-align: left;
   }
 
@@ -1259,7 +1283,7 @@ select:disabled,
     min-width: 0;
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-ticket-card__title {
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-ticket-card__title {
     margin-top: 0;
     min-height: 0;
     font-size: 1.25rem;
@@ -1267,7 +1291,7 @@ select:disabled,
     text-align: left;
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-ticket-card__subtitle {
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-ticket-card__subtitle {
     margin-top: 0.1875rem;
     min-height: 0;
     font-size: 0.8125rem;
@@ -1275,7 +1299,7 @@ select:disabled,
     text-align: left;
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-sample-strip__aside {
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-sample-strip__aside {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1284,21 +1308,21 @@ select:disabled,
     flex-shrink: 0;
     width: 15rem;
     min-width: 15rem;
-    padding: 0.875rem 1.25rem;
+    padding: 1.25rem 1.375rem;
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-sample-strip__aside::before {
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-sample-strip__aside::before {
     content: "";
     position: absolute;
-    top: 0.875rem;
-    bottom: 0.875rem;
+    top: 1.25rem;
+    bottom: 1.25rem;
     left: 0;
     width: 1px;
     pointer-events: none;
     background: rgba(255, 255, 255, 0.06);
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-ticket-card__price-block {
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-ticket-card__price-block {
     margin-top: 0;
     padding: 0;
     min-height: 0;
@@ -1306,12 +1330,12 @@ select:disabled,
     width: 100%;
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-plan-card__per-film-row {
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-plan-card__per-film-row {
     min-height: 0;
-    margin-bottom: 0.375rem;
+    margin-bottom: 0.625rem;
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-plan-card__per-film {
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-plan-card__per-film {
     white-space: normal;
     text-align: center;
     line-height: 1.25;
@@ -1319,19 +1343,19 @@ select:disabled,
     padding: 0.3125rem 0.625rem;
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-plan-card__price {
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-plan-card__price {
     font-size: 2.25rem;
     line-height: 1;
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-plan-card__spacer {
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-plan-card__spacer {
     display: block;
     flex: 0 0 auto;
-    min-height: 0.625rem;
-    max-height: 0.625rem;
+    min-height: 1rem;
+    max-height: 1rem;
   }
 
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-plan-card__cta {
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-plan-card__cta {
     width: 100%;
     margin-top: 0 !important;
     margin-bottom: 0;
@@ -1350,9 +1374,9 @@ select:disabled,
 }
 
 @media (min-width: 768px) {
-  .abonnements-catalog__tickets-grid .tarifs-sample-strip .tarifs-sample-strip__icon-wrap {
-    width: 3.25rem;
-    height: 3.25rem;
+  .abonnements-catalog__sample-slot .tarifs-sample-strip .tarifs-sample-strip__icon-wrap {
+    width: 5.4rem;
+    height: 5.4rem;
   }
 }
 
@@ -5921,5 +5945,562 @@ select:disabled,
     transform: translateX(-50%);
     width: min(22rem, calc(100vw - 1.5rem));
     z-index: 61;
+  }
+}
+
+.welcome-sample-offer-modal {
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+.welcome-sample-offer-modal__panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(232, 197, 71, 0.3);
+  background:
+    radial-gradient(
+      ellipse 120% 70% at 50% -18%,
+      rgba(232, 197, 71, 0.16) 0%,
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 80% 50% at 50% 108%,
+      rgba(118, 188, 255, 0.1) 0%,
+      transparent 52%
+    ),
+    linear-gradient(168deg, rgba(30, 27, 23, 0.98) 0%, rgba(14, 12, 10, 0.99) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 28px 56px rgba(0, 0, 0, 0.58),
+    0 0 72px rgba(232, 197, 71, 0.14);
+  transform-origin: center center;
+  transition: opacity 0.14s ease;
+  will-change: transform, opacity, border-radius;
+}
+
+.welcome-sample-offer-modal__glow {
+  position: absolute;
+  inset: -40% -20% auto;
+  height: 70%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(232, 197, 71, 0.22) 0%,
+    transparent 68%
+  );
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.welcome-sample-offer-modal__shine-top {
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.42) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.welcome-sample-offer-modal__inner {
+  position: relative;
+  z-index: 1;
+  padding: 1.75rem 1.5rem 1.625rem;
+  animation: welcome-sample-modal-in 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 640px) {
+  .welcome-sample-offer-modal__inner {
+    padding: 2rem 2rem 1.75rem;
+  }
+}
+
+.welcome-sample-offer-modal__eyebrow {
+  margin: 0;
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(243, 214, 122, 0.92);
+}
+
+.welcome-sample-offer-modal__hero {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.welcome-sample-offer-modal__close {
+  position: absolute;
+  top: 0.875rem;
+  right: 0.875rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(245, 239, 227, 0.62);
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.welcome-sample-offer-modal__close svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.welcome-sample-offer-modal__close:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(245, 239, 227, 0.92);
+}
+
+.welcome-sample-offer-modal__close:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.welcome-sample-offer-modal__icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 6.5rem;
+  height: 6.5rem;
+}
+
+@media (min-width: 640px) {
+  .welcome-sample-offer-modal__icon-wrap {
+    width: 7.25rem;
+    height: 7.25rem;
+  }
+}
+
+.welcome-sample-offer-modal__icon-halo {
+  position: absolute;
+  inset: 2%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(232, 197, 71, 0.22) 0%,
+    rgba(232, 197, 71, 0.08) 48%,
+    transparent 72%
+  );
+  pointer-events: none;
+}
+
+.welcome-sample-offer-modal__token-icon {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: lighten;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 0 18px rgba(232, 197, 71, 0.28));
+  user-select: none;
+  pointer-events: none;
+}
+
+.welcome-sample-offer-modal__title {
+  margin: 0.375rem 0 0;
+  font-size: 1.625rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: #f5efe3;
+}
+
+@media (min-width: 640px) {
+  .welcome-sample-offer-modal__title {
+    font-size: 1.875rem;
+  }
+}
+
+.welcome-sample-offer-modal__offer-card {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 1.125rem 1.25rem 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(232, 197, 71, 0.38);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(232, 197, 71, 0.14) 0%,
+      rgba(232, 197, 71, 0.05) 48%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 8px 20px rgba(0, 0, 0, 0.22);
+  text-align: center;
+}
+
+.welcome-sample-offer-modal__offer-label {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(243, 214, 122, 0.88);
+}
+
+.welcome-sample-offer-modal__duration {
+  display: inline-flex;
+  margin-top: 0.625rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(232, 197, 71, 0.42);
+  background: rgba(232, 197, 71, 0.1);
+  padding: 0.375rem 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(243, 214, 122, 0.95);
+}
+
+@media (min-width: 640px) {
+  .welcome-sample-offer-modal__duration {
+    font-size: 0.8125rem;
+  }
+}
+
+.welcome-sample-offer-modal__price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-top: 0.875rem;
+}
+
+.welcome-sample-offer-modal__price {
+  font-size: 2.75rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #f5efe3;
+  text-shadow: 0 2px 12px rgba(232, 197, 71, 0.22);
+}
+
+@media (min-width: 640px) {
+  .welcome-sample-offer-modal__price {
+    font-size: 3rem;
+  }
+}
+
+.welcome-sample-offer-modal__actions {
+  margin-top: calc(0.625rem - 3px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.welcome-sample-offer-modal__cta-wrap {
+  width: 100%;
+}
+
+.welcome-sample-offer-modal .welcome-sample-offer-modal__cta-wrap .abonnements-gold-cta {
+  min-height: 3.25rem;
+  font-size: 0.9375rem !important;
+  letter-spacing: 0.02em;
+}
+
+.welcome-sample-offer-modal__cta-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: rgba(245, 239, 227, 0.45);
+  text-align: center;
+}
+
+.welcome-sample-offer-modal__decline {
+  margin-top: 0.125rem;
+  border: none;
+  background: transparent;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(245, 239, 227, 0.42);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.welcome-sample-offer-modal__decline:hover:not(:disabled) {
+  color: rgba(245, 239, 227, 0.72);
+}
+
+.welcome-sample-offer-modal__decline:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.welcome-sample-offer-modal--collapsing {
+  pointer-events: none;
+}
+
+.welcome-sample-offer-modal__panel--collapse-morph {
+  z-index: 90;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  border-color: rgba(255, 255, 255, 0.68);
+  background:
+    radial-gradient(
+      circle at 30% 24%,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0.2) 11%,
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 72% 76%,
+      rgba(151, 214, 255, 0.42) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 48% 56%,
+      rgba(214, 178, 255, 0.24) 0%,
+      rgba(118, 188, 255, 0.2) 36%,
+      rgba(255, 255, 255, 0.08) 58%,
+      transparent 76%
+    );
+  box-shadow:
+    0 12px 24px rgba(72, 132, 220, 0.28),
+    0 5px 12px rgba(0, 0, 0, 0.34),
+    inset 0 -12px 20px rgba(88, 148, 230, 0.22),
+    inset 0 10px 16px rgba(255, 255, 255, 0.46);
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease,
+    box-shadow 0.12s ease;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.welcome-sample-offer-modal__panel--collapse-fly {
+  transform: translate3d(
+      var(--welcome-sample-collapse-x, 0),
+      var(--welcome-sample-collapse-y, 0),
+      0
+    )
+    scale(var(--welcome-sample-collapse-scale, 0.125));
+  transition: transform 0.58s cubic-bezier(0.32, 0.72, 0, 1);
+  opacity: 1;
+}
+
+.welcome-sample-offer-modal__panel--collapse-fade {
+  opacity: 0;
+}
+
+.welcome-sample-offer-modal__panel--collapse-morph .welcome-sample-offer-modal__glow,
+.welcome-sample-offer-modal__panel--collapse-morph .welcome-sample-offer-modal__shine-top {
+  opacity: 0;
+  transition: opacity 0.06s ease;
+}
+
+.welcome-sample-offer-modal__panel--collapse-morph .welcome-sample-offer-modal__inner {
+  animation: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0;
+  transition: padding 0.1s ease;
+}
+
+.welcome-sample-offer-modal__panel--collapse-morph .welcome-sample-offer-modal__eyebrow,
+.welcome-sample-offer-modal__panel--collapse-morph .welcome-sample-offer-modal__offer-card,
+.welcome-sample-offer-modal__panel--collapse-morph .welcome-sample-offer-modal__actions,
+.welcome-sample-offer-modal__panel--collapse-morph .welcome-sample-offer-modal__close,
+.welcome-sample-offer-modal__panel--collapse-morph .welcome-sample-offer-modal__title {
+  opacity: 0;
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 0.06s ease, max-height 0.1s ease, margin 0.1s ease;
+}
+
+.welcome-sample-offer-modal__panel--collapse-morph .welcome-sample-offer-modal__hero {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  justify-content: center;
+}
+
+.welcome-sample-offer-modal__panel--collapse-morph .welcome-sample-offer-modal__icon-wrap {
+  width: 78% !important;
+  height: 78% !important;
+  transition: width 0.12s ease, height 0.12s ease;
+}
+
+.welcome-sample-offer-modal__panel--collapse-morph .welcome-sample-offer-modal__icon-halo {
+  opacity: 0;
+  transition: opacity 0.06s ease;
+}
+
+@keyframes welcome-sample-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.welcome-sample-offer-bubble--receiving {
+  visibility: hidden;
+  pointer-events: none;
+  animation: none;
+}
+
+.welcome-sample-offer-bubble {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  isolation: isolate;
+  animation:
+    welcome-sample-bubble-in 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    welcome-sample-bubble-float 3.4s ease-in-out 0.4s infinite;
+  transition: transform 0.22s ease;
+}
+
+.welcome-sample-offer-bubble:hover {
+  transform: scale(1.06);
+  animation-play-state: paused;
+}
+
+.welcome-sample-offer-bubble:active {
+  transform: scale(0.97);
+}
+
+.welcome-sample-offer-bubble:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.72);
+  outline-offset: 4px;
+}
+
+.welcome-sample-offer-bubble__shell {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 30% 24%,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0.2) 11%,
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 72% 76%,
+      rgba(151, 214, 255, 0.42) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 48% 56%,
+      rgba(214, 178, 255, 0.24) 0%,
+      rgba(118, 188, 255, 0.2) 36%,
+      rgba(255, 255, 255, 0.08) 58%,
+      transparent 76%
+    );
+  border: 2px solid rgba(255, 255, 255, 0.68);
+  box-shadow:
+    0 12px 24px rgba(72, 132, 220, 0.28),
+    0 5px 12px rgba(0, 0, 0, 0.34),
+    inset 0 -12px 20px rgba(88, 148, 230, 0.22),
+    inset 0 10px 16px rgba(255, 255, 255, 0.46);
+  transition:
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.welcome-sample-offer-bubble:hover .welcome-sample-offer-bubble__shell {
+  border-color: rgba(255, 255, 255, 0.86);
+  box-shadow:
+    0 14px 28px rgba(92, 156, 255, 0.34),
+    0 6px 14px rgba(0, 0, 0, 0.36),
+    inset 0 -12px 20px rgba(88, 148, 230, 0.26),
+    inset 0 10px 18px rgba(255, 255, 255, 0.54);
+}
+
+.welcome-sample-offer-bubble__shine {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.welcome-sample-offer-bubble__shine--main {
+  top: 13%;
+  left: 16%;
+  width: 36%;
+  height: 24%;
+  background: rgba(255, 255, 255, 0.92);
+  transform: rotate(-32deg);
+  filter: blur(0.4px);
+}
+
+.welcome-sample-offer-bubble__shine--soft {
+  right: 18%;
+  bottom: 20%;
+  width: 18%;
+  height: 11%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: rotate(24deg);
+}
+
+.welcome-sample-offer-bubble__icon {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 2.75rem;
+  height: 2.75rem;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+@keyframes welcome-sample-bubble-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes welcome-sample-bubble-in {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

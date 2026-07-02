@@ -35,7 +35,7 @@ export function AbonnementsSampleBlock({ offer, locale }: AbonnementsSampleBlock
               width={SITE_JETON_WIDTH}
               height={SITE_JETON_HEIGHT}
               className="tarifs-sample-strip__icon"
-              sizes="(max-width: 768px) 120px, 60px"
+              sizes="(max-width: 767px) 120px, 86px"
               draggable={false}
             />
           </div>

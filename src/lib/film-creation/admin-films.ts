@@ -1,9 +1,11 @@
 import { ensureSchema, getSql, isDatabaseEnabled } from "@/lib/db/client";
 import { normalizeEmail } from "@/lib/db/normalize-email";
+import { listCharacters } from "@/lib/characters/store";
+import type { Character } from "@/lib/characters/types";
 import { attachStoryToFilms } from "./catalog-films";
 import { isUserShortPreviewFilm } from "./is-short-preview-film";
 import { listUserFilms } from "./store";
-import type { UserFilmWithStory } from "./types";
+import type { FilmCharacterRef, UserFilmWithStory } from "./types";
 import { normalizeFilmStatus } from "@/lib/i18n/film-labels";
 
 export type AdminFilmEntry = UserFilmWithStory & {
@@ -65,6 +67,24 @@ function sortCompletedDesc(films: AdminFilmEntry[]): AdminFilmEntry[] {
   );
 }
 
+function enrichFilmCharacters(
+  characters: FilmCharacterRef[],
+  liveCharacters: Character[]
+): FilmCharacterRef[] {
+  const byId = new Map(liveCharacters.map((character) => [character.id, character]));
+
+  return characters.map((ref) => {
+    const live = byId.get(ref.id);
+    if (!live) return ref;
+
+    return {
+      ...ref,
+      ...(!ref.photoSrc && live.photoSrc ? { photoSrc: live.photoSrc } : {}),
+      ...(!ref.audioSrc && live.audioSrc ? { audioSrc: live.audioSrc } : {}),
+    };
+  });
+}
+
 export async function listAdminFilmsByStatus(): Promise<AdminFilmsByStatus> {
   const emails = await listAllOwnerEmails();
   const awaiting: AdminFilmEntry[] = [];
@@ -74,12 +94,18 @@ export async function listAdminFilmsByStatus(): Promise<AdminFilmsByStatus> {
     const films = await listUserFilms(email);
     if (films.length === 0) continue;
 
+    const liveCharacters = await listCharacters(email);
     const withStory = await attachStoryToFilms(email, films);
     for (const film of withStory) {
-      if (isFilmAwaitingCreation(film)) {
-        awaiting.push({ ...film, ownerEmail: email });
-      } else if (isFilmCompleted(film)) {
-        completed.push({ ...film, ownerEmail: email });
+      const enrichedFilm = {
+        ...film,
+        characters: enrichFilmCharacters(film.characters, liveCharacters),
+      };
+
+      if (isFilmAwaitingCreation(enrichedFilm)) {
+        awaiting.push({ ...enrichedFilm, ownerEmail: email });
+      } else if (isFilmCompleted(enrichedFilm)) {
+        completed.push({ ...enrichedFilm, ownerEmail: email });
       }
     }
   }

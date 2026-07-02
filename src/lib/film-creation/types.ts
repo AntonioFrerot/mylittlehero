@@ -52,6 +52,7 @@ export type FilmCharacterRef = {
   id: string;
   prenom: string;
   photoSrc?: string;
+  audioSrc?: string;
   age?: string;
   taille?: string;
   isMain?: boolean;

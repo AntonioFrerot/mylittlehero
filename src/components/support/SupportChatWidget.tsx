@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useWelcomeSampleOffer } from "@/components/espace/WelcomeSampleOfferProvider";
 import { useLocale } from "@/components/LocaleProvider";
 import {
   BTN_3D_CHAT_SEND,
@@ -9,6 +11,7 @@ import {
   BTN_3D_ICON,
 } from "@/lib/ui/button-3d-classes";
 import { SUPPORT_WELCOME_MESSAGE } from "@/lib/support-chat/welcome-message";
+import { SITE_JETON_HEIGHT, SITE_JETON_SRC, SITE_JETON_WIDTH } from "@/lib/brand";
 
 type UiMessage = {
   id: string;
@@ -62,7 +65,8 @@ function getOrCreateConversationId(): string {
 }
 
 export function SupportChatWidget() {
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
+  const welcomeSampleOffer = useWelcomeSampleOffer();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
@@ -160,7 +164,35 @@ export function SupportChatWidget() {
   };
 
   return (
-    <div className="fixed right-4 z-[60] flex flex-col items-end gap-3 safe-bottom sm:right-6">
+    <div className="support-chat-stack fixed right-4 z-[60] flex flex-col items-end gap-2 safe-bottom sm:right-6">
+      {welcomeSampleOffer?.bubbleVisible || welcomeSampleOffer?.bubbleReceiving ? (
+        <button
+          type="button"
+          onClick={welcomeSampleOffer.openModal}
+          className={`welcome-sample-offer-bubble${
+            welcomeSampleOffer.bubbleReceiving ? " welcome-sample-offer-bubble--receiving" : ""
+          }`}
+          aria-label={t("welcomeSampleOffer.bubbleLabel")}
+          title={t("welcomeSampleOffer.bubbleLabel")}
+          tabIndex={welcomeSampleOffer.bubbleReceiving ? -1 : undefined}
+          aria-hidden={welcomeSampleOffer.bubbleReceiving ? true : undefined}
+        >
+          <span className="welcome-sample-offer-bubble__shell" aria-hidden>
+            <span className="welcome-sample-offer-bubble__shine welcome-sample-offer-bubble__shine--main" />
+            <span className="welcome-sample-offer-bubble__shine welcome-sample-offer-bubble__shine--soft" />
+          </span>
+          <Image
+            src={SITE_JETON_SRC}
+            alt=""
+            width={SITE_JETON_WIDTH}
+            height={SITE_JETON_HEIGHT}
+            className="welcome-sample-offer-bubble__icon"
+            sizes="44px"
+            draggable={false}
+          />
+        </button>
+      ) : null}
+
       {open && (
         <div
           className="flex w-[min(100vw-2rem,24rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-cinema-surface shadow-[0_6px_18px_rgba(0,0,0,0.4)] sm:w-[22rem]"

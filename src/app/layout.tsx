@@ -3,6 +3,7 @@ import { HashScrollHandler } from "@/components/HashScrollHandler";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { SupportChatLazy } from "@/components/support/SupportChatLazy";
+import { WelcomeSampleOfferRoot } from "@/components/espace/WelcomeSampleOfferRoot";
 import { getSession } from "@/lib/auth/get-session";
 import { isAdminEmail } from "@/lib/auth/is-admin";
 import { BRAND_NAME } from "@/lib/brand";
@@ -57,9 +58,11 @@ export default async function RootLayout({
       <body className="min-h-screen bg-cinema-black font-sans text-cream antialiased">
         <LocaleProvider locale={locale} messages={getMessages(locale)}>
           <AuthProvider initialUser={session} initialIsAdmin={initialIsAdmin}>
-            <HashScrollHandler />
-            {children}
-            <SupportChatLazy />
+            <WelcomeSampleOfferRoot>
+              <HashScrollHandler />
+              {children}
+              <SupportChatLazy />
+            </WelcomeSampleOfferRoot>
           </AuthProvider>
         </LocaleProvider>
       </body>

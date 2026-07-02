@@ -2,6 +2,7 @@ export type Character = {
   id: string;
   prenom: string;
   photoSrc: string;
+  audioSrc?: string;
   age?: string;
   taille: string;
   additionalInfo?: string;
@@ -15,6 +16,7 @@ export type LegacyCharacter = {
   name?: string;
   prenom?: string;
   photoSrc?: string;
+  audioSrc?: string;
   role?: string;
   description?: string;
   age?: string;

@@ -31,6 +31,65 @@ function formatDate(value: string, locale: LocaleCode): string {
   }
 }
 
+function AdminCharacterMedia({
+  character,
+  locale,
+  compact = false,
+}: {
+  character: AdminFilmEntry["characters"][number];
+  locale: LocaleCode;
+  compact?: boolean;
+}) {
+  const t = createTranslator(locale);
+
+  return (
+    <div className={compact ? "space-y-2" : "space-y-3"}>
+      {character.photoSrc ? (
+        <div
+          className={
+            compact
+              ? "relative h-24 w-20 overflow-hidden rounded-lg border border-white/10 bg-black/40"
+              : "relative h-44 w-36 overflow-hidden rounded-lg border border-white/10 bg-black/40 sm:h-52 sm:w-44"
+          }
+        >
+          <Image
+            src={character.photoSrc}
+            alt={character.prenom}
+            fill
+            className="object-contain"
+            sizes={compact ? "80px" : "(max-width: 640px) 144px, 176px"}
+          />
+        </div>
+      ) : null}
+
+      {character.audioSrc ? (
+        <div className="space-y-2">
+          {!compact ? (
+            <p className="text-xs font-medium uppercase tracking-wide text-cream/45">
+              {t("admin.mainCharacterAudio")}
+            </p>
+          ) : null}
+          <audio
+            controls
+            src={character.audioSrc}
+            className={compact ? "w-full max-w-[12rem]" : "w-full max-w-xs"}
+            preload="metadata"
+          />
+          <a
+            href={character.audioSrc}
+            download
+            className="inline-flex text-xs text-gold-light underline-offset-2 hover:underline"
+          >
+            {t("admin.downloadCharacterAudio")}
+          </a>
+        </div>
+      ) : (
+        <p className="text-xs text-amber-200/80">{t("admin.missingCharacterAudio")}</p>
+      )}
+    </div>
+  );
+}
+
 function AdminFilmDetails({
   film,
   locale,
@@ -51,24 +110,19 @@ function AdminFilmDetails({
   const themes = film.themes
     .map((theme) => translateFilmTheme(String(theme) as FilmThemeId, locale))
     .join(", ");
+  const secondaryCharacters = film.characters.filter(
+    (character) => character.id !== main?.id
+  );
 
   return (
   <>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        {main?.photoSrc ? (
+        {main ? (
           <div className="shrink-0">
             <p className="mb-2 text-xs font-medium uppercase tracking-wide text-cream/45">
               {t("admin.mainCharacterPhoto")}
             </p>
-            <div className="relative h-44 w-36 overflow-hidden rounded-lg border border-white/10 bg-black/40 sm:h-52 sm:w-44">
-              <Image
-                src={main.photoSrc}
-                alt={main.prenom}
-                fill
-                className="object-contain"
-                sizes="(max-width: 640px) 144px, 176px"
-              />
-            </div>
+            <AdminCharacterMedia character={main} locale={locale} />
             <p className="mt-2 text-sm font-medium text-cream">{main.prenom}</p>
             {main.age ? (
               <p className="text-xs text-cream/55">
@@ -143,19 +197,33 @@ function AdminFilmDetails({
             </div>
           </section>
 
-          {film.characters.length > 1 ? (
+          {secondaryCharacters.length > 0 ? (
             <section>
               <h3 className="text-xs font-semibold uppercase tracking-wide text-cream/45">
                 {t("admin.allCharacters")}
               </h3>
-              <ul className="mt-2 flex flex-wrap gap-2 text-sm text-cream/70">
-                {film.characters.map((character) => (
+              <ul className="mt-3 grid gap-4 sm:grid-cols-2">
+                {secondaryCharacters.map((character) => (
                   <li
                     key={character.id}
-                    className="rounded-full border border-white/10 px-3 py-1"
+                    className="rounded-xl border border-white/10 bg-black/20 p-4"
                   >
-                    {character.prenom}
-                    {character.isMain ? ` (${t("admin.mainCharacter")})` : ""}
+                    <p className="text-sm font-medium text-cream">
+                      {character.prenom}
+                      {character.isMain ? ` (${t("admin.mainCharacter")})` : ""}
+                    </p>
+                    {character.age ? (
+                      <p className="mt-1 text-xs text-cream/55">
+                        {t("admin.characterAge", { age: character.age })}
+                      </p>
+                    ) : null}
+                    <div className="mt-3">
+                      <AdminCharacterMedia
+                        character={character}
+                        locale={locale}
+                        compact
+                      />
+                    </div>
                   </li>
                 ))}
               </ul>

@@ -11,7 +11,9 @@ import {
 } from "@/lib/ui/button-3d-classes";
 import { useLocale } from "@/components/LocaleProvider";
 import { Button } from "@/components/ui/Button";
+import { RequiredFieldLabel } from "@/components/ui/RequiredFieldLabel";
 import { CharacterPhotoUpload } from "@/components/espace/CharacterPhotoUpload";
+import { CharacterAudioUpload } from "@/components/espace/CharacterAudioUpload";
 import {
   removeCharacter,
   upsertCharacter,
@@ -181,6 +183,11 @@ export function CharacterManager({
                               {t("characters.missingPhoto")}
                             </p>
                           )}
+                          {!character.audioSrc && (
+                            <p className="mt-1 text-xs text-amber-200/80">
+                              {t("characters.missingAudio")}
+                            </p>
+                          )}
                           {character.additionalInfo && (
                             <p className="mt-2 line-clamp-3 text-sm text-cream/55">
                               {character.additionalInfo}
@@ -224,6 +231,7 @@ export function CharacterManager({
         <form
           key={editing?.id ?? `new-${formResetKey}`}
           action={formAction}
+          encType="multipart/form-data"
           className="mt-6 flex flex-col gap-4"
         >
           {editing && <input type="hidden" name="id" value={editing.id} />}
@@ -233,8 +241,10 @@ export function CharacterManager({
             prenom={editing?.prenom}
           />
 
+          <CharacterAudioUpload currentAudioSrc={editing?.audioSrc} />
+
           <label className="flex flex-col gap-1.5 text-sm">
-            <span className="text-cream/70">{t("characters.prenom")}</span>
+            <RequiredFieldLabel>{t("characters.prenom")}</RequiredFieldLabel>
             <input
               type="text"
               name="prenom"
@@ -245,17 +255,18 @@ export function CharacterManager({
           </label>
 
           <label className="flex flex-col gap-1.5 text-sm">
-            <span className="text-cream/70">{t("characters.age")}</span>
+            <RequiredFieldLabel>{t("characters.age")}</RequiredFieldLabel>
             <input
               type="text"
               name="age"
+              required
               defaultValue={editing?.age ?? ""}
               className={inputClass}
             />
           </label>
 
           <label className="flex flex-col gap-1.5 text-sm">
-            <span className="text-cream/70">{t("characters.taille")}</span>
+            <RequiredFieldLabel>{t("characters.taille")}</RequiredFieldLabel>
             <input
               type="number"
               name="taille"

@@ -93,7 +93,7 @@ export function FilmCreationForm({
       : t("filmCreation.form.jetonsCount", { count });
   }
 
-  const eligibleCharacters = characters.filter((c) => c.photoSrc);
+  const eligibleCharacters = characters.filter((c) => c.photoSrc && c.audioSrc);
   const missingPhoto = characters.filter((c) => !c.photoSrc);
 
   function validateBeforeSubmit(form: HTMLFormElement): string | null {
@@ -181,7 +181,11 @@ export function FilmCreationForm({
         ) : eligibleCharacters.length === 0 ? (
           <div className="rounded-xl border border-amber-500/25 bg-amber-950/20 p-6 text-center">
             <p className="text-sm text-amber-100/90">
-              {t("filmCreation.form.noPhoto")}
+              {t(
+                missingPhoto.length > 0
+                  ? "filmCreation.form.noPhoto"
+                  : "filmCreation.form.noAudio"
+              )}
             </p>
             <Link
               href="/mon-espace?section=personnages"

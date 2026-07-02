@@ -10,6 +10,11 @@ import {
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "node:crypto";
 import {
+  deleteCharacterAudioFile,
+  isValidCharacterAudioDuration,
+  saveCharacterAudio,
+} from "./audio";
+import {
   deleteCharacterPhotoFile,
   saveCharacterPhoto,
 } from "./photo";
@@ -30,10 +35,20 @@ function optionalText(value: unknown): string | undefined {
   return trimmed ? trimmed : undefined;
 }
 
-function optionalAge(value: unknown): string | undefined {
-  const raw = optionalText(value);
-  if (!raw) return undefined;
-  return formatCharacterAge(raw) ?? undefined;
+function parseAge(
+  value: unknown,
+  t: ReturnType<typeof import("@/lib/i18n/translator").createTranslator>
+): { age: string } | { error: string } {
+  if (typeof value !== "string" || !value.trim()) {
+    return { error: t("characters.errors.ageRequired") };
+  }
+
+  const formatted = formatCharacterAge(value);
+  if (!formatted) {
+    return { error: t("characters.errors.ageRequired") };
+  }
+
+  return { age: formatted };
 }
 
 const MIN_TAILLE_CM = 10;
@@ -87,16 +102,21 @@ export async function upsertCharacter(
 
     const id = formData.get("id");
     const prenom = formData.get("prenom");
-    const age = optionalAge(formData.get("age"));
+    const ageResult = parseAge(formData.get("age"), t);
     const tailleResult = parseTailleCm(formData.get("taille"), t);
     const additionalInfo = optionalText(formData.get("additionalInfo"));
     const photoInput = formData.get("photo");
+    const audioInput = formData.get("audio");
+    const audioDurationRaw = formData.get("audioDuration");
 
     if (typeof prenom !== "string" || !prenom.trim()) {
       return { error: t("characters.errors.prenomRequired") };
     }
     if ("error" in tailleResult) {
       return { error: tailleResult.error };
+    }
+    if ("error" in ageResult) {
+      return { error: ageResult.error };
     }
 
     const now = new Date().toISOString();
@@ -124,11 +144,36 @@ export async function upsertCharacter(
       return { error: t("characters.errors.photoRequired") };
     }
 
+    let audioSrc = previous?.audioSrc;
+
+    if (audioInput instanceof File && audioInput.size > 0) {
+      const duration =
+        typeof audioDurationRaw === "string" ? Number(audioDurationRaw) : Number.NaN;
+      if (!isValidCharacterAudioDuration(duration)) {
+        return { error: t("characters.errors.audioDuration") };
+      }
+
+      const savedAudio = await saveCharacterAudio(
+        session.email,
+        characterId,
+        audioInput
+      );
+      if (!savedAudio.ok) return { error: savedAudio.error };
+
+      if (previous?.audioSrc && previous.audioSrc !== savedAudio.audioSrc) {
+        await deleteCharacterAudioFile(previous.audioSrc);
+      }
+      audioSrc = savedAudio.audioSrc;
+    } else if (!audioSrc) {
+      return { error: t("characters.errors.audioRequired") };
+    }
+
     const character: Character = {
       id: characterId,
       prenom: prenom.trim(),
       photoSrc,
-      ...(age ? { age } : {}),
+      ...(audioSrc ? { audioSrc } : {}),
+      age: ageResult.age,
       taille: tailleResult.taille,
       ...(additionalInfo ? { additionalInfo } : {}),
       createdAt: previous?.createdAt ?? now,
@@ -173,6 +218,9 @@ export async function removeCharacter(
     const target = existing.find((c) => c.id === characterId);
     if (target?.photoSrc) {
       await deleteCharacterPhotoFile(target.photoSrc);
+    }
+    if (target?.audioSrc) {
+      await deleteCharacterAudioFile(target.audioSrc);
     }
 
     await deleteCharacter(session.email, characterId);
