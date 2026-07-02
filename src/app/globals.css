@@ -5955,7 +5955,7 @@ select:disabled,
 
 .welcome-sample-offer-modal__panel {
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   border-radius: 1.5rem;
   background: transparent;
   transform-origin: center center;
@@ -5969,57 +5969,58 @@ select:disabled,
   inset: 0;
   z-index: 0;
   border-radius: inherit;
-  border: 1px solid rgba(232, 197, 71, 0.3);
+  border: 1px solid rgba(232, 197, 71, 0.38);
   background:
     radial-gradient(
-      ellipse 120% 70% at 50% -18%,
-      rgba(232, 197, 71, 0.16) 0%,
-      transparent 58%
+      ellipse 110% 68% at 50% -10%,
+      rgba(232, 197, 71, 0.3) 0%,
+      rgba(232, 197, 71, 0.12) 40%,
+      transparent 62%
     ),
     radial-gradient(
-      ellipse 80% 50% at 50% 108%,
-      rgba(118, 188, 255, 0.1) 0%,
-      transparent 52%
+      ellipse 88% 58% at 50% 108%,
+      rgba(118, 188, 255, 0.14) 0%,
+      transparent 56%
     ),
-    linear-gradient(168deg, rgba(30, 27, 23, 0.98) 0%, rgba(14, 12, 10, 0.99) 100%);
+    linear-gradient(168deg, rgba(32, 28, 22, 0.98) 0%, rgba(12, 10, 8, 0.99) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 28px 56px rgba(0, 0, 0, 0.58),
-    0 0 72px rgba(232, 197, 71, 0.14);
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 52px rgba(232, 197, 71, 0.1),
+    inset 0 -28px 44px rgba(118, 188, 255, 0.05),
+    0 28px 56px rgba(0, 0, 0, 0.58);
   pointer-events: none;
 }
 
-.welcome-sample-offer-modal__glow {
+.welcome-sample-offer-modal__panel::after {
+  content: "";
   position: absolute;
-  top: -18%;
-  left: -12%;
-  right: -12%;
-  height: 72%;
+  inset: 0;
   z-index: 0;
-  background: radial-gradient(
-    ellipse 72% 88% at 50% 42%,
-    rgba(232, 197, 71, 0.24) 0%,
-    rgba(232, 197, 71, 0.1) 42%,
-    rgba(232, 197, 71, 0.03) 62%,
-    transparent 78%
-  );
+  border-radius: inherit;
   pointer-events: none;
-  opacity: 0.9;
+  background: radial-gradient(
+    ellipse 78% 52% at 50% 30%,
+    rgba(232, 197, 71, 0.24) 0%,
+    rgba(232, 197, 71, 0.09) 36%,
+    transparent 68%
+  );
+  opacity: 0.92;
 }
 
 .welcome-sample-offer-modal__shine-top {
   position: absolute;
   top: 0;
-  left: 8%;
-  right: 8%;
-  height: 1px;
+  left: 6%;
+  right: 6%;
+  height: 2px;
   z-index: 1;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.42) 50%,
+    rgba(255, 236, 180, 0.55) 50%,
     transparent 100%
   );
+  box-shadow: 0 0 14px rgba(255, 236, 180, 0.18);
   pointer-events: none;
 }
 
@@ -6112,17 +6113,17 @@ select:disabled,
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 16rem;
-  height: 16rem;
+  width: 14rem;
+  height: 14rem;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(232, 197, 71, 0.34) 0%,
-    rgba(232, 197, 71, 0.16) 28%,
-    rgba(232, 197, 71, 0.07) 48%,
-    rgba(232, 197, 71, 0.02) 64%,
-    transparent 78%
+    rgba(232, 197, 71, 0.46) 0%,
+    rgba(232, 197, 71, 0.24) 26%,
+    rgba(232, 197, 71, 0.11) 44%,
+    rgba(232, 197, 71, 0.04) 58%,
+    transparent 72%
   );
   pointer-events: none;
 }
@@ -6136,7 +6137,7 @@ select:disabled,
   object-fit: contain;
   mix-blend-mode: lighten;
   filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.42))
-    drop-shadow(0 0 18px rgba(232, 197, 71, 0.28));
+    drop-shadow(0 0 22px rgba(232, 197, 71, 0.36));
   user-select: none;
   pointer-events: none;
 }
@@ -6166,12 +6167,13 @@ select:disabled,
   background:
     linear-gradient(
       180deg,
-      rgba(232, 197, 71, 0.14) 0%,
-      rgba(232, 197, 71, 0.05) 48%,
-      rgba(255, 255, 255, 0.02) 100%
+      rgba(232, 197, 71, 0.18) 0%,
+      rgba(232, 197, 71, 0.07) 48%,
+      rgba(255, 255, 255, 0.03) 100%
     );
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 28px rgba(232, 197, 71, 0.14),
     0 8px 20px rgba(0, 0, 0, 0.22);
   text-align: center;
 }
@@ -6314,7 +6316,8 @@ select:disabled,
   pointer-events: none;
 }
 
-.welcome-sample-offer-modal__panel--collapse-morph::before {
+.welcome-sample-offer-modal__panel--collapse-morph::before,
+.welcome-sample-offer-modal__panel--collapse-morph::after {
   opacity: 0;
 }
 
@@ -6333,7 +6336,6 @@ select:disabled,
   opacity: 0;
 }
 
-.welcome-sample-offer-modal__panel--collapse-morph .welcome-sample-offer-modal__glow,
 .welcome-sample-offer-modal__panel--collapse-morph .welcome-sample-offer-modal__shine-top {
   opacity: 0;
   transition: opacity 0.06s ease;

@@ -177,7 +177,6 @@ export function WelcomeSampleOfferModal({
         aria-labelledby="welcome-sample-offer-title"
         className="welcome-sample-offer-modal__panel relative z-[1] w-full max-w-md"
       >
-        <div className="welcome-sample-offer-modal__glow" aria-hidden />
         <div className="welcome-sample-offer-modal__shine-top" aria-hidden />
 
         <button

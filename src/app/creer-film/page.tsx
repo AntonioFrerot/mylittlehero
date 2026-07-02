@@ -3,7 +3,6 @@ import { getMyCharacters } from "@/lib/characters/actions";
 import { getMyFilmCreationCooldown } from "@/lib/film-creation/actions";
 import { getSession } from "@/lib/auth/get-session";
 import { getMyFilmTicketSummary } from "@/lib/purchases/actions";
-import { canCreateFilm, PRICING_PATH } from "@/lib/navigation/creer-film";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
 import { SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
@@ -31,10 +30,6 @@ export default async function CreerFilmPage() {
 
   if (!session) {
     redirect("/connexion?redirect=/creer-film");
-  }
-
-  if (ticketSummary && !canCreateFilm(ticketSummary)) {
-    redirect(PRICING_PATH);
   }
 
   return (
