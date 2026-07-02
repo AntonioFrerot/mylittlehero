@@ -4,6 +4,7 @@ import { isAdminEmail } from "@/lib/auth/is-admin";
 import { SESSION_COOKIE } from "@/lib/auth/session";
 import { verifySessionToken } from "@/lib/auth/session-token";
 import { VISITOR_COOKIE } from "@/lib/analytics/admin-stats";
+import { getAnalyticsCollectSecret } from "@/lib/analytics/collect-secret";
 import { shouldRecordVisitEnvironment } from "@/lib/analytics/filter-visits";
 import { shouldTrackVisit } from "@/lib/analytics/parse-visit";
 import type { SessionUser } from "@/lib/auth/session";
@@ -62,7 +63,7 @@ function applyVisitorCookie(request: NextRequest, response: NextResponse): strin
 function trackVisitAsync(request: NextRequest, visitorId: string) {
   if (!shouldRecordVisitEnvironment(request.nextUrl.hostname)) return;
 
-  const secret = process.env.ANALYTICS_COLLECT_SECRET?.trim();
+  const secret = getAnalyticsCollectSecret();
   const url = new URL("/api/analytics/collect", request.nextUrl.origin);
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -94,6 +95,7 @@ function trackVisitAsync(request: NextRequest, visitorId: string) {
     headers,
     body: JSON.stringify({
       path: request.nextUrl.pathname,
+      search: request.nextUrl.search || undefined,
       visitorId,
     }),
   }).catch(() => {});

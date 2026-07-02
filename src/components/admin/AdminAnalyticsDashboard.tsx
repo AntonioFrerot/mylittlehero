@@ -23,6 +23,12 @@ function formatNumber(value: number, locale: string): string {
   return new Intl.NumberFormat(locale === "en" ? "en-GB" : "fr-FR").format(value);
 }
 
+function formatPercent(value: number, locale: string): string {
+  return new Intl.NumberFormat(locale === "en" ? "en-GB" : "fr-FR", {
+    maximumFractionDigits: 1,
+  }).format(value);
+}
+
 function formatRange(stats: AdminAnalyticsStats, locale: string): string {
   const formatter = new Intl.DateTimeFormat(locale === "en" ? "en-GB" : "fr-FR", {
     dateStyle: "medium",
@@ -31,22 +37,26 @@ function formatRange(stats: AdminAnalyticsStats, locale: string): string {
   return `${formatter.format(new Date(stats.from))} → ${formatter.format(new Date(stats.to))}`;
 }
 
+function formatVisitDate(value: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale === "en" ? "en-GB" : "fr-FR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(new Date(value));
+}
+
 function VisitsChart({
   series,
   locale,
   emptyLabel,
-  visitorsLabel,
 }: {
   series: AdminAnalyticsStats["series"];
   locale: string;
   emptyLabel: string;
-  visitorsLabel: string;
 }) {
-  const maxVisitors = Math.max(...series.map((bucket) => bucket.uniqueVisitors), 1);
+  const maxViews = Math.max(...series.map((bucket) => bucket.pageViews), 1);
   const chartHeight = 180;
-  const barGap = 4;
 
-  if (series.every((bucket) => bucket.uniqueVisitors === 0)) {
+  if (series.every((bucket) => bucket.pageViews === 0)) {
     return (
       <p className="rounded-xl border border-dashed border-white/15 bg-black/20 px-4 py-10 text-center text-sm text-cream/55">
         {emptyLabel}
@@ -60,22 +70,21 @@ function VisitsChart({
         className="flex min-w-full items-end gap-1 px-1"
         style={{ minHeight: chartHeight + 48 }}
         role="img"
-        aria-label={visitorsLabel}
       >
         {series.map((bucket) => {
-          const height = Math.max(6, (bucket.uniqueVisitors / maxVisitors) * chartHeight);
+          const height = Math.max(6, (bucket.pageViews / maxViews) * chartHeight);
           return (
             <div
               key={bucket.start}
               className="flex min-w-[2.25rem] flex-1 flex-col items-center gap-2"
-              title={`${bucket.label}: ${bucket.uniqueVisitors}`}
+              title={`${bucket.label}: ${bucket.pageViews} / ${bucket.uniqueVisitors}`}
             >
               <span className="text-[10px] font-medium text-cream/55">
                 {bucket.uniqueVisitors > 0 ? bucket.uniqueVisitors : ""}
               </span>
               <div
                 className="w-full rounded-t-md bg-gradient-to-t from-gold-dark via-gold to-gold-light/90"
-                style={{ height, marginBottom: barGap }}
+                style={{ height }}
               />
               <span className="max-w-full truncate text-center text-[10px] text-cream/45">
                 {bucket.label}
@@ -111,13 +120,13 @@ function RankedList({
   items,
   emptyLabel,
   renderLabel,
-  visitorsLabel,
+  countLabel,
 }: {
   title: string;
   items: AdminAnalyticsStats["countries"];
   emptyLabel: string;
   renderLabel?: (label: string) => string;
-  visitorsLabel: string;
+  countLabel: string;
 }) {
   return (
     <section className="rounded-xl border border-white/10 bg-black/20 p-4">
@@ -140,7 +149,7 @@ function RankedList({
                 ) : null}
               </span>
               <span className="shrink-0 text-cream/55">
-                {item.count} {visitorsLabel}
+                {item.count} {countLabel}
               </span>
             </li>
           ))}
@@ -225,16 +234,36 @@ export function AdminAnalyticsDashboard({ initialStats }: AdminAnalyticsDashboar
         </p>
       ) : null}
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <StatCard
+          label={t("admin.analyticsPageViews")}
+          value={formatNumber(stats.totals.pageViews, locale)}
+          hint={t("admin.analyticsPageViewsHint")}
+        />
         <StatCard
           label={t("admin.analyticsUniqueVisitors")}
           value={formatNumber(stats.totals.uniqueVisitors, locale)}
           hint={t("admin.analyticsUniqueVisitorsHint")}
         />
         <StatCard
+          label={t("admin.analyticsConversionRate")}
+          value={`${formatPercent(stats.totals.conversionRate, locale)} %`}
+          hint={t("admin.analyticsConversionRateHint")}
+        />
+        <StatCard
+          label={t("admin.analyticsPurchases")}
+          value={formatNumber(stats.totals.purchases, locale)}
+          hint={t("admin.analyticsPurchasesHint")}
+        />
+        <StatCard
           label={t("admin.analyticsUniqueUsers")}
           value={formatNumber(stats.totals.uniqueUsers, locale)}
           hint={t("admin.analyticsUniqueUsersHint")}
+        />
+        <StatCard
+          label={t("admin.analyticsAvgPages")}
+          value={formatNumber(stats.totals.avgPagesPerVisitor, locale)}
+          hint={t("admin.analyticsAvgPagesHint")}
         />
       </div>
 
@@ -251,9 +280,107 @@ export function AdminAnalyticsDashboard({ initialStats }: AdminAnalyticsDashboar
           series={stats.series}
           locale={locale}
           emptyLabel={t("admin.analyticsNoData")}
-          visitorsLabel={t("admin.analyticsChartTitle")}
         />
         <p className="mt-3 text-xs text-cream/40">{t("admin.analyticsChartHint")}</p>
+      </div>
+
+      <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-cream/45">
+          {t("admin.analyticsFunnelTitle")}
+        </h3>
+        <p className="mt-1 text-xs text-cream/45">{t("admin.analyticsFunnelHint")}</p>
+        <ul className="mt-4 space-y-3">
+          {stats.funnel.map((step) => (
+            <li key={step.id}>
+              <div className="mb-1 flex items-center justify-between gap-3 text-sm">
+                <span className="text-cream/85">
+                  {t(
+                    step.labelKey as
+                      | "admin.analyticsFunnel.visitors"
+                      | "admin.analyticsFunnel.pricing"
+                      | "admin.analyticsFunnel.signup"
+                      | "admin.analyticsFunnel.account"
+                      | "admin.analyticsFunnel.purchase"
+                  )}
+                </span>
+                <span className="shrink-0 text-cream/55">
+                  {formatNumber(step.count, locale)} · {formatPercent(step.rateFromVisitors, locale)} %
+                </span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-white/8">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light"
+                  style={{ width: `${Math.min(100, step.rateFromVisitors)}%` }}
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-cream/45">
+          {t("admin.analyticsRecentTitle")}
+        </h3>
+        <p className="mt-1 text-xs text-cream/45">{t("admin.analyticsRecentHint")}</p>
+        {stats.recentVisits.length === 0 ? (
+          <p className="mt-4 text-sm text-cream/50">{t("admin.analyticsNoData")}</p>
+        ) : (
+          <div className="mt-4 overflow-x-auto">
+            <table className="min-w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-white/10 text-xs uppercase tracking-wide text-cream/45">
+                  <th className="px-2 py-2 font-medium">{t("admin.analyticsRecentWhen")}</th>
+                  <th className="px-2 py-2 font-medium">{t("admin.analyticsRecentPage")}</th>
+                  <th className="px-2 py-2 font-medium">{t("admin.analyticsRecentOrigin")}</th>
+                  <th className="px-2 py-2 font-medium">{t("admin.analyticsRecentDevice")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {stats.recentVisits.map((visit) => {
+                  const origin =
+                    visit.utmSource ??
+                    (visit.referer === "(direct)" || !visit.referer
+                      ? t("admin.analyticsDirect")
+                      : visit.referer);
+                  const geo = visit.city
+                    ? visit.country
+                      ? `${visit.city}, ${formatCountryName(visit.country, locale)}`
+                      : visit.city
+                    : visit.country
+                      ? formatCountryName(visit.country, locale)
+                      : null;
+
+                  return (
+                    <tr key={visit.id} className="border-b border-white/5 text-cream/80">
+                      <td className="whitespace-nowrap px-2 py-2.5 text-xs text-cream/60">
+                        {formatVisitDate(visit.visitedAt, locale)}
+                      </td>
+                      <td className="px-2 py-2.5">
+                        <span className="font-medium text-cream">{visit.path}</span>
+                        {visit.userEmail ? (
+                          <span className="mt-0.5 block text-xs text-gold-light/80">
+                            {t("admin.analyticsRecentLoggedIn")}
+                          </span>
+                        ) : null}
+                      </td>
+                      <td className="px-2 py-2.5">
+                        <span className="block">{origin}</span>
+                        {geo ? <span className="text-xs text-cream/45">{geo}</span> : null}
+                      </td>
+                      <td className="whitespace-nowrap px-2 py-2.5 text-cream/65">
+                        {t(
+                          DEVICE_LABEL_KEYS[visit.deviceType] ?? DEVICE_LABEL_KEYS.unknown
+                        )}
+                        {visit.browser ? ` · ${visit.browser}` : ""}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -262,32 +389,19 @@ export function AdminAnalyticsDashboard({ initialStats }: AdminAnalyticsDashboar
           items={stats.countries}
           emptyLabel={t("admin.analyticsNoData")}
           renderLabel={(label) => formatCountryName(label, locale)}
-          visitorsLabel={t("admin.analyticsVisitorsShort")}
+          countLabel={t("admin.analyticsVisitorsShort")}
         />
         <RankedList
           title={t("admin.analyticsCities")}
           items={stats.cities}
           emptyLabel={t("admin.analyticsNoGeo")}
-          renderLabel={(label) => label}
-          visitorsLabel={t("admin.analyticsVisitorsShort")}
-        />
-        <RankedList
-          title={t("admin.analyticsRegions")}
-          items={stats.regions}
-          emptyLabel={t("admin.analyticsNoGeo")}
-          visitorsLabel={t("admin.analyticsVisitorsShort")}
-        />
-        <RankedList
-          title={t("admin.analyticsTimezones")}
-          items={stats.timezones}
-          emptyLabel={t("admin.analyticsNoGeo")}
-          visitorsLabel={t("admin.analyticsVisitorsShort")}
+          countLabel={t("admin.analyticsVisitorsShort")}
         />
         <RankedList
           title={t("admin.analyticsPages")}
           items={stats.pages}
           emptyLabel={t("admin.analyticsNoData")}
-          visitorsLabel={t("admin.analyticsVisitorsShort")}
+          countLabel={t("admin.analyticsViewsShort")}
         />
         <RankedList
           title={t("admin.analyticsReferrers")}
@@ -296,7 +410,13 @@ export function AdminAnalyticsDashboard({ initialStats }: AdminAnalyticsDashboar
           renderLabel={(label) =>
             label === "(direct)" ? t("admin.analyticsDirect") : label
           }
-          visitorsLabel={t("admin.analyticsVisitorsShort")}
+          countLabel={t("admin.analyticsVisitorsShort")}
+        />
+        <RankedList
+          title={t("admin.analyticsUtmSources")}
+          items={stats.utmSources}
+          emptyLabel={t("admin.analyticsNoData")}
+          countLabel={t("admin.analyticsVisitorsShort")}
         />
         <RankedList
           title={t("admin.analyticsDevices")}
@@ -308,19 +428,19 @@ export function AdminAnalyticsDashboard({ initialStats }: AdminAnalyticsDashboar
                 DEVICE_LABEL_KEYS.unknown
             )
           }
-          visitorsLabel={t("admin.analyticsVisitorsShort")}
+          countLabel={t("admin.analyticsVisitorsShort")}
         />
         <RankedList
           title={t("admin.analyticsBrowsers")}
           items={stats.browsers}
           emptyLabel={t("admin.analyticsNoData")}
-          visitorsLabel={t("admin.analyticsVisitorsShort")}
+          countLabel={t("admin.analyticsVisitorsShort")}
         />
         <RankedList
           title={t("admin.analyticsOperatingSystems")}
           items={stats.operatingSystems}
           emptyLabel={t("admin.analyticsNoData")}
-          visitorsLabel={t("admin.analyticsVisitorsShort")}
+          countLabel={t("admin.analyticsVisitorsShort")}
         />
       </div>
     </section>

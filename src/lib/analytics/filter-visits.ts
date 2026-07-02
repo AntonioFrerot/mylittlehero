@@ -3,16 +3,33 @@ import type { SiteVisit } from "./types";
 
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
 
+const NOISE_PATHS = new Set([
+  "/icon.png",
+  "/favicon.ico",
+  "/robots.txt",
+  "/sitemap.xml",
+]);
+
 export function isLocalHostname(hostname: string): boolean {
   const normalized = hostname.trim().toLowerCase();
   return LOCAL_HOSTS.has(normalized) || normalized.endsWith(".local");
 }
 
+export function isLocalAnalyticsEnabled(): boolean {
+  return process.env.ANALYTICS_RECORD_LOCAL === "1";
+}
+
 export function shouldRecordVisitEnvironment(hostname: string): boolean {
-  if (process.env.NODE_ENV === "development") return false;
-  if (isLocalHostname(hostname)) return false;
+  if (isLocalHostname(hostname)) return isLocalAnalyticsEnabled();
   if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") return false;
   return true;
+}
+
+export function isNoiseVisitPath(path: string): boolean {
+  const normalized = path.split("?")[0]?.toLowerCase() ?? "";
+  if (NOISE_PATHS.has(normalized)) return true;
+  if (normalized.startsWith("/_next/")) return true;
+  return false;
 }
 
 export function isAdminVisit(visit: SiteVisit): boolean {
@@ -20,13 +37,20 @@ export function isAdminVisit(visit: SiteVisit): boolean {
 }
 
 export function isLikelyLocalVisit(visit: SiteVisit): boolean {
-  if (visit.referer?.toLowerCase().includes("localhost")) return true;
-  if (!visit.country && !visit.region && !visit.city && !visit.timezone) return true;
+  if (!isLocalAnalyticsEnabled()) {
+    const referer = visit.referer?.toLowerCase() ?? "";
+    if (referer.includes("localhost") || referer.includes("127.0.0.1")) return true;
+  }
   return false;
 }
 
 export function filterRealVisitorVisits(visits: SiteVisit[]): SiteVisit[] {
-  return visits.filter((visit) => !isAdminVisit(visit) && !isLikelyLocalVisit(visit));
+  return visits.filter(
+    (visit) =>
+      !isAdminVisit(visit) &&
+      !isLikelyLocalVisit(visit) &&
+      !isNoiseVisitPath(visit.path)
+  );
 }
 
 /** Un seul enregistrement par visiteur (première visite de la période). */
@@ -45,6 +69,15 @@ export function dedupeVisitsByVisitor(visits: SiteVisit[]): SiteVisit[] {
   );
 }
 
-export function prepareVisitsForAnalytics(visits: SiteVisit[]): SiteVisit[] {
+export function preparePageViewsForAnalytics(visits: SiteVisit[]): SiteVisit[] {
+  return filterRealVisitorVisits(visits);
+}
+
+export function prepareUniqueVisitorsForAnalytics(visits: SiteVisit[]): SiteVisit[] {
   return dedupeVisitsByVisitor(filterRealVisitorVisits(visits));
+}
+
+/** @deprecated Utiliser prepareUniqueVisitorsForAnalytics */
+export function prepareVisitsForAnalytics(visits: SiteVisit[]): SiteVisit[] {
+  return prepareUniqueVisitorsForAnalytics(visits);
 }

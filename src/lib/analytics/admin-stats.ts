@@ -2,10 +2,16 @@ import type {
   AdminAnalyticsStats,
   AnalyticsBucket,
   AnalyticsPeriod,
+  ConversionFunnelStep,
   RankedCount,
+  RecentVisitRow,
   SiteVisit,
 } from "./types";
-import { prepareVisitsForAnalytics } from "./filter-visits";
+import {
+  preparePageViewsForAnalytics,
+  prepareUniqueVisitorsForAnalytics,
+} from "./filter-visits";
+import { countPurchasesBetween } from "./purchase-stats";
 
 const VISITOR_COOKIE = "mlh_visit_sid";
 
@@ -101,7 +107,8 @@ function bucketStartForVisit(visit: SiteVisit, period: AnalyticsPeriod): Date {
 }
 
 function buildSeries(
-  visits: SiteVisit[],
+  pageViews: SiteVisit[],
+  uniqueVisits: SiteVisit[],
   period: AnalyticsPeriod,
   range: PeriodRange,
   locale: string
@@ -138,9 +145,15 @@ function buildSeries(
 
   const visitorsByBucket = new Map<string, Set<string>>();
 
-  for (const visit of visits) {
-    const start = bucketStartForVisit(visit, period);
-    const key = start.toISOString();
+  for (const visit of pageViews) {
+    const key = bucketStartForVisit(visit, period).toISOString();
+    const bucket = buckets.get(key);
+    if (!bucket) continue;
+    bucket.pageViews += 1;
+  }
+
+  for (const visit of uniqueVisits) {
+    const key = bucketStartForVisit(visit, period).toISOString();
     const bucket = buckets.get(key);
     if (!bucket) continue;
     const visitors = visitorsByBucket.get(key) ?? new Set<string>();
@@ -181,49 +194,166 @@ function rankByUniqueVisitors(
     .slice(0, 12);
 }
 
-export function buildAdminAnalyticsStats(
+function rankByPageViews(
+  visits: SiteVisit[],
+  getLabel: (visit: SiteVisit) => string | null,
+  options?: { meta?: (visit: SiteVisit) => string | null }
+): RankedCount[] {
+  const counts = new Map<string, { views: number; meta: string | null }>();
+
+  for (const visit of visits) {
+    const label = getLabel(visit);
+    if (!label) continue;
+    const existing = counts.get(label) ?? {
+      views: 0,
+      meta: options?.meta?.(visit) ?? null,
+    };
+    existing.views += 1;
+    counts.set(label, existing);
+  }
+
+  return [...counts.entries()]
+    .map(([label, value]) => ({
+      label,
+      count: value.views,
+      meta: value.meta,
+    }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 12);
+}
+
+function buildRecentVisits(pageViews: SiteVisit[]): RecentVisitRow[] {
+  return [...pageViews]
+    .sort((a, b) => new Date(b.visitedAt).getTime() - new Date(a.visitedAt).getTime())
+    .slice(0, 40)
+    .map((visit) => ({
+      id: visit.id,
+      visitedAt: visit.visitedAt,
+      path: visit.path,
+      country: visit.country,
+      city: visit.city,
+      deviceType: visit.deviceType,
+      browser: visit.browser,
+      referer: visit.referer,
+      utmSource: visit.utmSource ?? null,
+      userEmail: visit.userEmail,
+    }));
+}
+
+function buildFunnel(
+  uniqueVisitors: number,
+  pageViews: SiteVisit[],
+  purchases: number
+): ConversionFunnelStep[] {
+  const pricingVisitors = new Set(
+    pageViews
+      .filter((visit) => visit.path.startsWith("/tarifs") || visit.path.startsWith("/abonnements") || visit.path.startsWith("/achat"))
+      .map((visit) => visit.visitorId)
+  ).size;
+  const signupVisitors = new Set(
+    pageViews
+      .filter((visit) => visit.path.startsWith("/inscription") || visit.path.startsWith("/connexion"))
+      .map((visit) => visit.visitorId)
+  ).size;
+  const accountVisitors = new Set(
+    pageViews
+      .filter((visit) => visit.path.startsWith("/mon-espace") || visit.path.startsWith("/creer-film"))
+      .map((visit) => visit.visitorId)
+  ).size;
+
+  const rate = (count: number) =>
+    uniqueVisitors > 0 ? Math.round((count / uniqueVisitors) * 1000) / 10 : 0;
+
+  return [
+    {
+      id: "visitors",
+      labelKey: "admin.analyticsFunnel.visitors",
+      count: uniqueVisitors,
+      rateFromVisitors: uniqueVisitors > 0 ? 100 : 0,
+    },
+    {
+      id: "pricing",
+      labelKey: "admin.analyticsFunnel.pricing",
+      count: pricingVisitors,
+      rateFromVisitors: rate(pricingVisitors),
+    },
+    {
+      id: "signup",
+      labelKey: "admin.analyticsFunnel.signup",
+      count: signupVisitors,
+      rateFromVisitors: rate(signupVisitors),
+    },
+    {
+      id: "account",
+      labelKey: "admin.analyticsFunnel.account",
+      count: accountVisitors,
+      rateFromVisitors: rate(accountVisitors),
+    },
+    {
+      id: "purchase",
+      labelKey: "admin.analyticsFunnel.purchase",
+      count: purchases,
+      rateFromVisitors: rate(purchases),
+    },
+  ];
+}
+
+export async function buildAdminAnalyticsStats(
   visits: SiteVisit[],
   period: AnalyticsPeriod,
   locale: string
-): AdminAnalyticsStats {
-  const realVisits = prepareVisitsForAnalytics(visits);
+): Promise<AdminAnalyticsStats> {
+  const pageViews = preparePageViewsForAnalytics(visits);
+  const uniqueVisits = prepareUniqueVisitorsForAnalytics(visits);
   const range = getPeriodRange(period);
-  const uniqueVisitors = realVisits.length;
+  const uniqueVisitors = uniqueVisits.length;
+  const totalPageViews = pageViews.length;
   const uniqueUsers = new Set(
-    realVisits
+    uniqueVisits
       .map((visit) => visit.userEmail)
       .filter((email): email is string => Boolean(email))
   ).size;
+  const purchases = await countPurchasesBetween(range.from, range.to);
+  const conversionRate =
+    uniqueVisitors > 0 ? Math.round((purchases / uniqueVisitors) * 1000) / 10 : 0;
 
   return {
     period,
     from: range.from.toISOString(),
     to: range.to.toISOString(),
     totals: {
-      pageViews: uniqueVisitors,
+      pageViews: totalPageViews,
       uniqueVisitors,
       uniqueUsers,
-      avgPagesPerVisitor: 0,
+      purchases,
+      conversionRate,
+      avgPagesPerVisitor:
+        uniqueVisitors > 0
+          ? Math.round((totalPageViews / uniqueVisitors) * 10) / 10
+          : 0,
     },
-    series: buildSeries(realVisits, period, range, locale),
-    countries: rankByUniqueVisitors(realVisits, (visit) => visit.country),
-    cities: rankByUniqueVisitors(realVisits, (visit) => {
+    series: buildSeries(pageViews, uniqueVisits, period, range, locale),
+    countries: rankByUniqueVisitors(uniqueVisits, (visit) => visit.country),
+    cities: rankByUniqueVisitors(uniqueVisits, (visit) => {
       if (!visit.city) return null;
       return visit.region ? `${visit.city} (${visit.region})` : visit.city;
     }, { meta: (visit) => visit.country }),
-    regions: rankByUniqueVisitors(realVisits, (visit) => {
+    regions: rankByUniqueVisitors(uniqueVisits, (visit) => {
       if (!visit.region) return null;
       return visit.country ? `${visit.region} (${visit.country})` : visit.region;
     }),
-    pages: rankByUniqueVisitors(realVisits, (visit) => visit.path),
-    devices: rankByUniqueVisitors(realVisits, (visit) => visit.deviceType),
-    browsers: rankByUniqueVisitors(realVisits, (visit) => visit.browser),
-    operatingSystems: rankByUniqueVisitors(realVisits, (visit) => visit.os),
+    pages: rankByPageViews(pageViews, (visit) => visit.path),
+    devices: rankByUniqueVisitors(uniqueVisits, (visit) => visit.deviceType),
+    browsers: rankByUniqueVisitors(uniqueVisits, (visit) => visit.browser),
+    operatingSystems: rankByUniqueVisitors(uniqueVisits, (visit) => visit.os),
     referrers: rankByUniqueVisitors(
-      realVisits,
+      uniqueVisits,
       (visit) => visit.referer ?? "(direct)"
     ),
-    timezones: rankByUniqueVisitors(realVisits, (visit) => visit.timezone),
+    timezones: rankByUniqueVisitors(uniqueVisits, (visit) => visit.timezone),
+    utmSources: rankByUniqueVisitors(uniqueVisits, (visit) => visit.utmSource ?? null),
+    recentVisits: buildRecentVisits(pageViews),
+    funnel: buildFunnel(uniqueVisitors, pageViews, purchases),
   };
 }
 

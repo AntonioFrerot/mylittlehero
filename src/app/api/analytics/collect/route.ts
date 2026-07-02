@@ -1,21 +1,16 @@
 import { verifySessionToken } from "@/lib/auth/session-token";
 import { SESSION_COOKIE } from "@/lib/auth/session";
 import { isAdminEmail } from "@/lib/auth/is-admin";
+import { isAuthorizedAnalyticsCollect } from "@/lib/analytics/collect-secret";
 import { parseVisitFromRequest, shouldTrackVisit } from "@/lib/analytics/parse-visit";
-import { shouldRecordVisitEnvironment } from "@/lib/analytics/filter-visits";
+import { isNoiseVisitPath, shouldRecordVisitEnvironment } from "@/lib/analytics/filter-visits";
 import { recordSiteVisit } from "@/lib/analytics/store";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-function isAuthorizedCollect(request: Request): boolean {
-  const secret = process.env.ANALYTICS_COLLECT_SECRET?.trim();
-  if (!secret) return process.env.NODE_ENV === "development";
-  return request.headers.get("x-analytics-secret") === secret;
-}
-
 export async function POST(request: Request) {
-  if (!isAuthorizedCollect(request)) {
+  if (!isAuthorizedAnalyticsCollect(request)) {
     return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
   }
 
@@ -30,6 +25,10 @@ export async function POST(request: Request) {
     typeof (body as { path?: unknown }).path === "string"
       ? (body as { path: string }).path.trim()
       : "";
+  const search =
+    typeof (body as { search?: unknown }).search === "string"
+      ? (body as { search: string }).search
+      : null;
   const visitorId =
     typeof (body as { visitorId?: unknown }).visitorId === "string"
       ? (body as { visitorId: string }).visitorId.trim()
@@ -37,6 +36,10 @@ export async function POST(request: Request) {
 
   if (!path || !visitorId) {
     return NextResponse.json({ error: "Données manquantes." }, { status: 400 });
+  }
+
+  if (!shouldTrackVisit(path, request.headers.get("user-agent")) || isNoiseVisitPath(path)) {
+    return NextResponse.json({ ok: true, skipped: "path" });
   }
 
   const host =
@@ -63,6 +66,7 @@ export async function POST(request: Request) {
 
   const parsed = parseVisitFromRequest({
     path,
+    search,
     visitorId,
     userEmail: session?.email ?? null,
     headers: request.headers,

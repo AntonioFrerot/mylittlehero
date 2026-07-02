@@ -18,6 +18,9 @@ export type SiteVisit = {
   os: string | null;
   referer: string | null;
   userAgent: string | null;
+  utmSource?: string | null;
+  utmMedium?: string | null;
+  utmCampaign?: string | null;
 };
 
 export type AnalyticsBucket = {
@@ -34,6 +37,26 @@ export type RankedCount = {
   meta?: string | null;
 };
 
+export type RecentVisitRow = {
+  id: string;
+  visitedAt: string;
+  path: string;
+  country: string | null;
+  city: string | null;
+  deviceType: SiteVisit["deviceType"];
+  browser: string | null;
+  referer: string | null;
+  utmSource: string | null;
+  userEmail: string | null;
+};
+
+export type ConversionFunnelStep = {
+  id: string;
+  labelKey: string;
+  count: number;
+  rateFromVisitors: number;
+};
+
 export type AdminAnalyticsStats = {
   period: AnalyticsPeriod;
   from: string;
@@ -42,6 +65,8 @@ export type AdminAnalyticsStats = {
     pageViews: number;
     uniqueVisitors: number;
     uniqueUsers: number;
+    purchases: number;
+    conversionRate: number;
     avgPagesPerVisitor: number;
   };
   series: AnalyticsBucket[];
@@ -54,4 +79,7 @@ export type AdminAnalyticsStats = {
   operatingSystems: RankedCount[];
   referrers: RankedCount[];
   timezones: RankedCount[];
+  utmSources: RankedCount[];
+  recentVisits: RecentVisitRow[];
+  funnel: ConversionFunnelStep[];
 };

@@ -47,6 +47,9 @@ function rowToVisit(row: {
   os: string | null;
   referer: string | null;
   user_agent: string | null;
+  utm_source?: string | null;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
 }): SiteVisit {
   return {
     id: row.id,
@@ -69,6 +72,9 @@ function rowToVisit(row: {
     os: row.os,
     referer: row.referer,
     userAgent: row.user_agent,
+    utmSource: row.utm_source ?? null,
+    utmMedium: row.utm_medium ?? null,
+    utmCampaign: row.utm_campaign ?? null,
   };
 }
 
@@ -86,7 +92,8 @@ export async function recordSiteVisit(input: RecordSiteVisitInput): Promise<Site
     await db`
       INSERT INTO site_visits (
         id, visited_at, path, visitor_id, user_email, country, region, city,
-        timezone, latitude, longitude, locale, device_type, browser, os, referer, user_agent
+        timezone, latitude, longitude, locale, device_type, browser, os, referer, user_agent,
+        utm_source, utm_medium, utm_campaign
       )
       VALUES (
         ${entry.id},
@@ -105,7 +112,10 @@ export async function recordSiteVisit(input: RecordSiteVisitInput): Promise<Site
         ${entry.browser},
         ${entry.os},
         ${entry.referer},
-        ${entry.userAgent}
+        ${entry.userAgent},
+        ${entry.utmSource ?? null},
+        ${entry.utmMedium ?? null},
+        ${entry.utmCampaign ?? null}
       )
     `;
     return entry;
@@ -140,11 +150,15 @@ export async function listSiteVisitsBetween(from: Date, to: Date): Promise<SiteV
         os: string | null;
         referer: string | null;
         user_agent: string | null;
+        utm_source: string | null;
+        utm_medium: string | null;
+        utm_campaign: string | null;
       }[]
     >`
       SELECT
         id, visited_at, path, visitor_id, user_email, country, region, city,
-        timezone, latitude, longitude, locale, device_type, browser, os, referer, user_agent
+        timezone, latitude, longitude, locale, device_type, browser, os, referer, user_agent,
+        utm_source, utm_medium, utm_campaign
       FROM site_visits
       WHERE visited_at >= ${from.toISOString()}
         AND visited_at <= ${to.toISOString()}

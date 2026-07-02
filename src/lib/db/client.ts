@@ -231,6 +231,16 @@ async function runSchema(): Promise<void> {
     CREATE INDEX IF NOT EXISTS site_visits_country_idx
     ON site_visits (country)
   `;
+
+  await db`
+    ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS utm_source TEXT
+  `;
+  await db`
+    ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS utm_medium TEXT
+  `;
+  await db`
+    ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS utm_campaign TEXT
+  `;
 }
 
 export async function ensureSchema(): Promise<void> {

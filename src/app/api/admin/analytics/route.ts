@@ -37,7 +37,7 @@ export async function GET(request: Request) {
   );
 
   const visits = await listSiteVisitsBetween(from, now);
-  const stats = buildAdminAnalyticsStats(visits, period, analyticsLocale);
+  const stats = await buildAdminAnalyticsStats(visits, period, analyticsLocale);
 
   return NextResponse.json(stats);
 }

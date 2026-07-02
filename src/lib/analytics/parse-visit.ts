@@ -3,6 +3,7 @@ import type { SiteVisit } from "./types";
 
 export type ParsedVisitInput = {
   path: string;
+  search?: string | null;
   visitorId: string;
   userEmail?: string | null;
   headers: Headers;
@@ -57,6 +58,40 @@ function parseNumber(value: string | null): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+export function shouldTrackVisit(pathname: string, userAgent: string | null): boolean {
+  if (pathname.startsWith("/admin")) return false;
+  if (pathname.startsWith("/api")) return false;
+  if (/\.(png|jpe?g|webp|gif|svg|ico|woff2?|css|js|map)$/i.test(pathname)) return false;
+  if (/bot|crawl|spider|slurp|preview|facebookexternalhit|whatsapp|telegram/i.test(
+    userAgent ?? ""
+  )) {
+    return false;
+  }
+  return true;
+}
+
+function parseUtm(search: string | null | undefined): {
+  utmSource: string | null;
+  utmMedium: string | null;
+  utmCampaign: string | null;
+} {
+  if (!search?.trim()) {
+    return { utmSource: null, utmMedium: null, utmCampaign: null };
+  }
+
+  try {
+    const params = new URLSearchParams(search.startsWith("?") ? search : `?${search}`);
+    const pick = (key: string) => params.get(key)?.trim().slice(0, 120) ?? null;
+    return {
+      utmSource: pick("utm_source"),
+      utmMedium: pick("utm_medium"),
+      utmCampaign: pick("utm_campaign"),
+    };
+  } catch {
+    return { utmSource: null, utmMedium: null, utmCampaign: null };
+  }
+}
+
 export function parseVisitFromRequest(input: ParsedVisitInput): Omit<
   SiteVisit,
   "id" | "visitedAt"
@@ -70,12 +105,16 @@ export function parseVisitFromRequest(input: ParsedVisitInput): Omit<
     .find((part) => part.startsWith("mlh_locale="))
     ?.split("=")[1];
   const locale = parseLocale(localeCookie ? decodeURIComponent(localeCookie) : null);
+  const utm = parseUtm(input.search);
 
   return {
     path: input.path.slice(0, 500),
     visitorId: input.visitorId.slice(0, 64),
     userEmail: input.userEmail ?? null,
-    country: headers.get("x-vercel-ip-country")?.toUpperCase() ?? null,
+    country:
+      headers.get("x-vercel-ip-country")?.toUpperCase() ??
+      headers.get("cf-ipcountry")?.toUpperCase() ??
+      null,
     region: headers.get("x-vercel-ip-country-region") ?? null,
     city: headers.get("x-vercel-ip-city") ?? null,
     timezone: headers.get("x-vercel-ip-timezone") ?? null,
@@ -87,16 +126,8 @@ export function parseVisitFromRequest(input: ParsedVisitInput): Omit<
     os: parseOs(userAgent),
     referer: parseReferer(headers.get("referer")),
     userAgent: userAgent?.slice(0, 500) ?? null,
+    utmSource: utm.utmSource,
+    utmMedium: utm.utmMedium,
+    utmCampaign: utm.utmCampaign,
   };
-}
-
-export function shouldTrackVisit(pathname: string, userAgent: string | null): boolean {
-  if (pathname.startsWith("/admin")) return false;
-  if (pathname.startsWith("/api")) return false;
-  if (/bot|crawl|spider|slurp|preview|facebookexternalhit|whatsapp|telegram/i.test(
-    userAgent ?? ""
-  )) {
-    return false;
-  }
-  return true;
 }

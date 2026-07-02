@@ -26,5 +26,5 @@ export async function loadAdminAnalyticsStats(
   );
 
   const visits = await listSiteVisitsBetween(from, now);
-  return buildAdminAnalyticsStats(visits, period, analyticsLocale);
+  return await buildAdminAnalyticsStats(visits, period, analyticsLocale);
 }
