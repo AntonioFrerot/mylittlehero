@@ -363,6 +363,8 @@ export const en = {
     filmValidateReminderTitle: "Approve the story for « {title} »",
     filmValidateReminderBody:
       "Your screenplay is ready. Approve it in My films to start creating your film.",
+    ticketBalanceUpdatedTitle: "{count} ticket(s) added to your account",
+    ticketBalanceUpdatedBody: "Your new balance is shown in the header.",
     adminFilmValidatedTitle: "Film to deliver — {client}",
     adminFilmValidatedBody:
       "« {title} »: the customer validated the story and is waiting for their film.",

@@ -41,6 +41,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: result.error }, { status: 500 });
   }
 
+  const { notifyTicketBalanceUpdated } = await import(
+    "@/lib/notifications/notify-ticket-balance-updated"
+  );
+  await notifyTicketBalanceUpdated({
+    userEmail: email,
+    balance: result.balance,
+    ticketsGranted: tickets,
+    referenceId: result.referenceId,
+  });
+
   return NextResponse.json({
     ok: true,
     email,

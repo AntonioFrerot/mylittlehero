@@ -321,7 +321,7 @@ export async function grantAdminTickets(input: {
   tickets: number;
   referenceId?: string;
 }): Promise<
-  { ok: true; balance: number } | { ok: false; error: string }
+  { ok: true; balance: number; referenceId: string } | { ok: false; error: string }
 > {
   if (input.tickets <= 0) {
     return { ok: false, error: "Le nombre de tickets doit être positif." };
@@ -337,7 +337,7 @@ export async function grantAdminTickets(input: {
 
   if (await hasLedgerReference(email, referenceId)) {
     const balance = await getTicketBalance(email);
-    return { ok: true, balance };
+    return { ok: true, balance, referenceId };
   }
 
   await insertLedgerEntry({
@@ -348,7 +348,7 @@ export async function grantAdminTickets(input: {
   });
 
   const balance = await getTicketBalance(email);
-  return { ok: true, balance };
+  return { ok: true, balance, referenceId };
 }
 
 export function getPlanTicketGrant(

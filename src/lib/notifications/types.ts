@@ -2,7 +2,8 @@ export type NotificationKind =
   | "film_ready"
   | "film_validate_reminder"
   | "admin"
-  | "film_awaiting_admin";
+  | "film_awaiting_admin"
+  | "ticket_balance_updated";
 
 export type UserNotification = {
   id: string;

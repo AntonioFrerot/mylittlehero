@@ -126,6 +126,9 @@ export async function grantTicketsToUser(
   }
 
   const { grantAdminTickets } = await import("@/lib/purchases/tickets");
+  const { notifyTicketBalanceUpdated } = await import(
+    "@/lib/notifications/notify-ticket-balance-updated"
+  );
   const result = await grantAdminTickets({
     userEmail: emailRaw.trim(),
     tickets: Math.floor(tickets),
@@ -134,6 +137,13 @@ export async function grantTicketsToUser(
   if (!result.ok) {
     return { error: result.error };
   }
+
+  await notifyTicketBalanceUpdated({
+    userEmail: emailRaw.trim(),
+    balance: result.balance,
+    ticketsGranted: Math.floor(tickets),
+    referenceId: result.referenceId,
+  });
 
   revalidatePath("/admin");
   revalidatePath("/mon-espace");

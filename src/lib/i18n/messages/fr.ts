@@ -368,6 +368,8 @@ export const fr = {
     filmValidateReminderTitle: "Validez l'histoire de « {title} »",
     filmValidateReminderBody:
       "Votre scénario est prêt. Validez-le dans Mes films pour lancer la création de votre film.",
+    ticketBalanceUpdatedTitle: "{count} ticket(s) ajouté(s) à votre compte",
+    ticketBalanceUpdatedBody: "Votre nouveau solde est disponible dans le header.",
     adminFilmValidatedTitle: "Film à livrer — {client}",
     adminFilmValidatedBody:
       "« {title} » : le client a validé l'histoire et attend son film.",
