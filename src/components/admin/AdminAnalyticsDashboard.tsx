@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { AdminAnalyticsStats, AnalyticsPeriod } from "@/lib/analytics/types";
-import { formatCountryName } from "@/lib/analytics/admin-stats";
+import { formatCountryName, formatRevenueEur } from "@/lib/analytics/format";
 import { SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
 import { useLocale } from "@/components/LocaleProvider";
 
@@ -121,12 +121,14 @@ function RankedList({
   emptyLabel,
   renderLabel,
   countLabel,
+  locale,
 }: {
   title: string;
   items: AdminAnalyticsStats["countries"];
   emptyLabel: string;
   renderLabel?: (label: string) => string;
   countLabel: string;
+  locale?: string;
 }) {
   return (
     <section className="rounded-xl border border-white/10 bg-black/20 p-4">
@@ -148,8 +150,13 @@ function RankedList({
                   <span className="ml-1 text-cream/40">({item.meta})</span>
                 ) : null}
               </span>
-              <span className="shrink-0 text-cream/55">
+              <span className="shrink-0 text-right text-cream/55">
                 {item.count} {countLabel}
+                {item.revenue != null && locale ? (
+                  <span className="block text-xs text-gold-light/80">
+                    {formatRevenueEur(item.revenue, locale)}
+                  </span>
+                ) : null}
               </span>
             </li>
           ))}
@@ -234,7 +241,30 @@ export function AdminAnalyticsDashboard({ initialStats }: AdminAnalyticsDashboar
         </p>
       ) : null}
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          label={t("admin.analyticsTotalRevenue")}
+          value={formatRevenueEur(stats.totals.totalRevenue, locale)}
+          hint={t("admin.analyticsTotalRevenueHint")}
+        />
+        <StatCard
+          label={t("admin.analyticsSessions")}
+          value={formatNumber(stats.totals.sessions, locale)}
+          hint={t("admin.analyticsSessionsHint")}
+        />
+        <StatCard
+          label={t("admin.analyticsSessionConversionRate")}
+          value={`${formatPercent(stats.totals.sessionConversionRate, locale)} %`}
+          hint={t("admin.analyticsSessionConversionRateHint")}
+        />
+        <StatCard
+          label={t("admin.analyticsAverageOrderValue")}
+          value={formatRevenueEur(stats.totals.averageOrderValue, locale)}
+          hint={t("admin.analyticsAverageOrderValueHint")}
+        />
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label={t("admin.analyticsPageViews")}
           value={formatNumber(stats.totals.pageViews, locale)}
@@ -246,24 +276,37 @@ export function AdminAnalyticsDashboard({ initialStats }: AdminAnalyticsDashboar
           hint={t("admin.analyticsUniqueVisitorsHint")}
         />
         <StatCard
-          label={t("admin.analyticsConversionRate")}
-          value={`${formatPercent(stats.totals.conversionRate, locale)} %`}
-          hint={t("admin.analyticsConversionRateHint")}
+          label={t("admin.analyticsBounceRate")}
+          value={`${formatPercent(stats.totals.bounceRate, locale)} %`}
+          hint={t("admin.analyticsBounceRateHint")}
         />
+        <StatCard
+          label={t("admin.analyticsReturningVisitors")}
+          value={`${formatPercent(stats.totals.returningVisitorRate, locale)} %`}
+          hint={t("admin.analyticsReturningVisitorsHint")}
+        />
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label={t("admin.analyticsPurchases")}
           value={formatNumber(stats.totals.purchases, locale)}
           hint={t("admin.analyticsPurchasesHint")}
         />
         <StatCard
-          label={t("admin.analyticsUniqueUsers")}
-          value={formatNumber(stats.totals.uniqueUsers, locale)}
-          hint={t("admin.analyticsUniqueUsersHint")}
+          label={t("admin.analyticsConversionRate")}
+          value={`${formatPercent(stats.totals.conversionRate, locale)} %`}
+          hint={t("admin.analyticsConversionRateHint")}
         />
         <StatCard
-          label={t("admin.analyticsAvgPages")}
-          value={formatNumber(stats.totals.avgPagesPerVisitor, locale)}
-          hint={t("admin.analyticsAvgPagesHint")}
+          label={t("admin.analyticsCheckoutConversionRate")}
+          value={`${formatPercent(stats.totals.checkoutConversionRate, locale)} %`}
+          hint={t("admin.analyticsCheckoutConversionRateHint")}
+        />
+        <StatCard
+          label={t("admin.analyticsPagesPerSession")}
+          value={formatNumber(stats.totals.avgPagesPerSession, locale)}
+          hint={t("admin.analyticsPagesPerSessionHint")}
         />
       </div>
 
@@ -296,8 +339,10 @@ export function AdminAnalyticsDashboard({ initialStats }: AdminAnalyticsDashboar
                 <span className="text-cream/85">
                   {t(
                     step.labelKey as
+                      | "admin.analyticsFunnel.sessions"
                       | "admin.analyticsFunnel.visitors"
                       | "admin.analyticsFunnel.pricing"
+                      | "admin.analyticsFunnel.checkout"
                       | "admin.analyticsFunnel.signup"
                       | "admin.analyticsFunnel.account"
                       | "admin.analyticsFunnel.purchase"
@@ -316,6 +361,43 @@ export function AdminAnalyticsDashboard({ initialStats }: AdminAnalyticsDashboar
             </li>
           ))}
         </ul>
+      </div>
+
+      <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-cream/45">
+          {t("admin.analyticsSalesBySourceTitle")}
+        </h3>
+        <p className="mt-1 text-xs text-cream/45">{t("admin.analyticsSalesBySourceHint")}</p>
+        {stats.salesBySource.length === 0 ? (
+          <p className="mt-4 text-sm text-cream/50">{t("admin.analyticsNoData")}</p>
+        ) : (
+          <div className="mt-4 overflow-x-auto">
+            <table className="min-w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-white/10 text-xs uppercase tracking-wide text-cream/45">
+                  <th className="px-2 py-2 font-medium">{t("admin.analyticsSourceColumn")}</th>
+                  <th className="px-2 py-2 font-medium">{t("admin.analyticsSessionsColumn")}</th>
+                  <th className="px-2 py-2 font-medium">{t("admin.analyticsOrdersColumn")}</th>
+                  <th className="px-2 py-2 font-medium">{t("admin.analyticsRevenueColumn")}</th>
+                  <th className="px-2 py-2 font-medium">{t("admin.analyticsSourceConversionColumn")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {stats.salesBySource.map((row) => (
+                  <tr key={row.label} className="border-b border-white/5 text-cream/80">
+                    <td className="px-2 py-2.5">
+                      {row.label === "(direct)" ? t("admin.analyticsDirect") : row.label}
+                    </td>
+                    <td className="px-2 py-2.5">{formatNumber(row.sessions, locale)}</td>
+                    <td className="px-2 py-2.5">{formatNumber(row.purchases, locale)}</td>
+                    <td className="px-2 py-2.5">{formatRevenueEur(row.revenue, locale)}</td>
+                    <td className="px-2 py-2.5">{formatPercent(row.conversionRate, locale)} %</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       <div className="rounded-xl border border-white/10 bg-black/20 p-4">
@@ -384,6 +466,19 @@ export function AdminAnalyticsDashboard({ initialStats }: AdminAnalyticsDashboar
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
+        <RankedList
+          title={t("admin.analyticsSalesByPlanTitle")}
+          items={stats.salesByPlan}
+          emptyLabel={t("admin.analyticsNoData")}
+          countLabel={t("admin.analyticsOrdersColumn")}
+          locale={locale}
+        />
+        <RankedList
+          title={t("admin.analyticsLandingPages")}
+          items={stats.landingPages}
+          emptyLabel={t("admin.analyticsNoData")}
+          countLabel={t("admin.analyticsSessionsColumn")}
+        />
         <RankedList
           title={t("admin.analyticsCountries")}
           items={stats.countries}

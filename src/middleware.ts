@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { isAdminEmail } from "@/lib/auth/is-admin";
 import { SESSION_COOKIE } from "@/lib/auth/session";
 import { verifySessionToken } from "@/lib/auth/session-token";
-import { VISITOR_COOKIE } from "@/lib/analytics/admin-stats";
+import { VISITOR_COOKIE } from "@/lib/analytics/constants";
 import { getAnalyticsCollectSecret } from "@/lib/analytics/collect-secret";
 import { shouldRecordVisitEnvironment } from "@/lib/analytics/filter-visits";
 import { shouldTrackVisit } from "@/lib/analytics/parse-visit";

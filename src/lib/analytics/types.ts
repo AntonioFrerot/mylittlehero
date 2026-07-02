@@ -35,6 +35,15 @@ export type RankedCount = {
   count: number;
   visitors?: number;
   meta?: string | null;
+  revenue?: number;
+};
+
+export type SalesBySourceRow = {
+  label: string;
+  sessions: number;
+  purchases: number;
+  revenue: number;
+  conversionRate: number;
 };
 
 export type RecentVisitRow = {
@@ -63,23 +72,35 @@ export type AdminAnalyticsStats = {
   to: string;
   totals: {
     pageViews: number;
+    sessions: number;
     uniqueVisitors: number;
     uniqueUsers: number;
     purchases: number;
+    totalRevenue: number;
+    averageOrderValue: number;
     conversionRate: number;
+    sessionConversionRate: number;
+    checkoutConversionRate: number;
+    bounceRate: number;
+    returningVisitorRate: number;
     avgPagesPerVisitor: number;
+    avgPagesPerSession: number;
+    checkoutVisitors: number;
   };
   series: AnalyticsBucket[];
   countries: RankedCount[];
   cities: RankedCount[];
   regions: RankedCount[];
   pages: RankedCount[];
+  landingPages: RankedCount[];
   devices: RankedCount[];
   browsers: RankedCount[];
   operatingSystems: RankedCount[];
   referrers: RankedCount[];
   timezones: RankedCount[];
   utmSources: RankedCount[];
+  salesByPlan: RankedCount[];
+  salesBySource: SalesBySourceRow[];
   recentVisits: RecentVisitRow[];
   funnel: ConversionFunnelStep[];
 };

@@ -1,3 +1,5 @@
+import "server-only";
+
 import type {
   AdminAnalyticsStats,
   AnalyticsBucket,
@@ -5,15 +7,21 @@ import type {
   ConversionFunnelStep,
   RankedCount,
   RecentVisitRow,
+  SalesBySourceRow,
   SiteVisit,
 } from "./types";
 import {
   preparePageViewsForAnalytics,
   prepareUniqueVisitorsForAnalytics,
 } from "./filter-visits";
-import { countPurchasesBetween } from "./purchase-stats";
-
-const VISITOR_COOKIE = "mlh_visit_sid";
+import { listPurchasesBetween, type PurchaseRecord } from "./purchase-stats";
+import {
+  buildVisitorSessions,
+  computeSessionMetrics,
+  rankLandingPages,
+} from "./session-stats";
+import { VISITOR_COOKIE } from "./constants";
+import { getAnalyticsLocale } from "./format";
 
 export { VISITOR_COOKIE };
 
@@ -240,10 +248,109 @@ function buildRecentVisits(pageViews: SiteVisit[]): RecentVisitRow[] {
     }));
 }
 
+function buildSalesByPlan(purchases: PurchaseRecord[]): RankedCount[] {
+  const counts = new Map<string, { orders: number; revenue: number }>();
+
+  for (const purchase of purchases) {
+    const existing = counts.get(purchase.planId) ?? { orders: 0, revenue: 0 };
+    existing.orders += 1;
+    existing.revenue += purchase.revenueEur;
+    counts.set(purchase.planId, existing);
+  }
+
+  return [...counts.entries()]
+    .map(([label, value]) => ({
+      label,
+      count: value.orders,
+      revenue: Math.round(value.revenue * 100) / 100,
+    }))
+    .sort((a, b) => b.revenue - a.revenue)
+    .slice(0, 12);
+}
+
+function attributeSourceLabel(visit: SiteVisit): string {
+  if (visit.utmSource) return visit.utmSource;
+  if (!visit.referer || visit.referer === "(direct)") return "(direct)";
+  return visit.referer;
+}
+
+function buildSalesBySource(
+  pageViews: SiteVisit[],
+  purchases: PurchaseRecord[]
+): SalesBySourceRow[] {
+  const sessions = buildVisitorSessions(pageViews);
+  const sessionsBySource = new Map<string, number>();
+
+  for (const session of sessions) {
+    const label = attributeSourceLabel({
+      referer: session.referer,
+      utmSource: session.utmSource,
+    } as SiteVisit);
+    sessionsBySource.set(label, (sessionsBySource.get(label) ?? 0) + 1);
+  }
+
+  const purchasesBySource = new Map<string, { count: number; revenue: number }>();
+
+  for (const purchase of purchases) {
+    const userVisits = pageViews
+      .filter((visit) => visit.userEmail === purchase.userEmail)
+      .sort((a, b) => new Date(a.visitedAt).getTime() - new Date(b.visitedAt).getTime());
+    const lastVisitBeforePurchase =
+      [...userVisits]
+        .reverse()
+        .find(
+          (visit) =>
+            new Date(visit.visitedAt).getTime() <= new Date(purchase.createdAt).getTime()
+        ) ?? userVisits[0];
+
+    const label = lastVisitBeforePurchase
+      ? attributeSourceLabel(lastVisitBeforePurchase)
+      : "(direct)";
+
+    const existing = purchasesBySource.get(label) ?? { count: 0, revenue: 0 };
+    existing.count += 1;
+    existing.revenue += purchase.revenueEur;
+    purchasesBySource.set(label, existing);
+  }
+
+  const labels = new Set([
+    ...sessionsBySource.keys(),
+    ...purchasesBySource.keys(),
+  ]);
+
+  return [...labels]
+    .map((label) => {
+      const sessionCount = sessionsBySource.get(label) ?? 0;
+      const purchaseStats = purchasesBySource.get(label) ?? { count: 0, revenue: 0 };
+      return {
+        label,
+        sessions: sessionCount,
+        purchases: purchaseStats.count,
+        revenue: Math.round(purchaseStats.revenue * 100) / 100,
+        conversionRate:
+          sessionCount > 0
+            ? Math.round((purchaseStats.count / sessionCount) * 1000) / 10
+            : 0,
+      };
+    })
+    .sort((a, b) => b.revenue - a.revenue || b.sessions - a.sessions)
+    .slice(0, 12);
+}
+
+function buildLandingPageRanking(sessions: ReturnType<typeof buildVisitorSessions>): RankedCount[] {
+  const counts = rankLandingPages(sessions);
+  return [...counts.entries()]
+    .map(([label, count]) => ({ label, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 12);
+}
+
 function buildFunnel(
+  sessions: number,
   uniqueVisitors: number,
   pageViews: SiteVisit[],
-  purchases: number
+  purchases: number,
+  checkoutVisitors: number
 ): ConversionFunnelStep[] {
   const pricingVisitors = new Set(
     pageViews
@@ -261,39 +368,52 @@ function buildFunnel(
       .map((visit) => visit.visitorId)
   ).size;
 
-  const rate = (count: number) =>
-    uniqueVisitors > 0 ? Math.round((count / uniqueVisitors) * 1000) / 10 : 0;
+  const rateFromSessions = (count: number) =>
+    sessions > 0 ? Math.round((count / sessions) * 1000) / 10 : 0;
 
   return [
+    {
+      id: "sessions",
+      labelKey: "admin.analyticsFunnel.sessions",
+      count: sessions,
+      rateFromVisitors: sessions > 0 ? 100 : 0,
+    },
     {
       id: "visitors",
       labelKey: "admin.analyticsFunnel.visitors",
       count: uniqueVisitors,
-      rateFromVisitors: uniqueVisitors > 0 ? 100 : 0,
+      rateFromVisitors:
+        sessions > 0 ? Math.round((uniqueVisitors / sessions) * 1000) / 10 : 0,
     },
     {
       id: "pricing",
       labelKey: "admin.analyticsFunnel.pricing",
       count: pricingVisitors,
-      rateFromVisitors: rate(pricingVisitors),
+      rateFromVisitors: rateFromSessions(pricingVisitors),
+    },
+    {
+      id: "checkout",
+      labelKey: "admin.analyticsFunnel.checkout",
+      count: checkoutVisitors,
+      rateFromVisitors: rateFromSessions(checkoutVisitors),
     },
     {
       id: "signup",
       labelKey: "admin.analyticsFunnel.signup",
       count: signupVisitors,
-      rateFromVisitors: rate(signupVisitors),
+      rateFromVisitors: rateFromSessions(signupVisitors),
     },
     {
       id: "account",
       labelKey: "admin.analyticsFunnel.account",
       count: accountVisitors,
-      rateFromVisitors: rate(accountVisitors),
+      rateFromVisitors: rateFromSessions(accountVisitors),
     },
     {
       id: "purchase",
       labelKey: "admin.analyticsFunnel.purchase",
       count: purchases,
-      rateFromVisitors: rate(purchases),
+      rateFromVisitors: rateFromSessions(purchases),
     },
   ];
 }
@@ -313,9 +433,21 @@ export async function buildAdminAnalyticsStats(
       .map((visit) => visit.userEmail)
       .filter((email): email is string => Boolean(email))
   ).size;
-  const purchases = await countPurchasesBetween(range.from, range.to);
+  const purchasesStats = await listPurchasesBetween(range.from, range.to);
+  const purchases = purchasesStats.purchases.length;
+  const sessionMetrics = computeSessionMetrics(pageViews, uniqueVisitors);
+  const visitorSessions = buildVisitorSessions(pageViews);
+
   const conversionRate =
     uniqueVisitors > 0 ? Math.round((purchases / uniqueVisitors) * 1000) / 10 : 0;
+  const sessionConversionRate =
+    sessionMetrics.sessions > 0
+      ? Math.round((purchases / sessionMetrics.sessions) * 1000) / 10
+      : 0;
+  const checkoutConversionRate =
+    sessionMetrics.checkoutVisitors > 0
+      ? Math.round((purchases / sessionMetrics.checkoutVisitors) * 1000) / 10
+      : 0;
 
   return {
     period,
@@ -323,14 +455,23 @@ export async function buildAdminAnalyticsStats(
     to: range.to.toISOString(),
     totals: {
       pageViews: totalPageViews,
+      sessions: sessionMetrics.sessions,
       uniqueVisitors,
       uniqueUsers,
       purchases,
+      totalRevenue: purchasesStats.totalRevenue,
+      averageOrderValue: purchasesStats.averageOrderValue,
       conversionRate,
+      sessionConversionRate,
+      checkoutConversionRate,
+      bounceRate: sessionMetrics.bounceRate,
+      returningVisitorRate: sessionMetrics.returningVisitorRate,
       avgPagesPerVisitor:
         uniqueVisitors > 0
           ? Math.round((totalPageViews / uniqueVisitors) * 10) / 10
           : 0,
+      avgPagesPerSession: sessionMetrics.avgPagesPerSession,
+      checkoutVisitors: sessionMetrics.checkoutVisitors,
     },
     series: buildSeries(pageViews, uniqueVisits, period, range, locale),
     countries: rankByUniqueVisitors(uniqueVisits, (visit) => visit.country),
@@ -343,6 +484,7 @@ export async function buildAdminAnalyticsStats(
       return visit.country ? `${visit.region} (${visit.country})` : visit.region;
     }),
     pages: rankByPageViews(pageViews, (visit) => visit.path),
+    landingPages: buildLandingPageRanking(visitorSessions),
     devices: rankByUniqueVisitors(uniqueVisits, (visit) => visit.deviceType),
     browsers: rankByUniqueVisitors(uniqueVisits, (visit) => visit.browser),
     operatingSystems: rankByUniqueVisitors(uniqueVisits, (visit) => visit.os),
@@ -352,8 +494,16 @@ export async function buildAdminAnalyticsStats(
     ),
     timezones: rankByUniqueVisitors(uniqueVisits, (visit) => visit.timezone),
     utmSources: rankByUniqueVisitors(uniqueVisits, (visit) => visit.utmSource ?? null),
+    salesByPlan: buildSalesByPlan(purchasesStats.purchases),
+    salesBySource: buildSalesBySource(pageViews, purchasesStats.purchases),
     recentVisits: buildRecentVisits(pageViews),
-    funnel: buildFunnel(uniqueVisitors, pageViews, purchases),
+    funnel: buildFunnel(
+      sessionMetrics.sessions,
+      uniqueVisitors,
+      pageViews,
+      purchases,
+      sessionMetrics.checkoutVisitors
+    ),
   };
 }
 
@@ -362,17 +512,4 @@ export function parseAnalyticsPeriod(value: string | null | undefined): Analytic
   return "day";
 }
 
-export function getAnalyticsLocale(locale: string): string {
-  return locale === "en" ? "en-GB" : "fr-FR";
-}
-
-export function formatCountryName(code: string, locale: string): string {
-  try {
-    const display = new Intl.DisplayNames([getAnalyticsLocale(locale)], {
-      type: "region",
-    });
-    return display.of(code) ?? code;
-  } catch {
-    return code;
-  }
-}
+export { getAnalyticsLocale } from "./format";
