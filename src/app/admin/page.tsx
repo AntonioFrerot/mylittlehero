@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { BRAND_NAME } from "@/lib/brand";
@@ -19,7 +18,6 @@ export default async function AdminPage() {
 
   return (
     <>
-      <Header />
       <main className="min-h-screen bg-cinema-black pb-20">
         <section className="safe-top-offset border-b border-white/5 bg-cinema-night/60">
           <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:px-8 md:py-12">

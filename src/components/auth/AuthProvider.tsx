@@ -17,6 +17,8 @@ type AuthContextValue = {
   balanceLoaded: boolean;
   isAdmin: boolean;
   refresh: () => Promise<void>;
+  refreshTicketBalance: () => Promise<void>;
+  setTicketBalance: (balance: number) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -25,28 +27,43 @@ type AuthProviderProps = {
   children: ReactNode;
   initialUser: SessionUser | null;
   initialIsAdmin?: boolean;
-  initialBalance?: number | null;
 };
 
 export function AuthProvider({
   children,
   initialUser,
   initialIsAdmin = false,
-  initialBalance = null,
 }: AuthProviderProps) {
   const [user, setUser] = useState<SessionUser | null | undefined>(initialUser);
-  const [balance, setBalance] = useState<number | null>(
-    initialUser ? initialBalance : null
-  );
+  const [balance, setBalance] = useState<number | null>(null);
   const [balanceLoaded, setBalanceLoaded] = useState(!initialUser);
   const [isAdmin, setIsAdmin] = useState(initialIsAdmin);
+
+  const refreshTicketBalance = useCallback(async () => {
+    try {
+      const response = await fetch("/api/tickets/balance");
+      if (!response.ok) {
+        setBalanceLoaded(true);
+        return;
+      }
+      const data = (await response.json()) as { balance?: number };
+      setBalance(typeof data.balance === "number" ? data.balance : 0);
+      setBalanceLoaded(true);
+    } catch {
+      setBalanceLoaded(true);
+    }
+  }, []);
+
+  const setTicketBalanceValue = useCallback((nextBalance: number) => {
+    setBalance(nextBalance);
+    setBalanceLoaded(true);
+  }, []);
 
   const refresh = useCallback(async () => {
     try {
       const response = await fetch("/api/auth/session");
       const data = (await response.json()) as {
         user: SessionUser | null;
-        balance?: number;
         isAdmin?: boolean;
       };
       setUser(data.user);
@@ -56,9 +73,7 @@ export function AuthProvider({
         setBalanceLoaded(true);
         return;
       }
-      setBalance(typeof data.balance === "number" ? data.balance : 0);
       setIsAdmin(Boolean(data.isAdmin));
-      setBalanceLoaded(true);
     } catch {
       setUser(null);
       setBalance(null);
@@ -72,16 +87,36 @@ export function AuthProvider({
     if (!initialUser) {
       setBalance(null);
       setBalanceLoaded(true);
+    }
+  }, [initialUser, initialIsAdmin]);
+
+  useEffect(() => {
+    if (!initialUser || initialIsAdmin) {
       return;
     }
 
-    setBalance(initialBalance);
-    setBalanceLoaded(true);
-  }, [initialUser, initialIsAdmin, initialBalance]);
+    void refreshTicketBalance();
+  }, [initialUser?.email, initialIsAdmin, refreshTicketBalance]);
 
   const value = useMemo(
-    () => ({ user, balance, balanceLoaded, isAdmin, refresh }),
-    [user, balance, balanceLoaded, isAdmin, refresh]
+    () => ({
+      user,
+      balance,
+      balanceLoaded,
+      isAdmin,
+      refresh,
+      refreshTicketBalance,
+      setTicketBalance: setTicketBalanceValue,
+    }),
+    [
+      user,
+      balance,
+      balanceLoaded,
+      isAdmin,
+      refresh,
+      refreshTicketBalance,
+      setTicketBalanceValue,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -104,11 +139,18 @@ export function useIsAdmin() {
 }
 
 export function useTicketBalance() {
-  const { user, balance, balanceLoaded, refresh } = useAuthContext();
+  const {
+    user,
+    balance,
+    balanceLoaded,
+    refreshTicketBalance,
+    setTicketBalance,
+  } = useAuthContext();
 
   return {
     balance: user ? balance : null,
-    refresh,
+    refresh: refreshTicketBalance,
+    setTicketBalance,
     isLoading: Boolean(user) && !balanceLoaded,
   };
 }

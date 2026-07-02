@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { PaymentSuccessContent } from "@/components/pricing/PaymentSuccessContent";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
@@ -14,7 +13,6 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function CreerSuccesPage() {
   return (
     <>
-      <Header />
       <main>
         <PaymentSuccessContent kind="subscription" />
       </main>

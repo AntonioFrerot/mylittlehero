@@ -1,9 +1,7 @@
-import { Header } from "@/components/Header";
 
 export default function MonEspaceLoading() {
   return (
     <>
-      <Header />
       <main className="min-h-screen bg-cinema-black pb-20">
         <section className="mon-espace-hero safe-top-offset">
           <div className="mon-espace-hero__ambient" aria-hidden>

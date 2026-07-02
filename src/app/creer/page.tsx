@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { PricingPageContent } from "@/components/pricing/PricingPageContent";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
@@ -14,9 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function CreerPage() {
   return (
-    <>
-      <Header />
-      <main>
+    <>      <main>
         <PricingPageContent />
       </main>
     </>

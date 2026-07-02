@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Header } from "@/components/Header";
 import { BRAND_NAME } from "@/lib/brand";
 import { LEGAL_DOCUMENT_LABEL_KEYS } from "@/lib/legal/labels";
 import {
@@ -51,7 +50,6 @@ export async function LegalDocumentPage({ document }: LegalDocumentPageProps) {
 
   return (
     <>
-      <Header />
       <main className="min-h-screen bg-cinema-black pb-20 safe-top-offset">
         <div className="mx-auto max-w-3xl px-4 md:px-8">
           <Link

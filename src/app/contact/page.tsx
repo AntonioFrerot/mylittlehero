@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { CONTACT_EMAIL } from "@/lib/contact/constants";
 import { getSession } from "@/lib/auth/get-session";
@@ -22,7 +21,6 @@ export default async function ContactPage() {
 
   return (
     <>
-      <Header />
       <main className="min-h-screen bg-cinema-black pb-20 safe-top-offset">
         <div className="mx-auto max-w-2xl px-4 md:px-8">
           <Link

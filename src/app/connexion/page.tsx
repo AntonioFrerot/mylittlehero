@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { getSession } from "@/lib/auth/get-session";
 import {
@@ -39,7 +38,6 @@ export default async function ConnexionPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <Header />
       <main className="min-h-screen bg-cinema-black pb-20 safe-top-offset">
         <div className="mx-auto max-w-md px-4 md:px-8">
           <Link

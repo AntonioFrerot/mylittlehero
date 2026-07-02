@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { FilmMetaBadges } from "@/components/films/FilmMetaBadges";
 import { UserFilmHeroSpotlight } from "@/components/films/UserFilmHeroSpotlight";
 import { UserFilmMedia } from "@/components/films/UserFilmMedia";
@@ -108,7 +107,6 @@ export default async function UserFilmPage({ params }: PageProps) {
       <FilmStoryGenerationPollLazy
         filmIds={shouldPollStory ? [id] : []}
       />
-      <Header />
       <main className="min-h-screen bg-cinema-black pb-16 safe-top-offset">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
           <Link

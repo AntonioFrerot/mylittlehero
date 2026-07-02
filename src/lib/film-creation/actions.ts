@@ -30,7 +30,7 @@ import {
   JETONS_REQUIRED_FOR_SAMPLE,
 } from "@/lib/purchases/ticket-rules";
 import { spendJetonsForFilm } from "@/lib/purchases/jetons";
-import { spendTicketsForFilm } from "@/lib/purchases/tickets";
+import { spendTicketsForFilm, getTicketBalance } from "@/lib/purchases/tickets";
 import { addUserFilm, getUserFilmById, listUserFilms, updateUserFilm } from "./store";
 import { hasUserUsedFreeFilm, isUserFreeTrialFilm } from "./free-film";
 import {
@@ -338,7 +338,18 @@ export async function saveFilmCreation(
   revalidatePath("/achat");
   revalidatePath("/catalogue");
 
-  redirect("/mon-espace?section=films");
+  let redirectUrl = "/mon-espace?section=films";
+  if (
+    !isFreeFilm &&
+    !isSampleFilm &&
+    !hasActiveSubscription &&
+    ticketsRequired > 0
+  ) {
+    const ticketBalance = await getTicketBalance(session.email);
+    redirectUrl = `/mon-espace?section=films&ticketBalance=${ticketBalance}`;
+  }
+
+  redirect(redirectUrl);
 }
 
 /** Livraison d'un film terminé (affiche, vidéo, thèmes) → visible dans le catalogue. */

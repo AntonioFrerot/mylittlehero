@@ -1,9 +1,7 @@
-import { Header } from "@/components/Header";
 
 export default function UserFilmLoading() {
   return (
     <>
-      <Header />
       <main className="min-h-screen bg-cinema-black pb-16 safe-top-offset">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
           <div className="h-4 w-32 animate-pulse rounded bg-white/10" />

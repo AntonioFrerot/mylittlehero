@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { FilmCreationForm } from "@/components/film-creation/FilmCreationForm";
 import { getMyCharacters } from "@/lib/characters/actions";
 import { getMyFilmCreationCooldown } from "@/lib/film-creation/actions";
@@ -40,7 +39,6 @@ export default async function CreerFilmPage() {
 
   return (
     <>
-      <Header />
       <main className="min-h-screen bg-cinema-black pb-20 safe-top-offset">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 md:px-8">
           <Link

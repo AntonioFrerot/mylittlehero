@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { PaymentSuccessContent } from "@/components/pricing/PaymentSuccessContent";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
@@ -19,9 +18,7 @@ export default async function TarifsSuccesPage({ searchParams }: PageProps) {
   const { kind } = await searchParams;
 
   return (
-    <>
-      <Header />
-      <main>
+    <>      <main>
         <PaymentSuccessContent kind={kind === "purchase" ? "purchase" : "subscription"} />
       </main>
     </>

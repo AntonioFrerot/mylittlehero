@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -47,25 +48,48 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
   const searchParams = useSearchParams();
   const [phase, setPhase] = useState<WelcomeSampleOfferPhase>("hidden");
   const [hasSitePurchase, setHasSitePurchase] = useState<boolean | null>(null);
+  const purchaseCheckStarted = useRef(false);
 
   const email = user?.email ?? null;
 
   useEffect(() => {
+    purchaseCheckStarted.current = false;
+    setHasSitePurchase(null);
+    setPhase("hidden");
+  }, [email]);
+
+  useEffect(() => {
+    if (!email) return;
+
+    const userEmail = email;
     let cancelled = false;
 
     async function syncOfferState() {
-      if (!email) {
-        setHasSitePurchase(null);
-        setPhase("hidden");
-        return;
-      }
-
-      const stored = readWelcomeSampleOfferState(email);
+      const stored = readWelcomeSampleOfferState(userEmail);
       if (stored === "purchased") {
         setHasSitePurchase(true);
         setPhase("hidden");
         return;
       }
+
+      if (stored === "dismissed") {
+        setPhase("bubble");
+        if (purchaseCheckStarted.current) return;
+        purchaseCheckStarted.current = true;
+
+        const purchased = await checkUserHasSitePurchase();
+        if (cancelled) return;
+
+        setHasSitePurchase(purchased);
+        if (purchased) {
+          markWelcomeSampleOfferPurchased(userEmail);
+          setPhase("hidden");
+        }
+        return;
+      }
+
+      if (purchaseCheckStarted.current) return;
+      purchaseCheckStarted.current = true;
 
       const purchased = await checkUserHasSitePurchase();
       if (cancelled) return;
@@ -73,23 +97,8 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
       setHasSitePurchase(purchased);
 
       if (purchased) {
-        markWelcomeSampleOfferPurchased(email);
+        markWelcomeSampleOfferPurchased(userEmail);
         setPhase("hidden");
-        return;
-      }
-
-      if (stored === "dismissed") {
-        setPhase("bubble");
-        return;
-      }
-
-      const onMonEspaceFilms =
-        pathname === "/mon-espace" &&
-        (searchParams.get("section") ?? "films") === "films";
-
-      if (onMonEspaceFilms && hasWelcomeSampleOfferFromSearchParam(searchParams)) {
-        setPhase("modal");
-        clearWelcomeSampleOfferSearchParam();
         return;
       }
 
@@ -101,7 +110,21 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
     return () => {
       cancelled = true;
     };
-  }, [email, pathname, searchParams]);
+  }, [email]);
+
+  useEffect(() => {
+    if (!email || hasSitePurchase) return;
+    if (readWelcomeSampleOfferState(email) === "purchased") return;
+
+    const onMonEspaceFilms =
+      pathname === "/mon-espace" &&
+      (searchParams.get("section") ?? "films") === "films";
+
+    if (onMonEspaceFilms && hasWelcomeSampleOfferFromSearchParam(searchParams)) {
+      setPhase("modal");
+      clearWelcomeSampleOfferSearchParam();
+    }
+  }, [email, hasSitePurchase, pathname, searchParams]);
 
   const openModal = useCallback(() => {
     if (!email || readWelcomeSampleOfferState(email) === "purchased") return;
@@ -113,7 +136,8 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
 
     setPhase("modal");
 
-    if (hasSitePurchase === null) {
+    if (hasSitePurchase === null && !purchaseCheckStarted.current) {
+      purchaseCheckStarted.current = true;
       void checkUserHasSitePurchase().then((purchased) => {
         setHasSitePurchase(purchased);
         if (purchased) {

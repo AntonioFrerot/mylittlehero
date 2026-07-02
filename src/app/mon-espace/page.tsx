@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { MonEspaceShell } from "@/components/espace/MonEspaceShell";
 import { DEFAULT_ESPACE_SECTION, parseEspaceSection } from "@/lib/espace/sections";
 import { getSession } from "@/lib/auth/get-session";
@@ -40,7 +39,6 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
 
   return (
     <>
-      <Header />
       <main className="min-h-screen bg-cinema-black pb-20">
         <section className="mon-espace-hero safe-top-offset" aria-labelledby="mon-espace-title">
           <div className="mon-espace-hero__ambient" aria-hidden>

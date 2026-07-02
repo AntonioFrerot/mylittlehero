@@ -1,5 +1,4 @@
 import { CTAFooter } from "@/components/CTAFooter";
-import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { HowItWorks } from "@/components/HowItWorks";
 import { MoviePosterGrid } from "@/components/MoviePosterGrid";
@@ -11,7 +10,6 @@ export const revalidate = 300;
 export default function Home() {
   return (
     <>
-      <Header />
       <main>
         <Hero />
         <MoviePosterGrid />

@@ -78,11 +78,6 @@ function finalizeResponse(
   return response;
 }
 
-async function getOptionalSession(request: NextRequest): Promise<SessionUser | null> {
-  const token = request.cookies.get(SESSION_COOKIE)?.value;
-  return verifySessionToken(token);
-}
-
 export async function middleware(request: NextRequest) {
   const canonicalRedirect = maybeCanonicalHostRedirect(request);
   if (canonicalRedirect) return canonicalRedirect;
@@ -93,7 +88,8 @@ export async function middleware(request: NextRequest) {
   );
 
   if (!isProtected) {
-    const session = await getOptionalSession(request);
+    const token = request.cookies.get(SESSION_COOKIE)?.value;
+    const session = token ? await verifySessionToken(token) : null;
     return finalizeResponse(request, NextResponse.next(), session);
   }
 

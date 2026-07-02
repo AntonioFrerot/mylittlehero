@@ -1,13 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { AnalyticsArrivalBeacon } from "@/components/analytics/AnalyticsArrivalBeacon";
 import { HashScrollHandler } from "@/components/HashScrollHandler";
+import { Header } from "@/components/Header";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { SupportChatLazy } from "@/components/support/SupportChatLazy";
 import { WelcomeSampleOfferRoot } from "@/components/espace/WelcomeSampleOfferRoot";
 import { getSession } from "@/lib/auth/get-session";
 import { isAdminEmail } from "@/lib/auth/is-admin";
-import { getTicketBalanceForUser } from "@/lib/purchases/tickets";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerLocale, getServerTranslator } from "@/lib/i18n/server";
 import { getMessages } from "@/lib/i18n/translator";
@@ -51,8 +51,6 @@ export default async function RootLayout({
 }>) {
   const [locale, session] = await Promise.all([getServerLocale(), getSession()]);
   const initialIsAdmin = session ? isAdminEmail(session.email) : false;
-  const initialBalance =
-    session && !initialIsAdmin ? await getTicketBalanceForUser(session.email) : null;
 
   return (
     <html
@@ -61,14 +59,11 @@ export default async function RootLayout({
     >
       <body className="min-h-screen bg-cinema-black font-sans text-cream antialiased">
         <LocaleProvider locale={locale} messages={getMessages(locale)}>
-          <AuthProvider
-            initialUser={session}
-            initialIsAdmin={initialIsAdmin}
-            initialBalance={initialBalance}
-          >
+          <AuthProvider initialUser={session} initialIsAdmin={initialIsAdmin}>
             <WelcomeSampleOfferRoot>
               <HashScrollHandler />
               <AnalyticsArrivalBeacon />
+              <Header />
               {children}
               <SupportChatLazy />
             </WelcomeSampleOfferRoot>
