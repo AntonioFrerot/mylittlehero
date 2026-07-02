@@ -35,7 +35,6 @@ const EMPTY_STATS: AdminAnalyticsStats = {
   countries: [],
   cities: [],
   regions: [],
-  pages: [],
   landingPages: [],
   devices: [],
   browsers: [],
@@ -530,12 +529,6 @@ export function AdminAnalyticsDashboard({
           items={stats.cities}
           emptyLabel={t("admin.analyticsNoGeo")}
           countLabel={t("admin.analyticsVisitorsShort")}
-        />
-        <RankedList
-          title={t("admin.analyticsPages")}
-          items={stats.pages}
-          emptyLabel={t("admin.analyticsNoData")}
-          countLabel={t("admin.analyticsViewsShort")}
         />
         <RankedList
           title={t("admin.analyticsReferrers")}

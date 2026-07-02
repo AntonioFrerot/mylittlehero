@@ -91,7 +91,6 @@ export type AdminAnalyticsStats = {
   countries: RankedCount[];
   cities: RankedCount[];
   regions: RankedCount[];
-  pages: RankedCount[];
   landingPages: RankedCount[];
   devices: RankedCount[];
   browsers: RankedCount[];

@@ -202,34 +202,6 @@ function rankByUniqueVisitors(
     .slice(0, 12);
 }
 
-function rankByPageViews(
-  visits: SiteVisit[],
-  getLabel: (visit: SiteVisit) => string | null,
-  options?: { meta?: (visit: SiteVisit) => string | null }
-): RankedCount[] {
-  const counts = new Map<string, { views: number; meta: string | null }>();
-
-  for (const visit of visits) {
-    const label = getLabel(visit);
-    if (!label) continue;
-    const existing = counts.get(label) ?? {
-      views: 0,
-      meta: options?.meta?.(visit) ?? null,
-    };
-    existing.views += 1;
-    counts.set(label, existing);
-  }
-
-  return [...counts.entries()]
-    .map(([label, value]) => ({
-      label,
-      count: value.views,
-      meta: value.meta,
-    }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 12);
-}
-
 function buildRecentVisits(pageViews: SiteVisit[]): RecentVisitRow[] {
   return [...pageViews]
     .sort((a, b) => new Date(b.visitedAt).getTime() - new Date(a.visitedAt).getTime())
@@ -483,7 +455,6 @@ export async function buildAdminAnalyticsStats(
       if (!visit.region) return null;
       return visit.country ? `${visit.region} (${visit.country})` : visit.region;
     }),
-    pages: rankByPageViews(pageViews, (visit) => visit.path),
     landingPages: buildLandingPageRanking(visitorSessions),
     devices: rankByUniqueVisitors(uniqueVisits, (visit) => visit.deviceType),
     browsers: rankByUniqueVisitors(uniqueVisits, (visit) => visit.browser),
