@@ -1,6 +1,7 @@
 import { Header } from "@/components/Header";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { loadAdminAnalyticsStats } from "@/lib/analytics/load-admin-stats";
+import { listAdminClients } from "@/lib/admin/clients";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { listAdminFilmsByStatus } from "@/lib/film-creation/admin-films";
 import {
@@ -23,6 +24,7 @@ export default async function AdminPage() {
   const session = await requireAdmin();
   const { t, locale } = await getServerTranslator();
   const { awaiting, completed } = await listAdminFilmsByStatus();
+  const adminClients = await listAdminClients(locale);
   const supportChatClients = groupConversationsByClient(
     await listSupportChatConversationsForAdmin()
   );
@@ -51,6 +53,7 @@ export default async function AdminPage() {
           locale={locale}
           awaiting={awaiting}
           completed={completed}
+          adminClients={adminClients}
           supportChatClients={supportChatClients}
           analyticsStats={analyticsStats}
         />

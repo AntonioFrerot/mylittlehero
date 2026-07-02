@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { AdminAnalyticsDashboard } from "@/components/admin/AdminAnalyticsDashboard";
+import { AdminClientsList } from "@/components/admin/AdminClientsList";
 import { AdminFilmsList } from "@/components/admin/AdminFilmsList";
 import { AdminGrantTicketsForm } from "@/components/admin/AdminGrantTicketsForm";
 import { AdminNotificationsForm } from "@/components/admin/AdminNotificationsForm";
 import { AdminSupportChatList } from "@/components/admin/AdminSupportChatList";
+import type { AdminClientEntry } from "@/lib/admin/clients";
 import type { AdminAnalyticsStats } from "@/lib/analytics/types";
 import type { AdminFilmEntry } from "@/lib/film-creation/admin-films";
 import type { LocaleCode } from "@/lib/i18n/locales";
@@ -19,6 +21,7 @@ type AdminShellProps = {
   locale: LocaleCode;
   awaiting: AdminFilmEntry[];
   completed: AdminFilmEntry[];
+  adminClients: AdminClientEntry[];
   supportChatClients: AdminSupportChatClient[];
   analyticsStats: AdminAnalyticsStats;
 };
@@ -103,11 +106,13 @@ export function AdminShell({
   locale,
   awaiting,
   completed,
+  adminClients,
   supportChatClients,
   analyticsStats,
 }: AdminShellProps) {
   const { t } = useLocale();
   const [activeSection, setActiveSection] = useState<AdminSectionId>("films");
+  const [grantEmail, setGrantEmail] = useState(defaultEmail);
 
   const syncFromHash = useCallback(() => {
     const section = parseSectionHash(window.location.hash);
@@ -125,11 +130,6 @@ export function AdminShell({
     window.history.replaceState(null, "", `#${section}`);
   };
 
-  const supportChatCount = supportChatClients.reduce(
-    (total, client) => total + client.conversations.length,
-    0
-  );
-
   const navItems = [
     {
       id: "films" as const,
@@ -141,7 +141,7 @@ export function AdminShell({
       id: "clients" as const,
       label: t("admin.navClients"),
       description: t("admin.navClientsHint"),
-      badge: supportChatCount,
+      badge: adminClients.length,
     },
     {
       id: "stats" as const,
@@ -190,7 +190,12 @@ export function AdminShell({
               lead={t("admin.categoryClientsLead")}
             />
             <div className="space-y-8">
-              <AdminGrantTicketsForm defaultEmail={defaultEmail} />
+              <AdminClientsList
+                clients={adminClients}
+                locale={locale}
+                onSelectEmail={setGrantEmail}
+              />
+              <AdminGrantTicketsForm key={grantEmail} defaultEmail={grantEmail} />
               <AdminNotificationsForm />
               <AdminSupportChatList clients={supportChatClients} locale={locale} />
             </div>
