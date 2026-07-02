@@ -17,7 +17,7 @@ export function WelcomeSampleOfferBubble() {
     <button
       type="button"
       onClick={welcomeSampleOffer.openModal}
-      className={`welcome-sample-offer-bubble${
+      className={`welcome-sample-offer-bubble active:scale-95 transition-transform${
         welcomeSampleOffer.bubbleReceiving ? " welcome-sample-offer-bubble--receiving" : ""
       }`}
       aria-label={t("welcomeSampleOffer.bubbleLabel")}

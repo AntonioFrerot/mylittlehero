@@ -3,7 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { HashLink } from "@/components/ui/HashLink";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { HeaderAuth } from "@/components/auth/HeaderAuth";
 import { MobileNavMenu } from "@/components/MobileNavMenu";
 import { HeaderTicketCount } from "@/components/tickets/HeaderTicketCount";
@@ -13,13 +14,14 @@ import { useLocale } from "@/components/LocaleProvider";
 import { BRAND_NAME, SITE_LOGO_SRC } from "@/lib/brand";
 import { SITE_NAV_LINKS } from "@/lib/navigation/site-nav";
 import { BTN_3D_ICON } from "@/lib/ui/button-3d-classes";
-import { usePathname } from "next/navigation";
 
 export function Header() {
   const { t } = useLocale();
   const user = useAuthUser();
   const isAdmin = useIsAdmin();
   const pathname = usePathname();
+  const router = useRouter();
+  const [isNavigatingHome, startHomeNavigation] = useTransition();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrollLockY, setScrollLockY] = useState(0);
@@ -99,15 +101,30 @@ export function Header() {
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-3 px-4 md:grid md:h-16 md:grid-cols-[auto_1fr_auto] md:items-center md:gap-4 md:px-8 lg:px-10">
         <Link
           href="/"
-          className="group flex min-w-0 shrink-0 items-center gap-1"
+          aria-busy={isNavigatingHome}
+          className={`group flex min-w-0 shrink-0 items-center gap-1 transition-opacity ${
+            isNavigatingHome ? "pointer-events-none opacity-55" : ""
+          }`}
           onClick={(event) => {
-            if (!menuOpen) return;
+            if (!menuOpen) {
+              if ((pathname || "/") !== "/") {
+                event.preventDefault();
+                startHomeNavigation(() => {
+                  router.push("/");
+                });
+              }
+              return;
+            }
             if ((pathname || "/") === "/") {
               event.preventDefault();
               closeMenu();
               return;
             }
+            event.preventDefault();
             closeMenu();
+            startHomeNavigation(() => {
+              router.push("/");
+            });
           }}
         >
           <Image

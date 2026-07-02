@@ -46,6 +46,7 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [phase, setPhase] = useState<WelcomeSampleOfferPhase>("hidden");
+  const [hasSitePurchase, setHasSitePurchase] = useState<boolean | null>(null);
 
   const email = user?.email ?? null;
 
@@ -54,20 +55,24 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
 
     async function syncOfferState() {
       if (!email) {
+        setHasSitePurchase(null);
         setPhase("hidden");
         return;
       }
 
       const stored = readWelcomeSampleOfferState(email);
       if (stored === "purchased") {
+        setHasSitePurchase(true);
         setPhase("hidden");
         return;
       }
 
-      const hasSitePurchase = await checkUserHasSitePurchase();
+      const purchased = await checkUserHasSitePurchase();
       if (cancelled) return;
 
-      if (hasSitePurchase) {
+      setHasSitePurchase(purchased);
+
+      if (purchased) {
         markWelcomeSampleOfferPurchased(email);
         setPhase("hidden");
         return;
@@ -100,15 +105,24 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
 
   const openModal = useCallback(() => {
     if (!email || readWelcomeSampleOfferState(email) === "purchased") return;
-    void checkUserHasSitePurchase().then((hasSitePurchase) => {
-      if (hasSitePurchase) {
-        markWelcomeSampleOfferPurchased(email);
-        setPhase("hidden");
-        return;
-      }
-      setPhase("modal");
-    });
-  }, [email]);
+    if (hasSitePurchase) {
+      markWelcomeSampleOfferPurchased(email);
+      setPhase("hidden");
+      return;
+    }
+
+    setPhase("modal");
+
+    if (hasSitePurchase === null) {
+      void checkUserHasSitePurchase().then((purchased) => {
+        setHasSitePurchase(purchased);
+        if (purchased) {
+          markWelcomeSampleOfferPurchased(email);
+          setPhase("hidden");
+        }
+      });
+    }
+  }, [email, hasSitePurchase]);
 
   const handleDecline = useCallback(() => {
     if (!email) return;
@@ -124,6 +138,7 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
   const handlePurchaseStart = useCallback(() => {
     if (!email) return;
     markWelcomeSampleOfferPurchased(email);
+    setHasSitePurchase(true);
     setPhase("hidden");
   }, [email]);
 
