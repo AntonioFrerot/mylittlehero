@@ -60,10 +60,10 @@ function applyVisitorCookie(request: NextRequest, response: NextResponse): strin
   return visitorId;
 }
 
-function trackVisitAsync(request: NextRequest, visitorId: string) {
+async function trackVisitAsync(request: NextRequest, visitorId: string) {
   if (!shouldRecordVisitEnvironment(request.nextUrl.hostname)) return;
 
-  const secret = getAnalyticsCollectSecret();
+  const secret = await getAnalyticsCollectSecret();
   const url = new URL("/api/analytics/collect", request.nextUrl.origin);
   const headers: Record<string, string> = {
     "Content-Type": "application/json",

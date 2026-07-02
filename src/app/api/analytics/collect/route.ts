@@ -10,7 +10,7 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  if (!isAuthorizedAnalyticsCollect(request)) {
+  if (!(await isAuthorizedAnalyticsCollect(request))) {
     return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
   }
 
