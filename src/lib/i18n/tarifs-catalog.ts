@@ -74,7 +74,7 @@ const PLAN_FEATURE_IDS: Record<TarifsSubscriptionId, TarifsPlanFeatureId[]> = {
     "filmDuration",
     "fullCustom",
     "delivery24h",
-    "supportPriority",
+    "supportStandard",
     "accumulateFilms",
   ],
   "yearly-48-films": [
@@ -132,9 +132,9 @@ const ABONNEMENTS_YEARLY_OVERRIDES: Partial<
     price: 39.99 * 12,
   },
   "yearly-48-films": {
-    monthlyEquivalent: 149.99,
-    perFilmUnit: 34.61,
-    price: 149.99 * 12,
+    monthlyEquivalent: 139.99,
+    perFilmUnit: 32.31,
+    price: 139.99 * 12,
     quotaHighlight: 52,
   },
 };
@@ -445,7 +445,7 @@ export function getTarifsMaxYearlySavingsPercent(): number {
 }
 
 export function getAbonnementsSampleOffer(locale: LocaleCode): AbonnementsSampleOffer {
-  const priceValue = 8.99;
+  const priceValue = 7.99;
   return {
     id: "jeton-1",
     stripePlanId: "jeton-1",

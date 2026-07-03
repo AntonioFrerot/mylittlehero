@@ -6,7 +6,7 @@ const PLAN_REVENUE_EUR: Record<string, number> = {
   "ticket-1": 59.99,
   "ticket-3": 149.99,
   "ticket-10": 399.99,
-  "jeton-1": 8.99,
+  "jeton-1": 7.99,
   "standard-monthly": 39.99,
   "standard-yearly": 349.99,
   "unlimited-monthly": 119.99,
