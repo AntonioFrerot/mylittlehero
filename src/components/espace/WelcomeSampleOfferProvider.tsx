@@ -162,13 +162,14 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
   useEffect(() => {
     if (!email || hasSitePurchase || phase === "hidden") return;
 
+    const userEmail = email;
     let cancelled = false;
 
     async function recheckPurchase() {
       const purchased = await checkUserHasSitePurchase();
       if (cancelled || !purchased) return;
 
-      markWelcomeSampleOfferPurchased(email);
+      markWelcomeSampleOfferPurchased(userEmail);
       setHasSitePurchase(true);
       setPhase("hidden");
     }
