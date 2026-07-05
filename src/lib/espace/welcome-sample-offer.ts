@@ -46,6 +46,15 @@ export function markWelcomeSampleOfferPurchased(email: string): void {
   }
 }
 
+export function clearWelcomeSampleOfferPurchased(email: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(storageKey(email, "purchased"));
+  } catch {
+    // silencieux
+  }
+}
+
 export function hasWelcomeSampleOfferFromSearchParam(
   searchParams: Pick<URLSearchParams, "get">
 ): boolean {

@@ -15,6 +15,7 @@ import { useAuthUser } from "@/hooks/use-auth-user";
 import { WelcomeSampleOfferModal } from "@/components/espace/WelcomeSampleOfferModal";
 import { checkUserHasSitePurchase } from "@/lib/purchases/actions";
 import {
+  clearWelcomeSampleOfferPurchased,
   clearWelcomeSampleOfferSearchParam,
   hasWelcomeSampleOfferFromSearchParam,
   markWelcomeSampleOfferDismissed,
@@ -64,11 +65,26 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
     const userEmail = email;
     let cancelled = false;
 
+    async function hideIfPurchased(): Promise<boolean> {
+      const purchased = await checkUserHasSitePurchase();
+      if (cancelled) return purchased;
+
+      setHasSitePurchase(purchased);
+      if (purchased) {
+        markWelcomeSampleOfferPurchased(userEmail);
+        setPhase("hidden");
+      }
+      return purchased;
+    }
+
     async function syncOfferState() {
       const stored = readWelcomeSampleOfferState(userEmail);
       if (stored === "purchased") {
-        setHasSitePurchase(true);
-        setPhase("hidden");
+        const purchased = await hideIfPurchased();
+        if (!purchased) {
+          clearWelcomeSampleOfferPurchased(userEmail);
+          setPhase("bubble");
+        }
         return;
       }
 
@@ -77,30 +93,15 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
         if (purchaseCheckStarted.current) return;
         purchaseCheckStarted.current = true;
 
-        const purchased = await checkUserHasSitePurchase();
-        if (cancelled) return;
-
-        setHasSitePurchase(purchased);
-        if (purchased) {
-          markWelcomeSampleOfferPurchased(userEmail);
-          setPhase("hidden");
-        }
+        await hideIfPurchased();
         return;
       }
 
       if (purchaseCheckStarted.current) return;
       purchaseCheckStarted.current = true;
 
-      const purchased = await checkUserHasSitePurchase();
-      if (cancelled) return;
-
-      setHasSitePurchase(purchased);
-
-      if (purchased) {
-        markWelcomeSampleOfferPurchased(userEmail);
-        setPhase("hidden");
-        return;
-      }
+      const purchased = await hideIfPurchased();
+      if (cancelled || purchased) return;
 
       setPhase("bubble");
     }
@@ -114,7 +115,6 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
 
   useEffect(() => {
     if (!email || hasSitePurchase) return;
-    if (readWelcomeSampleOfferState(email) === "purchased") return;
 
     const onMonEspaceFilms =
       pathname === "/mon-espace" &&
@@ -127,7 +127,7 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
   }, [email, hasSitePurchase, pathname, searchParams]);
 
   const openModal = useCallback(() => {
-    if (!email || readWelcomeSampleOfferState(email) === "purchased") return;
+    if (!email) return;
     if (hasSitePurchase) {
       markWelcomeSampleOfferPurchased(email);
       setPhase("hidden");
@@ -159,12 +159,35 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
     setPhase("bubble");
   }, [email]);
 
-  const handlePurchaseStart = useCallback(() => {
-    if (!email) return;
-    markWelcomeSampleOfferPurchased(email);
-    setHasSitePurchase(true);
-    setPhase("hidden");
-  }, [email]);
+  useEffect(() => {
+    if (!email || hasSitePurchase || phase === "hidden") return;
+
+    let cancelled = false;
+
+    async function recheckPurchase() {
+      const purchased = await checkUserHasSitePurchase();
+      if (cancelled || !purchased) return;
+
+      markWelcomeSampleOfferPurchased(email);
+      setHasSitePurchase(true);
+      setPhase("hidden");
+    }
+
+    const onVisible = () => {
+      if (document.visibilityState === "visible") {
+        void recheckPurchase();
+      }
+    };
+
+    window.addEventListener("focus", recheckPurchase);
+    document.addEventListener("visibilitychange", onVisible);
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("focus", recheckPurchase);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [email, hasSitePurchase, phase]);
 
   const bubbleVisible = Boolean(email) && phase === "bubble";
   const bubbleReceiving = Boolean(email) && phase === "collapsing";
@@ -186,7 +209,6 @@ export function WelcomeSampleOfferProvider({ children }: WelcomeSampleOfferProvi
           collapsing={phase === "collapsing"}
           onDecline={handleDecline}
           onCollapseComplete={handleCollapseComplete}
-          onPurchaseStart={handlePurchaseStart}
         />
       ) : null}
     </WelcomeSampleOfferContext.Provider>

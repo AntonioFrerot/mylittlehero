@@ -13,7 +13,6 @@ type WelcomeSampleOfferModalProps = {
   collapsing: boolean;
   onDecline: () => void;
   onCollapseComplete: () => void;
-  onPurchaseStart: () => void;
 };
 
 const MORPH_MS = 90;
@@ -61,7 +60,6 @@ export function WelcomeSampleOfferModal({
   collapsing,
   onDecline,
   onCollapseComplete,
-  onPurchaseStart,
 }: WelcomeSampleOfferModalProps) {
   const { locale, t } = useLocale();
   const offer = getAbonnementsSampleOffer(locale);
@@ -238,7 +236,7 @@ export function WelcomeSampleOfferModal({
           </div>
 
           <div className="welcome-sample-offer-modal__actions">
-            <div className="welcome-sample-offer-modal__cta-wrap" onClick={() => onPurchaseStart()}>
+            <div className="welcome-sample-offer-modal__cta-wrap">
               <CheckoutButton
                 planId={offer.stripePlanId}
                 planType="purchase"
