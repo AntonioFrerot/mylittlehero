@@ -23,3 +23,24 @@ export async function notifyTicketBalanceUpdated(input: {
     referenceId: input.referenceId,
   });
 }
+
+export async function notifyTicketBalanceRevoked(input: {
+  userEmail: string;
+  balance: number;
+  ticketsRevoked: number;
+  referenceId: string;
+}): Promise<void> {
+  const locale = (await getUserLocale(input.userEmail)) as LocaleCode;
+  const t = createTranslator(locale);
+
+  await createNotification({
+    userEmail: input.userEmail,
+    kind: "ticket_balance_updated",
+    title: t("notifications.ticketBalanceRevokedTitle", {
+      count: input.ticketsRevoked,
+    }),
+    body: String(input.balance),
+    href: "/mon-espace",
+    referenceId: input.referenceId,
+  });
+}

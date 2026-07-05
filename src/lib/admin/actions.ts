@@ -152,3 +152,202 @@ export async function grantTicketsToUser(
     success: `${Math.floor(tickets)} ticket(s) ajouté(s). Nouveau solde : ${result.balance}.`,
   };
 }
+
+export type AdminRevokeTicketsState = {
+  error?: string;
+  success?: string;
+};
+
+export async function revokeTicketsFromUser(
+  _prev: AdminRevokeTicketsState,
+  formData: FormData
+): Promise<AdminRevokeTicketsState> {
+  const session = await requireAdminSession();
+  if (!session) {
+    return { error: "Accès refusé." };
+  }
+
+  const emailRaw = formData.get("email");
+  const ticketsRaw = formData.get("tickets");
+
+  if (typeof emailRaw !== "string" || !emailRaw.trim().includes("@")) {
+    return { error: "Indiquez une adresse e-mail valide." };
+  }
+
+  const tickets = Number(ticketsRaw);
+  if (!Number.isFinite(tickets) || tickets <= 0) {
+    return { error: "Indiquez un nombre de tickets positif." };
+  }
+
+  const { revokeAdminTickets } = await import("@/lib/purchases/tickets");
+  const { notifyTicketBalanceRevoked } = await import(
+    "@/lib/notifications/notify-ticket-balance-updated"
+  );
+  const result = await revokeAdminTickets({
+    userEmail: emailRaw.trim(),
+    tickets: Math.floor(tickets),
+  });
+
+  if (!result.ok) {
+    return { error: result.error };
+  }
+
+  await notifyTicketBalanceRevoked({
+    userEmail: emailRaw.trim(),
+    balance: result.balance,
+    ticketsRevoked: Math.floor(tickets),
+    referenceId: result.referenceId,
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/mon-espace");
+
+  return {
+    success: `${Math.floor(tickets)} ticket(s) retiré(s). Nouveau solde : ${result.balance}.`,
+  };
+}
+
+export type AdminGrantJetonsState = {
+  error?: string;
+  success?: string;
+};
+
+export async function grantJetonsToUser(
+  _prev: AdminGrantJetonsState,
+  formData: FormData
+): Promise<AdminGrantJetonsState> {
+  const session = await requireAdminSession();
+  if (!session) {
+    return { error: "Accès refusé." };
+  }
+
+  const emailRaw = formData.get("email");
+  const jetonsRaw = formData.get("jetons");
+
+  if (typeof emailRaw !== "string" || !emailRaw.trim().includes("@")) {
+    return { error: "Indiquez une adresse e-mail valide." };
+  }
+
+  const jetons = Number(jetonsRaw);
+  if (!Number.isFinite(jetons) || jetons <= 0) {
+    return { error: "Indiquez un nombre de jetons positif." };
+  }
+
+  const { grantAdminJetons } = await import("@/lib/purchases/jetons");
+  const result = await grantAdminJetons({
+    userEmail: emailRaw.trim(),
+    jetons: Math.floor(jetons),
+  });
+
+  if (!result.ok) {
+    return { error: result.error };
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/mon-espace");
+  revalidatePath("/creer-film");
+
+  return {
+    success: `${Math.floor(jetons)} jeton(s) ajouté(s). Nouveau solde : ${result.balance}.`,
+  };
+}
+
+export type AdminRevokeJetonsState = {
+  error?: string;
+  success?: string;
+};
+
+export async function revokeJetonsFromUser(
+  _prev: AdminRevokeJetonsState,
+  formData: FormData
+): Promise<AdminRevokeJetonsState> {
+  const session = await requireAdminSession();
+  if (!session) {
+    return { error: "Accès refusé." };
+  }
+
+  const emailRaw = formData.get("email");
+  const jetonsRaw = formData.get("jetons");
+
+  if (typeof emailRaw !== "string" || !emailRaw.trim().includes("@")) {
+    return { error: "Indiquez une adresse e-mail valide." };
+  }
+
+  const jetons = Number(jetonsRaw);
+  if (!Number.isFinite(jetons) || jetons <= 0) {
+    return { error: "Indiquez un nombre de jetons positif." };
+  }
+
+  const { revokeAdminJetons } = await import("@/lib/purchases/jetons");
+  const result = await revokeAdminJetons({
+    userEmail: emailRaw.trim(),
+    jetons: Math.floor(jetons),
+  });
+
+  if (!result.ok) {
+    return { error: result.error };
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/mon-espace");
+  revalidatePath("/creer-film");
+
+  return {
+    success: `${Math.floor(jetons)} jeton(s) retiré(s). Nouveau solde : ${result.balance}.`,
+  };
+}
+
+export type AdminSetSubscriptionState = {
+  error?: string;
+  success?: string;
+};
+
+export async function setAdminOwnSubscription(
+  _prev: AdminSetSubscriptionState,
+  formData: FormData
+): Promise<AdminSetSubscriptionState> {
+  const session = await requireAdminSession();
+  if (!session) {
+    return { error: "Accès refusé." };
+  }
+
+  const planRaw = formData.get("subscriptionPlanId");
+  const planId =
+    typeof planRaw === "string" && planRaw.trim() ? planRaw.trim() : null;
+
+  if (
+    planId !== null &&
+    planId !== "standard-monthly" &&
+    planId !== "unlimited-monthly"
+  ) {
+    return { error: "Plan d'abonnement invalide." };
+  }
+
+  const { updateUserSubscription } = await import("@/lib/auth/users-store");
+  await updateUserSubscription(session.email, planId);
+
+  const paths = [
+    "/admin",
+    "/mon-espace",
+    "/creer-film",
+    "/calendrier",
+    "/abonnements",
+    "/achat",
+  ];
+  for (const path of paths) {
+    revalidatePath(path);
+  }
+
+  const { getServerTranslator } = await import("@/lib/i18n/server");
+  const { t } = await getServerTranslator();
+
+  if (!planId) {
+    return { success: t("admin.subscriptionSimulator.successNone") };
+  }
+
+  const successKey =
+    planId === "standard-monthly"
+      ? "admin.subscriptionSimulator.successEssential"
+      : "admin.subscriptionSimulator.successPremium";
+  return { success: t(successKey) };
+}

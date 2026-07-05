@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { AbonnementsCatalogSection } from "@/components/tarifs/AbonnementsCatalogSection";
 import { CheckoutLauncher } from "@/components/pricing/CheckoutLauncher";
 import {
@@ -32,12 +33,14 @@ export async function AbonnementsPageContent() {
         </header>
 
         <div className="mt-8 md:mt-10">
-          <AbonnementsCatalogSection
-            yearlyPlans={yearlyPlans}
-            ticketPlans={ticketPlans}
-            sampleOffer={sampleOffer}
-            locale={locale}
-          />
+          <Suspense fallback={null}>
+            <AbonnementsCatalogSection
+              yearlyPlans={yearlyPlans}
+              ticketPlans={ticketPlans}
+              sampleOffer={sampleOffer}
+              locale={locale}
+            />
+          </Suspense>
         </div>
 
         <footer className="tarifs-page__footer mt-16 text-center md:mt-20">

@@ -9,6 +9,7 @@ import { WelcomeSampleOfferRoot } from "@/components/espace/WelcomeSampleOfferRo
 import { getSession } from "@/lib/auth/get-session";
 import { isAdminEmail } from "@/lib/auth/is-admin";
 import { getTicketBalanceForUser } from "@/lib/purchases/tickets";
+import { getJetonBalanceForUser } from "@/lib/purchases/jetons";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerLocale, getServerTranslator } from "@/lib/i18n/server";
 import { getMessages } from "@/lib/i18n/translator";
@@ -53,6 +54,9 @@ export default async function RootLayout({
   const [locale, session] = await Promise.all([getServerLocale(), getSession()]);
   const initialIsAdmin = session ? isAdminEmail(session.email) : false;
   const initialBalance = session ? await getTicketBalanceForUser(session.email) : null;
+  const initialJetonBalance = session
+    ? await getJetonBalanceForUser(session.email)
+    : null;
 
   return (
     <html
@@ -65,6 +69,7 @@ export default async function RootLayout({
             initialUser={session}
             initialIsAdmin={initialIsAdmin}
             initialBalance={initialBalance}
+            initialJetonBalance={initialJetonBalance}
           >
             <WelcomeSampleOfferRoot>
               <HashScrollHandler />

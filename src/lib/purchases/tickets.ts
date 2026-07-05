@@ -17,7 +17,12 @@ import {
   TICKET_DURATION_SECONDS,
 } from "@/lib/purchases/ticket-rules";
 
-export type TicketLedgerKind = "purchase" | "film_creation" | "legacy_migration";
+export type TicketLedgerKind =
+  | "purchase"
+  | "film_creation"
+  | "legacy_migration"
+  | "admin_revoke"
+  | "subscription_grant";
 
 export type TicketLedgerEntry = {
   id: string;
@@ -231,6 +236,11 @@ export async function getTicketBalance(userEmail: string): Promise<number> {
   const email = normalizeEmail(userEmail);
   await migrateLegacyFilmCreditsForUser(email);
 
+  const { syncSubscriptionPeriodicGrants } = await import(
+    "@/lib/purchases/subscription-ticket-grants"
+  );
+  await syncSubscriptionPeriodicGrants(email);
+
   if (isDatabaseEnabled()) {
     await ensureSchema();
     const db = getSql();
@@ -349,6 +359,69 @@ export async function grantAdminTickets(input: {
 
   const balance = await getTicketBalance(email);
   return { ok: true, balance, referenceId };
+}
+
+export async function revokeAdminTickets(input: {
+  userEmail: string;
+  tickets: number;
+  referenceId?: string;
+}): Promise<
+  { ok: true; balance: number; referenceId: string } | { ok: false; error: string }
+> {
+  if (input.tickets <= 0) {
+    return { ok: false, error: "Le nombre de tickets doit être positif." };
+  }
+
+  if (isHostedProduction() && !isDatabaseEnabled()) {
+    return { ok: false, error: databaseRequiredError() };
+  }
+
+  const email = normalizeEmail(input.userEmail);
+  const referenceId =
+    input.referenceId?.trim() || `admin-revoke:${randomUUID()}`;
+
+  if (await hasLedgerReference(email, referenceId)) {
+    const balance = await getTicketBalance(email);
+    return { ok: true, balance, referenceId };
+  }
+
+  const balance = await getTicketBalance(email);
+  const ticketsToRevoke = Math.floor(input.tickets);
+  if (balance < ticketsToRevoke) {
+    return {
+      ok: false,
+      error: `Solde insuffisant (${balance} ticket(s) disponible(s)).`,
+    };
+  }
+
+  await insertLedgerEntry({
+    userEmail: email,
+    delta: -ticketsToRevoke,
+    kind: "admin_revoke",
+    referenceId,
+  });
+
+  const newBalance = await getTicketBalance(email);
+  return { ok: true, balance: newBalance, referenceId };
+}
+
+export async function tryGrantSubscriptionPeriodTicket(
+  userEmail: string,
+  referenceId: string
+): Promise<boolean> {
+  const email = normalizeEmail(userEmail);
+  if (await hasLedgerReference(email, referenceId)) {
+    return false;
+  }
+
+  await insertLedgerEntry({
+    userEmail: email,
+    delta: 1,
+    kind: "subscription_grant",
+    referenceId,
+  });
+
+  return true;
 }
 
 export function getPlanTicketGrant(

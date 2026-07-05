@@ -7,9 +7,10 @@ import { useEffect, useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { HeaderAuth } from "@/components/auth/HeaderAuth";
 import { MobileNavMenu } from "@/components/MobileNavMenu";
+import { HeaderJetonCount } from "@/components/tickets/HeaderJetonCount";
 import { HeaderTicketCount } from "@/components/tickets/HeaderTicketCount";
 import { HeaderNotificationBellLazy, StoryValidationReminderPollLazy } from "@/components/notifications/HeaderUserServices";
-import { useAuthUser, useIsAdmin } from "@/components/auth/AuthProvider";
+import { useAuthUser } from "@/hooks/use-auth-user";
 import { useLocale } from "@/components/LocaleProvider";
 import { BRAND_NAME, SITE_LOGO_SRC } from "@/lib/brand";
 import { SITE_NAV_LINKS } from "@/lib/navigation/site-nav";
@@ -18,7 +19,6 @@ import { BTN_3D_ICON } from "@/lib/ui/button-3d-classes";
 export function Header() {
   const { t } = useLocale();
   const user = useAuthUser();
-  const isAdmin = useIsAdmin();
   const pathname = usePathname();
   const router = useRouter();
   const [isNavigatingHome, startHomeNavigation] = useTransition();
@@ -157,23 +157,14 @@ export function Header() {
               </NavLink>
             );
           })}
-          {isAdmin ? (
-            <Link
-              href="/admin"
-              className="text-sm text-cream/70 transition-colors hover:text-gold-light"
-            >
-              {t("nav.admin")}
-            </Link>
-          ) : null}
         </nav>
 
-        <div className="hidden md:block">
-          <HeaderAuth />
-        </div>
+        <HeaderAuth />
 
         <div className="flex shrink-0 items-center gap-2 md:hidden">
           {user ? (
             <div className="header-mobile-ticket-bell">
+              <HeaderJetonCount className="header-jeton-count--mobile" />
               <HeaderTicketCount className="header-ticket-count--mobile" />
               <HeaderNotificationBellLazy className="notification-bell--header-mobile" />
             </div>

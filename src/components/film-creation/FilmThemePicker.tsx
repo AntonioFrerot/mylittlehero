@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { FILM_THEMES } from "@/lib/film-creation/types";
-import { BTN_FILM_THEME_VALIDATE, SURFACE_3D_CARD } from "@/lib/ui/button-3d-classes";
+import { BTN_FILM_THEME_VALIDATE, SURFACE_3D_CARD, SURFACE_3D_FORM_CONTROL } from "@/lib/ui/button-3d-classes";
 import type { TranslationKey } from "@/lib/i18n/translator";
 
 const MOBILE_THEMES_MQ = "(max-width: 639px)";
@@ -169,7 +169,7 @@ export function FilmThemePicker() {
         <div ref={rootRef} className="film-theme-dropdown">
           <button
             type="button"
-            className={`film-theme-dropdown__trigger${open ? " film-theme-dropdown__trigger--open" : ""}${selected.length > 0 ? " film-theme-dropdown__trigger--filled" : ""}`}
+            className={`${SURFACE_3D_FORM_CONTROL} film-theme-dropdown__trigger${open ? " film-theme-dropdown__trigger--open" : ""}${selected.length > 0 ? " film-theme-dropdown__trigger--filled" : ""}`}
             aria-expanded={open}
             aria-controls={listId}
             aria-haspopup="listbox"

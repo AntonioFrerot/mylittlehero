@@ -93,9 +93,7 @@ async function readAudioDuration(file: File): Promise<number> {
 
 export function CharacterAudioUpload({ currentAudioSrc }: CharacterAudioUploadProps) {
   const { t } = useLocale();
-  const uploadInputRef = useRef<HTMLInputElement>(null);
-  const submitInputRef = useRef<HTMLInputElement>(null);
-  const durationInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -104,6 +102,7 @@ export function CharacterAudioUpload({ currentAudioSrc }: CharacterAudioUploadPr
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentAudioSrc ?? null);
   const [durationSeconds, setDurationSeconds] = useState<number | null>(null);
+  const [isProcessingAudio, setIsProcessingAudio] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordElapsed, setRecordElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -112,11 +111,29 @@ export function CharacterAudioUpload({ currentAudioSrc }: CharacterAudioUploadPr
     setPreviewUrl(currentAudioSrc ?? null);
     setDurationSeconds(null);
     setError(null);
-    assignFileToInput(submitInputRef.current, null);
-    if (durationInputRef.current) {
-      durationInputRef.current.value = "";
-    }
+    assignFileToInput(fileInputRef.current, null);
   }, [currentAudioSrc]);
+
+  useEffect(() => {
+    const form = fileInputRef.current?.closest("form");
+    if (!form) return;
+
+    const handleSubmit = (event: Event) => {
+      const hasNewAudio = (fileInputRef.current?.files?.length ?? 0) > 0;
+      if (!hasNewAudio && !currentAudioSrc) {
+        event.preventDefault();
+        setError(t("characters.errors.audioRequired"));
+        return;
+      }
+      if (hasNewAudio && durationSeconds === null) {
+        event.preventDefault();
+        setError(t("characters.errors.audioDuration"));
+      }
+    };
+
+    form.addEventListener("submit", handleSubmit);
+    return () => form.removeEventListener("submit", handleSubmit);
+  }, [currentAudioSrc, durationSeconds, t]);
 
   useEffect(() => {
     return () => {
@@ -138,6 +155,7 @@ export function CharacterAudioUpload({ currentAudioSrc }: CharacterAudioUploadPr
   const applyAudioFile = useCallback(
     async (file: File, knownDurationSeconds?: number) => {
       setError(null);
+      setIsProcessingAudio(true);
       try {
         const duration =
           knownDurationSeconds !== undefined && Number.isFinite(knownDurationSeconds)
@@ -145,25 +163,30 @@ export function CharacterAudioUpload({ currentAudioSrc }: CharacterAudioUploadPr
             : await readAudioDuration(file);
         if (duration < MIN_CHARACTER_AUDIO_SECONDS) {
           setError(t("characters.errors.audioTooShort", { min: MIN_CHARACTER_AUDIO_SECONDS }));
+          assignFileToInput(fileInputRef.current, null);
+          setDurationSeconds(null);
           return;
         }
         if (duration > MAX_CHARACTER_AUDIO_SECONDS) {
           setError(t("characters.errors.audioTooLong", { max: MAX_CHARACTER_AUDIO_SECONDS }));
+          assignFileToInput(fileInputRef.current, null);
+          setDurationSeconds(null);
           return;
         }
 
         const roundedDuration = Math.round(duration * 10) / 10;
         setDurationSeconds(roundedDuration);
-        if (durationInputRef.current) {
-          durationInputRef.current.value = String(roundedDuration);
-        }
-        assignFileToInput(submitInputRef.current, file);
+        assignFileToInput(fileInputRef.current, file);
         setPreviewUrl((prev) => {
           if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
           return URL.createObjectURL(file);
         });
       } catch {
+        assignFileToInput(fileInputRef.current, null);
+        setDurationSeconds(null);
         setError(t("characters.errors.audioInvalid"));
+      } finally {
+        setIsProcessingAudio(false);
       }
     },
     [t]
@@ -171,9 +194,11 @@ export function CharacterAudioUpload({ currentAudioSrc }: CharacterAudioUploadPr
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      setDurationSeconds(null);
+      return;
+    }
     await applyAudioFile(file);
-    event.target.value = "";
   };
 
   const clearTimer = () => {
@@ -283,18 +308,10 @@ export function CharacterAudioUpload({ currentAudioSrc }: CharacterAudioUploadPr
       )}
 
       <input
-        ref={durationInputRef}
         type="hidden"
         name="audioDuration"
-        defaultValue=""
-      />
-      <input
-        ref={submitInputRef}
-        type="file"
-        name="audio"
-        accept="audio/webm,audio/mp4,audio/mpeg,audio/wav,audio/ogg"
-        className="sr-only"
-        aria-hidden
+        value={durationSeconds !== null ? String(durationSeconds) : ""}
+        readOnly
       />
 
       {isRecording ? (
@@ -323,17 +340,20 @@ export function CharacterAudioUpload({ currentAudioSrc }: CharacterAudioUploadPr
           <label className="flex flex-1 cursor-pointer flex-col gap-1">
             <span className={BTN_3D_SECONDARY_ACTION}>{t("characters.chooseAudio")}</span>
             <input
-              ref={uploadInputRef}
+              ref={fileInputRef}
               type="file"
-              accept="audio/webm,audio/mp4,audio/mpeg,audio/wav,audio/ogg"
+              name="audio"
+              accept="audio/webm,audio/mp4,audio/mpeg,audio/wav,audio/ogg,audio/x-m4a,audio/x-wav,.mp3,.m4a,.wav,.ogg,.webm"
               className="sr-only"
+              disabled={isProcessingAudio}
               onChange={(event) => void handleFileChange(event)}
             />
           </label>
           <button
             type="button"
             onClick={() => void startRecording()}
-            className={`${BTN_3D_SECONDARY_ACTION} flex-1`}
+            disabled={isProcessingAudio}
+            className={`${BTN_3D_SECONDARY_ACTION} flex-1 disabled:cursor-not-allowed disabled:opacity-50`}
           >
             {t("characters.recordAudio")}
           </button>
@@ -347,7 +367,11 @@ export function CharacterAudioUpload({ currentAudioSrc }: CharacterAudioUploadPr
         })}
       </span>
 
-      {durationSeconds !== null && !error ? (
+      {isProcessingAudio ? (
+        <p className="text-xs text-cream/55">{t("characters.audioProcessing")}</p>
+      ) : null}
+
+      {durationSeconds !== null && !error && !isProcessingAudio ? (
         <span className="text-xs text-gold-light/80">
           {t("characters.audioDurationSelected", { duration: formatSeconds(durationSeconds) })}
         </span>

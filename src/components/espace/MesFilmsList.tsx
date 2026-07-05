@@ -31,6 +31,7 @@ import type { LocaleCode } from "@/lib/i18n/locales";
 import { ShareFilmButton } from "@/components/espace/ShareFilmButton";
 import { getYouTubeWatchUrl } from "@/lib/youtube";
 import { SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
+import { parseDayKey } from "@/lib/calendar/date-utils";
 import Link from "next/link";
 
 function getStatusStyle(status: string): string {
@@ -56,11 +57,20 @@ function formatDate(iso: string, locale: LocaleCode): string {
   }).format(new Date(iso));
 }
 
+function formatScheduledDate(dayKey: string, locale: LocaleCode): string {
+  return new Intl.DateTimeFormat(dateLocale[locale], {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(parseDayKey(dayKey));
+}
+
 function getFilmListSynopsis(
   film: UserFilmWithStory,
   t: ReturnType<typeof useLocale>["t"]
 ): { heading?: string; text: string; pending?: boolean } | null {
-  if (isUserFreeTrialFilm(film) || isUserSampleFilm(film)) {
+  if (isUserFreeTrialFilm(film)) {
     return null;
   }
 
@@ -76,7 +86,12 @@ function getFilmListSynopsis(
     return { text: t("space.storyStatusGenerating"), pending: true };
   }
   if (status === "awaiting_generation") {
-    return { text: t("space.storyStatusAwaiting"), pending: true };
+    return {
+      text: isUserSampleFilm(film)
+        ? t("space.sampleFilmSynopsisPending")
+        : t("space.storyStatusAwaiting"),
+      pending: true,
+    };
   }
   if (status === "failed") {
     return { text: t("space.storyStatusFailed"), pending: true };
@@ -164,6 +179,13 @@ export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
                       date: formatDate(film.createdAt, locale),
                     })}
                   </p>
+                  {film.scheduledDate ? (
+                    <p className="mt-1 text-xs font-medium text-gold-light/85">
+                      {t("space.scheduledFor", {
+                        date: formatScheduledDate(film.scheduledDate, locale),
+                      })}
+                    </p>
+                  ) : null}
                   {film.characters && film.characters.length > 0 && (
                     <p className="mt-[0.45rem] text-sm text-cream/60">
                       {t("space.charactersLabel")}{" "}

@@ -1,4 +1,5 @@
 import { CTAFooter } from "@/components/CTAFooter";
+import { HomeAdminButton } from "@/components/auth/HomeAdminButton";
 import { Hero } from "@/components/Hero";
 import { HowItWorks } from "@/components/HowItWorks";
 import { MoviePosterGrid } from "@/components/MoviePosterGrid";
@@ -18,6 +19,7 @@ export default function Home() {
         <ParentTrustSection />
       </main>
       <CTAFooter />
+      <HomeAdminButton />
     </>
   );
 }

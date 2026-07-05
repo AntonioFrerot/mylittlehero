@@ -1,8 +1,13 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AdminDeliverFilmForm } from "@/components/admin/AdminDeliverFilmForm";
+import { AdminDeliveryCountdown } from "@/components/admin/AdminDeliveryCountdown";
 import type { AdminFilmEntry } from "@/lib/film-creation/admin-films";
+import { parseDayKey } from "@/lib/calendar/date-utils";
 import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
 import { formatFilmDuration } from "@/lib/film-creation/types";
 import { getFilmDisplayTitle } from "@/lib/film-creation/user-film-page";
@@ -14,11 +19,23 @@ import type { LocaleCode } from "@/lib/i18n/locales";
 import { createTranslator } from "@/lib/i18n/translator";
 import { POSTER_DIMENSIONS } from "@/lib/hero-posters";
 
+type AdminFilmsTabId = "urgent" | "scheduled" | "completed";
+
 type AdminFilmsListProps = {
-  awaiting: AdminFilmEntry[];
+  awaitingUrgent: AdminFilmEntry[];
+  awaitingScheduled: AdminFilmEntry[];
   completed: AdminFilmEntry[];
   locale: LocaleCode;
 };
+
+function formatScheduledDate(dayKey: string, locale: LocaleCode): string {
+  return new Intl.DateTimeFormat(locale === "en" ? "en-GB" : "fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(parseDayKey(dayKey));
+}
 
 function formatDate(value: string, locale: LocaleCode): string {
   try {
@@ -157,10 +174,16 @@ function AdminFilmDetails({
                     date: formatDate(film.storyValidatedAt, locale),
                   })}
                 </span>
-              ) : isFreeTrial ? (
-                <span>
-                  {t("admin.createdAt", {
-                    date: formatDate(film.createdAt, locale),
+              ) : null}
+              <span>
+                {t("admin.createdAt", {
+                  date: formatDate(film.createdAt, locale),
+                })}
+              </span>
+              {film.scheduledDate ? (
+                <span className="text-gold-light/90">
+                  {t("admin.scheduledForShort", {
+                    date: formatScheduledDate(film.scheduledDate, locale),
                   })}
                 </span>
               ) : null}
@@ -238,14 +261,38 @@ function AdminFilmDetails({
 function AdminAwaitingFilmCard({
   film,
   locale,
+  variant,
 }: {
   film: AdminFilmEntry;
   locale: LocaleCode;
+  variant: "urgent" | "scheduled";
 }) {
+  const t = createTranslator(locale);
   const isFreeTrial = isUserFreeTrialFilm(film);
 
   return (
-    <article className="rounded-2xl border border-white/10 bg-cinema-night/80 p-5 shadow-lg shadow-black/20 md:p-6">
+    <article
+      className={`admin-film-card rounded-2xl border bg-cinema-night/80 p-5 shadow-lg shadow-black/20 md:p-6 ${
+        variant === "scheduled"
+          ? "admin-film-card--scheduled border-gold/25"
+          : "admin-film-card--urgent border-white/10"
+      }`}
+    >
+      <div className="admin-film-card__priority">
+        {variant === "urgent" ? (
+          <AdminDeliveryCountdown createdAt={film.createdAt} />
+        ) : film.scheduledDate ? (
+          <div className="admin-film-card__scheduled-badge">
+            <p className="admin-film-card__scheduled-label">
+              {t("admin.scheduledFor")}
+            </p>
+            <p className="admin-film-card__scheduled-date">
+              {formatScheduledDate(film.scheduledDate, locale)}
+            </p>
+          </div>
+        ) : null}
+      </div>
+
       <AdminFilmDetails film={film} locale={locale} />
       <div className="mt-6 border-t border-white/8 pt-6">
         <AdminDeliverFilmForm
@@ -315,13 +362,13 @@ function AdminCompletedFilmCard({
   );
 }
 
-function AdminSection({
-  title,
+function AdminFilmsTabPanel({
+  lead,
   countLabel,
   emptyLabel,
   children,
 }: {
-  title: string;
+  lead?: string;
   countLabel: string;
   emptyLabel: string;
   children: ReactNode;
@@ -329,11 +376,9 @@ function AdminSection({
   const isEmpty = !children;
 
   return (
-    <section className="space-y-4">
+    <div className="admin-films-tab-panel space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-2 border-b border-white/8 pb-3">
-        <h2 className="font-display text-xl font-semibold text-cream md:text-2xl">
-          {title}
-        </h2>
+        {lead ? <p className="text-sm text-cream/55">{lead}</p> : <span />}
         <p className="text-sm text-cream/45">{countLabel}</p>
       </div>
       {isEmpty ? (
@@ -343,50 +388,119 @@ function AdminSection({
       ) : (
         <div className="space-y-6">{children}</div>
       )}
-    </section>
+    </div>
   );
 }
 
 export function AdminFilmsList({
-  awaiting,
+  awaitingUrgent,
+  awaitingScheduled,
   completed,
   locale,
 }: AdminFilmsListProps) {
   const t = createTranslator(locale);
+  const [activeTab, setActiveTab] = useState<AdminFilmsTabId>("urgent");
+
+  const tabs: {
+    id: AdminFilmsTabId;
+    label: string;
+    count: number;
+    accent?: boolean;
+  }[] = [
+    {
+      id: "urgent",
+      label: t("admin.filmsTabUrgent"),
+      count: awaitingUrgent.length,
+      accent: awaitingUrgent.length > 0,
+    },
+    {
+      id: "scheduled",
+      label: t("admin.filmsTabScheduled"),
+      count: awaitingScheduled.length,
+    },
+    {
+      id: "completed",
+      label: t("admin.filmsTabCompleted"),
+      count: completed.length,
+    },
+  ];
 
   return (
-    <div className="space-y-12">
-      <AdminSection
-        title={t("admin.awaitingTitle")}
-        countLabel={t("admin.filmCount", { count: awaiting.length })}
-        emptyLabel={t("admin.awaitingEmpty")}
-      >
-        {awaiting.length > 0
-          ? awaiting.map((film) => (
-              <AdminAwaitingFilmCard
-                key={`${film.ownerEmail}-${film.id}`}
-                film={film}
-                locale={locale}
-              />
-            ))
-          : null}
-      </AdminSection>
+    <div className="admin-films-list space-y-5">
+      <nav className="admin-films-tabs" aria-label={t("admin.filmsTabsLabel")}>
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={`admin-films-tabs__item${
+                isActive ? " admin-films-tabs__item--active" : ""
+              }${tab.accent && !isActive ? " admin-films-tabs__item--accent" : ""}`}
+              aria-current={isActive ? "page" : undefined}
+            >
+              <span className="admin-films-tabs__label">{tab.label}</span>
+              <span className="admin-films-tabs__count">{tab.count}</span>
+            </button>
+          );
+        })}
+      </nav>
 
-      <AdminSection
-        title={t("admin.completedTitle")}
-        countLabel={t("admin.filmCount", { count: completed.length })}
-        emptyLabel={t("admin.completedEmpty")}
-      >
-        {completed.length > 0
-          ? completed.map((film) => (
-              <AdminCompletedFilmCard
-                key={`${film.ownerEmail}-${film.id}`}
-                film={film}
-                locale={locale}
-              />
-            ))
-          : null}
-      </AdminSection>
+      {activeTab === "urgent" ? (
+        <AdminFilmsTabPanel
+          lead={t("admin.awaitingUrgentLead")}
+          countLabel={t("admin.filmCount", { count: awaitingUrgent.length })}
+          emptyLabel={t("admin.awaitingUrgentEmpty")}
+        >
+          {awaitingUrgent.length > 0
+            ? awaitingUrgent.map((film) => (
+                <AdminAwaitingFilmCard
+                  key={`urgent-${film.ownerEmail}-${film.id}`}
+                  film={film}
+                  locale={locale}
+                  variant="urgent"
+                />
+              ))
+            : null}
+        </AdminFilmsTabPanel>
+      ) : null}
+
+      {activeTab === "scheduled" ? (
+        <AdminFilmsTabPanel
+          lead={t("admin.awaitingScheduledLead")}
+          countLabel={t("admin.filmCount", { count: awaitingScheduled.length })}
+          emptyLabel={t("admin.awaitingScheduledEmpty")}
+        >
+          {awaitingScheduled.length > 0
+            ? awaitingScheduled.map((film) => (
+                <AdminAwaitingFilmCard
+                  key={`scheduled-${film.ownerEmail}-${film.id}`}
+                  film={film}
+                  locale={locale}
+                  variant="scheduled"
+                />
+              ))
+            : null}
+        </AdminFilmsTabPanel>
+      ) : null}
+
+      {activeTab === "completed" ? (
+        <AdminFilmsTabPanel
+          countLabel={t("admin.filmCount", { count: completed.length })}
+          emptyLabel={t("admin.completedEmpty")}
+        >
+          {completed.length > 0
+            ? completed.map((film) => (
+                <AdminCompletedFilmCard
+                  key={`${film.ownerEmail}-${film.id}`}
+                  film={film}
+                  locale={locale}
+                />
+              ))
+            : null}
+        </AdminFilmsTabPanel>
+      ) : null}
     </div>
   );
 }

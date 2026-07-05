@@ -12,6 +12,7 @@ import { listUserFilms } from "@/lib/film-creation/store";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { findPricingPlanById } from "@/lib/pricing";
 import { getTicketBalance } from "@/lib/purchases/tickets";
+import { hasActiveSubscriptionForUser } from "@/lib/purchases/has-active-subscription";
 import type { SupportUserContext } from "./types";
 
 export async function buildSupportUserContext(
@@ -37,7 +38,10 @@ export async function buildSupportUserContext(
     email: session.email,
     name: session.name ?? user?.name,
     ticketBalance: balance,
-    hasActiveSubscription: Boolean(user?.subscriptionPlanId),
+    hasActiveSubscription: hasActiveSubscriptionForUser({
+      email: session.email,
+      subscriptionPlanId: user?.subscriptionPlanId,
+    }),
     subscriptionPlanName: plan?.name,
     freeFilmAvailable,
     characterCount: characters.length,

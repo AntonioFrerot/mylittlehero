@@ -1,6 +1,7 @@
 import type { UserFilm } from "@/lib/film-creation/types";
 import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
 import { isUserSampleFilm } from "@/lib/film-creation/is-sample-film";
+import type { StoryGenerationStatus } from "@/lib/story-generation/types";
 import {
   buildLegacyLocalizedFilmTitle,
   buildLocalizedFilmTitle,
@@ -49,7 +50,14 @@ export function getFilmDisplayTitle(
   userLocale: LocaleCode,
   generatedTitle?: string | null
 ): string {
-  if (isUserFreeTrialFilm(film) || isUserSampleFilm(film)) {
+  if (isUserFreeTrialFilm(film)) {
+    return buildLocalizedFilmTitle(film.themes, userLocale);
+  }
+
+  if (isUserSampleFilm(film)) {
+    if (generatedTitle?.trim()) {
+      return generatedTitle.trim();
+    }
     return buildLocalizedFilmTitle(film.themes, userLocale);
   }
 
@@ -68,7 +76,8 @@ export function buildUserFilmPageCopy(
   film: UserFilm,
   userLocale: LocaleCode,
   resume: string | null,
-  tagline: string | null
+  tagline: string | null,
+  storyStatus?: StoryGenerationStatus
 ) {
   const t = createTranslator(userLocale);
 
@@ -97,16 +106,37 @@ export function buildUserFilmPageCopy(
   }
 
   if (isUserSampleFilm(film)) {
-    const synopsis = `${t("space.filmSynopsisHeading")} ${t("space.sampleFilmSynopsisFallback")}`;
+    const displayTagline =
+      tagline?.trim() || film.tagline?.trim() || t("space.sampleFilmTagline");
+
+    if (resume?.trim()) {
+      const synopsisBody = stripSynopsisPrefix(resume.trim());
+      return {
+        tagline: displayTagline,
+        intro,
+        lead: t("space.filmLead", { name: heroName }),
+        heroName,
+        heroPhotoSrc: main?.photoSrc,
+        heroPhotoAlt: t("space.filmHeroPhotoAlt", { name: heroName }),
+        synopsis: `${t("space.filmSynopsisHeading")} ${synopsisBody}`,
+      };
+    }
+
+    const pendingSynopsis =
+      storyStatus === "generating"
+        ? t("space.storyStatusGenerating")
+        : storyStatus === "failed"
+          ? t("space.storyStatusFailed")
+          : t("space.sampleFilmSynopsisPending");
 
     return {
-      tagline: t("space.sampleFilmTagline"),
+      tagline: displayTagline,
       intro,
       lead: t("space.filmLead", { name: heroName }),
       heroName,
       heroPhotoSrc: main?.photoSrc,
       heroPhotoAlt: t("space.filmHeroPhotoAlt", { name: heroName }),
-      synopsis,
+      synopsis: `${t("space.filmSynopsisHeading")} ${pendingSynopsis}`,
     };
   }
 

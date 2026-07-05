@@ -65,6 +65,34 @@ export function generateMockTitleAndResume(
   return { title, resume, tagline };
 }
 
+export function generateMockSampleTitleAndResume(
+  film: UserFilm,
+  locale: LocaleCode
+): StoryTitleResume {
+  const t = createTranslator(locale);
+  const hero = mainCharacterName(film);
+  const themeLabel = film.themes
+    .map((theme) => t(`filmCreation.themes.${theme}` as never))
+    .join(", ");
+
+  const title =
+    locale === "en"
+      ? `${hero}'s little ${themeLabel.toLowerCase()} moment`
+      : `${hero} — mini ${themeLabel.toLowerCase()}`;
+
+  const resume =
+    locale === "en"
+      ? `${hero} lives a tiny ${themeLabel.toLowerCase()} adventure in half a minute — one surprise, one smile, and a gentle ending. (Demo — add OPENAI_API_KEY for AI summary.)`
+      : `${hero} vit une mini aventure ${themeLabel.toLowerCase()} en une demi-minute : une surprise, un sourire, une fin douce. (Démo — ajoutez OPENAI_API_KEY pour un résumé IA.)`;
+
+  const tagline =
+    locale === "en"
+      ? "A spark of magic in thirty seconds"
+      : "Une étincelle magique en trente secondes";
+
+  return { title, resume, tagline };
+}
+
 export function generateMockStoryPlan(
   film: UserFilm,
   locale: LocaleCode

@@ -159,6 +159,21 @@ async function runSchema(): Promise<void> {
   `;
 
   await db`
+    CREATE TABLE IF NOT EXISTS film_schedules (
+      id TEXT PRIMARY KEY,
+      user_email TEXT NOT NULL REFERENCES users(email) ON DELETE CASCADE,
+      scheduled_date DATE NOT NULL,
+      film_id TEXT,
+      created_at TIMESTAMPTZ NOT NULL
+    )
+  `;
+
+  await db`
+    CREATE INDEX IF NOT EXISTS film_schedules_user_date_idx
+    ON film_schedules (user_email, scheduled_date)
+  `;
+
+  await db`
     CREATE TABLE IF NOT EXISTS notifications (
       id TEXT PRIMARY KEY,
       user_email TEXT NOT NULL REFERENCES users(email) ON DELETE CASCADE,

@@ -17,7 +17,7 @@ import {
   isAlternateDeploymentHost,
 } from "@/lib/site-url";
 
-const protectedPaths = ["/mon-espace", "/creer-film", "/admin"];
+const protectedPaths = ["/mon-espace", "/creer-film", "/calendrier", "/admin"];
 
 function applyLocaleCookie(request: NextRequest, response: NextResponse) {
   const existingLocale = parseLocale(request.cookies.get(LOCALE_COOKIE)?.value);

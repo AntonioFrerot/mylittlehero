@@ -11,10 +11,21 @@ export const SAMPLE_FILM_DURATION_SECONDS = 30;
 
 export const JETONS_REQUIRED_FOR_SAMPLE = 1;
 
-export const PAID_FILM_DURATION_SECONDS = [5 * 60, 10 * 60] as const;
+export const PAID_FILM_DURATION_MIN_SECONDS = TICKET_DURATION_SECONDS;
+export const PAID_FILM_DURATION_MAX_SECONDS = 30 * 60;
+
+export const PAID_FILM_DURATION_SECONDS = Array.from(
+  { length: PAID_FILM_DURATION_MAX_SECONDS / TICKET_DURATION_SECONDS },
+  (_, index) => (index + 1) * TICKET_DURATION_SECONDS
+) as readonly number[];
 
 export function isPaidFilmDuration(seconds: number): boolean {
-  return (PAID_FILM_DURATION_SECONDS as readonly number[]).includes(seconds);
+  return (
+    Number.isFinite(seconds) &&
+    seconds >= PAID_FILM_DURATION_MIN_SECONDS &&
+    seconds <= PAID_FILM_DURATION_MAX_SECONDS &&
+    seconds % TICKET_DURATION_SECONDS === 0
+  );
 }
 
 export const PLAN_TICKET_GRANTS: Record<
@@ -32,6 +43,22 @@ export const PLAN_TICKET_GRANTS: Record<
 export function getTicketsRequiredForDuration(durationSeconds: number): number {
   if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) return 0;
   return Math.ceil(durationSeconds / TICKET_DURATION_SECONDS);
+}
+
+export function getMaxAffordablePaidStepIndex(
+  ticketBalance: number,
+  steps: readonly number[] = PAID_FILM_DURATION_SECONDS
+): number {
+  let maxIndex = -1;
+
+  for (let index = 0; index < steps.length; index += 1) {
+    const seconds = steps[index];
+    if (seconds != null && getTicketsRequiredForDuration(seconds) <= ticketBalance) {
+      maxIndex = index;
+    }
+  }
+
+  return maxIndex;
 }
 
 export function isFreeTrialFilmDuration(durationSeconds: number): boolean {

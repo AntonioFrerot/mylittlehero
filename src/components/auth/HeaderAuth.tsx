@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/Button";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { HeaderJetonCount } from "@/components/tickets/HeaderJetonCount";
 import { HeaderTicketCount } from "@/components/tickets/HeaderTicketCount";
 import { HeaderNotificationBellLazy } from "@/components/notifications/HeaderUserServices";
 import { useLocale } from "@/components/LocaleProvider";
@@ -21,6 +22,7 @@ export function HeaderAuth() {
   if (user) {
     return (
       <div className="hidden items-center justify-end gap-2 md:flex">
+        <HeaderJetonCount />
         <HeaderTicketCount />
         <Button href={MON_ESPACE_DEFAULT_PATH} variant="primary" className="!px-4 !py-2 !text-sm">
           {t("nav.mySpace")}

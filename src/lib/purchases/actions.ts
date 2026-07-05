@@ -7,6 +7,9 @@ import { listUserFilmsForUser } from "@/lib/film-creation/store";
 import { getJetonBalanceForUser } from "@/lib/purchases/jetons";
 import { userHasAnySitePurchase } from "@/lib/purchases/purchase-history";
 import { getTicketBalanceForUser } from "@/lib/purchases/tickets";
+import { hasActiveSubscriptionForUser } from "@/lib/purchases/has-active-subscription";
+import type { SubscriptionGrantScheduleContext } from "@/lib/purchases/subscription-scheduling-types";
+import { buildSubscriptionGrantScheduleContext } from "@/lib/purchases/subscription-scheduling";
 
 export type FilmTicketSummary = {
   balance: number;
@@ -14,6 +17,7 @@ export type FilmTicketSummary = {
   hasActiveSubscription: boolean;
   hasCreatedFilms: boolean;
   freeFilmAvailable: boolean;
+  subscriptionGrantSchedule: SubscriptionGrantScheduleContext;
 };
 
 export async function getMyFilmTicketSummary(): Promise<FilmTicketSummary | null> {
@@ -28,12 +32,23 @@ export async function getMyFilmTicketSummary(): Promise<FilmTicketSummary | null
     isFreeFilmAvailableForEmail(session.email),
   ]);
 
+  const subscriptionGrantSchedule = await buildSubscriptionGrantScheduleContext({
+    email: session.email,
+    ticketBalance: balance,
+    subscriptionPlanId: user?.subscriptionPlanId,
+    registrationDate: user?.createdAt,
+  });
+
   return {
     balance,
     jetonBalance,
-    hasActiveSubscription: Boolean(user?.subscriptionPlanId),
+    hasActiveSubscription: hasActiveSubscriptionForUser({
+      email: session.email,
+      subscriptionPlanId: user?.subscriptionPlanId,
+    }),
     hasCreatedFilms: films.length > 0,
     freeFilmAvailable,
+    subscriptionGrantSchedule,
   };
 }
 

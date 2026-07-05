@@ -106,6 +106,10 @@ export const BTN_3D_FAB =
 export const SURFACE_3D_PANEL =
   "btn-3d btn-3d--secondary rounded-xl";
 
+/** Panneau de contrôle — formulaire création de film (thèmes, durée). */
+export const SURFACE_3D_FORM_CONTROL =
+  "btn-3d btn-3d--secondary film-creation-form__control rounded-xl transition-[border-color,box-shadow] duration-200";
+
 export const SURFACE_3D_PANEL_LG =
   "btn-3d btn-3d--secondary rounded-2xl transition-colors hover:border-white/15";
 
@@ -188,3 +192,6 @@ export const SURFACE_3D_TARIFS_PLAN =
 
 export const SURFACE_3D_TARIFS_PLAN_FEATURED =
   "btn-3d btn-3d--secondary btn-3d--glow-subtle tarifs-plan-card--3d transition-[border-color,box-shadow,transform] duration-300";
+
+export const BTN_HEADER_ADMIN =
+  "header-admin-btn btn-3d inline-flex shrink-0 items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition-all hover:brightness-110 active:scale-[0.98]";

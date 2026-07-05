@@ -1,5 +1,6 @@
 import { AdminShell } from "@/components/admin/AdminShell";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { findUserByEmail } from "@/lib/auth/users-store";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
 import type { Metadata } from "next";
@@ -15,12 +16,13 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AdminPage() {
   const session = await requireAdmin();
   const { t, locale } = await getServerTranslator();
+  const user = await findUserByEmail(session.email);
 
   return (
     <>
       <main className="min-h-screen bg-cinema-black pb-20">
         <section className="safe-top-offset border-b border-white/5 bg-cinema-night/60">
-          <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:px-8 md:py-12">
+          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:px-8 md:py-12">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-light/80">
               {t("admin.eyebrow")}
             </p>
@@ -33,7 +35,11 @@ export default async function AdminPage() {
           </div>
         </section>
 
-        <AdminShell defaultEmail={session.email} locale={locale} />
+        <AdminShell
+          defaultEmail={session.email}
+          locale={locale}
+          adminSubscriptionPlanId={user?.subscriptionPlanId ?? null}
+        />
       </main>
     </>
   );

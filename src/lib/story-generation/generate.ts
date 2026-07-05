@@ -1,7 +1,7 @@
 import { createChatCompletion } from "@/lib/openai/chat-completion";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import type { UserFilm } from "@/lib/film-creation/types";
-import { buildFullStorySystemPrompt, buildTitleResumeSystemPrompt } from "./build-prompt";
+import { buildFullStorySystemPrompt, buildSampleTitleResumeSystemPrompt, buildTitleResumeSystemPrompt } from "./build-prompt";
 import { parseJsonFromModel } from "./parse-json";
 import { getStorySceneCount, STORY_SCENE_DURATION_SECONDS } from "./scene-count";
 import { getStyleScenePrefix } from "./style-scene-prefix";
@@ -52,6 +52,52 @@ Contraintes :
       { role: "user", content: userPrompt },
     ],
     { jsonMode: true, maxTokens: 1200, temperature: 0.75 }
+  );
+
+  if (!raw) return null;
+
+  const parsed = parseJsonFromModel<StoryTitleResume>(raw);
+  if (!parsed?.title?.trim() || !parsed.resume?.trim() || !parsed.tagline?.trim()) {
+    return null;
+  }
+
+  return {
+    title: parsed.title.trim(),
+    resume: parsed.resume.trim(),
+    tagline: parsed.tagline.trim(),
+  };
+}
+
+export async function generateSampleTitleAndResume(
+  film: UserFilm,
+  locale: LocaleCode
+): Promise<StoryTitleResume | null> {
+  const systemPrompt = await buildSampleTitleResumeSystemPrompt(film, locale);
+
+  const userPrompt = `Produis un JSON strict pour un échantillon vidéo de 30 secondes.
+
+{
+  "title": "titre court du film",
+  "resume": "résumé ultra-court de l'histoire (1 à 2 phrases, 25 à 45 mots max)",
+  "tagline": "accroche courte sous le titre"
+}
+
+Le titre, le résumé et l'accroche sont en ${locale === "en" ? "anglais" : "français"}.
+
+Contraintes spécifiques 30 secondes :
+- Une seule idée narrative, une action principale, une fin nette.
+- Le résumé doit tenir compte qu'on ne pourra montrer qu'une scène très courte à l'écran.
+- Pas de liste d'événements ; pas plus de 2 phrases pour le résumé.
+- Le titre ne doit pas contenir les noms des thèmes.
+- Le résumé ne doit pas mentionner la taille du personnage en cm.
+- L'accroche : 6 à 12 mots, sans prénom du héros.`;
+
+  const raw = await createChatCompletion(
+    [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    { jsonMode: true, maxTokens: 600, temperature: 0.75 }
   );
 
   if (!raw) return null;

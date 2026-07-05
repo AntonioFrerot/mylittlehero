@@ -15,6 +15,12 @@ export const RESUME_TITRE_PROMPT_PATH = path.join(
   "prompt-resume-titre"
 );
 
+export const SAMPLE_RESUME_TITRE_PROMPT_PATH = path.join(
+  process.cwd(),
+  "prompts",
+  "prompt-resume-titre-echantillon.txt"
+);
+
 export function getClientStoriesDir(email: string): string {
   return path.join(STORIES_DATA_DIR, userPhotoDirKey(email));
 }

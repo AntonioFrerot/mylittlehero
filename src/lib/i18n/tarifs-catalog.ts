@@ -16,6 +16,7 @@ export type TarifsPlanFeatureId =
   | "filmDuration"
   | "fullCustom"
   | "delivery24h"
+  | "scheduleFilms"
   | "supportStandard"
   | "supportPriority"
   | "accumulateFilms";
@@ -67,27 +68,34 @@ const PLAN_FEATURE_IDS: Record<TarifsSubscriptionId, TarifsPlanFeatureId[]> = {
     "filmDuration",
     "fullCustom",
     "delivery24h",
-    "supportPriority",
     "accumulateFilms",
+    "supportPriority",
   ],
   "yearly-12-films": [
     "filmDuration",
     "fullCustom",
     "delivery24h",
-    "supportStandard",
     "accumulateFilms",
+    "supportStandard",
   ],
   "yearly-48-films": [
     "filmDuration",
     "fullCustom",
     "delivery24h",
-    "supportPriority",
     "accumulateFilms",
+    "supportPriority",
   ],
 };
 
 const PLAN_EXCLUDED_FEATURE_IDS: Partial<Record<TarifsSubscriptionId, TarifsPlanFeatureId[]>> = {
   "monthly-1-film": ["accumulateFilms"],
+};
+
+const ABONNEMENTS_SUBSCRIPTION_EXTRA_FEATURES: Partial<
+  Record<TarifsSubscriptionId, TarifsPlanFeatureId[]>
+> = {
+  "yearly-12-films": ["scheduleFilms"],
+  "yearly-48-films": ["scheduleFilms"],
 };
 
 const PLAN_FEATURE_LABEL_OVERRIDES: Partial<
@@ -218,12 +226,32 @@ function featureLabelKey(
   );
 }
 
+function planFeatureIds(
+  id: TarifsSubscriptionId,
+  context: TarifsPricingContext
+): TarifsPlanFeatureId[] {
+  const base = PLAN_FEATURE_IDS[id];
+  if (context !== "abonnements") return base;
+
+  const extra = ABONNEMENTS_SUBSCRIPTION_EXTRA_FEATURES[id] ?? [];
+  if (extra.length === 0) return base;
+
+  const supportFeatures = base.filter(
+    (featureId) => featureId === "supportStandard" || featureId === "supportPriority"
+  );
+  const nonSupportFeatures = base.filter(
+    (featureId) => featureId !== "supportStandard" && featureId !== "supportPriority"
+  );
+
+  return [...nonSupportFeatures, ...extra, ...supportFeatures];
+}
+
 function buildPlanFeatures(
   id: TarifsSubscriptionId,
   t: ReturnType<typeof createTranslator>,
   context: TarifsPricingContext = "tarifs"
 ): { id: TarifsPlanFeatureId; label: string; included: boolean }[] {
-  const included = PLAN_FEATURE_IDS[id].map((featureId) => ({
+  const included = planFeatureIds(id, context).map((featureId) => ({
     id: featureId,
     label: t(featureLabelKey(id, featureId, context)),
     included: true,

@@ -9,6 +9,9 @@ type FilmDurationPickerWithIntentProps = {
   onChange: (seconds: number) => void;
   freeFilmAvailable: boolean;
   jetonBalance?: number;
+  ticketBalance?: number;
+  hasActiveSubscription?: boolean;
+  subscriptionGrantMode?: boolean;
 };
 
 function FilmDurationPickerInner(props: FilmDurationPickerWithIntentProps) {

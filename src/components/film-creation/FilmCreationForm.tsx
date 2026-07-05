@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState, useState, type FormEvent } from "react";
+import { useActionState, useEffect, useRef, useState, type FormEvent } from "react";
 import { useTicketBalance } from "@/hooks/use-ticket-balance";
 import {
   getTicketsRequiredForDuration,
+  PAID_FILM_DURATION_MIN_SECONDS,
   isFreeTrialFilmDuration,
   isSampleFilmDuration,
   JETONS_REQUIRED_FOR_SAMPLE,
@@ -16,17 +17,33 @@ import {
 } from "@/lib/film-creation/actions";
 import { CharacterFacePicker } from "@/components/film-creation/CharacterFacePicker";
 import { FilmCreationCooldown } from "@/components/film-creation/FilmCreationCooldown";
+import { ScheduleFilmModal } from "@/components/film-creation/ScheduleFilmModal";
 import { FilmThemePicker } from "@/components/film-creation/FilmThemePicker";
 import { FilmDurationPickerWithIntent } from "@/components/film-creation/FilmDurationPickerWithIntent";
 import { YesNoTextField } from "@/components/film-creation/YesNoTextField";
 import { TicketCountPill } from "@/components/tickets/TicketCountPill";
+import { JetonCountPill } from "@/components/tickets/JetonCountPill";
 import {
   BTN_3D_PRIMARY_ACTION,
   BTN_FILM_CREATE_SUBMIT,
 } from "@/lib/ui/button-3d-classes";
 import type { Character } from "@/lib/characters/types";
+import type { SubscriptionGrantScheduleContext } from "@/lib/purchases/subscription-scheduling-types";
 
 const initialState: FilmCreationFormState = {};
+
+const INACTIVE_SUBSCRIPTION_GRANT: SubscriptionGrantScheduleContext = {
+  active: false,
+  tier: null,
+  period: null,
+  anchorDayKey: null,
+  minScheduleDayKey: null,
+  remainingScheduleSlots: 0,
+  annualGrantCap: 0,
+  elapsedGrantsInYear: 0,
+  scheduledGrantCount: 0,
+  canScheduleMore: false,
+};
 
 type FilmCreationFormProps = {
   characters: Character[];
@@ -35,6 +52,9 @@ type FilmCreationFormProps = {
   hasActiveSubscription: boolean;
   freeFilmAvailable: boolean;
   cooldownEndsAt?: string | null;
+  registrationDate: string;
+  occupiedScheduleDates?: string[];
+  subscriptionGrantSchedule?: SubscriptionGrantScheduleContext;
 };
 
 export function FilmCreationForm({
@@ -44,10 +64,18 @@ export function FilmCreationForm({
   hasActiveSubscription,
   freeFilmAvailable,
   cooldownEndsAt = null,
+  registrationDate,
+  occupiedScheduleDates = [],
+  subscriptionGrantSchedule = INACTIVE_SUBSCRIPTION_GRANT,
 }: FilmCreationFormProps) {
   const { t } = useLocale();
-  const [durationSeconds, setDurationSeconds] = useState<number | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const scheduledDateInputRef = useRef<HTMLInputElement>(null);
+  const [durationSeconds, setDurationSeconds] = useState<number | null>(
+    PAID_FILM_DURATION_MIN_SECONDS
+  );
   const [clientError, setClientError] = useState<string | null>(null);
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [cooldownActive, setCooldownActive] = useState(() => {
     if (!cooldownEndsAt) return false;
     return new Date(cooldownEndsAt).getTime() > Date.now();
@@ -63,6 +91,21 @@ export function FilmCreationForm({
     durationSeconds != null && isFreeTrialFilmDuration(durationSeconds);
   const isSampleFilm =
     durationSeconds != null && isSampleFilmDuration(durationSeconds);
+
+  useEffect(() => {
+    if (isFreeFilm || isSampleFilm) {
+      setScheduleModalOpen(false);
+    }
+  }, [isFreeFilm, isSampleFilm]);
+
+  const subscriptionGrantActive = subscriptionGrantSchedule.active;
+
+  useEffect(() => {
+    if (subscriptionGrantActive) {
+      setDurationSeconds(PAID_FILM_DURATION_MIN_SECONDS);
+    }
+  }, [subscriptionGrantActive]);
+
   const ticketsRequired =
     durationSeconds != null
       ? isFreeFilm || isSampleFilm
@@ -77,9 +120,15 @@ export function FilmCreationForm({
     effectiveTicketBalance < ticketsRequired;
   const insufficientJetons =
     isSampleFilm && jetonBalance < JETONS_REQUIRED_FOR_SAMPLE;
-  const showSubmitCostBadge =
+  const showPaidTicketBadge =
     durationSeconds != null &&
-    (isFreeFilm || isSampleFilm || !hasActiveSubscription);
+    !isFreeFilm &&
+    !isSampleFilm &&
+    ticketsRequired > 0 &&
+    effectiveTicketBalance > 0;
+  const showCreateCostBadge =
+    showPaidTicketBadge ||
+    (durationSeconds != null && (isSampleFilm || isFreeFilm));
 
   function ticketCostLabel(count: number): string {
     return count === 1
@@ -96,7 +145,10 @@ export function FilmCreationForm({
   const eligibleCharacters = characters.filter((c) => c.photoSrc && c.audioSrc);
   const missingPhoto = characters.filter((c) => !c.photoSrc);
 
-  function validateBeforeSubmit(form: HTMLFormElement): string | null {
+  function validateBeforeSubmit(
+    form: HTMLFormElement,
+    options?: { forSchedule?: boolean }
+  ): string | null {
     const formData = new FormData(form);
     if (formData.getAll("themes").length === 0) {
       return t("filmCreation.errors.themesRequired");
@@ -108,7 +160,7 @@ export function FilmCreationForm({
     if (typeof durationRaw !== "string" || !durationRaw.trim()) {
       return t("filmCreation.errors.durationRequired");
     }
-    if (insufficientTickets) {
+    if (!options?.forSchedule && insufficientTickets) {
       return t("filmCreation.errors.insufficientTickets");
     }
     if (insufficientJetons) {
@@ -130,27 +182,74 @@ export function FilmCreationForm({
     setClientError(null);
   }
 
+  function handleScheduleFilm(dayKey: string) {
+    if (!formRef.current) return;
+
+    const validationError = validateBeforeSubmit(formRef.current, { forSchedule: true });
+    if (validationError) {
+      setClientError(validationError);
+      setScheduleModalOpen(false);
+      return;
+    }
+
+    setClientError(null);
+    if (scheduledDateInputRef.current) {
+      scheduledDateInputRef.current.value = dayKey;
+    }
+    formRef.current.requestSubmit();
+  }
+
+  function handleOpenScheduleModal() {
+    if (!formRef.current) {
+      setScheduleModalOpen(true);
+      return;
+    }
+
+    const validationError = validateBeforeSubmit(formRef.current, { forSchedule: true });
+    if (validationError) {
+      setClientError(validationError);
+      return;
+    }
+
+    setClientError(null);
+    setScheduleModalOpen(true);
+  }
+
+  function clearScheduledDateInput() {
+    if (scheduledDateInputRef.current) {
+      scheduledDateInputRef.current.value = "";
+    }
+  }
+
   const insufficientJetonsMessage = t("filmCreation.errors.insufficientJetons");
   const showJetonPurchaseCta =
     insufficientJetons ||
     clientError === insufficientJetonsMessage ||
     state.error === insufficientJetonsMessage;
 
-  const insufficientTicketsMessage = t("filmCreation.errors.insufficientTickets");
-  const showTicketPurchaseCta =
-    !hasActiveSubscription &&
-    !showJetonPurchaseCta &&
-    (insufficientTickets ||
-      clientError === insufficientTicketsMessage ||
-      state.error === insufficientTicketsMessage);
+  const showScheduleAsPrimaryCta =
+    !cooldownActive &&
+    !isFreeFilm &&
+    !isSampleFilm &&
+    subscriptionGrantActive &&
+    subscriptionGrantSchedule.canScheduleMore;
+
+  const canShowScheduleLink =
+    !showScheduleAsPrimaryCta &&
+    !cooldownActive &&
+    !isFreeFilm &&
+    !isSampleFilm &&
+    (!hasActiveSubscription || effectiveTicketBalance > 0);
 
   return (
     <form
+      ref={formRef}
       action={formAction}
       noValidate
       onSubmit={handleSubmit}
       className="film-creation-form flex flex-col gap-8 sm:gap-10"
     >
+      <input ref={scheduledDateInputRef} type="hidden" name="scheduledDate" defaultValue="" />
       <fieldset className="film-creation-form__themes">
         <legend className="font-display text-lg font-semibold text-cream md:text-xl">
           {t("filmCreation.form.themesLegend")}
@@ -207,6 +306,9 @@ export function FilmCreationForm({
         onChange={setDurationSeconds}
         freeFilmAvailable={freeFilmAvailable}
         jetonBalance={jetonBalance}
+        ticketBalance={effectiveTicketBalance}
+        hasActiveSubscription={hasActiveSubscription}
+        subscriptionGrantMode={subscriptionGrantActive}
       />
 
       <YesNoTextField
@@ -237,16 +339,6 @@ export function FilmCreationForm({
             {t("filmCreation.errors.samplePurchaseCta")}
           </Link>
         </div>
-      ) : showTicketPurchaseCta ? (
-        <div className="rounded-xl border border-amber-500/35 bg-amber-950/30 px-4 py-4 text-center">
-          <p className="text-sm text-amber-100/95">{insufficientTicketsMessage}</p>
-          <Link
-            href="/achat"
-            className={`mt-4 inline-flex ${BTN_3D_PRIMARY_ACTION}`}
-          >
-            {t("filmCreation.errors.purchaseCta")}
-          </Link>
-        </div>
       ) : (clientError || state.error) ? (
         <p className="rounded-lg border border-red-500/30 bg-red-950/40 px-3 py-2 text-sm text-red-200">
           {clientError ?? state.error}
@@ -259,13 +351,35 @@ export function FilmCreationForm({
             endsAt={cooldownEndsAt}
             onCooldownEnd={() => setCooldownActive(false)}
           />
+        ) : subscriptionGrantActive && !subscriptionGrantSchedule.canScheduleMore ? (
+          <p className="rounded-xl border border-amber-500/35 bg-amber-950/30 px-4 py-4 text-center text-sm text-amber-100/95">
+            {t("filmCreation.scheduleFilm.quotaReached")}
+          </p>
+        ) : showScheduleAsPrimaryCta ? (
+          <button
+            type="button"
+            disabled={pending || eligibleCharacters.length === 0}
+            onClick={handleOpenScheduleModal}
+            className={`${BTN_FILM_CREATE_SUBMIT} film-create-submit--solo`}
+          >
+            {pending ? (
+              <span className="film-create-submit__pending">
+                {t("filmCreation.form.pending")}
+              </span>
+            ) : (
+              <span className="film-create-submit__label">
+                {t("filmCreation.scheduleFilm.confirm")}
+              </span>
+            )}
+          </button>
         ) : (
           <button
             type="submit"
             disabled={pending || eligibleCharacters.length === 0}
+            onClick={clearScheduledDateInput}
             className={`${BTN_FILM_CREATE_SUBMIT}${
               insufficientTickets || insufficientJetons ? " film-create-submit--blocked" : ""
-            }${!showSubmitCostBadge || pending ? " film-create-submit--solo" : ""}`}
+            }${!showCreateCostBadge || pending ? " film-create-submit--solo" : ""}`}
             aria-disabled={insufficientTickets || insufficientJetons || undefined}
           >
             {pending ? (
@@ -277,7 +391,7 @@ export function FilmCreationForm({
                 <span className="film-create-submit__label">
                   {t("filmCreation.form.submit")}
                 </span>
-                {!hasActiveSubscription && durationSeconds != null && !isFreeFilm && !isSampleFilm ? (
+                {showPaidTicketBadge ? (
                   <span className="film-create-submit__cost">
                     <TicketCountPill
                       count={ticketsRequired}
@@ -286,8 +400,12 @@ export function FilmCreationForm({
                     />
                   </span>
                 ) : durationSeconds != null && isSampleFilm ? (
-                  <span className="film-create-submit__cost film-create-submit__cost--sample">
-                    {jetonCostLabel(JETONS_REQUIRED_FOR_SAMPLE)}
+                  <span className="film-create-submit__cost">
+                    <JetonCountPill
+                      count={JETONS_REQUIRED_FOR_SAMPLE}
+                      size="onPrimary"
+                      label={jetonCostLabel(JETONS_REQUIRED_FOR_SAMPLE)}
+                    />
                   </span>
                 ) : durationSeconds != null && isFreeFilm ? (
                   <span className="film-create-submit__cost film-create-submit__cost--free">
@@ -298,7 +416,34 @@ export function FilmCreationForm({
             )}
           </button>
         )}
+        {canShowScheduleLink ? (
+          <div className="film-create-schedule">
+            <button
+              type="button"
+              className="film-create-schedule__link"
+              disabled={pending}
+              onClick={handleOpenScheduleModal}
+            >
+              {t("filmCreation.scheduleFilm.link")}
+            </button>
+          </div>
+        ) : null}
       </div>
+
+      <ScheduleFilmModal
+        open={scheduleModalOpen}
+        registrationDate={registrationDate}
+        occupiedDates={occupiedScheduleDates}
+        pending={pending}
+        ticketsRequired={ticketsRequired}
+        ticketBalance={effectiveTicketBalance}
+        hasActiveSubscription={hasActiveSubscription}
+        insufficientTickets={insufficientTickets}
+        allowScheduleWithoutTickets={showScheduleAsPrimaryCta}
+        subscriptionGrantSchedule={subscriptionGrantSchedule}
+        onSchedule={handleScheduleFilm}
+        onClose={() => setScheduleModalOpen(false)}
+      />
     </form>
   );
 }

@@ -8,6 +8,14 @@ import type { AdminFilmsByStatus } from "@/lib/film-creation/admin-films";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import type { AdminSupportChatClient } from "@/lib/support-chat/store";
 import { useLocale } from "@/components/LocaleProvider";
+import { AdminOverviewCards } from "@/components/admin/AdminOverviewCards";
+import { AdminSubNav } from "@/components/admin/AdminSubNav";
+import {
+  buildAdminHash,
+  parseAdminHash,
+  type AdminManageTabId,
+  type AdminSectionId,
+} from "@/components/admin/admin-shell-types";
 
 const AdminFilmsList = dynamic(
   () =>
@@ -25,10 +33,10 @@ const AdminClientsList = dynamic(
   { loading: () => <AdminSectionSkeleton /> }
 );
 
-const AdminGrantTicketsForm = dynamic(
+const AdminCreditsPanel = dynamic(
   () =>
-    import("@/components/admin/AdminGrantTicketsForm").then((module) => ({
-      default: module.AdminGrantTicketsForm,
+    import("@/components/admin/AdminCreditsPanel").then((module) => ({
+      default: module.AdminCreditsPanel,
     })),
   { loading: () => <AdminSectionSkeleton /> }
 );
@@ -49,6 +57,14 @@ const AdminSupportChatList = dynamic(
   { loading: () => <AdminSectionSkeleton /> }
 );
 
+const AdminSubscriptionSimulatorForm = dynamic(
+  () =>
+    import("@/components/admin/AdminSubscriptionSimulatorForm").then((module) => ({
+      default: module.AdminSubscriptionSimulatorForm,
+    })),
+  { loading: () => <AdminSectionSkeleton /> }
+);
+
 const AdminAnalyticsDashboard = dynamic(
   () =>
     import("@/components/admin/AdminAnalyticsDashboard").then((module) => ({
@@ -57,14 +73,11 @@ const AdminAnalyticsDashboard = dynamic(
   { loading: () => <AdminSectionSkeleton /> }
 );
 
-export type AdminSectionId = "films" | "clients" | "stats";
-
 type AdminShellProps = {
   defaultEmail: string;
   locale: LocaleCode;
+  adminSubscriptionPlanId?: string | null;
 };
-
-const SECTION_IDS: AdminSectionId[] = ["films", "clients", "stats"];
 
 type SectionData = {
   films?: AdminFilmsByStatus;
@@ -79,13 +92,6 @@ function AdminSectionSkeleton() {
       {t("admin.sectionLoading")}
     </p>
   );
-}
-
-function parseSectionHash(hash: string): AdminSectionId | null {
-  const value = hash.replace(/^#/, "");
-  return SECTION_IDS.includes(value as AdminSectionId)
-    ? (value as AdminSectionId)
-    : null;
 }
 
 function NavButton({
@@ -105,38 +111,24 @@ function NavButton({
     <button
       type="button"
       onClick={onClick}
-      className={`w-full rounded-2xl border px-4 py-3 text-left transition-colors ${
-        active
-          ? "border-gold/40 bg-gold/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-          : "border-white/8 bg-cinema-night/40 hover:border-white/15 hover:bg-cinema-night/70"
-      }`}
+      className={`admin-nav-btn${active ? " admin-nav-btn--active" : ""}`}
     >
       <div className="flex items-center justify-between gap-2">
-        <span
-          className={`font-display text-sm font-semibold md:text-base ${
-            active ? "text-gold-light" : "text-cream"
-          }`}
-        >
-          {label}
-        </span>
+        <span className="admin-nav-btn__label">{label}</span>
         {typeof badge === "number" && badge > 0 ? (
-          <span className="rounded-full bg-gold/20 px-2 py-0.5 text-xs font-semibold text-gold-light">
-            {badge}
-          </span>
+          <span className="admin-nav-btn__badge">{badge}</span>
         ) : null}
       </div>
-      <p className="mt-1 text-xs leading-relaxed text-cream/50">{description}</p>
+      <p className="admin-nav-btn__hint">{description}</p>
     </button>
   );
 }
 
 function CategoryHeader({ title, lead }: { title: string; lead: string }) {
   return (
-    <header className="border-b border-white/8 pb-5">
-      <h2 className="font-display text-2xl font-semibold text-cream md:text-3xl">
-        {title}
-      </h2>
-      <p className="mt-2 max-w-2xl text-sm text-cream/60 md:text-base">{lead}</p>
+    <header className="admin-category-header">
+      <h2 className="admin-category-header__title">{title}</h2>
+      <p className="admin-category-header__lead">{lead}</p>
     </header>
   );
 }
@@ -151,25 +143,42 @@ function CategoryPanel({
   children: ReactNode;
 }) {
   if (active !== id) return null;
-  return <div className="space-y-8">{children}</div>;
+  return <div className="admin-category-panel">{children}</div>;
 }
 
-export function AdminShell({ defaultEmail, locale }: AdminShellProps) {
+export function AdminShell({
+  defaultEmail,
+  locale,
+  adminSubscriptionPlanId = null,
+}: AdminShellProps) {
   const { t } = useLocale();
   const [activeSection, setActiveSection] = useState<AdminSectionId>("films");
+  const [activeManageTab, setActiveManageTab] =
+    useState<AdminManageTabId>("credits");
   const [grantEmail, setGrantEmail] = useState(defaultEmail);
   const [summary, setSummary] = useState<AdminDashboardSummary | null>(null);
   const [sectionData, setSectionData] = useState<SectionData>({});
   const [loadedSections, setLoadedSections] = useState<
     Partial<Record<AdminSectionId, boolean>>
   >({});
-  const [loadingSection, setLoadingSection] = useState<AdminSectionId | null>(null);
+  const [loadedManageTabs, setLoadedManageTabs] = useState<
+    Partial<Record<AdminManageTabId, boolean>>
+  >({});
+  const [loadingSection, setLoadingSection] = useState<AdminSectionId | null>(
+    null
+  );
+  const [loadingManageTab, setLoadingManageTab] =
+    useState<AdminManageTabId | null>(null);
   const [sectionError, setSectionError] = useState<string | null>(null);
   const loadingRef = useRef<Partial<Record<AdminSectionId, boolean>>>({});
+  const loadingManageRef = useRef<Partial<Record<AdminManageTabId, boolean>>>(
+    {}
+  );
 
   const syncFromHash = useCallback(() => {
-    const section = parseSectionHash(window.location.hash);
-    if (section) setActiveSection(section);
+    const parsed = parseAdminHash(window.location.hash);
+    setActiveSection(parsed.section);
+    setActiveManageTab(parsed.manageTab);
   }, []);
 
   useEffect(() => {
@@ -187,67 +196,104 @@ export function AdminShell({ defaultEmail, locale }: AdminShellProps) {
       .catch(() => {});
   }, []);
 
-  const loadSection = useCallback(async (section: AdminSectionId) => {
-    if (section === "stats" || loadedSections[section] || loadingRef.current[section]) {
-      return;
-    }
-
-    loadingRef.current[section] = true;
-    setLoadingSection(section);
-    setSectionError(null);
-
-    try {
-      if (section === "films") {
-        const response = await fetch("/api/admin/films");
-        if (!response.ok) throw new Error("fetch_failed");
-        const films = (await response.json()) as AdminFilmsByStatus;
-        setSectionData((current) => ({ ...current, films }));
+  const loadSection = useCallback(
+    async (section: AdminSectionId) => {
+      if (
+        section === "stats" ||
+        section === "manage" ||
+        loadedSections[section] ||
+        loadingRef.current[section]
+      ) {
+        return;
       }
 
-      if (section === "clients") {
-        const [clientsResponse, supportResponse] = await Promise.all([
-          fetch("/api/admin/clients"),
-          fetch("/api/admin/support-chat"),
-        ]);
-        if (!clientsResponse.ok || !supportResponse.ok) {
-          throw new Error("fetch_failed");
+      loadingRef.current[section] = true;
+      setLoadingSection(section);
+      setSectionError(null);
+
+      try {
+        if (section === "films") {
+          const response = await fetch("/api/admin/films");
+          if (!response.ok) throw new Error("fetch_failed");
+          const films = (await response.json()) as AdminFilmsByStatus;
+          setSectionData((current) => ({ ...current, films }));
         }
-        const clients = (await clientsResponse.json()) as AdminClientSummary[];
-        const supportChat =
-          (await supportResponse.json()) as AdminSupportChatClient[];
-        setSectionData((current) => ({ ...current, clients, supportChat }));
+
+        if (section === "clients") {
+          const response = await fetch("/api/admin/clients");
+          if (!response.ok) throw new Error("fetch_failed");
+          const clients = (await response.json()) as AdminClientSummary[];
+          setSectionData((current) => ({ ...current, clients }));
+        }
+
+        setLoadedSections((current) => ({ ...current, [section]: true }));
+      } catch {
+        setSectionError(t("admin.sectionLoadError"));
+      } finally {
+        loadingRef.current[section] = false;
+        setLoadingSection(null);
+      }
+    },
+    [loadedSections, t]
+  );
+
+  const loadManageTab = useCallback(
+    async (tab: AdminManageTabId) => {
+      if (tab !== "support" || loadedManageTabs.support || loadingManageRef.current.support) {
+        return;
       }
 
-      setLoadedSections((current) => ({ ...current, [section]: true }));
-    } catch {
-      setSectionError(t("admin.sectionLoadError"));
-    } finally {
-      loadingRef.current[section] = false;
-      setLoadingSection(null);
-    }
-  }, [loadedSections, t]);
+      loadingManageRef.current.support = true;
+      setLoadingManageTab("support");
+      setSectionError(null);
+
+      try {
+        const response = await fetch("/api/admin/support-chat");
+        if (!response.ok) throw new Error("fetch_failed");
+        const supportChat =
+          (await response.json()) as AdminSupportChatClient[];
+        setSectionData((current) => ({ ...current, supportChat }));
+        setLoadedManageTabs((current) => ({ ...current, support: true }));
+      } catch {
+        setSectionError(t("admin.sectionLoadError"));
+      } finally {
+        loadingManageRef.current.support = false;
+        setLoadingManageTab(null);
+      }
+    },
+    [loadedManageTabs.support, t]
+  );
 
   useEffect(() => {
     void loadSection(activeSection);
   }, [activeSection, loadSection]);
 
-  const selectSection = (section: AdminSectionId) => {
+  useEffect(() => {
+    if (activeSection === "manage") {
+      void loadManageTab(activeManageTab);
+    }
+  }, [activeSection, activeManageTab, loadManageTab]);
+
+  const navigate = (section: AdminSectionId, manageTab?: AdminManageTabId) => {
+    const tab = section === "manage" ? (manageTab ?? activeManageTab) : "credits";
     setActiveSection(section);
-    window.history.replaceState(null, "", `#${section}`);
+    if (section === "manage") {
+      setActiveManageTab(tab);
+    }
+    window.history.replaceState(null, "", buildAdminHash(section, tab));
   };
 
-  const navItems = [
+  const selectClientForCredits = (email: string) => {
+    setGrantEmail(email);
+    navigate("manage", "credits");
+  };
+
+  const productionNav = [
     {
       id: "films" as const,
       label: t("admin.navFilms"),
       description: t("admin.navFilmsHint"),
       badge: summary?.awaitingFilmsCount,
-    },
-    {
-      id: "clients" as const,
-      label: t("admin.navClients"),
-      description: t("admin.navClientsHint"),
-      badge: summary?.clientCount,
     },
     {
       id: "stats" as const,
@@ -256,34 +302,83 @@ export function AdminShell({ defaultEmail, locale }: AdminShellProps) {
     },
   ];
 
+  const accountNav = [
+    {
+      id: "clients" as const,
+      label: t("admin.navClients"),
+      description: t("admin.navClientsHint"),
+      badge: summary?.clientCount,
+    },
+    {
+      id: "manage" as const,
+      label: t("admin.navManage"),
+      description: t("admin.navManageHint"),
+    },
+  ];
+
+  const manageTabs: { id: AdminManageTabId; label: string; badge?: number }[] = [
+    { id: "credits", label: t("admin.manageTabCredits") },
+    { id: "notifications", label: t("admin.manageTabNotifications") },
+    {
+      id: "support",
+      label: t("admin.manageTabSupport"),
+      badge: sectionData.supportChat?.length,
+    },
+    { id: "tools", label: t("admin.manageTabTools") },
+  ];
+
   const films = sectionData.films;
   const clients = sectionData.clients;
   const supportChatClients = sectionData.supportChat;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:px-8 md:py-10">
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-10">
-        <aside className="lg:w-60 lg:shrink-0">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-cream/40">
-            {t("admin.navEyebrow")}
-          </p>
-          <nav className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
-            {navItems.map((item) => (
-              <NavButton
-                key={item.id}
-                active={activeSection === item.id}
-                label={item.label}
-                description={item.description}
-                badge={item.badge}
-                onClick={() => selectSection(item.id)}
-              />
-            ))}
-          </nav>
+    <div className="admin-shell mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 md:px-8 md:py-10">
+      <AdminOverviewCards summary={summary} />
+
+      <div className="admin-shell__layout">
+        <aside className="admin-shell__sidebar">
+          <div className="admin-nav-group">
+            <p className="admin-nav-group__eyebrow">{t("admin.navGroupProduction")}</p>
+            <nav className="admin-nav-group__items">
+              {productionNav.map((item) => (
+                <NavButton
+                  key={item.id}
+                  active={activeSection === item.id}
+                  label={item.label}
+                  description={item.description}
+                  badge={item.badge}
+                  onClick={() => navigate(item.id)}
+                />
+              ))}
+            </nav>
+          </div>
+
+          <div className="admin-nav-group">
+            <p className="admin-nav-group__eyebrow">{t("admin.navGroupAccounts")}</p>
+            <nav className="admin-nav-group__items">
+              {accountNav.map((item) => (
+                <NavButton
+                  key={item.id}
+                  active={
+                    item.id === "manage"
+                      ? activeSection === "manage"
+                      : activeSection === item.id
+                  }
+                  label={item.label}
+                  description={item.description}
+                  badge={item.badge}
+                  onClick={() =>
+                    navigate(item.id, item.id === "manage" ? activeManageTab : undefined)
+                  }
+                />
+              ))}
+            </nav>
+          </div>
         </aside>
 
-        <div className="min-w-0 flex-1">
+        <div className="admin-shell__content">
           {sectionError ? (
-            <p className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            <p className="admin-shell__error" role="alert">
               {sectionError}
             </p>
           ) : null}
@@ -297,7 +392,8 @@ export function AdminShell({ defaultEmail, locale }: AdminShellProps) {
               <AdminSectionSkeleton />
             ) : films ? (
               <AdminFilmsList
-                awaiting={films.awaiting}
+                awaitingUrgent={films.awaitingUrgent}
+                awaitingScheduled={films.awaitingScheduled}
                 completed={films.completed}
                 locale={locale}
               />
@@ -312,22 +408,53 @@ export function AdminShell({ defaultEmail, locale }: AdminShellProps) {
             {loadingSection === "clients" && !clients ? (
               <AdminSectionSkeleton />
             ) : clients ? (
-              <div className="space-y-8">
-                <AdminClientsList
-                  clients={clients}
-                  locale={locale}
-                  onSelectEmail={setGrantEmail}
-                />
-                <AdminGrantTicketsForm key={grantEmail} defaultEmail={grantEmail} />
+              <AdminClientsList
+                clients={clients}
+                locale={locale}
+                onSelectEmail={selectClientForCredits}
+              />
+            ) : null}
+          </CategoryPanel>
+
+          <CategoryPanel id="manage" active={activeSection}>
+            <CategoryHeader
+              title={t("admin.categoryManageTitle")}
+              lead={t("admin.categoryManageLead")}
+            />
+            <AdminSubNav
+              items={manageTabs}
+              active={activeManageTab}
+              onSelect={(tab) => navigate("manage", tab)}
+              ariaLabel={t("admin.manageSubNavLabel")}
+            />
+
+            <div className="admin-manage-panel">
+              {activeManageTab === "credits" ? (
+                <AdminCreditsPanel grantEmail={grantEmail} />
+              ) : null}
+
+              {activeManageTab === "notifications" ? (
                 <AdminNotificationsForm />
-                {supportChatClients ? (
+              ) : null}
+
+              {activeManageTab === "support" ? (
+                loadingManageTab === "support" && !supportChatClients ? (
+                  <AdminSectionSkeleton />
+                ) : supportChatClients ? (
                   <AdminSupportChatList
                     clients={supportChatClients}
                     locale={locale}
                   />
-                ) : null}
-              </div>
-            ) : null}
+                ) : null
+              ) : null}
+
+              {activeManageTab === "tools" ? (
+                <AdminSubscriptionSimulatorForm
+                  adminEmail={defaultEmail}
+                  currentPlanId={adminSubscriptionPlanId}
+                />
+              ) : null}
+            </div>
           </CategoryPanel>
 
           <CategoryPanel id="stats" active={activeSection}>

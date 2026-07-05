@@ -20,9 +20,12 @@ type AuthContextValue = {
   user: SessionUser | null | undefined;
   balance: number | null;
   balanceLoaded: boolean;
+  jetonBalance: number | null;
+  jetonBalanceLoaded: boolean;
   isAdmin: boolean;
   refresh: () => Promise<void>;
   refreshTicketBalance: () => Promise<void>;
+  refreshJetonBalance: () => Promise<void>;
   setTicketBalance: (balance: number) => void;
 };
 
@@ -33,6 +36,7 @@ type AuthProviderProps = {
   initialUser: SessionUser | null;
   initialIsAdmin?: boolean;
   initialBalance?: number | null;
+  initialJetonBalance?: number | null;
 };
 
 function readInitialBalance(
@@ -51,11 +55,28 @@ function readInitialBalanceLoaded(
   return typeof initialBalance === "number";
 }
 
+function readInitialJetonBalance(
+  initialUser: SessionUser | null,
+  initialJetonBalance: number | null | undefined
+): number | null {
+  if (!initialUser) return null;
+  return typeof initialJetonBalance === "number" ? initialJetonBalance : null;
+}
+
+function readInitialJetonBalanceLoaded(
+  initialUser: SessionUser | null,
+  initialJetonBalance: number | null | undefined
+): boolean {
+  if (!initialUser) return true;
+  return typeof initialJetonBalance === "number";
+}
+
 export function AuthProvider({
   children,
   initialUser,
   initialIsAdmin = false,
   initialBalance = null,
+  initialJetonBalance = null,
 }: AuthProviderProps) {
   const [user, setUser] = useState<SessionUser | null | undefined>(initialUser);
   const [balance, setBalance] = useState<number | null>(() =>
@@ -63,6 +84,12 @@ export function AuthProvider({
   );
   const [balanceLoaded, setBalanceLoaded] = useState(() =>
     readInitialBalanceLoaded(initialUser, initialBalance)
+  );
+  const [jetonBalance, setJetonBalance] = useState<number | null>(() =>
+    readInitialJetonBalance(initialUser, initialJetonBalance)
+  );
+  const [jetonBalanceLoaded, setJetonBalanceLoaded] = useState(() =>
+    readInitialJetonBalanceLoaded(initialUser, initialJetonBalance)
   );
   const [isAdmin, setIsAdmin] = useState(initialIsAdmin);
   const userEmailRef = useRef<string | null>(initialUser?.email ?? null);
@@ -106,6 +133,28 @@ export function AuthProvider({
     }
   }, []);
 
+  const refreshJetonBalance = useCallback(async () => {
+    const email = userEmailRef.current;
+    if (!email) return;
+
+    try {
+      const response = await fetch("/api/jetons/balance");
+      if (!response.ok) {
+        setJetonBalance((current) => current ?? 0);
+        setJetonBalanceLoaded(true);
+        return;
+      }
+
+      const data = (await response.json()) as { balance?: number };
+      const nextBalance = typeof data.balance === "number" ? data.balance : 0;
+      setJetonBalance(nextBalance);
+      setJetonBalanceLoaded(true);
+    } catch {
+      setJetonBalance((current) => current ?? 0);
+      setJetonBalanceLoaded(true);
+    }
+  }, []);
+
   const refresh = useCallback(async () => {
     try {
       const response = await fetch("/api/auth/session");
@@ -121,8 +170,10 @@ export function AuthProvider({
         }
         userEmailRef.current = null;
         setBalance(null);
+        setJetonBalance(null);
         setIsAdmin(false);
         setBalanceLoaded(true);
+        setJetonBalanceLoaded(true);
         return;
       }
       setIsAdmin(Boolean(data.isAdmin));
@@ -134,7 +185,9 @@ export function AuthProvider({
       userEmailRef.current = null;
       setUser(null);
       setBalance(null);
+      setJetonBalance(null);
       setBalanceLoaded(true);
+      setJetonBalanceLoaded(true);
     }
   }, []);
 
@@ -145,7 +198,9 @@ export function AuthProvider({
 
     if (!initialUser) {
       setBalance(null);
+      setJetonBalance(null);
       setBalanceLoaded(true);
+      setJetonBalanceLoaded(true);
     }
   }, [initialUser, initialIsAdmin]);
 
@@ -158,6 +213,14 @@ export function AuthProvider({
   }, [initialUser?.email, balanceLoaded, refreshTicketBalance]);
 
   useEffect(() => {
+    if (!initialUser?.email || jetonBalanceLoaded) {
+      return;
+    }
+
+    void refreshJetonBalance();
+  }, [initialUser?.email, jetonBalanceLoaded, refreshJetonBalance]);
+
+  useEffect(() => {
     if (!initialUser?.email) return;
     if (typeof initialBalance !== "number") return;
     writeCachedTicketBalance(initialUser.email, initialBalance);
@@ -168,18 +231,24 @@ export function AuthProvider({
       user,
       balance,
       balanceLoaded,
+      jetonBalance,
+      jetonBalanceLoaded,
       isAdmin,
       refresh,
       refreshTicketBalance,
+      refreshJetonBalance,
       setTicketBalance: setTicketBalanceValue,
     }),
     [
       user,
       balance,
       balanceLoaded,
+      jetonBalance,
+      jetonBalanceLoaded,
       isAdmin,
       refresh,
       refreshTicketBalance,
+      refreshJetonBalance,
       setTicketBalanceValue,
     ]
   );
@@ -217,5 +286,16 @@ export function useTicketBalance() {
     refresh: refreshTicketBalance,
     setTicketBalance,
     isLoading: Boolean(user) && !balanceLoaded,
+  };
+}
+
+export function useJetonBalance() {
+  const { user, jetonBalance, jetonBalanceLoaded, refreshJetonBalance } =
+    useAuthContext();
+
+  return {
+    balance: user ? jetonBalance : null,
+    refresh: refreshJetonBalance,
+    isLoading: Boolean(user) && !jetonBalanceLoaded,
   };
 }

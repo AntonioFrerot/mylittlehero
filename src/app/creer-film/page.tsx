@@ -2,6 +2,8 @@ import { FilmCreationForm } from "@/components/film-creation/FilmCreationForm";
 import { getMyCharacters } from "@/lib/characters/actions";
 import { getMyFilmCreationCooldown } from "@/lib/film-creation/actions";
 import { getSession } from "@/lib/auth/get-session";
+import { findUserByEmail } from "@/lib/auth/users-store";
+import { listUserFilmSchedules } from "@/lib/calendar/store";
 import { getMyFilmTicketSummary } from "@/lib/purchases/actions";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
@@ -19,18 +21,24 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CreerFilmPage() {
-  const [session, ticketSummary, { t }, characters, creationCooldown] =
-    await Promise.all([
-    getSession(),
-    getMyFilmTicketSummary(),
-    getServerTranslator(),
-    getMyCharacters(),
-    getMyFilmCreationCooldown(),
-  ]);
+  const session = await getSession();
 
   if (!session) {
     redirect("/connexion?redirect=/creer-film");
   }
+
+  const [ticketSummary, { t }, characters, creationCooldown, user, schedules] =
+    await Promise.all([
+      getMyFilmTicketSummary(),
+      getServerTranslator(),
+      getMyCharacters(),
+      getMyFilmCreationCooldown(),
+      findUserByEmail(session.email),
+      listUserFilmSchedules(session.email),
+    ]);
+
+  const occupiedScheduleDates = schedules.map((entry) => entry.scheduledDate);
+  const registrationDate = user?.createdAt ?? new Date().toISOString();
 
   return (
     <>
@@ -58,19 +66,24 @@ export default async function CreerFilmPage() {
               hasActiveSubscription={ticketSummary?.hasActiveSubscription ?? false}
               freeFilmAvailable={ticketSummary?.freeFilmAvailable ?? false}
               cooldownEndsAt={creationCooldown.endsAt}
+              registrationDate={registrationDate}
+              occupiedScheduleDates={occupiedScheduleDates}
+              subscriptionGrantSchedule={
+                ticketSummary?.subscriptionGrantSchedule ?? {
+                  active: false,
+                  tier: null,
+                  period: null,
+                  anchorDayKey: null,
+                  minScheduleDayKey: null,
+                  remainingScheduleSlots: 0,
+                  annualGrantCap: 0,
+                  elapsedGrantsInYear: 0,
+                  scheduledGrantCount: 0,
+                  canScheduleMore: false,
+                }
+              }
             />
           </div>
-
-          <p className="mt-6 text-center text-sm text-cream/45">
-            <Link
-              href="/mon-espace?section=personnages"
-              className="text-gold-light/80 hover:text-gold-light"
-            >
-              {t("filmCreation.manageCharacters")}
-            </Link>
-            {" · "}
-            {t("filmCreation.hint")}
-          </p>
         </div>
       </main>
     </>

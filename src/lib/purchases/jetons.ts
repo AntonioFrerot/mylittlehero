@@ -12,7 +12,7 @@ import {
 import { normalizeEmail } from "@/lib/db/normalize-email";
 import type { JetonPurchasePlanId } from "@/lib/i18n/purchase-catalog";
 
-export type JetonLedgerKind = "purchase" | "film_creation";
+export type JetonLedgerKind = "purchase" | "film_creation" | "admin_revoke";
 
 export type JetonLedgerEntry = {
   id: string;
@@ -191,4 +191,83 @@ export async function spendJetonsForFilm(input: {
   });
 
   return { ok: true };
+}
+
+export async function grantAdminJetons(input: {
+  userEmail: string;
+  jetons: number;
+  referenceId?: string;
+}): Promise<
+  { ok: true; balance: number; referenceId: string } | { ok: false; error: string }
+> {
+  if (input.jetons <= 0) {
+    return { ok: false, error: "Le nombre de jetons doit être positif." };
+  }
+
+  if (isHostedProduction() && !isDatabaseEnabled()) {
+    return { ok: false, error: databaseRequiredError() };
+  }
+
+  const email = normalizeEmail(input.userEmail);
+  const referenceId =
+    input.referenceId?.trim() || `admin-grant:${randomUUID()}`;
+
+  if (await hasLedgerReference(email, referenceId)) {
+    const balance = await getJetonBalance(email);
+    return { ok: true, balance, referenceId };
+  }
+
+  await insertLedgerEntry({
+    userEmail: email,
+    delta: input.jetons,
+    kind: "purchase",
+    referenceId,
+  });
+
+  const balance = await getJetonBalance(email);
+  return { ok: true, balance, referenceId };
+}
+
+export async function revokeAdminJetons(input: {
+  userEmail: string;
+  jetons: number;
+  referenceId?: string;
+}): Promise<
+  { ok: true; balance: number; referenceId: string } | { ok: false; error: string }
+> {
+  if (input.jetons <= 0) {
+    return { ok: false, error: "Le nombre de jetons doit être positif." };
+  }
+
+  if (isHostedProduction() && !isDatabaseEnabled()) {
+    return { ok: false, error: databaseRequiredError() };
+  }
+
+  const email = normalizeEmail(input.userEmail);
+  const referenceId =
+    input.referenceId?.trim() || `admin-revoke:${randomUUID()}`;
+
+  if (await hasLedgerReference(email, referenceId)) {
+    const balance = await getJetonBalance(email);
+    return { ok: true, balance, referenceId };
+  }
+
+  const balance = await getJetonBalance(email);
+  const jetonsToRevoke = Math.floor(input.jetons);
+  if (balance < jetonsToRevoke) {
+    return {
+      ok: false,
+      error: `Solde insuffisant (${balance} jeton(s) disponible(s)).`,
+    };
+  }
+
+  await insertLedgerEntry({
+    userEmail: email,
+    delta: -jetonsToRevoke,
+    kind: "admin_revoke",
+    referenceId,
+  });
+
+  const newBalance = await getJetonBalance(email);
+  return { ok: true, balance: newBalance, referenceId };
 }

@@ -15,7 +15,8 @@ import {
   getFilmDurationSeconds,
 } from "@/lib/film-creation/duration";
 import { getUserFilmByIdForUser } from "@/lib/film-creation/store";
-import { isUserShortPreviewFilm } from "@/lib/film-creation/is-short-preview-film";
+import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
+import { isUserSampleFilm } from "@/lib/film-creation/is-sample-film";
 import { getSession } from "@/lib/auth/get-session";
 import { getUserLocale } from "@/lib/auth/users-store";
 import { BRAND_NAME } from "@/lib/brand";
@@ -73,13 +74,21 @@ export default async function UserFilmPage({ params }: PageProps) {
   ]);
   const { filmWithStory, resume, tagline, manifest } = storyData;
   const { t } = await getServerTranslator();
-  const pageCopy = buildUserFilmPageCopy(film, userLocale, resume, tagline);
+  const pageCopy = buildUserFilmPageCopy(
+    film,
+    userLocale,
+    resume,
+    tagline,
+    manifest?.status
+  );
   const displayTitle = getFilmDisplayTitle(
     film,
     userLocale,
     manifest?.generatedTitle
   );
-  const isShortPreview = isUserShortPreviewFilm(film);
+  const isFreeTrial = isUserFreeTrialFilm(film);
+  const isSample = isUserSampleFilm(film);
+  const isShortPreview = isFreeTrial || isSample;
   const durationSec = getFilmDurationSeconds(film);
   const durationLabel =
     durationSec != null

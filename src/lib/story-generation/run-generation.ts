@@ -1,10 +1,11 @@
 import { revalidatePath } from "next/cache";
 import { getUserFilmById } from "@/lib/film-creation/store";
-import { isUserShortPreviewFilm } from "@/lib/film-creation/is-short-preview-film";
+import { isUserFreeTrialFilm } from "@/lib/film-creation/is-free-trial-film";
+import { isUserSampleFilm } from "@/lib/film-creation/is-sample-film";
 import { getUserLocale } from "@/lib/auth/users-store";
 import type { LocaleCode } from "@/lib/i18n/locales";
-import { generateTitleAndResume } from "./generate";
-import { generateMockTitleAndResume } from "./generate-mock";
+import { generateSampleTitleAndResume, generateTitleAndResume } from "./generate";
+import { generateMockSampleTitleAndResume, generateMockTitleAndResume } from "./generate-mock";
 import { getStoryGenerationMode, isMockStoryGenerationEnabled } from "./mock-mode";
 import { patchStoryManifest, readStoryManifest } from "./manifest";
 import { markStoryValidated } from "./mark-story-validated";
@@ -22,9 +23,11 @@ export async function runStoryGeneration(
     return { ok: false, error: "Film introuvable" };
   }
 
-  if (isUserShortPreviewFilm(film)) {
+  if (isUserFreeTrialFilm(film)) {
     return { ok: true };
   }
+
+  const isSample = isUserSampleFilm(film);
 
   let existing = await readStoryManifest(email, filmId);
   if (!existing) {
@@ -49,8 +52,12 @@ export async function runStoryGeneration(
 
   try {
     const result = useMock
-      ? generateMockTitleAndResume(film, locale)
-      : await generateTitleAndResume(film, locale);
+      ? isSample
+        ? generateMockSampleTitleAndResume(film, locale)
+        : generateMockTitleAndResume(film, locale)
+      : isSample
+        ? await generateSampleTitleAndResume(film, locale)
+        : await generateTitleAndResume(film, locale);
 
     if (!result) {
       throw new Error("Échec génération du titre, du résumé et de l'accroche");

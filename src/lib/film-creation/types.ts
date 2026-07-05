@@ -84,6 +84,10 @@ export type UserFilm = {
   videoSrc?: string;
   /** Accroche courte sous le titre (page visionnage) */
   tagline?: string;
+  /** Date de programmation YYYY-MM-DD */
+  scheduledDate?: string;
+  /** Film programmé via droit abonnement (0 ticket au moment de la création). */
+  scheduledViaSubscriptionGrant?: boolean;
 };
 
 export type UserFilmWithStory = UserFilm & {

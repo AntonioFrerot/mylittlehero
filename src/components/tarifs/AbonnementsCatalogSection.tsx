@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import {
   AbonnementsCatalogToggle,
@@ -11,6 +12,12 @@ import { TarifsTicketCard } from "@/components/tarifs/TarifsTicketCard";
 import { AbonnementsSampleBlock } from "@/components/tarifs/AbonnementsSampleBlock";
 import type { AbonnementsSampleOffer, TarifsSubscriptionPlan, TarifsTicketPlan } from "@/lib/i18n/tarifs-catalog";
 import type { LocaleCode } from "@/lib/i18n/locales";
+
+export const ABONNEMENTS_TICKETS_SECTION = "tickets";
+
+function tabFromSectionParam(section: string | null): AbonnementsCatalogTab {
+  return section === ABONNEMENTS_TICKETS_SECTION ? "tickets" : "subscriptions";
+}
 
 type AbonnementsCatalogSectionProps = {
   yearlyPlans: TarifsSubscriptionPlan[];
@@ -26,10 +33,29 @@ export function AbonnementsCatalogSection({
   locale,
 }: AbonnementsCatalogSectionProps) {
   const { t } = useLocale();
-  const [tab, setTab] = useState<AbonnementsCatalogTab>("subscriptions");
+  const searchParams = useSearchParams();
+  const sectionParam = searchParams.get("section");
+  const [tab, setTab] = useState<AbonnementsCatalogTab>(() =>
+    tabFromSectionParam(sectionParam)
+  );
+
+  useEffect(() => {
+    setTab(tabFromSectionParam(sectionParam));
+  }, [sectionParam]);
+
+  useEffect(() => {
+    if (sectionParam !== ABONNEMENTS_TICKETS_SECTION || tab !== "tickets") return;
+    document.getElementById("abonnements-tickets")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, [sectionParam, tab]);
 
   return (
-    <section className="tarifs-page__section abonnements-catalog scroll-mt-28">
+    <section
+      id={tab === "tickets" ? "abonnements-tickets" : undefined}
+      className="tarifs-page__section abonnements-catalog scroll-mt-28"
+    >
       <div className="tarifs-subscriptions__header">
         <div className="tarifs-subscriptions__toolbar">
           <AbonnementsCatalogToggle value={tab} onChange={setTab} />

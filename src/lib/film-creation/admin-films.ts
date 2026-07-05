@@ -10,6 +10,7 @@ import {
 } from "@/lib/admin/batch-loaders";
 import { normalizeEmail } from "@/lib/db/normalize-email";
 import { attachStoryToFilms } from "./catalog-films";
+import { partitionAwaitingAdminFilms } from "./delivery-deadline";
 import { isUserShortPreviewFilm } from "./is-short-preview-film";
 import type { FilmCharacterRef, UserFilm, UserFilmWithStory } from "./types";
 import { normalizeFilmStatus } from "@/lib/i18n/film-labels";
@@ -19,9 +20,26 @@ export type AdminFilmEntry = UserFilmWithStory & {
 };
 
 export type AdminFilmsByStatus = {
-  awaiting: AdminFilmEntry[];
+  awaitingUrgent: AdminFilmEntry[];
+  awaitingScheduled: AdminFilmEntry[];
   completed: AdminFilmEntry[];
+  /** Liste combinée — rétrocompatibilité */
+  awaiting: AdminFilmEntry[];
 };
+
+function finalizeAwaitingLists(awaiting: AdminFilmEntry[]): {
+  awaitingUrgent: AdminFilmEntry[];
+  awaitingScheduled: AdminFilmEntry[];
+  awaiting: AdminFilmEntry[];
+} {
+  const { urgent, scheduled } = partitionAwaitingAdminFilms(awaiting);
+
+  return {
+    awaitingUrgent: urgent,
+    awaitingScheduled: scheduled,
+    awaiting: [...urgent, ...scheduled],
+  };
+}
 
 function isFilmAwaitingCreation(film: UserFilmWithStory): boolean {
   if (normalizeFilmStatus(film.status) === "ready") return false;
@@ -31,14 +49,6 @@ function isFilmAwaitingCreation(film: UserFilmWithStory): boolean {
 
 function isFilmCompleted(film: UserFilmWithStory): boolean {
   return normalizeFilmStatus(film.status) === "ready";
-}
-
-function sortByValidatedDesc(films: AdminFilmEntry[]): AdminFilmEntry[] {
-  return films.sort(
-    (a, b) =>
-      new Date(b.storyValidatedAt ?? b.createdAt).getTime() -
-      new Date(a.storyValidatedAt ?? a.createdAt).getTime()
-  );
 }
 
 function sortCompletedDesc(films: AdminFilmEntry[]): AdminFilmEntry[] {
@@ -153,7 +163,7 @@ async function listAdminFilmsByStatusBatch(): Promise<AdminFilmsByStatus> {
   }
 
   return {
-    awaiting: sortByValidatedDesc(awaiting),
+    ...finalizeAwaitingLists(awaiting),
     completed: sortCompletedDesc(completed),
   };
 }
@@ -221,7 +231,7 @@ export async function listAdminFilmsByStatus(): Promise<AdminFilmsByStatus> {
   );
 
   return {
-    awaiting: sortByValidatedDesc(awaiting),
+    ...finalizeAwaitingLists(awaiting),
     completed: sortCompletedDesc(completed),
   };
 }

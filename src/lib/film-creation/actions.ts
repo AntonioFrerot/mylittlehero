@@ -28,10 +28,23 @@ import {
   isPaidFilmDuration,
   isSampleFilmDuration,
   JETONS_REQUIRED_FOR_SAMPLE,
+  PAID_FILM_DURATION_MIN_SECONDS,
 } from "@/lib/purchases/ticket-rules";
 import { spendJetonsForFilm } from "@/lib/purchases/jetons";
 import { spendTicketsForFilm, getTicketBalance } from "@/lib/purchases/tickets";
-import { addUserFilm, getUserFilmById, listUserFilms, updateUserFilm } from "./store";
+import { hasActiveSubscriptionForUser } from "@/lib/purchases/has-active-subscription";
+import {
+  isSubscriptionGrantScheduling,
+  validateSubscriptionGrantScheduleDate,
+} from "@/lib/purchases/subscription-scheduling";
+import { addUserFilmScheduleForFilm, listUserFilmSchedules } from "@/lib/calendar/store";
+import { isScheduleDateAllowed } from "@/lib/calendar/calendar-bounds";
+import {
+  addUserFilm,
+  getUserFilmById,
+  listUserFilms,
+  updateUserFilm,
+} from "./store";
 import { hasUserUsedFreeFilm, isUserFreeTrialFilm } from "./free-film";
 import {
   getFilmCreationCooldownState,
@@ -187,6 +200,11 @@ export async function saveFilmCreation(
     "storyChoice",
     "additionalInfo"
   );
+  const scheduledDateRaw = formData.get("scheduledDate");
+  const scheduledDate =
+    typeof scheduledDateRaw === "string" && scheduledDateRaw.trim()
+      ? scheduledDateRaw.trim()
+      : null;
 
   const userCharacters = await listCharacters(session.email);
   const selectedCharacters = resolveFilmCharacters(
@@ -251,9 +269,61 @@ export async function saveFilmCreation(
     findUserByEmail(session.email),
     getUserLocale(session.email),
   ]);
-  const hasActiveSubscription = Boolean(user?.subscriptionPlanId);
+  const hasActiveSubscription = hasActiveSubscriptionForUser({
+    email: session.email,
+    subscriptionPlanId: user?.subscriptionPlanId,
+  });
+  const ticketBalance = await getTicketBalance(session.email);
+  const subscriptionGrantActive = isSubscriptionGrantScheduling({
+    hasActiveSubscription,
+    ticketBalance,
+  });
   const ticketsRequired = getTicketsRequiredForDuration(durationSeconds);
   const filmId = randomUUID();
+
+  if (subscriptionGrantActive) {
+    if (!scheduledDate) {
+      return { error: t("filmCreation.errors.subscriptionGrantScheduleRequired") };
+    }
+    if (durationSeconds !== PAID_FILM_DURATION_MIN_SECONDS) {
+      return { error: t("filmCreation.errors.subscriptionGrantDurationOnly") };
+    }
+  }
+
+  if (scheduledDate) {
+    if (isFreeFilm || isSampleFilm) {
+      return { error: t("filmCreation.errors.scheduleNotAllowed") };
+    }
+    if (!user?.createdAt) {
+      return { error: t("calendar.errors.notLoggedIn") };
+    }
+    if (!isScheduleDateAllowed(scheduledDate, new Date(user.createdAt))) {
+      return { error: t("calendar.errors.outOfRange") };
+    }
+    const schedules = await listUserFilmSchedules(session.email);
+    if (schedules.some((entry) => entry.scheduledDate === scheduledDate)) {
+      return { error: t("calendar.errors.alreadyScheduled") };
+    }
+
+    if (subscriptionGrantActive) {
+      const grantValidation = await validateSubscriptionGrantScheduleDate({
+        email: session.email,
+        ticketBalance,
+        subscriptionPlanId: user?.subscriptionPlanId,
+        registrationDate: user?.createdAt,
+        scheduledDate,
+      });
+      if (!grantValidation.ok) {
+        return {
+          error: t(
+            grantValidation.errorKey as
+              | "filmCreation.errors.subscriptionGrantDateTooEarly"
+              | "filmCreation.errors.subscriptionGrantQuotaReached"
+          ),
+        };
+      }
+    }
+  }
 
   if (isSampleFilm) {
     const spendResult = await spendJetonsForFilm({
@@ -295,11 +365,23 @@ export async function saveFilmCreation(
     language: filmLanguage,
     avoid,
     ...(additionalInfo ? { additionalInfo } : {}),
+    ...(scheduledDate ? { scheduledDate } : {}),
+    ...(subscriptionGrantActive && scheduledDate
+      ? { scheduledViaSubscriptionGrant: true }
+      : {}),
     status: "preparing",
     createdAt: new Date().toISOString(),
   };
 
   await addUserFilm(session.email, film);
+
+  if (scheduledDate) {
+    try {
+      await addUserFilmScheduleForFilm(session.email, scheduledDate, filmId);
+    } catch {
+      return { error: t("calendar.errors.alreadyScheduled") };
+    }
+  }
 
   if (isFreeFilm) {
     try {
@@ -317,7 +399,18 @@ export async function saveFilmCreation(
     revalidatePath("/admin");
   }
 
-  if (!isFreeFilm && !isSampleFilm) {
+  if (isSampleFilm) {
+    try {
+      await provisionStoryWorkspace(session.email, film);
+      scheduleStoryGeneration(session.email, film);
+    } catch (error) {
+      console.error("Sample story workspace provisioning failed", {
+        email: session.email,
+        filmId: film.id,
+        error,
+      });
+    }
+  } else if (!isFreeFilm) {
     try {
       await provisionStoryWorkspace(session.email, film);
       scheduleStoryGeneration(session.email, film);
@@ -337,6 +430,7 @@ export async function saveFilmCreation(
   revalidatePath("/abonnements");
   revalidatePath("/achat");
   revalidatePath("/catalogue");
+  revalidatePath("/calendrier");
 
   let redirectUrl = "/mon-espace?section=films";
   if (
