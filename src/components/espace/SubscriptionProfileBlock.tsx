@@ -123,29 +123,19 @@ export function SubscriptionProfileBlock({
           ) : null}
         </dl>
 
-        {loading ? (
-          <p className="subscription-profile-block__hint subscription-profile-block__hint--loading">
-            {t("space.subscriptionStatusLoading")}
-          </p>
-        ) : status?.cancellationScheduled && status.cancellationDate ? (
+        {!loading && status?.cancellationScheduled && status.cancellationDate ? (
           <p className="subscription-profile-block__notice" role="status">
             {t("space.subscriptionCancellationPending", {
               date: status.cancellationDate,
             })}
           </p>
-        ) : (
-          <p className="subscription-profile-block__hint">
-            {hasCommitment
-              ? t("space.subscriptionRenewalHint")
-              : t("space.subscriptionMonthlyHint")}
-          </p>
-        )}
+        ) : null}
       </div>
 
       <div className="subscription-profile-block__footer">
         <ManageSubscriptionButton
           className="subscription-profile-block__cta w-full !text-sm sm:w-auto"
-          disabled={Boolean(status?.cancellationScheduled)}
+          cancellationScheduled={Boolean(status?.cancellationScheduled)}
           cancellationPreviewDate={status?.cancellationPreviewDate ?? null}
           cancellationPreviewMode={status?.cancellationPreviewMode ?? "period_end"}
           onScheduled={() => void refreshStatus()}

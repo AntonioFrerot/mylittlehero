@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { Button } from "@/components/ui/Button";
 import { CancelSubscriptionModal } from "@/components/espace/CancelSubscriptionModal";
+import { RevertSubscriptionModal } from "@/components/espace/RevertSubscriptionModal";
 import { requestScheduleCancellation } from "@/lib/stripe/schedule-cancellation-client";
+import { requestRevertCancellation } from "@/lib/stripe/revert-cancellation-client";
 
 type ManageSubscriptionButtonProps = {
   className?: string;
-  disabled?: boolean;
+  cancellationScheduled?: boolean;
   cancellationPreviewDate?: string | null;
   cancellationPreviewMode?: "commitment" | "period_end";
   onScheduled?: () => void;
@@ -16,7 +18,7 @@ type ManageSubscriptionButtonProps = {
 
 export function ManageSubscriptionButton({
   className = "",
-  disabled = false,
+  cancellationScheduled = false,
   cancellationPreviewDate = null,
   cancellationPreviewMode = "period_end",
   onScheduled,
@@ -25,19 +27,23 @@ export function ManageSubscriptionButton({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [revertModalOpen, setRevertModalOpen] = useState(false);
 
-  useEffect(() => {
-    if (disabled) setSuccess(null);
-  }, [disabled]);
-
-  function handleOpenModal() {
+  function handleOpenCancelModal() {
     if (!cancellationPreviewDate) {
       setError(t("space.cancelSubscriptionDateUnavailable"));
       return;
     }
     setError(null);
-    setModalOpen(true);
+    setSuccess(null);
+    setCancelModalOpen(true);
+  }
+
+  function handleOpenRevertModal() {
+    setError(null);
+    setSuccess(null);
+    setRevertModalOpen(true);
   }
 
   async function handleConfirmCancellation() {
@@ -70,22 +76,55 @@ export function ManageSubscriptionButton({
 
     setSuccess(message);
     setPending(false);
-    setModalOpen(false);
+    setCancelModalOpen(false);
+    onScheduled?.();
+  }
+
+  async function handleConfirmRevert() {
+    setPending(true);
+    setError(null);
+    setSuccess(null);
+
+    const result = await requestRevertCancellation();
+
+    if (!result.ok) {
+      setError(
+        result.error === "checkout.error" ? t("checkout.error") : result.error
+      );
+      setPending(false);
+      return;
+    }
+
+    setSuccess(t("space.revertSubscriptionSuccess"));
+    setPending(false);
+    setRevertModalOpen(false);
     onScheduled?.();
   }
 
   return (
     <>
       <div className="subscription-profile-block__actions w-full sm:w-auto">
-        <Button
-          type="button"
-          variant="secondary"
-          className={className}
-          disabled={pending || disabled || !cancellationPreviewDate}
-          onClick={handleOpenModal}
-        >
-          {pending ? t("space.cancelling") : t("space.cancelSubscription")}
-        </Button>
+        {cancellationScheduled ? (
+          <Button
+            type="button"
+            variant="primary"
+            className={className}
+            disabled={pending}
+            onClick={handleOpenRevertModal}
+          >
+            {pending ? t("space.revertingSubscription") : t("space.keepSubscription")}
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            variant="secondary"
+            className={className}
+            disabled={pending || !cancellationPreviewDate}
+            onClick={handleOpenCancelModal}
+          >
+            {pending ? t("space.cancelling") : t("space.cancelSubscription")}
+          </Button>
+        )}
         {error ? (
           <p
             className="subscription-profile-block__feedback subscription-profile-block__feedback--error"
@@ -105,13 +144,22 @@ export function ManageSubscriptionButton({
       </div>
 
       <CancelSubscriptionModal
-        open={modalOpen}
+        open={cancelModalOpen}
         effectiveDate={cancellationPreviewDate}
         mode={cancellationPreviewMode}
         pending={pending}
         onConfirm={() => void handleConfirmCancellation()}
         onClose={() => {
-          if (!pending) setModalOpen(false);
+          if (!pending) setCancelModalOpen(false);
+        }}
+      />
+
+      <RevertSubscriptionModal
+        open={revertModalOpen}
+        pending={pending}
+        onConfirm={() => void handleConfirmRevert()}
+        onClose={() => {
+          if (!pending) setRevertModalOpen(false);
         }}
       />
     </>

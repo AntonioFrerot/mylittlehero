@@ -527,6 +527,16 @@ export const fr = {
       "Votre abonnement prendra fin le {date}, à la fin de la période de facturation en cours.",
     cancelSubscriptionModalConfirm: "Confirmer la résiliation",
     cancelSubscriptionModalDismiss: "Annuler",
+    keepSubscription: "Ne pas résilier",
+    revertingSubscription: "Reprise…",
+    revertSubscriptionModalEyebrow: "Abonnement",
+    revertSubscriptionModalTitle: "Garder mon abonnement",
+    revertSubscriptionModalLead:
+      "Votre abonnement continuera à se renouveler mois par mois, sans date de fin, jusqu'à ce que vous cliquiez de nouveau sur « Résilier ».",
+    revertSubscriptionModalConfirm: "Confirmer",
+    revertSubscriptionModalDismiss: "Annuler",
+    revertSubscriptionSuccess:
+      "Résiliation annulée. Votre abonnement continue sans date de fin.",
     cancelSubscription: "Résilier",
     cancelSubscriptionConfirm:
       "Votre engagement est de 12 mois. La résiliation prendra effet à la fin de cette période (vous serez facturé jusqu'à cette date). Sans action de votre part, l'abonnement continuera ensuite mois par mois. Continuer ?",

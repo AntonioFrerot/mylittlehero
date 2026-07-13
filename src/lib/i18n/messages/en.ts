@@ -521,6 +521,16 @@ export const en = {
       "Your subscription will end on {date}, at the end of the current billing period.",
     cancelSubscriptionModalConfirm: "Confirm cancellation",
     cancelSubscriptionModalDismiss: "Cancel",
+    keepSubscription: "Don't cancel",
+    revertingSubscription: "Resuming…",
+    revertSubscriptionModalEyebrow: "Subscription",
+    revertSubscriptionModalTitle: "Keep my subscription",
+    revertSubscriptionModalLead:
+      "Your subscription will keep renewing month to month with no end date until you click \"Cancel\" again.",
+    revertSubscriptionModalConfirm: "Confirm",
+    revertSubscriptionModalDismiss: "Cancel",
+    revertSubscriptionSuccess:
+      "Cancellation removed. Your subscription continues with no end date.",
     cancelSubscription: "Cancel",
     cancelSubscriptionConfirm:
       "Your plan has a 12-month commitment. Cancellation takes effect at the end of that period (you'll be billed until then). If you do nothing, your plan will keep renewing month to month after that. Continue?",

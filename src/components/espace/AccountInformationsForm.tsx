@@ -85,8 +85,12 @@ export function AccountInformationsForm({
   const hasActiveSubscription = Boolean(account.subscriptionPlanId?.trim());
   const subscriptionPlanName = useMemo(() => {
     if (!hasActiveSubscription) return null;
-    return findPricingPlanById(account.subscriptionPlanId!, locale)?.name ?? null;
-  }, [account.subscriptionPlanId, hasActiveSubscription, locale]);
+    const plan = findPricingPlanById(account.subscriptionPlanId!, locale);
+    if (!plan) return null;
+    return plan.tier === "standard"
+      ? t("pricing.tierEssential")
+      : t("pricing.tierPremium");
+  }, [account.subscriptionPlanId, hasActiveSubscription, locale, t]);
   const saveLanguageT = useMemo(
     () => createTranslator(selectedLocale),
     [selectedLocale]
