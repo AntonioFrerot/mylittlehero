@@ -495,8 +495,17 @@ export const en = {
     subscriptionTitle: "Subscription",
     subscriptionDesc: "Your active plan on MyLittleHero.",
     noSubscription: "No active subscription at the moment.",
-    subscriptionManageHint: "Manage or cancel your subscription on Stripe.",
+    subscriptionManageHint:
+      "12-month commitment. If you don't cancel, your plan renews month to month after that.",
     cancelSubscription: "Cancel",
+    cancelSubscriptionConfirm:
+      "Your plan has a 12-month commitment. Cancellation takes effect at the end of that period (you'll be billed until then). If you do nothing, your plan will keep renewing month to month after that. Continue?",
+    cancelSubscriptionScheduled:
+      "Cancellation scheduled for {date} (end of your commitment).",
+    cancelSubscriptionAlreadyScheduled:
+      "Your cancellation is already scheduled for {date}.",
+    cancelSubscriptionPeriodEnd:
+      "Cancellation scheduled at the end of the current billing period ({date}).",
     cancelling: "Cancelling…",
     changePlan: "Change plan",
     subscriptionCancelled: "Your subscription has been cancelled.",

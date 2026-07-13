@@ -10,6 +10,14 @@ import type { PurchasePlanId } from "@/lib/i18n/purchase-catalog";
 import { isJetonPurchasePlanId } from "@/lib/i18n/purchase-catalog";
 import { grantJetonsFromPurchase } from "@/lib/purchases/jetons";
 import { getStripe, isStripeConfigured } from "@/lib/stripe/client";
+import {
+  isWithinCommitmentPeriod,
+  resolveCommitmentEndUnix,
+} from "@/lib/stripe/subscriptions";
+import {
+  getCommitmentEndUnix,
+  isCommitmentSubscriptionPlan,
+} from "@/lib/stripe/subscription-commitment";
 
 export const runtime = "nodejs";
 
@@ -39,7 +47,68 @@ async function handleSubscriptionEnded(
   await updateUserSubscription(userEmail, null);
 }
 
-async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+async function handleSubscriptionUpdated(
+  stripe: ReturnType<typeof getStripe>,
+  subscription: Stripe.Subscription,
+  previousAttributes: Partial<Stripe.Subscription> | undefined
+) {
+  const planId = subscription.metadata?.planId;
+  if (!isCommitmentSubscriptionPlan(planId)) return;
+
+  const commitmentEndUnix = resolveCommitmentEndUnix(subscription, planId);
+  if (!commitmentEndUnix || !isWithinCommitmentPeriod(commitmentEndUnix)) {
+    return;
+  }
+
+  const earlyCancelRequested =
+    subscription.cancel_at_period_end &&
+    previousAttributes?.cancel_at_period_end === false;
+
+  if (!earlyCancelRequested) return;
+
+  await stripe.subscriptions.update(subscription.id, {
+    cancel_at_period_end: false,
+    cancel_at: commitmentEndUnix,
+    metadata: {
+      ...subscription.metadata,
+      commitmentEndUnix: String(commitmentEndUnix),
+    },
+  });
+}
+
+async function stampCommitmentMetadata(
+  stripe: ReturnType<typeof getStripe>,
+  session: Stripe.Checkout.Session,
+  planId: string
+) {
+  if (!isCommitmentSubscriptionPlan(planId)) return;
+
+  const subscriptionId =
+    typeof session.subscription === "string"
+      ? session.subscription
+      : session.subscription?.id;
+
+  if (!subscriptionId) return;
+
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  const commitmentEndUnix = getCommitmentEndUnix(subscription.start_date);
+
+  await stripe.subscriptions.update(subscriptionId, {
+    cancel_at: null,
+    cancel_at_period_end: false,
+    metadata: {
+      ...subscription.metadata,
+      planId,
+      commitmentMonths: subscription.metadata?.commitmentMonths ?? "12",
+      commitmentEndUnix: String(commitmentEndUnix),
+    },
+  });
+}
+
+async function handleCheckoutCompleted(
+  stripe: ReturnType<typeof getStripe>,
+  session: Stripe.Checkout.Session
+) {
   const sessionId = session.id;
   if (!sessionId) return;
 
@@ -66,6 +135,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   if (planType === "subscription") {
     await updateUserSubscription(userEmail, planId);
+    await stampCommitmentMetadata(stripe, session, planId);
     return;
   }
 
@@ -117,14 +187,23 @@ export async function POST(request: Request) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    await handleCheckoutCompleted(session);
+    await handleCheckoutCompleted(stripe, session);
   }
 
-  if (
-    event.type === "customer.subscription.deleted" ||
-    (event.type === "customer.subscription.updated" &&
-      (event.data.object as Stripe.Subscription).status === "canceled")
-  ) {
+  if (event.type === "customer.subscription.updated") {
+    const subscription = event.data.object as Stripe.Subscription;
+    const previousAttributes = event.data.previous_attributes as
+      | Partial<Stripe.Subscription>
+      | undefined;
+
+    if (subscription.status === "canceled") {
+      await handleSubscriptionEnded(stripe, subscription);
+    } else {
+      await handleSubscriptionUpdated(stripe, subscription, previousAttributes);
+    }
+  }
+
+  if (event.type === "customer.subscription.deleted") {
     const subscription = event.data.object as Stripe.Subscription;
     await handleSubscriptionEnded(stripe, subscription);
   }

@@ -501,8 +501,17 @@ export const fr = {
     subscriptionTitle: "Abonnement",
     subscriptionDesc: "Votre formule active sur MyLittleHero.",
     noSubscription: "Aucun abonnement actif pour le moment.",
-    subscriptionManageHint: "Gérez ou résiliez votre abonnement sur Stripe.",
+    subscriptionManageHint:
+      "Engagement 12 mois. Sans résiliation, l'abonnement se renouvelle ensuite mois par mois.",
     cancelSubscription: "Résilier",
+    cancelSubscriptionConfirm:
+      "Votre engagement est de 12 mois. La résiliation prendra effet à la fin de cette période (vous serez facturé jusqu'à cette date). Sans action de votre part, l'abonnement continuera ensuite mois par mois. Continuer ?",
+    cancelSubscriptionScheduled:
+      "Résiliation programmée au {date} (fin de votre engagement).",
+    cancelSubscriptionAlreadyScheduled:
+      "Votre résiliation est déjà programmée au {date}.",
+    cancelSubscriptionPeriodEnd:
+      "Résiliation programmée à la fin de la période en cours ({date}).",
     cancelling: "Résiliation…",
     changePlan: "Changer d'abonnement",
     subscriptionCancelled: "Votre abonnement a été résilié.",

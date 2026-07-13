@@ -6,6 +6,13 @@ import { getSiteUrl } from "@/lib/stripe/site-url";
 import { hasActiveSubscriptionForUser } from "@/lib/purchases/has-active-subscription";
 import { findUserByEmail } from "@/lib/auth/users-store";
 import { monEspaceSectionPath } from "@/lib/espace/sections";
+import {
+  findActiveStripeSubscription,
+  isWithinCommitmentPeriod,
+  resolveCommitmentEndUnix,
+  resolvePortalConfigurationId,
+} from "@/lib/stripe/subscriptions";
+import { isCommitmentSubscriptionPlan } from "@/lib/stripe/subscription-commitment";
 
 export const runtime = "nodejs";
 
@@ -56,9 +63,29 @@ export async function POST() {
   const baseUrl = getSiteUrl();
   const stripe = getStripe();
 
+  const subscription = await findActiveStripeSubscription(customerId);
+  let commitmentActive = false;
+
+  if (
+    subscription &&
+    isCommitmentSubscriptionPlan(user.subscriptionPlanId) &&
+    user.subscriptionPlanId
+  ) {
+    const commitmentEndUnix = resolveCommitmentEndUnix(
+      subscription,
+      user.subscriptionPlanId
+    );
+    commitmentActive = Boolean(
+      commitmentEndUnix && isWithinCommitmentPeriod(commitmentEndUnix)
+    );
+  }
+
+  const configuration = resolvePortalConfigurationId(commitmentActive);
+
   const portalSession = await stripe.billingPortal.sessions.create({
     customer: customerId,
     return_url: `${baseUrl}${monEspaceSectionPath("profil")}`,
+    ...(configuration ? { configuration } : {}),
   });
 
   if (!portalSession.url) {

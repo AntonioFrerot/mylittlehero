@@ -6,6 +6,10 @@ import {
   isValidCheckoutPlan,
   type CheckoutPlanType,
 } from "@/lib/stripe/plans";
+import {
+  isCommitmentSubscriptionPlan,
+  SUBSCRIPTION_COMMITMENT_MONTHS,
+} from "@/lib/stripe/subscription-commitment";
 import { getSiteUrl } from "@/lib/stripe/site-url";
 import {
   isSubscriptionPricingPath,
@@ -85,7 +89,7 @@ export async function POST(request: Request) {
   const returnPath = resolveReturnPath(planType, body.returnPath);
   const stripe = getStripe();
 
-  const checkoutSession = await stripe.checkout.sessions.create({
+  const checkoutParams: Parameters<typeof stripe.checkout.sessions.create>[0] = {
     mode: planType === "purchase" ? "payment" : "subscription",
     customer_email: session.email,
     line_items: [{ price: priceId, quantity: 1 }],
@@ -99,7 +103,18 @@ export async function POST(request: Request) {
       planType,
     },
     locale: "fr",
-  });
+  };
+
+  if (planType === "subscription" && isCommitmentSubscriptionPlan(planId)) {
+    checkoutParams.subscription_data = {
+      metadata: {
+        planId,
+        commitmentMonths: String(SUBSCRIPTION_COMMITMENT_MONTHS),
+      },
+    };
+  }
+
+  const checkoutSession = await stripe.checkout.sessions.create(checkoutParams);
 
   if (!checkoutSession.url) {
     return NextResponse.json(

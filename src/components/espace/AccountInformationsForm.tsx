@@ -306,7 +306,10 @@ export function AccountInformationsForm({
             )}
           </div>
           {hasActiveSubscription ? (
-            <ManageSubscriptionButton className="w-full !text-sm sm:w-auto" />
+            <ManageSubscriptionButton
+              className="w-full !text-sm sm:w-auto"
+              subscriptionPlanId={account.subscriptionPlanId}
+            />
           ) : (
             <Button
               href="/abonnements"
