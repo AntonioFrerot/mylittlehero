@@ -497,6 +497,30 @@ export const en = {
     noSubscription: "No active subscription at the moment.",
     subscriptionManageHint:
       "12-month commitment. If you don't cancel, your plan renews month to month after that.",
+    subscriptionPlanEyebrow: "Your plan",
+    subscriptionActiveBadge: "Active",
+    subscriptionCommittedUntil: "Committed until {date}",
+    subscriptionBillingLabel: "Billing",
+    subscriptionBillingMonthly: "Monthly",
+    subscriptionCommitmentLabel: "Commitment",
+    subscriptionCommitment12Months: "12 months",
+    subscriptionCommitmentNone: "No commitment",
+    subscriptionCommitmentEndLabel: "Commitment ends",
+    subscriptionRenewalHint:
+      "If you don't cancel, your plan renews automatically after these 12 months.",
+    subscriptionMonthlyHint: "Monthly subscription with no commitment.",
+    subscriptionCancellationPending: "Cancellation scheduled for {date}.",
+    subscriptionStatusLoading: "Loading status…",
+    cancelSubscriptionDateUnavailable:
+      "Unable to show the cancellation date right now.",
+    cancelSubscriptionModalEyebrow: "Cancellation",
+    cancelSubscriptionModalTitle: "Confirm cancellation",
+    cancelSubscriptionModalLeadCommitment:
+      "Your subscription will end on {date}. You will continue to be billed monthly until then, in line with your 12-month commitment.",
+    cancelSubscriptionModalLeadPeriodEnd:
+      "Your subscription will end on {date}, at the end of the current billing period.",
+    cancelSubscriptionModalConfirm: "Confirm cancellation",
+    cancelSubscriptionModalDismiss: "Cancel",
     cancelSubscription: "Cancel",
     cancelSubscriptionConfirm:
       "Your plan has a 12-month commitment. Cancellation takes effect at the end of that period (you'll be billed until then). If you do nothing, your plan will keep renewing month to month after that. Continue?",

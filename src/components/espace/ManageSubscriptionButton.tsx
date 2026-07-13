@@ -1,33 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { Button } from "@/components/ui/Button";
+import { CancelSubscriptionModal } from "@/components/espace/CancelSubscriptionModal";
 import { requestScheduleCancellation } from "@/lib/stripe/schedule-cancellation-client";
-import { isCommitmentSubscriptionPlan } from "@/lib/stripe/subscription-commitment";
 
 type ManageSubscriptionButtonProps = {
   className?: string;
-  subscriptionPlanId?: string;
+  disabled?: boolean;
+  cancellationPreviewDate?: string | null;
+  cancellationPreviewMode?: "commitment" | "period_end";
+  onScheduled?: () => void;
 };
 
 export function ManageSubscriptionButton({
   className = "",
-  subscriptionPlanId,
+  disabled = false,
+  cancellationPreviewDate = null,
+  cancellationPreviewMode = "period_end",
+  onScheduled,
 }: ManageSubscriptionButtonProps) {
   const { t } = useLocale();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  async function handleCancel() {
-    const isCommitment = isCommitmentSubscriptionPlan(subscriptionPlanId);
+  useEffect(() => {
+    if (disabled) setSuccess(null);
+  }, [disabled]);
 
-    if (isCommitment) {
-      const confirmed = window.confirm(t("space.cancelSubscriptionConfirm"));
-      if (!confirmed) return;
+  function handleOpenModal() {
+    if (!cancellationPreviewDate) {
+      setError(t("space.cancelSubscriptionDateUnavailable"));
+      return;
     }
+    setError(null);
+    setModalOpen(true);
+  }
 
+  async function handleConfirmCancellation() {
     setPending(true);
     setError(null);
     setSuccess(null);
@@ -57,29 +70,50 @@ export function ManageSubscriptionButton({
 
     setSuccess(message);
     setPending(false);
+    setModalOpen(false);
+    onScheduled?.();
   }
 
   return (
-    <div className="w-full sm:w-auto">
-      <Button
-        type="button"
-        variant="secondary"
-        className={className}
-        disabled={pending}
-        onClick={() => void handleCancel()}
-      >
-        {pending ? t("space.cancelling") : t("space.cancelSubscription")}
-      </Button>
-      {error ? (
-        <p className="mt-2 text-center text-xs text-red-300/90 sm:text-right" role="alert">
-          {error}
-        </p>
-      ) : null}
-      {success ? (
-        <p className="mt-2 text-center text-xs text-emerald-300/90 sm:text-right" role="status">
-          {success}
-        </p>
-      ) : null}
-    </div>
+    <>
+      <div className="subscription-profile-block__actions w-full sm:w-auto">
+        <Button
+          type="button"
+          variant="secondary"
+          className={className}
+          disabled={pending || disabled || !cancellationPreviewDate}
+          onClick={handleOpenModal}
+        >
+          {pending ? t("space.cancelling") : t("space.cancelSubscription")}
+        </Button>
+        {error ? (
+          <p
+            className="subscription-profile-block__feedback subscription-profile-block__feedback--error"
+            role="alert"
+          >
+            {error}
+          </p>
+        ) : null}
+        {success ? (
+          <p
+            className="subscription-profile-block__feedback subscription-profile-block__feedback--success"
+            role="status"
+          >
+            {success}
+          </p>
+        ) : null}
+      </div>
+
+      <CancelSubscriptionModal
+        open={modalOpen}
+        effectiveDate={cancellationPreviewDate}
+        mode={cancellationPreviewMode}
+        pending={pending}
+        onConfirm={() => void handleConfirmCancellation()}
+        onClose={() => {
+          if (!pending) setModalOpen(false);
+        }}
+      />
+    </>
   );
 }

@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { Button } from "@/components/ui/Button";
-import { ManageSubscriptionButton } from "@/components/espace/ManageSubscriptionButton";
+import { SubscriptionProfileBlock } from "@/components/espace/SubscriptionProfileBlock";
 import {
   updateAccountLocale,
   updateAccountName,
@@ -290,36 +290,12 @@ export function AccountInformationsForm({
         title={t("space.subscriptionTitle")}
         description={t("space.subscriptionDesc")}
       >
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="space-y-1">
-            {hasActiveSubscription ? (
-              <>
-                <p className="text-base font-medium text-cream">
-                  {subscriptionPlanName}
-                </p>
-                <p className="text-xs text-cream/50">
-                  {t("space.subscriptionManageHint")}
-                </p>
-              </>
-            ) : (
-              <p className="text-sm text-cream/70">{t("space.noSubscription")}</p>
-            )}
-          </div>
-          {hasActiveSubscription ? (
-            <ManageSubscriptionButton
-              className="w-full !text-sm sm:w-auto"
-              subscriptionPlanId={account.subscriptionPlanId}
-            />
-          ) : (
-            <Button
-              href="/abonnements"
-              variant="secondary"
-              className="w-full !text-sm sm:w-auto"
-            >
-              {t("purchase.viewSubscriptions")}
-            </Button>
-          )}
-        </div>
+        <SubscriptionProfileBlock
+          planName={subscriptionPlanName}
+          subscriptionPlanId={
+            hasActiveSubscription ? account.subscriptionPlanId : undefined
+          }
+        />
       </SectionCard>
     </div>
   );

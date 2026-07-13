@@ -503,6 +503,30 @@ export const fr = {
     noSubscription: "Aucun abonnement actif pour le moment.",
     subscriptionManageHint:
       "Engagement 12 mois. Sans résiliation, l'abonnement se renouvelle ensuite mois par mois.",
+    subscriptionPlanEyebrow: "Votre formule",
+    subscriptionActiveBadge: "Actif",
+    subscriptionCommittedUntil: "Engagé jusqu'au {date}",
+    subscriptionBillingLabel: "Facturation",
+    subscriptionBillingMonthly: "Mensuelle",
+    subscriptionCommitmentLabel: "Engagement",
+    subscriptionCommitment12Months: "12 mois",
+    subscriptionCommitmentNone: "Sans engagement",
+    subscriptionCommitmentEndLabel: "Fin d'engagement",
+    subscriptionRenewalHint:
+      "Sans résiliation, l'abonnement se renouvelle automatiquement après ces 12 mois.",
+    subscriptionMonthlyHint: "Abonnement mensuel sans engagement.",
+    subscriptionCancellationPending: "Résiliation prévue le {date}.",
+    subscriptionStatusLoading: "Chargement du statut…",
+    cancelSubscriptionDateUnavailable:
+      "Impossible d'afficher la date de résiliation pour le moment.",
+    cancelSubscriptionModalEyebrow: "Résiliation",
+    cancelSubscriptionModalTitle: "Confirmer la résiliation",
+    cancelSubscriptionModalLeadCommitment:
+      "Votre abonnement prendra fin le {date}. Vous continuerez d'être facturé mensuellement jusqu'à cette date, conformément à votre engagement de 12 mois.",
+    cancelSubscriptionModalLeadPeriodEnd:
+      "Votre abonnement prendra fin le {date}, à la fin de la période de facturation en cours.",
+    cancelSubscriptionModalConfirm: "Confirmer la résiliation",
+    cancelSubscriptionModalDismiss: "Annuler",
     cancelSubscription: "Résilier",
     cancelSubscriptionConfirm:
       "Votre engagement est de 12 mois. La résiliation prendra effet à la fin de cette période (vous serez facturé jusqu'à cette date). Sans action de votre part, l'abonnement continuera ensuite mois par mois. Continuer ?",
