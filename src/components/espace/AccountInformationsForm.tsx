@@ -297,7 +297,7 @@ export function AccountInformationsForm({
             variant="secondary"
             className="w-full !text-sm sm:w-auto"
           >
-            {t("abonnementsPage.viewSubscriptions")}
+            {t("purchase.viewSubscriptions")}
           </Button>
         </div>
       </SectionCard>
