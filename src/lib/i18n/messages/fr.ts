@@ -271,7 +271,7 @@ export const fr = {
       accountLabel: "Compte concerné : {email}",
       none: "Sans abonnement",
       essential: "Abonnement Essentiel (1 ticket / mois)",
-      premium: "Abonnement Premium (1 ticket / semaine)",
+      premium: "Abonnement Premium (4 tickets / mois)",
       submit: "Appliquer le profil",
       submitting: "Application…",
       successNone: "Abonnement retiré de votre compte.",
@@ -784,20 +784,20 @@ export const fr = {
     plans: {
       monthly1Film: {
         name: "Essentiel",
-        films: "1 film / mois",
+        films: "1 ticket / mois",
       },
       monthlyWeekly: {
         name: "Premium",
-        films: "1 film / semaine",
+        films: "4 tickets / mois",
         tagline: "Le rdv de la semaine",
       },
       yearly12Films: {
         name: "Essentiel",
-        films: "1 film / mois",
+        films: "1 ticket / mois",
       },
       yearly48Films: {
         name: "Premium",
-        films: "1 film / semaine",
+        films: "4 tickets / mois",
       },
     },
   },
@@ -816,7 +816,7 @@ export const fr = {
       subscriptionsLead: "Choisissez l'abonnement qui vous correspond.",
     },
     premiumYearly: {
-      filmDuration: "52 x 5 minutes de film",
+      filmDuration: "48 x 5 minutes de film",
     },
     sampleBlock: {
       eyebrow: "Échantillon",

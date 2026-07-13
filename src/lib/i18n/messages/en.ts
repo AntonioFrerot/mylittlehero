@@ -268,7 +268,7 @@ export const en = {
       accountLabel: "Account: {email}",
       none: "No subscription",
       essential: "Essential subscription (1 ticket / month)",
-      premium: "Premium subscription (1 ticket / week)",
+      premium: "Premium subscription (4 tickets / month)",
       submit: "Apply profile",
       submitting: "Applying…",
       successNone: "Subscription removed from your account.",
@@ -776,20 +776,20 @@ export const en = {
     plans: {
       monthly1Film: {
         name: "Essential",
-        films: "1 film / month",
+        films: "1 ticket / month",
       },
       monthlyWeekly: {
         name: "Premium",
-        films: "1 film / week",
+        films: "4 tickets / month",
         tagline: "The weekly ritual",
       },
       yearly12Films: {
         name: "Essential",
-        films: "1 film / month",
+        films: "1 ticket / month",
       },
       yearly48Films: {
         name: "Premium",
-        films: "1 film / week",
+        films: "4 tickets / month",
       },
     },
   },
@@ -808,7 +808,7 @@ export const en = {
       subscriptionsLead: "Choose the subscription that suits you.",
     },
     premiumYearly: {
-      filmDuration: "52 x 5-minute films",
+      filmDuration: "48 x 5-minute films",
     },
     sampleBlock: {
       eyebrow: "Sample",

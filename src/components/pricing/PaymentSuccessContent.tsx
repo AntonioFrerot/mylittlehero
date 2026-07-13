@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { RefreshTicketBalanceOnPurchase } from "@/components/tickets/RefreshTicketBalanceOnPurchase";
+import { RefreshBalancesOnPurchase } from "@/components/tickets/RefreshBalancesOnPurchase";
 import { MON_ESPACE_DEFAULT_PATH } from "@/lib/espace/sections";
 import { getServerTranslator } from "@/lib/i18n/server";
 import { resolveCreerSonFilmHref } from "@/lib/navigation/creer-film.server";
@@ -21,7 +21,7 @@ export async function PaymentSuccessContent({ kind }: PaymentSuccessContentProps
 
   return (
     <div className="relative min-h-screen bg-cinema-black pb-20 safe-top-offset md:pb-28">
-      {kind === "purchase" ? <RefreshTicketBalanceOnPurchase /> : null}
+      {kind === "purchase" ? <RefreshBalancesOnPurchase /> : null}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-cinema-night to-transparent"
         aria-hidden

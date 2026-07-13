@@ -407,8 +407,10 @@ export async function revokeAdminTickets(input: {
 
 export async function tryGrantSubscriptionPeriodTicket(
   userEmail: string,
-  referenceId: string
+  referenceId: string,
+  ticketCount: number = 1
 ): Promise<boolean> {
+  if (!Number.isFinite(ticketCount) || ticketCount <= 0) return false;
   const email = normalizeEmail(userEmail);
   if (await hasLedgerReference(email, referenceId)) {
     return false;
@@ -416,7 +418,7 @@ export async function tryGrantSubscriptionPeriodTicket(
 
   await insertLedgerEntry({
     userEmail: email,
-    delta: 1,
+    delta: ticketCount,
     kind: "subscription_grant",
     referenceId,
   });

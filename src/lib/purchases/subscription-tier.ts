@@ -1,12 +1,12 @@
 import type { PricingPlanId } from "@/lib/i18n/pricing-catalog";
 
 export type SubscriptionTier = "standard" | "unlimited";
-export type SubscriptionGrantPeriod = "month" | "week";
+export type SubscriptionGrantPeriod = "month";
 
 /** Crédits abonnement sur une année glissante (depuis la date d'achat). */
 export const ANNUAL_SUBSCRIPTION_GRANTS: Record<SubscriptionTier, number> = {
   standard: 12,
-  unlimited: 52,
+  unlimited: 12,
 };
 
 export function getAnnualGrantCapForTier(tier: SubscriptionTier): number {
@@ -34,5 +34,16 @@ export function isPricingPlanId(value: string): value is PricingPlanId {
 export function getGrantPeriodForTier(
   tier: SubscriptionTier
 ): SubscriptionGrantPeriod {
-  return tier === "standard" ? "month" : "week";
+  void tier;
+  return "month";
+}
+
+export function getTicketGrantsForSubscriptionPeriod(input: {
+  tier: SubscriptionTier;
+  periodIndex: number;
+}): number {
+  void input.periodIndex;
+  if (input.tier === "standard") return 1;
+
+  return 4;
 }

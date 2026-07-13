@@ -19,6 +19,10 @@ const PLAN_LABELS = {
   STRIPE_PRICE_FILM_5MIN: "Film 5 min (59,99 € attendu sur le site)",
   STRIPE_PRICE_FILM_10MIN: "Film 10 min (99,99 € attendu sur le site)",
   STRIPE_PRICE_PACK_3FILMS: "Pack 3 films (199,99 € attendu sur le site)",
+  STRIPE_PRICE_TICKET_1: "1 ticket (59,99 € sur /abonnements)",
+  STRIPE_PRICE_TICKET_3: "3 tickets (149,99 € sur /abonnements)",
+  STRIPE_PRICE_TICKET_10: "10 tickets (399,99 € sur /abonnements)",
+  STRIPE_PRICE_JETON_1: "1 jeton échantillon 30 s (7,99 € sur /abonnements)",
 };
 
 function loadEnvFile(filePath) {

@@ -25,6 +25,7 @@ function isCheckoutPlanId(
       "ticket-1",
       "ticket-3",
       "ticket-10",
+      "jeton-1",
     ].includes(value);
   }
   return [

@@ -17,6 +17,7 @@ import {
 import {
   getAnnualGrantCapForTier,
   getGrantPeriodForTier,
+  getTicketGrantsForSubscriptionPeriod,
   getSubscriptionTierFromPlanId,
 } from "@/lib/purchases/subscription-tier";
 import { tryGrantSubscriptionPeriodTicket } from "@/lib/purchases/tickets";
@@ -81,6 +82,10 @@ export async function syncSubscriptionPeriodicGrants(
       continue;
     }
 
-    await tryGrantSubscriptionPeriodTicket(userEmail, referenceId);
+    const ticketCount = getTicketGrantsForSubscriptionPeriod({
+      tier,
+      periodIndex: index + 1,
+    });
+    await tryGrantSubscriptionPeriodTicket(userEmail, referenceId, ticketCount);
   }
 }
