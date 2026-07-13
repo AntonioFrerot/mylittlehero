@@ -1425,6 +1425,18 @@ select:disabled,
   padding-top: 0.875rem;
 }
 
+@media (max-width: 767px) {
+  .abonnements-catalog .abonnements-catalog__subscriptions-grid.tarifs-subscriptions__grid {
+    margin-top: 1rem;
+    padding-top: 0.4375rem;
+  }
+
+  .abonnements-catalog .abonnements-catalog__tickets-grid.tarifs-tickets__grid {
+    margin-top: 1rem;
+    padding-top: 0.4375rem;
+  }
+}
+
 .tarifs-subscriptions__grid .tarifs-plan-card {
   height: 100%;
 }

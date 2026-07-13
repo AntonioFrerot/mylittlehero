@@ -10,6 +10,7 @@ import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useLocale } from "@/components/LocaleProvider";
+import { Button } from "@/components/ui/Button";
 import {
   updateAccountLocale,
   updateAccountName,
@@ -19,6 +20,7 @@ import {
 import type { AccountDetails } from "@/lib/auth/users-store";
 import { LOCALES, getLocaleLabel, parseLocale, type LocaleCode } from "@/lib/i18n/locales";
 import { createTranslator } from "@/lib/i18n/translator";
+import { findPricingPlanById } from "@/lib/pricing";
 
 const initialState: AccountFormState = {};
 
@@ -79,6 +81,10 @@ export function AccountInformationsForm({
   const { locale, t } = useLocale();
   const router = useRouter();
   const [selectedLocale, setSelectedLocale] = useState<LocaleCode>(account.locale);
+  const subscriptionPlanName = useMemo(() => {
+    if (!account.subscriptionPlanId?.trim()) return null;
+    return findPricingPlanById(account.subscriptionPlanId, locale)?.name ?? null;
+  }, [account.subscriptionPlanId, locale]);
   const saveLanguageT = useMemo(
     () => createTranslator(selectedLocale),
     [selectedLocale]
@@ -276,6 +282,24 @@ export function AccountInformationsForm({
               : t("space.updatePassword")}
           </button>
         </form>
+      </SectionCard>
+
+      <SectionCard
+        title={t("space.subscriptionTitle")}
+        description={t("space.subscriptionDesc")}
+      >
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-cream/70">
+            {subscriptionPlanName ?? t("space.noSubscription")}
+          </p>
+          <Button
+            href="/abonnements"
+            variant="secondary"
+            className="w-full !text-sm sm:w-auto"
+          >
+            {t("abonnementsPage.viewSubscriptions")}
+          </Button>
+        </div>
       </SectionCard>
     </div>
   );
