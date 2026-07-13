@@ -13,6 +13,32 @@ import { getStripe, isStripeConfigured } from "@/lib/stripe/client";
 
 export const runtime = "nodejs";
 
+async function resolveCustomerEmail(
+  stripe: ReturnType<typeof getStripe>,
+  customerId: string
+): Promise<string | null> {
+  const customer = await stripe.customers.retrieve(customerId);
+  if (customer.deleted) return null;
+  return customer.email?.trim() || null;
+}
+
+async function handleSubscriptionEnded(
+  stripe: ReturnType<typeof getStripe>,
+  subscription: Stripe.Subscription
+) {
+  const customerId =
+    typeof subscription.customer === "string"
+      ? subscription.customer
+      : subscription.customer?.id;
+
+  if (!customerId) return;
+
+  const userEmail = await resolveCustomerEmail(stripe, customerId);
+  if (!userEmail) return;
+
+  await updateUserSubscription(userEmail, null);
+}
+
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const sessionId = session.id;
   if (!sessionId) return;
@@ -92,6 +118,15 @@ export async function POST(request: Request) {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     await handleCheckoutCompleted(session);
+  }
+
+  if (
+    event.type === "customer.subscription.deleted" ||
+    (event.type === "customer.subscription.updated" &&
+      (event.data.object as Stripe.Subscription).status === "canceled")
+  ) {
+    const subscription = event.data.object as Stripe.Subscription;
+    await handleSubscriptionEnded(stripe, subscription);
   }
 
   return NextResponse.json({ received: true });

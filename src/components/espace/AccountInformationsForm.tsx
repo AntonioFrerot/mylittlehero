@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { Button } from "@/components/ui/Button";
+import { ManageSubscriptionButton } from "@/components/espace/ManageSubscriptionButton";
 import {
   updateAccountLocale,
   updateAccountName,
@@ -81,10 +82,11 @@ export function AccountInformationsForm({
   const { locale, t } = useLocale();
   const router = useRouter();
   const [selectedLocale, setSelectedLocale] = useState<LocaleCode>(account.locale);
+  const hasActiveSubscription = Boolean(account.subscriptionPlanId?.trim());
   const subscriptionPlanName = useMemo(() => {
-    if (!account.subscriptionPlanId?.trim()) return null;
-    return findPricingPlanById(account.subscriptionPlanId, locale)?.name ?? null;
-  }, [account.subscriptionPlanId, locale]);
+    if (!hasActiveSubscription) return null;
+    return findPricingPlanById(account.subscriptionPlanId!, locale)?.name ?? null;
+  }, [account.subscriptionPlanId, hasActiveSubscription, locale]);
   const saveLanguageT = useMemo(
     () => createTranslator(selectedLocale),
     [selectedLocale]
@@ -288,17 +290,32 @@ export function AccountInformationsForm({
         title={t("space.subscriptionTitle")}
         description={t("space.subscriptionDesc")}
       >
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-cream/70">
-            {subscriptionPlanName ?? t("space.noSubscription")}
-          </p>
-          <Button
-            href="/abonnements"
-            variant="secondary"
-            className="w-full !text-sm sm:w-auto"
-          >
-            {t("purchase.viewSubscriptions")}
-          </Button>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-1">
+            {hasActiveSubscription ? (
+              <>
+                <p className="text-base font-medium text-cream">
+                  {subscriptionPlanName}
+                </p>
+                <p className="text-xs text-cream/50">
+                  {t("space.subscriptionManageHint")}
+                </p>
+              </>
+            ) : (
+              <p className="text-sm text-cream/70">{t("space.noSubscription")}</p>
+            )}
+          </div>
+          {hasActiveSubscription ? (
+            <ManageSubscriptionButton className="w-full !text-sm sm:w-auto" />
+          ) : (
+            <Button
+              href="/abonnements"
+              variant="secondary"
+              className="w-full !text-sm sm:w-auto"
+            >
+              {t("purchase.viewSubscriptions")}
+            </Button>
+          )}
         </div>
       </SectionCard>
     </div>
