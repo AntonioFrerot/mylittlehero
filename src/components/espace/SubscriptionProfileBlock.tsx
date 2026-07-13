@@ -102,27 +102,6 @@ export function SubscriptionProfileBlock({
           </span>
         </div>
 
-        <dl className="subscription-profile-block__facts">
-          <div className="subscription-profile-block__fact">
-            <dt>{t("space.subscriptionBillingLabel")}</dt>
-            <dd>{t("space.subscriptionBillingMonthly")}</dd>
-          </div>
-          <div className="subscription-profile-block__fact">
-            <dt>{t("space.subscriptionCommitmentLabel")}</dt>
-            <dd>
-              {hasCommitment
-                ? t("space.subscriptionCommitment12Months")
-                : t("space.subscriptionCommitmentNone")}
-            </dd>
-          </div>
-          {hasCommitment && status?.commitmentEndDate ? (
-            <div className="subscription-profile-block__fact subscription-profile-block__fact--wide">
-              <dt>{t("space.subscriptionCommitmentEndLabel")}</dt>
-              <dd>{status.commitmentEndDate}</dd>
-            </div>
-          ) : null}
-        </dl>
-
         {!loading && status?.cancellationScheduled && status.cancellationDate ? (
           <p className="subscription-profile-block__notice" role="status">
             {t("space.subscriptionCancellationPending", {

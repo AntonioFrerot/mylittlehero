@@ -532,7 +532,7 @@ export const fr = {
     revertSubscriptionModalEyebrow: "Abonnement",
     revertSubscriptionModalTitle: "Garder mon abonnement",
     revertSubscriptionModalLead:
-      "Votre abonnement continuera à se renouveler mois par mois, sans date de fin, jusqu'à ce que vous cliquiez de nouveau sur « Résilier ».",
+      "Votre abonnement continuera à se renouveler chaque mois, sans date de fin, jusqu'à ce que vous cliquiez de nouveau sur « Résilier ».",
     revertSubscriptionModalConfirm: "Confirmer",
     revertSubscriptionModalDismiss: "Annuler",
     revertSubscriptionSuccess:
