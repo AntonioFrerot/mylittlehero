@@ -1,4 +1,6 @@
-export const TARIFS_PRICING_PATHS = ["/tarifs", "/abonnements"] as const;
+export const ABONNEMENTS_PRICING_PATH = "/abonnements" as const;
+
+export const TARIFS_PRICING_PATHS = ["/tarifs", ABONNEMENTS_PRICING_PATH] as const;
 
 export type TarifsPricingPath = (typeof TARIFS_PRICING_PATHS)[number];
 
@@ -26,20 +28,20 @@ export function isSubscriptionPricingPath(
 }
 
 export function resolveTarifsPricingPath(pathname: string): TarifsPricingPath {
-  if (matchesPricingPath(pathname, "/abonnements")) {
-    return "/abonnements";
-  }
   if (matchesPricingPath(pathname, "/tarifs")) {
     return "/tarifs";
   }
-  return "/tarifs";
+  if (matchesPricingPath(pathname, ABONNEMENTS_PRICING_PATH)) {
+    return ABONNEMENTS_PRICING_PATH;
+  }
+  return ABONNEMENTS_PRICING_PATH;
 }
 
 export function resolveSubscriptionPricingPath(
   pathname: string
 ): SubscriptionPricingPath {
-  if (matchesPricingPath(pathname, "/abonnements")) {
-    return "/abonnements";
+  if (matchesPricingPath(pathname, ABONNEMENTS_PRICING_PATH)) {
+    return ABONNEMENTS_PRICING_PATH;
   }
   if (matchesPricingPath(pathname, "/tarifs")) {
     return "/tarifs";
@@ -48,8 +50,8 @@ export function resolveSubscriptionPricingPath(
 }
 
 export function resolvePurchasePricingPath(pathname: string): PurchasePricingPath {
-  if (matchesPricingPath(pathname, "/abonnements")) {
-    return "/abonnements";
+  if (matchesPricingPath(pathname, ABONNEMENTS_PRICING_PATH)) {
+    return ABONNEMENTS_PRICING_PATH;
   }
   if (matchesPricingPath(pathname, "/tarifs")) {
     return "/tarifs";

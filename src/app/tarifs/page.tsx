@@ -13,7 +13,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function TarifsPage() {
   return (
-    <>      <main>
+    <>
+      <main>
         <TarifsPageContent />
       </main>
     </>

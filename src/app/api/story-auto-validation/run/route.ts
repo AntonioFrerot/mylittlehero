@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/get-session";
-import { trySendValidationReminderForFilm } from "@/lib/notifications/story-validation-reminder";
+import { tryAutoValidateStoryForFilm } from "@/lib/story-generation/story-auto-validation";
 
-type SendReminderBody = {
+type RunAutoValidationBody = {
   filmId?: string;
 };
 
@@ -12,9 +12,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 
-  let body: SendReminderBody;
+  let body: RunAutoValidationBody;
   try {
-    body = (await request.json()) as SendReminderBody;
+    body = (await request.json()) as RunAutoValidationBody;
   } catch {
     return NextResponse.json({ error: "Corps JSON invalide" }, { status: 400 });
   }
@@ -24,6 +24,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "filmId requis" }, { status: 400 });
   }
 
-  const sent = await trySendValidationReminderForFilm(session.email, filmId);
-  return NextResponse.json({ ok: true, sent });
+  const validated = await tryAutoValidateStoryForFilm(session.email, filmId);
+  return NextResponse.json({ ok: true, validated });
 }

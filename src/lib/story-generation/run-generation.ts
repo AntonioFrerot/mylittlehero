@@ -9,6 +9,10 @@ import { generateMockSampleTitleAndResume, generateMockTitleAndResume } from "./
 import { getStoryGenerationMode, isMockStoryGenerationEnabled } from "./mock-mode";
 import { patchStoryManifest, readStoryManifest } from "./manifest";
 import { markStoryValidated } from "./mark-story-validated";
+import {
+  isAutoValidationDue,
+  tryAutoValidateStoryForFilm,
+} from "./story-auto-validation";
 import { persistTitleAndResume } from "./persist-story";
 import { provisionStoryWorkspace } from "./provision";
 
@@ -81,6 +85,12 @@ export async function runStoryGeneration(
       if (validatedFilm) {
         await markStoryValidated(email, validatedFilm);
       }
+    } else if (
+      completedManifest &&
+      !completedManifest.storyValidatedAt &&
+      isAutoValidationDue(completedManifest)
+    ) {
+      await tryAutoValidateStoryForFilm(email, filmId);
     }
 
     try {

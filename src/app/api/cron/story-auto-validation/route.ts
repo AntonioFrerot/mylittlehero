@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { processStoryValidationReminders } from "@/lib/notifications/story-validation-reminder";
+import { processStoryAutoValidations } from "@/lib/story-generation/story-auto-validation";
 
 function isAuthorizedCronRequest(request: Request): boolean {
   const secret = process.env.CRON_SECRET?.trim();
@@ -14,6 +14,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 
-  const sent = await processStoryValidationReminders();
-  return NextResponse.json({ ok: true, sent });
+  const validated = await processStoryAutoValidations();
+  return NextResponse.json({ ok: true, validated });
 }

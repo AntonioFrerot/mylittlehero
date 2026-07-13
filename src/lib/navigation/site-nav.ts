@@ -1,4 +1,5 @@
 import type { TranslationKey } from "@/lib/i18n/translator";
+import { ABONNEMENTS_PRICING_PATH } from "@/lib/navigation/subscription-pricing";
 
 export type SiteNavLink = {
   href: string;
@@ -10,7 +11,7 @@ export const SITE_NAV_LINKS: SiteNavLink[] = [
   { href: "/#themes", key: "nav.themes" },
   { href: "/catalogue", key: "nav.catalog" },
   { href: "/contact", key: "nav.contact" },
-  { href: "/achat", key: "nav.purchase" },
+  { href: ABONNEMENTS_PRICING_PATH, key: "nav.purchase" },
 ];
 
 export function isSiteNavLinkActive(

@@ -18,7 +18,8 @@ export default async function TarifsSuccesPage({ searchParams }: PageProps) {
   const { kind } = await searchParams;
 
   return (
-    <>      <main>
+    <>
+      <main>
         <PaymentSuccessContent kind={kind === "purchase" ? "purchase" : "subscription"} />
       </main>
     </>

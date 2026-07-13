@@ -3,10 +3,10 @@
 import dynamic from "next/dynamic";
 import { useAuthUser } from "@/hooks/use-auth-user";
 
-const StoryValidationReminderPoll = dynamic(
+const StoryAutoValidationPoll = dynamic(
   () =>
-    import("@/components/notifications/StoryValidationReminderPoll").then(
-      (module) => module.StoryValidationReminderPoll
+    import("@/components/notifications/StoryAutoValidationPoll").then(
+      (module) => module.StoryAutoValidationPoll
     ),
   { ssr: false }
 );
@@ -19,10 +19,10 @@ const HeaderNotificationBell = dynamic(
   { ssr: false }
 );
 
-export function StoryValidationReminderPollLazy() {
+export function StoryAutoValidationPollLazy() {
   const user = useAuthUser();
   if (!user) return null;
-  return <StoryValidationReminderPoll />;
+  return <StoryAutoValidationPoll />;
 }
 
 export function HeaderNotificationBellLazy({

@@ -804,6 +804,12 @@ select:disabled,
   filter: saturate(0.75) !important;
 }
 
+@media (max-width: 767px) {
+  .abonnements-page.safe-top-offset {
+    padding-top: max(3.3275rem, calc(2.7225rem + env(safe-area-inset-top, 0px)));
+  }
+}
+
 .abonnements-catalog .tarifs-subscriptions__toolbar {
   gap: 1.5rem;
 }

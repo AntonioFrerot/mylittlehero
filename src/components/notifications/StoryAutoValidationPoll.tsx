@@ -1,30 +1,36 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuthUser } from "@/hooks/use-auth-user";
-import { requestNotificationsRefresh } from "@/lib/notifications/refresh";
 
-type PendingValidationReminder = {
+type PendingAutoValidation = {
   filmId: string;
   timerStartedAt: string;
   dueAt: string;
   isDue: boolean;
 };
 
-type PendingValidationRemindersResponse = {
-  reminders: PendingValidationReminder[];
+type PendingAutoValidationsResponse = {
+  validations: PendingAutoValidation[];
 };
 
-async function sendValidationReminder(filmId: string): Promise<void> {
+async function runAutoValidation(
+  filmId: string,
+  onValidated: () => void
+): Promise<void> {
   try {
-    const response = await fetch("/api/story-validation-reminder/send", {
+    const response = await fetch("/api/story-auto-validation/run", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ filmId }),
     });
     if (!response.ok) return;
-    requestNotificationsRefresh();
+
+    const data = (await response.json()) as { validated?: boolean };
+    if (data.validated) {
+      onValidated();
+    }
   } catch {
     // silencieux
   }
@@ -32,9 +38,10 @@ async function sendValidationReminder(filmId: string): Promise<void> {
 
 const PATHNAME_SYNC_DEBOUNCE_MS = 5000;
 
-export function StoryValidationReminderPoll() {
+export function StoryAutoValidationPoll() {
   const user = useAuthUser();
   const pathname = usePathname();
+  const router = useRouter();
   const timeoutIdsRef = useRef<number[]>([]);
   const pathnameSyncReadyRef = useRef(false);
 
@@ -45,47 +52,51 @@ export function StoryValidationReminderPoll() {
     timeoutIdsRef.current = [];
   }, []);
 
-  const scheduleReminders = useCallback(
-    (reminders: PendingValidationReminder[]) => {
+  const handleValidated = useCallback(() => {
+    router.refresh();
+  }, [router]);
+
+  const scheduleAutoValidations = useCallback(
+    (validations: PendingAutoValidation[]) => {
       clearScheduledTimeouts();
 
-      for (const reminder of reminders) {
-        if (reminder.isDue) {
-          void sendValidationReminder(reminder.filmId);
+      for (const validation of validations) {
+        if (validation.isDue) {
+          void runAutoValidation(validation.filmId, handleValidated);
           continue;
         }
 
-        const dueAtMs = new Date(reminder.dueAt).getTime();
+        const dueAtMs = new Date(validation.dueAt).getTime();
         const delayMs = dueAtMs - Date.now();
         if (delayMs <= 0) {
-          void sendValidationReminder(reminder.filmId);
+          void runAutoValidation(validation.filmId, handleValidated);
           continue;
         }
 
         const timeoutId = window.setTimeout(() => {
-          void sendValidationReminder(reminder.filmId);
+          void runAutoValidation(validation.filmId, handleValidated);
         }, delayMs);
         timeoutIdsRef.current.push(timeoutId);
       }
     },
-    [clearScheduledTimeouts]
+    [clearScheduledTimeouts, handleValidated]
   );
 
-  const syncReminders = useCallback(async () => {
+  const syncAutoValidations = useCallback(async () => {
     if (!user) return;
 
     try {
-      const response = await fetch("/api/films/pending-validation-reminders", {
+      const response = await fetch("/api/films/pending-auto-validations", {
         cache: "no-store",
       });
       if (!response.ok) return;
 
-      const data = (await response.json()) as PendingValidationRemindersResponse;
-      scheduleReminders(data.reminders ?? []);
+      const data = (await response.json()) as PendingAutoValidationsResponse;
+      scheduleAutoValidations(data.validations ?? []);
     } catch {
       // silencieux
     }
-  }, [scheduleReminders, user]);
+  }, [scheduleAutoValidations, user]);
 
   useEffect(() => {
     if (!user) {
@@ -95,12 +106,12 @@ export function StoryValidationReminderPoll() {
     }
 
     pathnameSyncReadyRef.current = false;
-    void syncReminders();
+    void syncAutoValidations();
 
     return () => {
       clearScheduledTimeouts();
     };
-  }, [clearScheduledTimeouts, syncReminders, user]);
+  }, [clearScheduledTimeouts, syncAutoValidations, user]);
 
   useEffect(() => {
     if (!user) return;
@@ -111,11 +122,11 @@ export function StoryValidationReminderPoll() {
     }
 
     const timeoutId = window.setTimeout(() => {
-      void syncReminders();
+      void syncAutoValidations();
     }, PATHNAME_SYNC_DEBOUNCE_MS);
 
     return () => window.clearTimeout(timeoutId);
-  }, [pathname, syncReminders, user]);
+  }, [pathname, syncAutoValidations, user]);
 
   return null;
 }
