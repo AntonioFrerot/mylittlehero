@@ -18,6 +18,15 @@ export async function findActiveStripeSubscription(
   return subscriptions.data[0] ?? null;
 }
 
+export function getSubscriptionCurrentPeriodEnd(
+  subscription: Stripe.Subscription
+): number | null {
+  const items = subscription.items?.data ?? [];
+  if (items.length === 0) return null;
+
+  return Math.max(...items.map((item) => item.current_period_end));
+}
+
 export function resolveCommitmentEndUnix(
   subscription: Stripe.Subscription,
   planId: string | null | undefined

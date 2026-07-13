@@ -5,6 +5,7 @@ import { findStripeCustomerIdByEmail } from "@/lib/stripe/customer";
 import { getStripe, isStripeConfigured } from "@/lib/stripe/client";
 import {
   findActiveStripeSubscription,
+  getSubscriptionCurrentPeriodEnd,
   isWithinCommitmentPeriod,
   resolveCommitmentEndUnix,
 } from "@/lib/stripe/subscriptions";
@@ -87,10 +88,12 @@ export async function POST() {
     }
 
     if (isWithinCommitmentPeriod(commitmentEndUnix)) {
+      const currentPeriodEnd = getSubscriptionCurrentPeriodEnd(subscription);
       const alreadyScheduled =
         subscription.cancel_at === commitmentEndUnix ||
         (subscription.cancel_at_period_end &&
-          subscription.current_period_end >= commitmentEndUnix);
+          currentPeriodEnd != null &&
+          currentPeriodEnd >= commitmentEndUnix);
 
       if (!alreadyScheduled) {
         await stripe.subscriptions.update(subscription.id, {
@@ -113,13 +116,18 @@ export async function POST() {
   }
 
   if (subscription.cancel_at_period_end) {
+    const currentPeriodEnd = getSubscriptionCurrentPeriodEnd(subscription);
+    if (currentPeriodEnd == null) {
+      return NextResponse.json(
+        { error: "Impossible de déterminer la fin de période." },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
       mode: "period_end",
-      effectiveDate: formatCommitmentEndDate(
-        subscription.current_period_end,
-        localeTag
-      ),
-      effectiveUnix: subscription.current_period_end,
+      effectiveDate: formatCommitmentEndDate(currentPeriodEnd, localeTag),
+      effectiveUnix: currentPeriodEnd,
       alreadyScheduled: true,
     });
   }
@@ -129,13 +137,18 @@ export async function POST() {
     cancel_at: null,
   });
 
+  const updatedPeriodEnd = getSubscriptionCurrentPeriodEnd(updated);
+  if (updatedPeriodEnd == null) {
+    return NextResponse.json(
+      { error: "Impossible de déterminer la fin de période." },
+      { status: 500 }
+    );
+  }
+
   return NextResponse.json({
     mode: "period_end",
-    effectiveDate: formatCommitmentEndDate(
-      updated.current_period_end,
-      localeTag
-    ),
-    effectiveUnix: updated.current_period_end,
+    effectiveDate: formatCommitmentEndDate(updatedPeriodEnd, localeTag),
+    effectiveUnix: updatedPeriodEnd,
     alreadyScheduled: false,
   });
 }

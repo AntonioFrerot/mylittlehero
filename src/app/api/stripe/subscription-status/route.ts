@@ -5,6 +5,7 @@ import { findStripeCustomerIdByEmail } from "@/lib/stripe/customer";
 import { getStripe, isStripeConfigured } from "@/lib/stripe/client";
 import {
   findActiveStripeSubscription,
+  getSubscriptionCurrentPeriodEnd,
   isWithinCommitmentPeriod,
   resolveCommitmentEndUnix,
 } from "@/lib/stripe/subscriptions";
@@ -72,27 +73,26 @@ export async function GET() {
   let cancellationPreviewDate: string | null = null;
 
   if (subscription) {
+    const currentPeriodEnd = getSubscriptionCurrentPeriodEnd(subscription);
+
     if (subscription.cancel_at) {
       cancellationScheduled = true;
       cancellationDate = formatCommitmentEndDate(
         subscription.cancel_at,
         localeTag
       );
-    } else if (subscription.cancel_at_period_end) {
+    } else if (subscription.cancel_at_period_end && currentPeriodEnd != null) {
       cancellationScheduled = true;
-      cancellationDate = formatCommitmentEndDate(
-        subscription.current_period_end,
-        localeTag
-      );
+      cancellationDate = formatCommitmentEndDate(currentPeriodEnd, localeTag);
     }
 
     if (hasCommitment && commitmentEndUnix && commitmentActive) {
       cancellationPreviewMode = "commitment";
       cancellationPreviewDate = formatCommitmentEndDate(commitmentEndUnix, localeTag);
-    } else {
+    } else if (currentPeriodEnd != null) {
       cancellationPreviewMode = "period_end";
       cancellationPreviewDate = formatCommitmentEndDate(
-        subscription.current_period_end,
+        currentPeriodEnd,
         localeTag
       );
     }
