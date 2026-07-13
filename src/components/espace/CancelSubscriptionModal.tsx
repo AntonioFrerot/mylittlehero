@@ -9,6 +9,7 @@ type CancelSubscriptionModalProps = {
   effectiveDate: string | null;
   mode: "commitment" | "period_end";
   pending?: boolean;
+  error?: string | null;
   onConfirm: () => void;
   onClose: () => void;
 };
@@ -18,6 +19,7 @@ export function CancelSubscriptionModal({
   effectiveDate,
   mode,
   pending = false,
+  error = null,
   onConfirm,
   onClose,
 }: CancelSubscriptionModalProps) {
@@ -113,6 +115,15 @@ export function CancelSubscriptionModal({
           </h2>
           <p className="cancel-subscription-modal__date">{effectiveDate}</p>
           <p className="cancel-subscription-modal__lead">{lead}</p>
+
+          {error ? (
+            <p
+              className="subscription-profile-block__feedback subscription-profile-block__feedback--error cancel-subscription-modal__error"
+              role="alert"
+            >
+              {error}
+            </p>
+          ) : null}
 
           <div className="cancel-subscription-modal__actions">
             <Button

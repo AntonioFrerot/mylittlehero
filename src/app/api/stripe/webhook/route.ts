@@ -68,7 +68,12 @@ async function handleSubscriptionUpdated(
 
   await stripe.subscriptions.update(subscription.id, {
     cancel_at_period_end: false,
+    proration_behavior: "none",
+  });
+
+  await stripe.subscriptions.update(subscription.id, {
     cancel_at: commitmentEndUnix,
+    proration_behavior: "none",
     metadata: {
       ...subscription.metadata,
       commitmentEndUnix: String(commitmentEndUnix),

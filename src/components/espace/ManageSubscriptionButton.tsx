@@ -39,7 +39,6 @@ export function ManageSubscriptionButton({
     setSuccess(null);
     setCancelModalOpen(true);
   }
-
   function handleOpenRevertModal() {
     setError(null);
     setSuccess(null);
@@ -51,33 +50,35 @@ export function ManageSubscriptionButton({
     setError(null);
     setSuccess(null);
 
-    const result = await requestScheduleCancellation();
+    try {
+      const result = await requestScheduleCancellation();
 
-    if (!result.ok) {
-      setError(
-        result.error === "checkout.error" ? t("checkout.error") : result.error
-      );
-      setPending(false);
-      return;
-    }
+      if (!result.ok) {
+        setError(
+          result.error === "checkout.error" ? t("checkout.error") : result.error
+        );
+        return;
+      }
 
-    const message =
-      result.alreadyScheduled && result.mode === "commitment"
-        ? t("space.cancelSubscriptionAlreadyScheduled", {
-            date: result.effectiveDate,
-          })
-        : result.mode === "commitment"
-          ? t("space.cancelSubscriptionScheduled", {
+      const message =
+        result.alreadyScheduled && result.mode === "commitment"
+          ? t("space.cancelSubscriptionAlreadyScheduled", {
               date: result.effectiveDate,
             })
-          : t("space.cancelSubscriptionPeriodEnd", {
-              date: result.effectiveDate,
-            });
+          : result.mode === "commitment"
+            ? t("space.cancelSubscriptionScheduled", {
+                date: result.effectiveDate,
+              })
+            : t("space.cancelSubscriptionPeriodEnd", {
+                date: result.effectiveDate,
+              });
 
-    setSuccess(message);
-    setPending(false);
-    setCancelModalOpen(false);
-    onScheduled?.();
+      setSuccess(message);
+      setCancelModalOpen(false);
+      onScheduled?.();
+    } finally {
+      setPending(false);
+    }
   }
 
   async function handleConfirmRevert() {
@@ -85,20 +86,22 @@ export function ManageSubscriptionButton({
     setError(null);
     setSuccess(null);
 
-    const result = await requestRevertCancellation();
+    try {
+      const result = await requestRevertCancellation();
 
-    if (!result.ok) {
-      setError(
-        result.error === "checkout.error" ? t("checkout.error") : result.error
-      );
+      if (!result.ok) {
+        setError(
+          result.error === "checkout.error" ? t("checkout.error") : result.error
+        );
+        return;
+      }
+
+      setSuccess(t("space.revertSubscriptionSuccess"));
+      setRevertModalOpen(false);
+      onScheduled?.();
+    } finally {
       setPending(false);
-      return;
     }
-
-    setSuccess(t("space.revertSubscriptionSuccess"));
-    setPending(false);
-    setRevertModalOpen(false);
-    onScheduled?.();
   }
 
   return (
@@ -125,7 +128,7 @@ export function ManageSubscriptionButton({
             {pending ? t("space.cancelling") : t("space.cancelSubscription")}
           </Button>
         )}
-        {error ? (
+        {error && !cancelModalOpen && !revertModalOpen ? (
           <p
             className="subscription-profile-block__feedback subscription-profile-block__feedback--error"
             role="alert"
@@ -148,9 +151,13 @@ export function ManageSubscriptionButton({
         effectiveDate={cancellationPreviewDate}
         mode={cancellationPreviewMode}
         pending={pending}
+        error={cancelModalOpen ? error : null}
         onConfirm={() => void handleConfirmCancellation()}
         onClose={() => {
-          if (!pending) setCancelModalOpen(false);
+          if (!pending) {
+            setCancelModalOpen(false);
+            setError(null);
+          }
         }}
       />
 

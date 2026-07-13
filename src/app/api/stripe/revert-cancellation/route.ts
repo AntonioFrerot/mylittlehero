@@ -19,6 +19,7 @@ export async function POST() {
     );
   }
 
+  try {
   const session = await getSession();
   if (!session) {
     return NextResponse.json(
@@ -67,10 +68,28 @@ export async function POST() {
   }
 
   const stripe = getStripe();
-  await stripe.subscriptions.update(subscription.id, {
-    cancel_at_period_end: false,
-    cancel_at: null,
-  });
+
+  if (subscription.cancel_at) {
+    await stripe.subscriptions.update(subscription.id, {
+      cancel_at: null,
+      proration_behavior: "none",
+    });
+  }
+
+  if (subscription.cancel_at_period_end) {
+    await stripe.subscriptions.update(subscription.id, {
+      cancel_at_period_end: false,
+      proration_behavior: "none",
+    });
+  }
 
   return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("[stripe/revert-cancellation]", error);
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Impossible de reprendre l'abonnement.";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

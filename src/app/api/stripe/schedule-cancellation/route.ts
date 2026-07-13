@@ -18,6 +18,19 @@ import { getUserLocale } from "@/lib/auth/users-store";
 
 export const runtime = "nodejs";
 
+function stripeErrorMessage(error: unknown): string {
+  if (
+    error &&
+    typeof error === "object" &&
+    "message" in error &&
+    typeof error.message === "string"
+  ) {
+    return error.message;
+  }
+
+  return "Impossible de programmer la résiliation. Réessayez plus tard.";
+}
+
 export async function POST() {
   if (!isStripeConfigured()) {
     return NextResponse.json(
@@ -29,6 +42,7 @@ export async function POST() {
     );
   }
 
+  try {
   const session = await getSession();
   if (!session) {
     return NextResponse.json(
@@ -96,9 +110,16 @@ export async function POST() {
           currentPeriodEnd >= commitmentEndUnix);
 
       if (!alreadyScheduled) {
+        if (subscription.cancel_at_period_end) {
+          await stripe.subscriptions.update(subscription.id, {
+            cancel_at_period_end: false,
+            proration_behavior: "none",
+          });
+        }
+
         await stripe.subscriptions.update(subscription.id, {
-          cancel_at_period_end: false,
           cancel_at: commitmentEndUnix,
+          proration_behavior: "none",
           metadata: {
             ...subscription.metadata,
             commitmentEndUnix: String(commitmentEndUnix),
@@ -132,9 +153,16 @@ export async function POST() {
     });
   }
 
+  if (subscription.cancel_at) {
+    await stripe.subscriptions.update(subscription.id, {
+      cancel_at: null,
+      proration_behavior: "none",
+    });
+  }
+
   const updated = await stripe.subscriptions.update(subscription.id, {
     cancel_at_period_end: true,
-    cancel_at: null,
+    proration_behavior: "none",
   });
 
   const updatedPeriodEnd = getSubscriptionCurrentPeriodEnd(updated);
@@ -151,4 +179,11 @@ export async function POST() {
     effectiveUnix: updatedPeriodEnd,
     alreadyScheduled: false,
   });
+  } catch (error) {
+    console.error("[stripe/schedule-cancellation]", error);
+    return NextResponse.json(
+      { error: stripeErrorMessage(error) },
+      { status: 500 }
+    );
+  }
 }
