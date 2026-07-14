@@ -1197,6 +1197,13 @@ export const fr = {
       decline: "Fermer",
       close: "Fermer",
     },
+    noCreditsNotice: {
+      eyebrow: "Crédits",
+      title: "Création indisponible",
+      lead:
+        "Il n'est pas possible de créer un film sans ticket ou abonnement actif. Consultez nos offres pour obtenir des tickets ou souscrire à un abonnement.",
+      cta: "Voir les tarifs",
+    },
     scheduleFilm: {
       link: "Programmer son film",
       eyebrow: "Calendrier",

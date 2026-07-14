@@ -1,4 +1,5 @@
 import { FilmCreationForm } from "@/components/film-creation/FilmCreationForm";
+import { FilmCreationNoCreditsNotice } from "@/components/film-creation/FilmCreationNoCreditsNotice";
 import { getMyCharacters } from "@/lib/characters/actions";
 import { getMyFilmCreationCooldown } from "@/lib/film-creation/actions";
 import { getSession } from "@/lib/auth/get-session";
@@ -7,6 +8,7 @@ import { listUserFilmSchedules } from "@/lib/calendar/store";
 import { getMyFilmTicketSummary } from "@/lib/purchases/actions";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerTranslator } from "@/lib/i18n/server";
+import { shouldShowNoCreditsNotice } from "@/lib/navigation/creer-film";
 import { SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -39,6 +41,15 @@ export default async function CreerFilmPage() {
 
   const occupiedScheduleDates = schedules.map((entry) => entry.scheduledDate);
   const registrationDate = user?.createdAt ?? new Date().toISOString();
+  const ticketBalance = ticketSummary?.balance ?? 0;
+  const jetonBalance = ticketSummary?.jetonBalance ?? 0;
+  const hasActiveSubscription = ticketSummary?.hasActiveSubscription ?? false;
+  const freeFilmAvailable = ticketSummary?.freeFilmAvailable ?? false;
+  const showNoCreditsNotice = shouldShowNoCreditsNotice({
+    balance: ticketBalance,
+    jetonBalance,
+    hasActiveSubscription,
+  });
 
   return (
     <>
@@ -58,13 +69,22 @@ export default async function CreerFilmPage() {
             {t("filmCreation.title")}
           </h1>
 
+          {showNoCreditsNotice ? (
+            <FilmCreationNoCreditsNotice
+              eyebrow={t("filmCreation.noCreditsNotice.eyebrow")}
+              title={t("filmCreation.noCreditsNotice.title")}
+              lead={t("filmCreation.noCreditsNotice.lead")}
+              cta={t("filmCreation.noCreditsNotice.cta")}
+            />
+          ) : null}
+
           <div className={`mt-8 ${SURFACE_3D_PANEL_LG} p-4 sm:mt-10 sm:p-6 md:p-8`}>
             <FilmCreationForm
               characters={characters}
-              ticketBalance={ticketSummary?.balance ?? 0}
-              jetonBalance={ticketSummary?.jetonBalance ?? 0}
-              hasActiveSubscription={ticketSummary?.hasActiveSubscription ?? false}
-              freeFilmAvailable={ticketSummary?.freeFilmAvailable ?? false}
+              ticketBalance={ticketBalance}
+              jetonBalance={jetonBalance}
+              hasActiveSubscription={hasActiveSubscription}
+              freeFilmAvailable={freeFilmAvailable}
               cooldownEndsAt={creationCooldown.endsAt}
               registrationDate={registrationDate}
               occupiedScheduleDates={occupiedScheduleDates}

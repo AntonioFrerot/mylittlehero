@@ -24,3 +24,16 @@ export function canCreateFilm(summary: CreateFilmEligibility): boolean {
     summary.jetonBalance > 0
   );
 }
+
+export function shouldShowNoCreditsNotice(
+  summary: Pick<
+    CreateFilmEligibility,
+    "balance" | "jetonBalance" | "hasActiveSubscription"
+  >
+): boolean {
+  return (
+    summary.balance === 0 &&
+    summary.jetonBalance === 0 &&
+    !summary.hasActiveSubscription
+  );
+}

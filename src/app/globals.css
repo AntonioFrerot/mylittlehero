@@ -8313,6 +8313,44 @@ select:disabled,
   }
 }
 
+/* Création film — absence de crédits */
+.film-creation-no-credits {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  border-color: rgb(212 175 55 / 0.28);
+  background:
+    linear-gradient(145deg, rgb(212 175 55 / 0.08), transparent 58%),
+    rgb(12 12 14 / 0.82);
+}
+
+.film-creation-no-credits__eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(212 175 55 / 0.82);
+}
+
+.film-creation-no-credits__title {
+  font-family: var(--font-display), serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: rgb(245 240 230);
+}
+
+.film-creation-no-credits__lead {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: rgb(245 240 230 / 0.72);
+}
+
+.film-creation-no-credits__cta {
+  align-self: flex-start;
+  margin-top: 0.35rem;
+}
+
 /* Profil — bloc abonnement */
 .subscription-profile-block {
   border-radius: 1.25rem;

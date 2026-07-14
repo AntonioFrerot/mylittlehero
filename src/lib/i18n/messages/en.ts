@@ -1186,6 +1186,13 @@ export const en = {
       decline: "Close",
       close: "Close",
     },
+    noCreditsNotice: {
+      eyebrow: "Credits",
+      title: "Creation unavailable",
+      lead:
+        "You cannot create a film without tickets or an active subscription. View our offers to buy tickets or subscribe.",
+      cta: "View pricing",
+    },
     scheduleFilm: {
       link: "Schedule your film",
       eyebrow: "Calendar",
