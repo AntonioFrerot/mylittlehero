@@ -368,7 +368,7 @@ export const fr = {
     analyticsPagesPerSession: "Pages / session",
     analyticsPagesPerSessionHint: "Profondeur moyenne de navigation par session",
     analyticsCheckoutVisitors: "Visites pages tarifs",
-    analyticsCheckoutVisitorsHint: "Visiteurs uniques sur /tarifs, /abonnements ou /achat",
+    analyticsCheckoutVisitorsHint: "Visiteurs uniques sur /abonnements ou /achat",
     analyticsSalesBySourceTitle: "Ventes par source de trafic",
     analyticsSalesBySourceHint: "Sessions, achats, chiffre d'affaires et conversion par origine.",
     analyticsSalesByPlanTitle: "Ventes par offre",
@@ -1198,10 +1198,10 @@ export const fr = {
       close: "Fermer",
     },
     noCreditsNotice: {
-      eyebrow: "Crédits",
-      title: "Création indisponible",
+      eyebrow: "Tickets et abonnements",
+      title: "Vous ne pouvez pas créer de film",
       lead:
-        "Il n'est pas possible de créer un film sans ticket ou abonnement actif. Consultez nos offres pour obtenir des tickets ou souscrire à un abonnement.",
+        "Il n'est pas possible de créer un film sans ticket ou abonnement actif. Consultez nos offres pour en obtenir.",
       cta: "Voir les tarifs",
     },
     scheduleFilm: {

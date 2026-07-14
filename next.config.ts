@@ -9,6 +9,16 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/tarifs",
+        destination: "/abonnements",
+        permanent: true,
+      },
+      {
+        source: "/tarifs/succes",
+        destination: "/abonnements/succes",
+        permanent: true,
+      },
+      {
         source: "/films/leo-temple-perdu",
         destination: "/films/super-leo",
         permanent: true,

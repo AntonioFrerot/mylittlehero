@@ -363,7 +363,7 @@ export const en = {
     analyticsPagesPerSession: "Pages / session",
     analyticsPagesPerSessionHint: "Average navigation depth per session",
     analyticsCheckoutVisitors: "Pricing page visitors",
-    analyticsCheckoutVisitorsHint: "Unique visitors on /tarifs, /abonnements or /achat",
+    analyticsCheckoutVisitorsHint: "Unique visitors on /abonnements or /achat",
     analyticsSalesBySourceTitle: "Sales by traffic source",
     analyticsSalesBySourceHint: "Sessions, orders, revenue and conversion by origin.",
     analyticsSalesByPlanTitle: "Sales by product",
@@ -1187,7 +1187,7 @@ export const en = {
       close: "Close",
     },
     noCreditsNotice: {
-      eyebrow: "Credits",
+      eyebrow: "Tickets & subscriptions",
       title: "Creation unavailable",
       lead:
         "You cannot create a film without tickets or an active subscription. View our offers to buy tickets or subscribe.",

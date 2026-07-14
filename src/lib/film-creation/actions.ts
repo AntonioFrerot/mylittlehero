@@ -426,7 +426,6 @@ export async function saveFilmCreation(
   revalidatePath("/mon-espace");
   revalidatePath("/creer-film");
   revalidatePath("/creer");
-  revalidatePath("/tarifs");
   revalidatePath("/abonnements");
   revalidatePath("/achat");
   revalidatePath("/catalogue");

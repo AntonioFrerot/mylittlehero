@@ -30,7 +30,7 @@ export function FilmCreationNoCreditsNotice({
         {title}
       </h2>
       <p className="film-creation-no-credits__lead">{lead}</p>
-      <Link href="/tarifs" className={`film-creation-no-credits__cta ${BTN_3D_PRIMARY_ACTION}`}>
+      <Link href="/abonnements" className={`film-creation-no-credits__cta ${BTN_3D_PRIMARY_ACTION}`}>
         {cta}
       </Link>
     </section>
