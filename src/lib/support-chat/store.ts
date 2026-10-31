@@ -60,7 +60,7 @@ async function writeConversationsFile(
   await writeFile(DATA_FILE, JSON.stringify(conversations, null, 2), "utf8");
 }
 
-function rowToConversation(row: {
+type SupportChatConversationRow = {
   id: string;
   user_email: string | null;
   user_name: string | null;
@@ -72,7 +72,9 @@ function rowToConversation(row: {
   human_takeover_by: string | null;
   human_takeover_at: Date | string | null;
   closed_at?: Date | string | null;
-}): SupportChatConversation {
+};
+
+function rowToConversation(row: SupportChatConversationRow): SupportChatConversation {
   return {
     id: row.id,
     userEmail: row.user_email,
@@ -131,7 +133,7 @@ export async function getSupportConversationById(
       WHERE id = ${id}
       LIMIT 1
     `;
-    const row = rows[0] as Parameters<typeof rowToConversation>[0] | undefined;
+    const row = rows[0] as SupportChatConversationRow | undefined;
     return row ? rowToConversation(row) : null;
   }
 
@@ -201,7 +203,7 @@ export async function appendSupportChatExchange(
     `;
 
     if (existing.length > 0) {
-      const row = existing[0] as Parameters<typeof rowToConversation>[0];
+      const row = existing[0] as SupportChatConversationRow;
       const prior = rowToConversation(row);
       if (!prior.closedAt) {
         const messages = [...prior.messages, ...newMessages];
@@ -411,7 +413,9 @@ export async function listSupportChatConversationsForAdmin(): Promise<
       FROM support_chat_conversations
       ORDER BY updated_at DESC
     `;
-    return (rows as Parameters<typeof rowToConversation>[0][]).map(rowToConversation);
+    return rows.map((row) =>
+      rowToConversation(row as SupportChatConversationRow)
+    );
   }
 
   const conversations = await readConversationsFile();
