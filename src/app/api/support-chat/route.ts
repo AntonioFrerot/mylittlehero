@@ -1,6 +1,9 @@
 import { buildSupportUserContext } from "@/lib/support-chat/build-user-context";
 import { generateSupportReply } from "@/lib/support-chat/assistant";
-import { appendSupportChatExchange } from "@/lib/support-chat/store";
+import {
+  appendSupportChatExchange,
+  getSupportConversationById,
+} from "@/lib/support-chat/store";
 import type { ChatMessage } from "@/lib/support-chat/types";
 import { getSession } from "@/lib/auth/get-session";
 import { parseLocale } from "@/lib/i18n/locales";
@@ -70,10 +73,51 @@ export async function POST(request: Request) {
   const userContext = await buildSupportUserContext(locale);
   const session = await getSession();
 
+  const existing = conversationId
+    ? await getSupportConversationById(conversationId)
+    : null;
+
+  if (existing?.humanTakeover) {
+    const saved = await appendSupportChatExchange({
+      conversationId: existing.id,
+      userEmail: session?.email ?? userContext?.email ?? null,
+      userName: session?.name ?? userContext?.name ?? null,
+      locale,
+      userMessage: last.content,
+      assistantReply: null,
+    });
+
+    return NextResponse.json({
+      reply: null,
+      humanMode: true,
+      conversationId: saved.id,
+    });
+  }
+
   const { reply, source } = await generateSupportReply(messages, {
     locale,
     userContext,
   });
+
+  const afterGeneration = conversationId
+    ? await getSupportConversationById(conversationId)
+    : null;
+  if (afterGeneration?.humanTakeover) {
+    const saved = await appendSupportChatExchange({
+      conversationId: afterGeneration.id,
+      userEmail: session?.email ?? userContext?.email ?? null,
+      userName: session?.name ?? userContext?.name ?? null,
+      locale,
+      userMessage: last.content,
+      assistantReply: null,
+    });
+
+    return NextResponse.json({
+      reply: null,
+      humanMode: true,
+      conversationId: saved.id,
+    });
+  }
 
   const saved = await appendSupportChatExchange({
     conversationId,
@@ -84,5 +128,10 @@ export async function POST(request: Request) {
     assistantReply: reply,
   });
 
-  return NextResponse.json({ reply, source, conversationId: saved.id });
+  return NextResponse.json({
+    reply,
+    source,
+    conversationId: saved.id,
+    humanMode: false,
+  });
 }

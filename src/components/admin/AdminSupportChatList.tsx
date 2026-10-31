@@ -1,4 +1,4 @@
-import type { AdminSupportChatClient } from "@/lib/support-chat/store";
+import type { AdminSupportChatClient } from "@/lib/support-chat/conversation-public";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { createTranslator } from "@/lib/i18n/translator";
 

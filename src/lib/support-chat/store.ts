@@ -4,28 +4,33 @@ import { randomUUID } from "node:crypto";
 import { ensureSchema, getSql, isDatabaseEnabled } from "@/lib/db/client";
 import { normalizeEmail } from "@/lib/db/normalize-email";
 import type { LocaleCode } from "@/lib/i18n/locales";
+import {
+  countSupportConversationsNeedingAttention,
+  groupConversationsByClient,
+  type AdminSupportChatClient,
+  type SupportChatConversation,
+} from "@/lib/support-chat/conversation-public";
+import {
+  parseStoredMessages,
+  type StoredChatMessage,
+} from "@/lib/support-chat/message-types";
+import {
+  botResumedMessage,
+  chatClosedByAdminMessage,
+  chatClosedByClientMessage,
+  humanAgentArrivedMessage,
+} from "@/lib/support-chat/system-messages";
 
-export type StoredChatMessage = {
-  role: "user" | "assistant";
-  content: string;
-  createdAt: string;
-};
-
-export type SupportChatConversation = {
-  id: string;
-  userEmail: string | null;
-  userName: string | null;
-  locale: LocaleCode;
-  messages: StoredChatMessage[];
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type AdminSupportChatClient = {
-  email: string;
-  name: string | null;
-  conversations: SupportChatConversation[];
-};
+export type { StoredChatMessage } from "@/lib/support-chat/message-types";
+export type {
+  AdminSupportChatClient,
+  SupportChatConversation,
+} from "@/lib/support-chat/conversation-public";
+export {
+  conversationNeedsAttention,
+  countSupportConversationsNeedingAttention,
+  groupConversationsByClient,
+} from "@/lib/support-chat/conversation-public";
 
 const DATA_FILE = path.join(process.cwd(), "data", "support-chat-conversations.json");
 
@@ -35,7 +40,7 @@ type AppendConversationInput = {
   userName?: string | null;
   locale: LocaleCode;
   userMessage: string;
-  assistantReply: string;
+  assistantReply?: string | null;
 };
 
 async function readConversationsFile(): Promise<SupportChatConversation[]> {
@@ -63,17 +68,17 @@ function rowToConversation(row: {
   messages: unknown;
   created_at: Date | string;
   updated_at: Date | string;
+  human_takeover: boolean | null;
+  human_takeover_by: string | null;
+  human_takeover_at: Date | string | null;
+  closed_at?: Date | string | null;
 }): SupportChatConversation {
-  const messages = Array.isArray(row.messages)
-    ? (row.messages as StoredChatMessage[])
-    : [];
-
   return {
     id: row.id,
     userEmail: row.user_email,
     userName: row.user_name,
     locale: row.locale as LocaleCode,
-    messages,
+    messages: parseStoredMessages(row.messages),
     createdAt:
       row.created_at instanceof Date
         ? row.created_at.toISOString()
@@ -82,7 +87,84 @@ function rowToConversation(row: {
       row.updated_at instanceof Date
         ? row.updated_at.toISOString()
         : String(row.updated_at),
+    humanTakeover: Boolean(row.human_takeover),
+    humanTakeoverBy: row.human_takeover_by,
+    humanTakeoverAt: row.human_takeover_at
+      ? row.human_takeover_at instanceof Date
+        ? row.human_takeover_at.toISOString()
+        : String(row.human_takeover_at)
+      : null,
+    closedAt: row.closed_at
+      ? row.closed_at instanceof Date
+        ? row.closed_at.toISOString()
+        : String(row.closed_at)
+      : null,
   };
+}
+
+function defaultConversationMeta(): Pick<
+  SupportChatConversation,
+  "humanTakeover" | "humanTakeoverBy" | "humanTakeoverAt" | "closedAt"
+> {
+  return {
+    humanTakeover: false,
+    humanTakeoverBy: null,
+    humanTakeoverAt: null,
+    closedAt: null,
+  };
+}
+
+export async function getSupportConversationById(
+  conversationId: string
+): Promise<SupportChatConversation | null> {
+  const id = conversationId.trim();
+  if (!id) return null;
+
+  if (isDatabaseEnabled()) {
+    await ensureSchema();
+    const db = getSql();
+    const rows = await db`
+      SELECT
+        id, user_email, user_name, locale, messages, created_at, updated_at,
+        human_takeover, human_takeover_by, human_takeover_at, closed_at
+      FROM support_chat_conversations
+      WHERE id = ${id}
+      LIMIT 1
+    `;
+    const row = rows[0] as Parameters<typeof rowToConversation>[0] | undefined;
+    return row ? rowToConversation(row) : null;
+  }
+
+  const conversations = await readConversationsFile();
+  return conversations.find((entry) => entry.id === id) ?? null;
+}
+
+async function saveConversation(conversation: SupportChatConversation): Promise<void> {
+  if (isDatabaseEnabled()) {
+    await ensureSchema();
+    const db = getSql();
+    await db`
+      UPDATE support_chat_conversations
+      SET
+        user_email = ${conversation.userEmail},
+        user_name = ${conversation.userName},
+        locale = ${conversation.locale},
+        messages = ${JSON.stringify(conversation.messages)}::jsonb,
+        updated_at = ${conversation.updatedAt},
+        human_takeover = ${conversation.humanTakeover},
+        human_takeover_by = ${conversation.humanTakeoverBy},
+        human_takeover_at = ${conversation.humanTakeoverAt},
+        closed_at = ${conversation.closedAt}
+      WHERE id = ${conversation.id}
+    `;
+    return;
+  }
+
+  const conversations = await readConversationsFile();
+  const index = conversations.findIndex((entry) => entry.id === conversation.id);
+  if (index === -1) return;
+  conversations[index] = conversation;
+  await writeConversationsFile(conversations);
 }
 
 export async function appendSupportChatExchange(
@@ -90,105 +172,116 @@ export async function appendSupportChatExchange(
 ): Promise<SupportChatConversation> {
   const now = new Date().toISOString();
   const userEmail = input.userEmail ? normalizeEmail(input.userEmail) : null;
-  const newMessages: StoredChatMessage[] = [
-    { role: "user", content: input.userMessage, createdAt: now },
-    { role: "assistant", content: input.assistantReply, createdAt: now },
-  ];
+  const userMessage: StoredChatMessage = {
+    role: "user",
+    content: input.userMessage,
+    createdAt: now,
+  };
+  const newMessages: StoredChatMessage[] = [userMessage];
+  if (input.assistantReply?.trim()) {
+    newMessages.push({
+      role: "assistant",
+      content: input.assistantReply.trim(),
+      createdAt: now,
+    });
+  }
 
   if (isDatabaseEnabled()) {
     await ensureSchema();
     const db = getSql();
     const conversationId = input.conversationId?.trim() || randomUUID();
 
-    const existing = await db<
-      {
-        id: string;
-        user_email: string | null;
-        user_name: string | null;
-        locale: string;
-        messages: unknown;
-        created_at: Date;
-        updated_at: Date;
-      }[]
-    >`
-      SELECT id, user_email, user_name, locale, messages, created_at, updated_at
+    const existing = await db`
+      SELECT
+        id, user_email, user_name, locale, messages, created_at, updated_at,
+        human_takeover, human_takeover_by, human_takeover_at, closed_at
       FROM support_chat_conversations
       WHERE id = ${conversationId}
       LIMIT 1
     `;
 
     if (existing.length > 0) {
-      const row = existing[0];
-      const messages = [
-        ...(Array.isArray(row.messages) ? (row.messages as StoredChatMessage[]) : []),
-        ...newMessages,
-      ];
+      const row = existing[0] as Parameters<typeof rowToConversation>[0];
+      const prior = rowToConversation(row);
+      if (!prior.closedAt) {
+        const messages = [...prior.messages, ...newMessages];
 
-      await db`
-        UPDATE support_chat_conversations
-        SET
-          messages = ${JSON.stringify(messages)}::jsonb,
-          user_email = COALESCE(${userEmail}, user_email),
-          user_name = COALESCE(${input.userName ?? null}, user_name),
-          locale = ${input.locale},
-          updated_at = ${now}
-        WHERE id = ${conversationId}
-      `;
+        await db`
+          UPDATE support_chat_conversations
+          SET
+            messages = ${JSON.stringify(messages)}::jsonb,
+            user_email = COALESCE(${userEmail}, user_email),
+            user_name = COALESCE(${input.userName ?? null}, user_name),
+            locale = ${input.locale},
+            updated_at = ${now}
+          WHERE id = ${conversationId}
+        `;
 
-      return {
-        id: conversationId,
-        userEmail: userEmail ?? row.user_email,
-        userName: input.userName ?? row.user_name,
-        locale: input.locale,
-        messages,
-        createdAt: row.created_at.toISOString(),
-        updatedAt: now,
-      };
+        return {
+          ...prior,
+          userEmail: userEmail ?? prior.userEmail,
+          userName: input.userName ?? prior.userName,
+          locale: input.locale,
+          messages,
+          updatedAt: now,
+        };
+      }
     }
+
+    const insertId = existing.length > 0 ? randomUUID() : conversationId;
 
     await db`
       INSERT INTO support_chat_conversations (
-        id, user_email, user_name, locale, messages, created_at, updated_at
+        id, user_email, user_name, locale, messages, created_at, updated_at,
+        human_takeover, human_takeover_by, human_takeover_at, closed_at
       )
       VALUES (
-        ${conversationId},
+        ${insertId},
         ${userEmail},
         ${input.userName ?? null},
         ${input.locale},
         ${JSON.stringify(newMessages)}::jsonb,
         ${now},
-        ${now}
+        ${now},
+        false,
+        null,
+        null,
+        null
       )
     `;
 
     return {
-      id: conversationId,
+      id: insertId,
       userEmail,
       userName: input.userName ?? null,
       locale: input.locale,
       messages: newMessages,
       createdAt: now,
       updatedAt: now,
+      ...defaultConversationMeta(),
     };
   }
 
   const conversations = await readConversationsFile();
-  const conversationId = input.conversationId?.trim() || randomUUID();
+  let conversationId = input.conversationId?.trim() || randomUUID();
   const index = conversations.findIndex((entry) => entry.id === conversationId);
 
   if (index >= 0) {
-    const existing = conversations[index];
-    const updated: SupportChatConversation = {
-      ...existing,
-      userEmail: userEmail ?? existing.userEmail,
-      userName: input.userName ?? existing.userName,
-      locale: input.locale,
-      messages: [...existing.messages, ...newMessages],
-      updatedAt: now,
-    };
-    conversations[index] = updated;
-    await writeConversationsFile(conversations);
-    return updated;
+    const existing = conversations[index]!;
+    if (!existing.closedAt) {
+      const updated: SupportChatConversation = {
+        ...existing,
+        userEmail: userEmail ?? existing.userEmail,
+        userName: input.userName ?? existing.userName,
+        locale: input.locale,
+        messages: [...existing.messages, ...newMessages],
+        updatedAt: now,
+      };
+      conversations[index] = updated;
+      await writeConversationsFile(conversations);
+      return updated;
+    }
+    conversationId = randomUUID();
   }
 
   const created: SupportChatConversation = {
@@ -199,10 +292,110 @@ export async function appendSupportChatExchange(
     messages: newMessages,
     createdAt: now,
     updatedAt: now,
+    ...defaultConversationMeta(),
   };
   conversations.push(created);
   await writeConversationsFile(conversations);
   return created;
+}
+
+export async function appendStaffSupportMessage(
+  conversationId: string,
+  adminEmail: string,
+  content: string
+): Promise<SupportChatConversation | null> {
+  const trimmed = content.trim().slice(0, 4000);
+  if (!trimmed) return null;
+
+  const conversation = await getSupportConversationById(conversationId);
+  if (!conversation) return null;
+
+  const now = new Date().toISOString();
+  const next: SupportChatConversation = {
+    ...conversation,
+    messages: [
+      ...conversation.messages,
+      { role: "staff", content: trimmed, createdAt: now },
+    ],
+    updatedAt: now,
+    humanTakeover: true,
+    humanTakeoverBy: normalizeEmail(adminEmail),
+    humanTakeoverAt: conversation.humanTakeoverAt ?? now,
+  };
+
+  await saveConversation(next);
+  return next;
+}
+
+export async function setSupportHumanTakeover(
+  conversationId: string,
+  adminEmail: string,
+  active: boolean
+): Promise<SupportChatConversation | null> {
+  const conversation = await getSupportConversationById(conversationId);
+  if (!conversation) return null;
+
+  const now = new Date().toISOString();
+  const extraMessages: StoredChatMessage[] = [];
+
+  if (active && !conversation.humanTakeover) {
+    extraMessages.push({
+      role: "staff",
+      content: humanAgentArrivedMessage(conversation.locale),
+      createdAt: now,
+    });
+  }
+
+  if (!active && conversation.humanTakeover) {
+    extraMessages.push({
+      role: "assistant",
+      content: botResumedMessage(conversation.locale),
+      createdAt: now,
+    });
+  }
+
+  const next: SupportChatConversation = {
+    ...conversation,
+    messages: [...conversation.messages, ...extraMessages],
+    humanTakeover: active,
+    humanTakeoverBy: active ? normalizeEmail(adminEmail) : null,
+    humanTakeoverAt: active ? now : null,
+    updatedAt: now,
+  };
+
+  await saveConversation(next);
+  return next;
+}
+
+export async function closeSupportConversation(
+  conversationId: string,
+  closedBy: "client" | "admin"
+): Promise<SupportChatConversation | null> {
+  const conversation = await getSupportConversationById(conversationId);
+  if (!conversation) return null;
+  if (conversation.closedAt) return conversation;
+
+  const now = new Date().toISOString();
+  const content =
+    closedBy === "admin"
+      ? chatClosedByAdminMessage(conversation.locale)
+      : chatClosedByClientMessage(conversation.locale);
+
+  const next: SupportChatConversation = {
+    ...conversation,
+    messages: [
+      ...conversation.messages,
+      { role: "assistant", content, createdAt: now },
+    ],
+    closedAt: now,
+    updatedAt: now,
+    humanTakeover: false,
+    humanTakeoverBy: null,
+    humanTakeoverAt: null,
+  };
+
+  await saveConversation(next);
+  return next;
 }
 
 export async function listSupportChatConversationsForAdmin(): Promise<
@@ -211,57 +404,35 @@ export async function listSupportChatConversationsForAdmin(): Promise<
   if (isDatabaseEnabled()) {
     await ensureSchema();
     const db = getSql();
-    const rows = await db<
-      {
-        id: string;
-        user_email: string | null;
-        user_name: string | null;
-        locale: string;
-        messages: unknown;
-        created_at: Date;
-        updated_at: Date;
-      }[]
-    >`
-      SELECT id, user_email, user_name, locale, messages, created_at, updated_at
+    const rows = await db`
+      SELECT
+        id, user_email, user_name, locale, messages, created_at, updated_at,
+        human_takeover, human_takeover_by, human_takeover_at, closed_at
       FROM support_chat_conversations
       ORDER BY updated_at DESC
     `;
-    return rows.map(rowToConversation);
+    return (rows as Parameters<typeof rowToConversation>[0][]).map(rowToConversation);
   }
 
   const conversations = await readConversationsFile();
-  return conversations.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-  );
+  return conversations
+    .map((entry) => ({
+      ...defaultConversationMeta(),
+      ...entry,
+      closedAt: entry.closedAt ?? null,
+      messages: parseStoredMessages(entry.messages),
+    }))
+    .sort(
+      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    );
 }
 
-export function groupConversationsByClient(
-  conversations: SupportChatConversation[]
-): AdminSupportChatClient[] {
-  const byEmail = new Map<string, AdminSupportChatClient>();
+export async function listSupportChatConversationsUpdatedSince(
+  sinceIso: string
+): Promise<SupportChatConversation[]> {
+  const since = Date.parse(sinceIso);
+  if (Number.isNaN(since)) return listSupportChatConversationsForAdmin();
 
-  for (const conversation of conversations) {
-    if (!conversation.userEmail) continue;
-
-    const email = conversation.userEmail;
-    const existing = byEmail.get(email);
-    if (existing) {
-      existing.conversations.push(conversation);
-      if (!existing.name && conversation.userName) {
-        existing.name = conversation.userName;
-      }
-    } else {
-      byEmail.set(email, {
-        email,
-        name: conversation.userName,
-        conversations: [conversation],
-      });
-    }
-  }
-
-  return [...byEmail.values()].sort((a, b) => {
-    const aLatest = a.conversations[0]?.updatedAt ?? "";
-    const bLatest = b.conversations[0]?.updatedAt ?? "";
-    return new Date(bLatest).getTime() - new Date(aLatest).getTime();
-  });
+  const all = await listSupportChatConversationsForAdmin();
+  return all.filter((entry) => Date.parse(entry.updatedAt) > since);
 }

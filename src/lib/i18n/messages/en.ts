@@ -171,6 +171,7 @@ export const en = {
     manageTabCredits: "Tickets & tokens",
     manageTabNotifications: "Notifications",
     manageTabSupport: "Support",
+    manageTabContact: "Contact",
     manageTabTools: "Test tools",
     overview: {
       awaitingFilms: "Films awaiting",
@@ -330,6 +331,47 @@ export const en = {
     supportChatConversationCount: "{count} conversation(s)",
     supportChatSession: "Session on {date}",
     supportChatMessageCount: "{count} message(s)",
+    supportLiveLead:
+      "Live conversations: take over and reply to the client from here.",
+    supportLivePollingHint: "Auto-refresh every 2–3 s",
+    supportLiveGuestClient: "Visitor (not signed in)",
+    supportLiveNeedsReply: "Needs reply",
+    supportLiveHumanMode: "Human mode",
+    supportLiveTakeover: "Take over (stop the bot)",
+    supportLiveTakeoverHint:
+      "Stops automatic replies and tells the client a human agent has joined.",
+    supportLiveReleaseBot: "Hand back to AI",
+    supportLiveHumanActiveHint:
+      "You are replying for the client; the bot stays paused until you hand back.",
+    supportLiveReplyLabel: "Your reply to the client",
+    supportLiveReplyPlaceholder: "Type here…",
+    supportLiveReplyLockedPlaceholder:
+      "Click “Take over” first to reply yourself.",
+    supportLiveSendReply: "Send to client",
+    supportLivePending: "Sending…",
+    supportLiveStaffLabel: "MyLittleHero team",
+    supportLiveActionError: "Could not update this conversation. Please try again.",
+    supportLiveAlertBanner: "New support message — open Support tab",
+    supportLiveCloseChat: "Close conversation",
+    supportLiveClosedBadge: "Closed",
+    supportLiveClosedHint:
+      "This chat is ended. The client’s next message will start a new conversation.",
+    contactFormTitle: "Contact form",
+    contactFormLead:
+      "Messages sent from the /contact page (client name, email and message).",
+    contactFormEmpty: "No messages received yet.",
+    contactFormMessageCount: "{count} message(s)",
+    contactFormSubNavLabel: "Contact message folders",
+    contactFormInboxTab: "Messages",
+    contactFormTrashTab: "Trash",
+    contactFormMoveToTrash: "Move to trash",
+    contactFormTrashPending: "Moving…",
+    contactFormTrashEmpty: "Trash is empty.",
+    contactFormEmptyTrash: "Empty trash",
+    contactFormEmptyTrashPending: "Deleting…",
+    contactFormEmptyTrashConfirm:
+      "Permanently delete all messages in trash? This cannot be undone.",
+    contactFormActionError: "Could not update messages right now. Please try again.",
     analyticsTitle: "Visit analytics",
     analyticsLead:
       "Track traffic, sources and site conversion. Admin visits and bots are excluded.",
@@ -683,6 +725,25 @@ export const en = {
     themeEmptyHint:
       "Films you create in the {theme} universe will appear here. Start a new creation to begin.",
     rowAria: "{theme} universe",
+  },
+  supportWidget: {
+    title: "MyLittleHero Assistant",
+    subtitleBot: "Understands your question and answers personally",
+    subtitleHuman: "A team member may reply live",
+    minimizeAria: "Minimize chat",
+    dialogAria: "MyLittleHero Assistant",
+    placeholder: "Your question…",
+    send: "Send",
+    endChat: "Close conversation",
+    endChatPending: "Closing…",
+    newChatPlaceholder: "Send a message to start a new chat…",
+    contactHint: "Need a human?",
+    contactLink: "Contact",
+    openFabAria: "Open assistant",
+    closeFabAria: "Close assistant",
+    networkError:
+      "Sorry, something went wrong. Try again or reach us on the Contact page.",
+    staffLabel: "MyLittleHero team",
   },
   common: {
     thankYou: "Thank you!",

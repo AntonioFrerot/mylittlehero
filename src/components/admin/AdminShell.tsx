@@ -6,7 +6,7 @@ import type { AdminClientSummary } from "@/lib/admin/clients";
 import type { AdminDashboardSummary } from "@/lib/admin/summary";
 import type { AdminFilmsByStatus } from "@/lib/film-creation/admin-films";
 import type { LocaleCode } from "@/lib/i18n/locales";
-import type { AdminSupportChatClient } from "@/lib/support-chat/store";
+import type { ContactMessage } from "@/lib/contact/store";
 import { useLocale } from "@/components/LocaleProvider";
 import { AdminOverviewCards } from "@/components/admin/AdminOverviewCards";
 import { AdminSubNav } from "@/components/admin/AdminSubNav";
@@ -49,10 +49,18 @@ const AdminNotificationsForm = dynamic(
   { loading: () => <AdminSectionSkeleton /> }
 );
 
-const AdminSupportChatList = dynamic(
+const AdminSupportLivePanel = dynamic(
   () =>
-    import("@/components/admin/AdminSupportChatList").then((module) => ({
-      default: module.AdminSupportChatList,
+    import("@/components/admin/AdminSupportLivePanel").then((module) => ({
+      default: module.AdminSupportLivePanel,
+    })),
+  { loading: () => <AdminSectionSkeleton /> }
+);
+
+const AdminContactMessagesList = dynamic(
+  () =>
+    import("@/components/admin/AdminContactMessagesList").then((module) => ({
+      default: module.AdminContactMessagesList,
     })),
   { loading: () => <AdminSectionSkeleton /> }
 );
@@ -82,7 +90,7 @@ type AdminShellProps = {
 type SectionData = {
   films?: AdminFilmsByStatus;
   clients?: AdminClientSummary[];
-  supportChat?: AdminSupportChatClient[];
+  contactMessages?: ContactMessage[];
 };
 
 function AdminSectionSkeleton() {
@@ -170,6 +178,10 @@ export function AdminShell({
   const [loadingManageTab, setLoadingManageTab] =
     useState<AdminManageTabId | null>(null);
   const [sectionError, setSectionError] = useState<string | null>(null);
+  const [contactInboxCount, setContactInboxCount] = useState<number | null>(null);
+  const [supportNeedsAttention, setSupportNeedsAttention] = useState<number | null>(
+    null
+  );
   const loadingRef = useRef<Partial<Record<AdminSectionId, boolean>>>({});
   const loadingManageRef = useRef<Partial<Record<AdminManageTabId, boolean>>>(
     {}
@@ -239,30 +251,43 @@ export function AdminShell({
 
   const loadManageTab = useCallback(
     async (tab: AdminManageTabId) => {
-      if (tab !== "support" || loadedManageTabs.support || loadingManageRef.current.support) {
-        return;
-      }
+      if (tab === "contact") {
+        if (loadedManageTabs.contact || loadingManageRef.current.contact) {
+          return;
+        }
 
-      loadingManageRef.current.support = true;
-      setLoadingManageTab("support");
-      setSectionError(null);
+        loadingManageRef.current.contact = true;
+        setLoadingManageTab("contact");
+        setSectionError(null);
 
-      try {
-        const response = await fetch("/api/admin/support-chat");
-        if (!response.ok) throw new Error("fetch_failed");
-        const supportChat =
-          (await response.json()) as AdminSupportChatClient[];
-        setSectionData((current) => ({ ...current, supportChat }));
-        setLoadedManageTabs((current) => ({ ...current, support: true }));
-      } catch {
-        setSectionError(t("admin.sectionLoadError"));
-      } finally {
-        loadingManageRef.current.support = false;
-        setLoadingManageTab(null);
+        try {
+          const response = await fetch("/api/admin/contact-messages?box=inbox");
+          if (!response.ok) throw new Error("fetch_failed");
+          const contactMessages = (await response.json()) as ContactMessage[];
+          setSectionData((current) => ({ ...current, contactMessages }));
+          setContactInboxCount(contactMessages.length);
+          setLoadedManageTabs((current) => ({ ...current, contact: true }));
+        } catch {
+          setSectionError(t("admin.sectionLoadError"));
+        } finally {
+          loadingManageRef.current.contact = false;
+          setLoadingManageTab(null);
+        }
       }
     },
-    [loadedManageTabs.support, t]
+    [loadedManageTabs.contact, t]
   );
+
+  useEffect(() => {
+    const onSupportMeta = (event: Event) => {
+      const detail = (event as CustomEvent<{ needsAttentionCount: number }>).detail;
+      if (typeof detail?.needsAttentionCount === "number") {
+        setSupportNeedsAttention(detail.needsAttentionCount);
+      }
+    };
+    window.addEventListener("mlh-support-meta", onSupportMeta);
+    return () => window.removeEventListener("mlh-support-meta", onSupportMeta);
+  }, []);
 
   useEffect(() => {
     void loadSection(activeSection);
@@ -322,14 +347,19 @@ export function AdminShell({
     {
       id: "support",
       label: t("admin.manageTabSupport"),
-      badge: sectionData.supportChat?.length,
+      badge: supportNeedsAttention ?? undefined,
+    },
+    {
+      id: "contact",
+      label: t("admin.manageTabContact"),
+      badge: contactInboxCount ?? summary?.contactMessageCount,
     },
     { id: "tools", label: t("admin.manageTabTools") },
   ];
 
   const films = sectionData.films;
   const clients = sectionData.clients;
-  const supportChatClients = sectionData.supportChat;
+  const contactMessages = sectionData.contactMessages;
 
   return (
     <div className="admin-shell mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 md:px-8 md:py-10">
@@ -438,12 +468,20 @@ export function AdminShell({
               ) : null}
 
               {activeManageTab === "support" ? (
-                loadingManageTab === "support" && !supportChatClients ? (
+                <AdminSupportLivePanel
+                  onMetaChange={({ needsAttentionCount }) =>
+                    setSupportNeedsAttention(needsAttentionCount)
+                  }
+                />
+              ) : null}
+
+              {activeManageTab === "contact" ? (
+                loadingManageTab === "contact" && !contactMessages ? (
                   <AdminSectionSkeleton />
-                ) : supportChatClients ? (
-                  <AdminSupportChatList
-                    clients={supportChatClients}
-                    locale={locale}
+                ) : contactMessages ? (
+                  <AdminContactMessagesList
+                    initialInbox={contactMessages}
+                    onInboxCountChange={setContactInboxCount}
                   />
                 ) : null
               ) : null}

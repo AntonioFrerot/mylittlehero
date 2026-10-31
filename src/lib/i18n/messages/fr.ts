@@ -172,6 +172,7 @@ export const fr = {
     manageTabCredits: "Tickets & jetons",
     manageTabNotifications: "Notifications",
     manageTabSupport: "Support",
+    manageTabContact: "Contact",
     manageTabTools: "Outils de test",
     overview: {
       awaitingFilms: "Films en attente",
@@ -333,6 +334,50 @@ export const fr = {
     supportChatConversationCount: "{count} conversation(s)",
     supportChatSession: "Session du {date}",
     supportChatMessageCount: "{count} message(s)",
+    supportLiveLead:
+      "Conversations en direct : reprenez la main et répondez au client depuis ici.",
+    supportLivePollingHint: "Actualisation automatique toutes les 2–3 s",
+    supportLiveGuestClient: "Visiteur (non connecté)",
+    supportLiveNeedsReply: "À répondre",
+    supportLiveHumanMode: "Mode humain",
+    supportLiveTakeover: "Intervenir (stopper le bot)",
+    supportLiveTakeoverHint:
+      "Stoppe les réponses automatiques et annonce votre arrivée dans le chat client.",
+    supportLiveReleaseBot: "Rendre la main à l’IA",
+    supportLiveHumanActiveHint:
+      "Vous répondez au client : le bot reste en pause jusqu’à ce que vous rendiez la main.",
+    supportLiveReplyLabel: "Votre réponse au client",
+    supportLiveReplyPlaceholder: "Écrivez ici…",
+    supportLiveReplyLockedPlaceholder:
+      "Cliquez d’abord sur « Intervenir » pour répondre vous-même.",
+    supportLiveSendReply: "Envoyer au client",
+    supportLivePending: "Envoi…",
+    supportLiveStaffLabel: "Équipe MyLittleHero",
+    supportLiveActionError:
+      "Impossible de mettre à jour cette conversation. Réessayez.",
+    supportLiveAlertBanner:
+      "Nouveau message support — ouvrir l’onglet Support",
+    supportLiveCloseChat: "Clôturer la conversation",
+    supportLiveClosedBadge: "Clôturée",
+    supportLiveClosedHint:
+      "Conversation terminée. Le prochain message du client ouvrira un nouveau chat.",
+    contactFormTitle: "Formulaire de contact",
+    contactFormLead:
+      "Messages envoyés depuis la page /contact (nom, e-mail et texte du client).",
+    contactFormEmpty: "Aucun message reçu pour le moment.",
+    contactFormMessageCount: "{count} message(s)",
+    contactFormSubNavLabel: "Boîtes de messages contact",
+    contactFormInboxTab: "Messages",
+    contactFormTrashTab: "Corbeille",
+    contactFormMoveToTrash: "Mettre à la corbeille",
+    contactFormTrashPending: "Déplacement…",
+    contactFormTrashEmpty: "La corbeille est vide.",
+    contactFormEmptyTrash: "Vider la corbeille",
+    contactFormEmptyTrashPending: "Suppression…",
+    contactFormEmptyTrashConfirm:
+      "Supprimer définitivement tous les messages de la corbeille ? Cette action est irréversible.",
+    contactFormActionError:
+      "Impossible de mettre à jour les messages pour le moment. Réessayez.",
     analyticsTitle: "Analyse des visites",
     analyticsLead:
       "Suivez le trafic, les sources et la conversion de votre site. Les visites admin et les bots sont exclus.",
@@ -689,6 +734,25 @@ export const fr = {
     themeEmptyHint:
       "Vos films créés dans l'univers {theme} apparaîtront ici. Lancez une création pour commencer.",
     rowAria: "Univers {theme}",
+  },
+  supportWidget: {
+    title: "Assistant MyLittleHero",
+    subtitleBot: "Analyse votre question et y répond sur mesure",
+    subtitleHuman: "Un conseiller peut répondre en direct",
+    minimizeAria: "Réduire le chat",
+    dialogAria: "Assistant MyLittleHero",
+    placeholder: "Votre question…",
+    send: "Envoyer",
+    endChat: "Clôturer la conversation",
+    endChatPending: "Clôture…",
+    newChatPlaceholder: "Nouveau message pour démarrer un autre chat…",
+    contactHint: "Besoin d'un humain ?",
+    contactLink: "Contact",
+    openFabAria: "Ouvrir l'assistant",
+    closeFabAria: "Fermer l'assistant",
+    networkError:
+      "Désolé, une erreur est survenue. Réessayez ou contactez-nous via la page Contact.",
+    staffLabel: "Équipe MyLittleHero",
   },
   common: {
     thankYou: "Merci !",

@@ -1,5 +1,6 @@
 "use server";
 
+import { isValidEmail } from "@/lib/db/normalize-email";
 import { getServerTranslator } from "@/lib/i18n/server";
 import { addContactMessage } from "./store";
 
@@ -20,7 +21,7 @@ export async function submitContactMessage(
   if (typeof name !== "string" || !name.trim()) {
     return { error: t("contact.errors.name") };
   }
-  if (typeof email !== "string" || !email.includes("@")) {
+  if (typeof email !== "string" || !isValidEmail(email)) {
     return { error: t("contact.errors.email") };
   }
   if (typeof message !== "string" || !message.trim()) {

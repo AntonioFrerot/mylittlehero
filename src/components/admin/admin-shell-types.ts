@@ -1,6 +1,11 @@
 export type AdminSectionId = "films" | "clients" | "manage" | "stats";
 
-export type AdminManageTabId = "credits" | "notifications" | "support" | "tools";
+export type AdminManageTabId =
+  | "credits"
+  | "notifications"
+  | "support"
+  | "contact"
+  | "tools";
 
 export const ADMIN_SECTION_IDS: AdminSectionId[] = [
   "films",
@@ -13,6 +18,7 @@ export const ADMIN_MANAGE_TAB_IDS: AdminManageTabId[] = [
   "credits",
   "notifications",
   "support",
+  "contact",
   "tools",
 ];
 

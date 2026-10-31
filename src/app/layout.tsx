@@ -4,6 +4,7 @@ import { HashScrollHandler } from "@/components/HashScrollHandler";
 import { Header } from "@/components/Header";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { LocaleProvider } from "@/components/LocaleProvider";
+import { AdminSupportAlertRoot } from "@/components/admin/AdminSupportAlertRoot";
 import { SupportChatLazy } from "@/components/support/SupportChatLazy";
 import { WelcomeSampleOfferRoot } from "@/components/espace/WelcomeSampleOfferRoot";
 import { getSession } from "@/lib/auth/get-session";
@@ -75,6 +76,7 @@ export default async function RootLayout({
               <HashScrollHandler />
               <AnalyticsArrivalBeacon />
               <Header />
+              <AdminSupportAlertRoot />
               {children}
               <SupportChatLazy />
             </WelcomeSampleOfferRoot>

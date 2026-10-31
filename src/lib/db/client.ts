@@ -79,6 +79,10 @@ async function runSchema(): Promise<void> {
   `;
 
   await db`
+    ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ
+  `;
+
+  await db`
     CREATE TABLE IF NOT EXISTS story_workspaces (
       user_email TEXT NOT NULL,
       film_id TEXT NOT NULL,
@@ -213,6 +217,22 @@ async function runSchema(): Promise<void> {
   await db`
     CREATE INDEX IF NOT EXISTS support_chat_conversations_updated_at_idx
     ON support_chat_conversations (updated_at DESC)
+  `;
+
+  await db`
+    ALTER TABLE support_chat_conversations ADD COLUMN IF NOT EXISTS human_takeover BOOLEAN NOT NULL DEFAULT false
+  `;
+
+  await db`
+    ALTER TABLE support_chat_conversations ADD COLUMN IF NOT EXISTS human_takeover_by TEXT
+  `;
+
+  await db`
+    ALTER TABLE support_chat_conversations ADD COLUMN IF NOT EXISTS human_takeover_at TIMESTAMPTZ
+  `;
+
+  await db`
+    ALTER TABLE support_chat_conversations ADD COLUMN IF NOT EXISTS closed_at TIMESTAMPTZ
   `;
 
   await db`

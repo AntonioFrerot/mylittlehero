@@ -6,6 +6,7 @@ import { WelcomeSampleOfferBubble } from "@/components/espace/WelcomeSampleOffer
 import { useLocale } from "@/components/LocaleProvider";
 import {
   BTN_3D_CHAT_SEND,
+  BTN_3D_COMPACT_SECONDARY,
   BTN_3D_FAB,
   BTN_3D_ICON,
 } from "@/lib/ui/button-3d-classes";
@@ -13,7 +14,7 @@ import { SUPPORT_WELCOME_MESSAGE } from "@/lib/support-chat/welcome-message";
 
 type UiMessage = {
   id: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "staff";
   content: string;
 };
 
@@ -53,13 +54,31 @@ function CloseIcon({ className }: { className?: string }) {
 
 const CONVERSATION_STORAGE_KEY = "support-chat-conversation-id";
 
+function peekConversationId(): string | null {
+  if (typeof window === "undefined") return null;
+  return sessionStorage.getItem(CONVERSATION_STORAGE_KEY);
+}
+
+function clearStoredConversationId() {
+  if (typeof window === "undefined") return;
+  sessionStorage.removeItem(CONVERSATION_STORAGE_KEY);
+}
+
 function getOrCreateConversationId(): string {
   if (typeof window === "undefined") return "";
-  const existing = sessionStorage.getItem(CONVERSATION_STORAGE_KEY);
+  const existing = peekConversationId();
   if (existing) return existing;
   const id = crypto.randomUUID();
   sessionStorage.setItem(CONVERSATION_STORAGE_KEY, id);
   return id;
+}
+
+function createWelcomeMessage(): UiMessage {
+  return {
+    id: "welcome",
+    role: "assistant",
+    content: SUPPORT_WELCOME_MESSAGE,
+  };
 }
 
 export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boolean }) {
@@ -76,6 +95,21 @@ export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boole
   ]);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [humanMode, setHumanMode] = useState(false);
+  const [chatEnded, setChatEnded] = useState(false);
+  const [endingChat, setEndingChat] = useState(false);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(
+    null
+  );
+  const lastSyncAtRef = useRef<string>(new Date(0).toISOString());
+
+  const hasUserMessages = messages.some((message) => message.role === "user");
+  const canEndChat = hasUserMessages && !chatEnded && !endingChat;
+
+  useEffect(() => {
+    if (!open) return;
+    setActiveConversationId(peekConversationId());
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -86,9 +120,127 @@ export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boole
     inputRef.current?.focus();
   }, [open, messages, pending]);
 
+  useEffect(() => {
+    if (!open) return;
+    const conversationId = peekConversationId();
+    if (!conversationId) return;
+
+    const sync = async () => {
+      try {
+        const response = await fetch(
+          `/api/support-chat/sync?conversationId=${encodeURIComponent(conversationId)}&since=${encodeURIComponent(lastSyncAtRef.current)}`,
+          { cache: "no-store" }
+        );
+        if (!response.ok) return;
+        const data = (await response.json()) as {
+          humanTakeover?: boolean;
+          closed?: boolean;
+          messages?: { role: "user" | "assistant" | "staff"; content: string; createdAt: string }[];
+          updatedAt?: string;
+        };
+
+        if (typeof data.humanTakeover === "boolean") {
+          setHumanMode(data.humanTakeover);
+        }
+
+        const incoming = data.messages ?? [];
+        if (incoming.length > 0) {
+          setMessages((prev) => {
+            const known = new Set(
+              prev.map((message) => `${message.role}:${message.content}:${message.id}`)
+            );
+            const next = [...prev];
+            for (const message of incoming) {
+              if (message.role !== "staff" && message.role !== "assistant") continue;
+              const id = `${message.role}-${message.createdAt}`;
+              const key = `${message.role}:${message.content}:${id}`;
+              if (known.has(key)) continue;
+              known.add(key);
+              next.push({
+                id,
+                role: message.role,
+                content: message.content,
+              });
+            }
+            return next;
+          });
+        }
+
+        if (data.updatedAt) {
+          lastSyncAtRef.current = data.updatedAt;
+        } else if (incoming.length > 0) {
+          lastSyncAtRef.current = new Date().toISOString();
+        }
+
+        if (data.closed) {
+          clearStoredConversationId();
+          setActiveConversationId(null);
+          setHumanMode(false);
+          setChatEnded(true);
+        }
+      } catch {
+        // sync silencieux
+      }
+    };
+
+    void sync();
+    const interval = window.setInterval(() => {
+      void sync();
+    }, 2500);
+    return () => window.clearInterval(interval);
+  }, [open, chatEnded]);
+
+  const endConversation = async () => {
+    const conversationId =
+      activeConversationId ?? peekConversationId() ?? getOrCreateConversationId();
+    if (!conversationId || endingChat) return;
+
+    setEndingChat(true);
+    try {
+      const response = await fetch("/api/support-chat/close", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ conversationId }),
+      });
+      const data = (await response.json()) as {
+        closingMessage?: string | null;
+        error?: string;
+      };
+      if (!response.ok) throw new Error(data.error ?? "close_failed");
+
+      if (data.closingMessage) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `assistant-close-${Date.now()}`,
+            role: "assistant",
+            content: data.closingMessage!,
+          },
+        ]);
+      }
+
+      clearStoredConversationId();
+      setActiveConversationId(null);
+      setHumanMode(false);
+      setChatEnded(true);
+      lastSyncAtRef.current = new Date(0).toISOString();
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `assistant-error-${Date.now()}`,
+          role: "assistant",
+          content: t("supportWidget.networkError"),
+        },
+      ]);
+    } finally {
+      setEndingChat(false);
+    }
+  };
+
   const sendMessage = async () => {
     const text = input.trim();
-    if (!text || pending) return;
+    if (!text || pending || endingChat) return;
 
     const userMessage: UiMessage = {
       id: `user-${Date.now()}`,
@@ -96,13 +248,25 @@ export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boole
       content: text,
     };
 
-    const history = [...messages, userMessage];
+    const startingNewChat = chatEnded || !peekConversationId();
+    const history = startingNewChat
+      ? [createWelcomeMessage(), userMessage]
+      : [...messages, userMessage];
+
+    if (startingNewChat) {
+      clearStoredConversationId();
+      setChatEnded(false);
+    }
+
     setMessages(history);
     setInput("");
     setPending(true);
 
+    const conversationIdForSend = getOrCreateConversationId();
+    setActiveConversationId(conversationIdForSend);
+
     try {
-      const apiMessages = history
+      const apiMessages = (startingNewChat ? [userMessage] : history)
         .filter((m) => m.id !== "welcome")
         .map((m) => ({ role: m.role, content: m.content }));
 
@@ -112,14 +276,15 @@ export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boole
         body: JSON.stringify({
           messages: apiMessages,
           locale,
-          conversationId: getOrCreateConversationId(),
+          conversationId: conversationIdForSend,
         }),
       });
 
       const data = (await response.json()) as {
-        reply?: string;
+        reply?: string | null;
         error?: string;
         conversationId?: string;
+        humanMode?: boolean;
       };
 
       if (!response.ok) {
@@ -128,24 +293,31 @@ export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boole
 
       if (data.conversationId && typeof window !== "undefined") {
         sessionStorage.setItem(CONVERSATION_STORAGE_KEY, data.conversationId);
+        setActiveConversationId(data.conversationId);
       }
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `assistant-${Date.now()}`,
-          role: "assistant",
-          content: data.reply ?? "Je n’ai pas pu répondre. Réessayez ou contactez-nous.",
-        },
-      ]);
+      if (data.humanMode) {
+        setHumanMode(true);
+      } else {
+        setHumanMode(false);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `assistant-${Date.now()}`,
+            role: "assistant",
+            content: data.reply ?? t("supportWidget.networkError"),
+          },
+        ]);
+      }
+
+      lastSyncAtRef.current = new Date().toISOString();
     } catch {
       setMessages((prev) => [
         ...prev,
         {
           id: `assistant-error-${Date.now()}`,
           role: "assistant",
-          content:
-            "Désolé, une erreur est survenue. Vous pouvez réessayer dans un instant ou nous écrire via la page Contact.",
+          content: t("supportWidget.networkError"),
         },
       ]);
     } finally {
@@ -168,22 +340,24 @@ export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boole
         <div
           className="flex w-[min(100vw-2rem,24rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-cinema-surface shadow-[0_6px_18px_rgba(0,0,0,0.4)] sm:w-[22rem]"
           role="dialog"
-          aria-label="Assistant MyLittleHero"
+          aria-label={t("supportWidget.dialogAria")}
         >
           <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-gradient-to-r from-cinema-surface to-cinema-night px-4 py-3">
             <div className="min-w-0">
               <p className="font-display text-sm font-semibold text-cream">
-                Assistant MyLittleHero
+                {t("supportWidget.title")}
               </p>
               <p className="text-[11px] text-cream/50">
-                Analyse votre question et y répond sur mesure
+                {humanMode
+                  ? t("supportWidget.subtitleHuman")
+                  : t("supportWidget.subtitleBot")}
               </p>
             </div>
             <button
               type="button"
               onClick={() => setOpen(false)}
               className={`${BTN_3D_ICON} h-8 w-8 text-cream/70 hover:text-cream`}
-              aria-label="Fermer le chat"
+              aria-label={t("supportWidget.minimizeAria")}
             >
               <CloseIcon className="h-4 w-4" />
             </button>
@@ -198,15 +372,24 @@ export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boole
                 key={message.id}
                 className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                <p
-                  className={`max-w-[90%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
-                    message.role === "user"
-                      ? "rounded-br-md bg-gradient-to-r from-gold-dark via-gold to-gold-light text-cinema-black"
-                      : "rounded-bl-md border border-white/10 bg-cinema-night text-cream/90"
-                  }`}
-                >
-                  {message.content}
-                </p>
+                <div className="max-w-[90%]">
+                  {message.role === "staff" ? (
+                    <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-gold-light/80">
+                      {t("supportWidget.staffLabel")}
+                    </p>
+                  ) : null}
+                  <p
+                    className={`rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                      message.role === "user"
+                        ? "rounded-br-md bg-gradient-to-r from-gold-dark via-gold to-gold-light text-cinema-black"
+                        : message.role === "staff"
+                          ? "rounded-bl-md border border-gold/35 bg-gold/10 text-cream"
+                          : "rounded-bl-md border border-white/10 bg-cinema-night text-cream/90"
+                    }`}
+                  >
+                    {message.content}
+                  </p>
+                </div>
               </div>
             ))}
             {pending && (
@@ -223,6 +406,18 @@ export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boole
           </div>
 
           <div className="border-t border-white/10 bg-cinema-night p-3">
+            {canEndChat ? (
+              <button
+                type="button"
+                onClick={() => void endConversation()}
+                disabled={endingChat}
+                className={`${BTN_3D_COMPACT_SECONDARY} mb-3 w-full justify-center text-xs font-semibold`}
+              >
+                {endingChat
+                  ? t("supportWidget.endChatPending")
+                  : t("supportWidget.endChat")}
+              </button>
+            ) : null}
             <div className="flex gap-2">
               <textarea
                 ref={inputRef}
@@ -230,25 +425,31 @@ export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boole
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={onKeyDown}
                 rows={2}
-                placeholder="Votre question…"
-                disabled={pending}
+                placeholder={
+                  chatEnded
+                    ? t("supportWidget.newChatPlaceholder")
+                    : t("supportWidget.placeholder")
+                }
+                disabled={pending || endingChat}
                 className="support-chat-input min-h-[44px] flex-1 resize-none rounded-xl border border-white/10 bg-cinema-black px-3 py-2 text-[16px] leading-snug text-cream placeholder:text-cream/35 outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30 disabled:opacity-60 sm:text-sm"
               />
               <button
                 type="button"
                 onClick={() => void sendMessage()}
-                disabled={pending || !input.trim()}
+                disabled={pending || endingChat || !input.trim()}
                 className={BTN_3D_CHAT_SEND}
               >
-                Envoyer
+                {t("supportWidget.send")}
               </button>
             </div>
-            <p className="mt-2 text-center text-[10px] text-cream/40">
-              Besoin d&apos;un humain ?{" "}
-              <Link href="/contact" className="text-gold-light/80 hover:text-gold-light">
-                Contact
-              </Link>
-            </p>
+            <div className="mt-2 flex flex-col items-center gap-1.5">
+              <p className="text-center text-[10px] text-cream/40">
+                {t("supportWidget.contactHint")}{" "}
+                <Link href="/contact" className="text-gold-light/80 hover:text-gold-light">
+                  {t("supportWidget.contactLink")}
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -261,7 +462,9 @@ export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boole
             ? `${BTN_3D_ICON} h-14 w-14 rounded-full text-cream`
             : BTN_3D_FAB
         }`}
-        aria-label={open ? "Fermer l'assistant" : "Ouvrir l'assistant"}
+        aria-label={
+          open ? t("supportWidget.closeFabAria") : t("supportWidget.openFabAria")
+        }
         aria-expanded={open}
       >
         {open ? (

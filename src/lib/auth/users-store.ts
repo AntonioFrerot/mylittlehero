@@ -9,6 +9,7 @@ import {
   isHostedProduction,
 } from "@/lib/db/client";
 import { isValidEmail, normalizeEmail } from "@/lib/db/normalize-email";
+import { isAdminEmail } from "@/lib/auth/is-admin";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { DEFAULT_LOCALE } from "@/lib/i18n/locales";
 import { hashPassword, verifyPassword } from "./password";
@@ -358,4 +359,48 @@ export async function updateUserFilmLanguage(
 /** @deprecated use getUserLocale */
 export async function getUserFilmLanguage(email: string): Promise<LocaleCode> {
   return getUserLocale(email);
+}
+
+async function deleteRegisteredUserDb(email: string): Promise<boolean> {
+  await ensureSchema();
+  const db = getSql();
+  await db`DELETE FROM story_scenes WHERE user_email = ${email}`;
+  await db`DELETE FROM story_workspaces WHERE user_email = ${email}`;
+  await db`DELETE FROM stripe_checkout_sessions WHERE user_email = ${email}`;
+  const deleted = await db<{ email: string }[]>`
+    DELETE FROM users WHERE email = ${email} RETURNING email
+  `;
+  return deleted.length > 0;
+}
+
+async function deleteRegisteredUserFile(email: string): Promise<boolean> {
+  const users = await readUsersFile();
+  const next = users.filter((user) => normalizeEmail(user.email) !== email);
+  if (next.length === users.length) return false;
+  await writeUsersFile(next);
+  return true;
+}
+
+/** Supprime un compte client (cascade Postgres sur films, personnages, etc.). */
+export async function deleteRegisteredUser(email: string): Promise<boolean> {
+  const normalized = normalizeEmail(email);
+  if (!normalized || isAdminEmail(normalized)) return false;
+
+  if (isDatabaseEnabled()) {
+    return deleteRegisteredUserDb(normalized);
+  }
+  return deleteRegisteredUserFile(normalized);
+}
+
+export async function listRegisteredUserEmails(): Promise<string[]> {
+  if (isDatabaseEnabled()) {
+    await ensureSchema();
+    const db = getSql();
+    const rows = await db<{ email: string }[]>`
+      SELECT email FROM users ORDER BY created_at DESC
+    `;
+    return rows.map((row) => row.email);
+  }
+  const users = await readUsersFile();
+  return users.map((user) => user.email);
 }
