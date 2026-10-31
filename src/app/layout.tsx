@@ -21,14 +21,12 @@ import "./globals.css";
 const dmSans = DM_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "600"],
   display: "swap",
 });
 
 const fraunces = Fraunces({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["600", "700"],
   display: "swap",
 });
 
