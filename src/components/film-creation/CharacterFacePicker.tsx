@@ -73,24 +73,29 @@ function CharacterScrollNav({
 type CharacterFacePickerProps = {
   eligible: Character[];
   missingPhoto: Character[];
+  selectedCharacterIds: string[];
+  onSelectedCharacterIdsChange: (ids: string[]) => void;
 };
 
 export function CharacterFacePicker({
   eligible,
   missingPhoto,
+  selectedCharacterIds: selectedIds,
+  onSelectedCharacterIdsChange: setSelectedIds,
 }: CharacterFacePickerProps) {
   const { t } = useLocale();
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const mainCharacterId = selectedIds[0] ?? "";
 
-  const toggleCharacter = useCallback((characterId: string) => {
-    setSelectedIds((current) => {
-      if (current.includes(characterId)) {
-        return current.filter((id) => id !== characterId);
-      }
-      return [...current, characterId];
-    });
-  }, []);
+  const toggleCharacter = useCallback(
+    (characterId: string) => {
+      setSelectedIds(
+        selectedIds.includes(characterId)
+          ? selectedIds.filter((id) => id !== characterId)
+          : [...selectedIds, characterId]
+      );
+    },
+    [selectedIds, setSelectedIds]
+  );
   const trackRef = useRef<HTMLDivElement>(null);
   const [scrollNav, setScrollNav] = useState<ScrollNavState>({
     canScrollLeft: false,

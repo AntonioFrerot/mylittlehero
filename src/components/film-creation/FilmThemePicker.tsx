@@ -36,12 +36,19 @@ type OutsideGesture = {
   moved: boolean;
 };
 
-export function FilmThemePicker() {
+type FilmThemePickerProps = {
+  selectedThemes: string[];
+  onSelectedThemesChange: (themes: string[]) => void;
+};
+
+export function FilmThemePicker({
+  selectedThemes: selected,
+  onSelectedThemesChange: setSelected,
+}: FilmThemePickerProps) {
   const { t } = useLocale();
   const listId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const outsideTapRef = useRef<OutsideGesture | null>(null);
-  const [selected, setSelected] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const isMobile = useSyncExternalStore(
     subscribeMobileViewport,
@@ -58,8 +65,10 @@ export function FilmThemePicker() {
   }
 
   function toggleTheme(theme: string) {
-    setSelected((prev) =>
-      prev.includes(theme) ? prev.filter((id) => id !== theme) : [...prev, theme]
+    setSelected(
+      selected.includes(theme)
+        ? selected.filter((id) => id !== theme)
+        : [...selected, theme]
     );
   }
 

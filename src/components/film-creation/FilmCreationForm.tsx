@@ -1,6 +1,13 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  useActionState,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import { useTicketBalance } from "@/hooks/use-ticket-balance";
 import {
   getTicketsRequiredForDuration,
@@ -15,6 +22,14 @@ import {
   saveFilmCreation,
   type FilmCreationFormState,
 } from "@/lib/film-creation/actions";
+import {
+  clearFilmCreationDraft,
+  filmCreationDraftStorageKey,
+  readFilmCreationDraft,
+  writeFilmCreationDraft,
+  type FilmCreationFormDraftPayload,
+  type YesNoChoice,
+} from "@/lib/film-creation/form-draft";
 import { CharacterFacePicker } from "@/components/film-creation/CharacterFacePicker";
 import { FilmCreationCooldown } from "@/components/film-creation/FilmCreationCooldown";
 import { ScheduleFilmModal } from "@/components/film-creation/ScheduleFilmModal";
@@ -46,6 +61,7 @@ const INACTIVE_SUBSCRIPTION_GRANT: SubscriptionGrantScheduleContext = {
 };
 
 type FilmCreationFormProps = {
+  accountEmail: string;
   characters: Character[];
   ticketBalance: number;
   jetonBalance: number;
@@ -58,6 +74,7 @@ type FilmCreationFormProps = {
 };
 
 export function FilmCreationForm({
+  accountEmail,
   characters,
   ticketBalance,
   jetonBalance,
@@ -69,11 +86,28 @@ export function FilmCreationForm({
   subscriptionGrantSchedule = INACTIVE_SUBSCRIPTION_GRANT,
 }: FilmCreationFormProps) {
   const { t } = useLocale();
+  const draftStorageKey = filmCreationDraftStorageKey(accountEmail);
   const formRef = useRef<HTMLFormElement>(null);
   const scheduledDateInputRef = useRef<HTMLInputElement>(null);
+  const draftPayloadRef = useRef<FilmCreationFormDraftPayload>({
+    themes: [],
+    characterIds: [],
+    durationSeconds: PAID_FILM_DURATION_MIN_SECONDS,
+    avoidChoice: null,
+    avoid: "",
+    storyChoice: null,
+    additionalInfo: "",
+  });
+  const [persistEnabled, setPersistEnabled] = useState(false);
+  const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
+  const [selectedCharacterIds, setSelectedCharacterIds] = useState<string[]>([]);
   const [durationSeconds, setDurationSeconds] = useState<number | null>(
     PAID_FILM_DURATION_MIN_SECONDS
   );
+  const [avoidChoice, setAvoidChoice] = useState<YesNoChoice | null>(null);
+  const [avoidText, setAvoidText] = useState("");
+  const [storyChoice, setStoryChoice] = useState<YesNoChoice | null>(null);
+  const [storyText, setStoryText] = useState("");
   const [clientError, setClientError] = useState<string | null>(null);
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [cooldownActive, setCooldownActive] = useState(() => {
@@ -100,11 +134,103 @@ export function FilmCreationForm({
 
   const subscriptionGrantActive = subscriptionGrantSchedule.active;
 
+  const eligibleCharacters = useMemo(
+    () => characters.filter((c) => c.photoSrc && c.audioSrc),
+    [characters]
+  );
+  const eligibleCharacterIdsKey = useMemo(
+    () => eligibleCharacters.map((c) => c.id).join("\0"),
+    [eligibleCharacters]
+  );
+  const missingPhoto = useMemo(
+    () => characters.filter((c) => !c.photoSrc),
+    [characters]
+  );
+
   useEffect(() => {
-    if (subscriptionGrantActive) {
+    const draft = readFilmCreationDraft(draftStorageKey);
+    if (draft) {
+      setSelectedThemes(draft.themes);
+      setSelectedCharacterIds(draft.characterIds);
+      if (draft.durationSeconds != null && !subscriptionGrantActive) {
+        setDurationSeconds(draft.durationSeconds);
+      }
+      setAvoidChoice(draft.avoidChoice);
+      setAvoidText(draft.avoid);
+      setStoryChoice(draft.storyChoice);
+      setStoryText(draft.additionalInfo);
+    } else if (subscriptionGrantActive) {
       setDurationSeconds(PAID_FILM_DURATION_MIN_SECONDS);
     }
-  }, [subscriptionGrantActive]);
+    setPersistEnabled(true);
+  }, [draftStorageKey, subscriptionGrantActive]);
+
+  useEffect(() => {
+    draftPayloadRef.current = {
+      themes: selectedThemes,
+      characterIds: selectedCharacterIds,
+      durationSeconds,
+      avoidChoice,
+      avoid: avoidText,
+      storyChoice,
+      additionalInfo: storyText,
+    };
+  }, [
+    selectedThemes,
+    selectedCharacterIds,
+    durationSeconds,
+    avoidChoice,
+    avoidText,
+    storyChoice,
+    storyText,
+  ]);
+
+  useEffect(() => {
+    if (!persistEnabled) return;
+    writeFilmCreationDraft(draftStorageKey, draftPayloadRef.current);
+  }, [
+    persistEnabled,
+    draftStorageKey,
+    selectedThemes,
+    selectedCharacterIds,
+    durationSeconds,
+    avoidChoice,
+    avoidText,
+    storyChoice,
+    storyText,
+  ]);
+
+  useEffect(() => {
+    if (!persistEnabled) return;
+
+    function flushDraft() {
+      writeFilmCreationDraft(draftStorageKey, draftPayloadRef.current);
+    }
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "hidden") {
+        flushDraft();
+      }
+    }
+
+    window.addEventListener("pagehide", flushDraft);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      window.removeEventListener("pagehide", flushDraft);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [persistEnabled, draftStorageKey]);
+
+  useEffect(() => {
+    const eligibleIds = new Set(eligibleCharacterIdsKey.split("\0").filter(Boolean));
+    setSelectedCharacterIds((current) => {
+      const next = current.filter((id) => eligibleIds.has(id));
+      if (next.length === current.length && next.every((id, i) => id === current[i])) {
+        return current;
+      }
+      return next;
+    });
+  }, [eligibleCharacterIdsKey]);
 
   const ticketsRequired =
     durationSeconds != null
@@ -142,9 +268,6 @@ export function FilmCreationForm({
       : t("filmCreation.form.jetonsCount", { count });
   }
 
-  const eligibleCharacters = characters.filter((c) => c.photoSrc && c.audioSrc);
-  const missingPhoto = characters.filter((c) => !c.photoSrc);
-
   function validateBeforeSubmit(
     form: HTMLFormElement,
     options?: { forSchedule?: boolean }
@@ -180,6 +303,7 @@ export function FilmCreationForm({
       return;
     }
     setClientError(null);
+    clearFilmCreationDraft(draftStorageKey);
   }
 
   function handleScheduleFilm(dayKey: string) {
@@ -193,6 +317,7 @@ export function FilmCreationForm({
     }
 
     setClientError(null);
+    clearFilmCreationDraft(draftStorageKey);
     if (scheduledDateInputRef.current) {
       scheduledDateInputRef.current.value = dayKey;
     }
@@ -257,7 +382,10 @@ export function FilmCreationForm({
         <p className="film-creation-form__themes-hint text-sm text-cream/50">
           {t("filmCreation.form.themesHint")}
         </p>
-        <FilmThemePicker />
+        <FilmThemePicker
+          selectedThemes={selectedThemes}
+          onSelectedThemesChange={setSelectedThemes}
+        />
       </fieldset>
 
       <fieldset className="space-y-3">
@@ -297,6 +425,8 @@ export function FilmCreationForm({
           <CharacterFacePicker
             eligible={eligibleCharacters}
             missingPhoto={missingPhoto}
+            selectedCharacterIds={selectedCharacterIds}
+            onSelectedCharacterIdsChange={setSelectedCharacterIds}
           />
         )}
       </fieldset>
@@ -318,6 +448,10 @@ export function FilmCreationForm({
         textId="avoid"
         placeholder={t("filmCreation.form.avoidPlaceholder")}
         hint={t("filmCreation.form.avoidHint")}
+        choice={avoidChoice}
+        onChoiceChange={setAvoidChoice}
+        text={avoidText}
+        onTextChange={setAvoidText}
       />
 
       <YesNoTextField
@@ -327,6 +461,10 @@ export function FilmCreationForm({
         textId="additionalInfo"
         placeholder={t("filmCreation.form.storyPlaceholder")}
         hint={t("filmCreation.form.storyHint")}
+        choice={storyChoice}
+        onChoiceChange={setStoryChoice}
+        text={storyText}
+        onTextChange={setStoryText}
       />
 
       {showJetonPurchaseCta ? (

@@ -80,6 +80,7 @@ export default async function CreerFilmPage() {
 
           <div className={`mt-8 ${SURFACE_3D_PANEL_LG} p-4 sm:mt-10 sm:p-6 md:p-8`}>
             <FilmCreationForm
+              accountEmail={session.email}
               characters={characters}
               ticketBalance={ticketBalance}
               jetonBalance={jetonBalance}
