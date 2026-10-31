@@ -9,11 +9,13 @@ import type {
 import { translateFilmStatus } from "@/lib/i18n/film-labels";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { useLocale } from "@/components/LocaleProvider";
+import { BTN_3D_COMPACT_SECONDARY } from "@/lib/ui/button-3d-classes";
 
 type AdminClientsListProps = {
   clients: AdminClientSummary[];
   locale: LocaleCode;
   onSelectEmail?: (email: string) => void;
+  onClientsChanged?: () => void;
 };
 
 function formatDate(value: string, locale: LocaleCode): string {
@@ -195,10 +197,84 @@ function ClientDetailsPanel({
   );
 }
 
+function PurgeSuspiciousClientsButton({
+  onDone,
+}: {
+  onDone?: () => void;
+}) {
+  const { t } = useLocale();
+  const [pending, setPending] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function run(apply: boolean) {
+    setPending(true);
+    setMessage(null);
+    try {
+      const response = await fetch("/api/admin/purge-suspicious-users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ apply }),
+      });
+      const data = (await response.json()) as {
+        suspiciousCount?: number;
+        removed?: number;
+        suspicious?: string[];
+      };
+      if (!response.ok) throw new Error("purge_failed");
+
+      if (!apply) {
+        const count = data.suspiciousCount ?? 0;
+        if (count === 0) {
+          setMessage(t("admin.clientsPurgeNone"));
+          return;
+        }
+        const sample = (data.suspicious ?? []).slice(0, 5).join("\n");
+        const extra =
+          count > 5
+            ? `\n… +${count - 5}`
+            : "";
+        const ok = window.confirm(
+          `${t("admin.clientsPurgeConfirm", { count })}\n\n${sample}${extra}`
+        );
+        if (ok) await run(true);
+        return;
+      }
+
+      setMessage(
+        t("admin.clientsPurgeDone", {
+          count: data.removed ?? 0,
+        })
+      );
+      onDone?.();
+    } catch {
+      setMessage(t("admin.clientsPurgeError"));
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-end gap-1">
+      <button
+        type="button"
+        disabled={pending}
+        className={BTN_3D_COMPACT_SECONDARY}
+        onClick={() => void run(false)}
+      >
+        {pending ? t("admin.clientsPurgePending") : t("admin.clientsPurgeButton")}
+      </button>
+      {message ? (
+        <p className="max-w-xs text-right text-xs text-cream/55">{message}</p>
+      ) : null}
+    </div>
+  );
+}
+
 export function AdminClientsList({
   clients,
   locale,
   onSelectEmail,
+  onClientsChanged,
 }: AdminClientsListProps) {
   const { t } = useLocale();
 
@@ -211,9 +287,12 @@ export function AdminClientsList({
           </h2>
           <p className="mt-1 text-sm text-cream/55">{t("admin.clientsListLead")}</p>
         </div>
-        <p className="text-sm text-cream/45">
-          {t("admin.clientsListCount", { count: clients.length })}
-        </p>
+        <div className="flex flex-col items-end gap-2">
+          <PurgeSuspiciousClientsButton onDone={onClientsChanged} />
+          <p className="text-sm text-cream/45">
+            {t("admin.clientsListCount", { count: clients.length })}
+          </p>
+        </div>
       </div>
 
       {clients.length === 0 ? (

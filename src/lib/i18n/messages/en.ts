@@ -297,6 +297,13 @@ export const en = {
     revokeJetonsCountLabel: "Number of tokens to remove",
     revokeJetonsSubmit: "Revoke tokens",
     revokeJetonsSubmitting: "Revoking…",
+    clientsPurgeButton: "Remove suspicious accounts",
+    clientsPurgePending: "Scanning…",
+    clientsPurgeNone: "No suspicious accounts found with the current rules.",
+    clientsPurgeConfirm:
+      "Delete {count} account(s) with invalid or bot-like emails? This cannot be undone.",
+    clientsPurgeDone: "Removed {count} suspicious account(s).",
+    clientsPurgeError: "Could not run cleanup. Please try again.",
     clientsListTitle: "Client accounts",
     clientsListLead:
       "All registered accounts with their characters, films, tickets and subscriptions.",

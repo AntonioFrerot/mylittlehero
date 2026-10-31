@@ -300,6 +300,13 @@ export const fr = {
     revokeJetonsCountLabel: "Nombre de jetons à retirer",
     revokeJetonsSubmit: "Retirer les jetons",
     revokeJetonsSubmitting: "Retrait en cours…",
+    clientsPurgeButton: "Supprimer les comptes suspects",
+    clientsPurgePending: "Analyse…",
+    clientsPurgeNone: "Aucun compte suspect détecté avec les règles actuelles.",
+    clientsPurgeConfirm:
+      "Supprimer {count} compte(s) dont l’e-mail semble invalide ou généré par bot ? Cette action est irréversible.",
+    clientsPurgeDone: "{count} compte(s) suspect(s) supprimé(s).",
+    clientsPurgeError: "Impossible de lancer le nettoyage. Réessayez.",
     clientsListTitle: "Comptes clients",
     clientsListLead:
       "Tous les comptes enregistrés avec leurs personnages, films, tickets et abonnements.",

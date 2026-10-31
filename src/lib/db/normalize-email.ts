@@ -35,9 +35,40 @@ function hasValidTld(domain: string): boolean {
   return /^[a-z]{2,63}$/.test(tld);
 }
 
-/** Heuristique anti-bots (local part très longue / aléatoire). */
+function localSegmentLooksHuman(segment: string): boolean {
+  if (!segment) return false;
+  if (/^\d+$/.test(segment)) return true;
+  if (segment.length === 1) return false;
+  if (segment.length <= 2) return /[aeiouy]/.test(segment);
+  if (!/[aeiouy]/.test(segment)) return false;
+  if (/[bcdfghjklmnpqrstvwxz]{5,}/.test(segment)) return false;
+  return true;
+}
+
+/** Heuristique anti-bots (local part aléatoire, points, suites sans voyelles). */
 function looksLikeGarbageLocalPart(local: string): boolean {
-  if (local.length <= 24) return false;
+  const dotCount = (local.match(/\./g) ?? []).length;
+  const segments = local.split(".").filter(Boolean);
+
+  if (dotCount >= 2 && segments.length >= 3) {
+    const humanSegments = segments.filter(localSegmentLooksHuman).length;
+    if (humanSegments < 2) return true;
+    if (segments.length >= 4 && humanSegments / segments.length < 0.5) {
+      return true;
+    }
+  }
+
+  if (dotCount >= 2 && segments.length === 2) {
+    if (!segments.every(localSegmentLooksHuman)) return true;
+  }
+
+  if (dotCount >= 3 && local.length >= 10) {
+    const lettersOnly = local.replace(/[^a-z]/g, "");
+    const vowels = (lettersOnly.match(/[aeiouy]/g) ?? []).length;
+    if (lettersOnly.length >= 8 && vowels / lettersOnly.length < 0.2) {
+      return true;
+    }
+  }
 
   if (/^[a-z0-9]+$/.test(local) && local.length >= 28) {
     return true;
@@ -48,8 +79,16 @@ function looksLikeGarbageLocalPart(local: string): boolean {
     return true;
   }
 
-  if (local.length >= 14 && !/[aeiouy]/.test(local)) {
+  const lettersOnly = local.replace(/[^a-z]/g, "");
+  if (lettersOnly.length >= 14 && !/[aeiouy]/.test(lettersOnly)) {
     return true;
+  }
+
+  if (lettersOnly.length >= 18) {
+    const vowels = (lettersOnly.match(/[aeiouy]/g) ?? []).length;
+    if (vowels / lettersOnly.length < 0.22) {
+      return true;
+    }
   }
 
   return false;

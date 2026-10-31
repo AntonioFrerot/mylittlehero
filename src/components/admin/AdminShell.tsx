@@ -249,6 +249,22 @@ export function AdminShell({
     [loadedSections, t]
   );
 
+  const refreshClients = useCallback(async () => {
+    setLoadingSection("clients");
+    setSectionError(null);
+    try {
+      const response = await fetch("/api/admin/clients", { cache: "no-store" });
+      if (!response.ok) throw new Error("fetch_failed");
+      const clients = (await response.json()) as AdminClientSummary[];
+      setSectionData((current) => ({ ...current, clients }));
+      setLoadedSections((current) => ({ ...current, clients: true }));
+    } catch {
+      setSectionError(t("admin.sectionLoadError"));
+    } finally {
+      setLoadingSection(null);
+    }
+  }, [t]);
+
   const loadManageTab = useCallback(
     async (tab: AdminManageTabId) => {
       if (tab === "contact") {
@@ -442,6 +458,7 @@ export function AdminShell({
                 clients={clients}
                 locale={locale}
                 onSelectEmail={selectClientForCredits}
+                onClientsChanged={() => void refreshClients()}
               />
             ) : null}
           </CategoryPanel>

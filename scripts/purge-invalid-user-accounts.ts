@@ -4,15 +4,12 @@
  * Usage:
  *   npx tsx scripts/purge-invalid-user-accounts.ts           # dry-run
  *   npx tsx scripts/purge-invalid-user-accounts.ts --apply   # suppression
+ *
+ * En prod : préférez POST /api/admin/purge-suspicious-users (connecté admin).
  */
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { isAdminEmail } from "../src/lib/auth/is-admin";
-import {
-  deleteRegisteredUser,
-  listRegisteredUserEmails,
-} from "../src/lib/auth/users-store";
-import { isValidEmail, normalizeEmail } from "../src/lib/db/normalize-email";
+import { purgeSuspiciousUserAccounts } from "../src/lib/auth/purge-suspicious-users";
 
 const apply = process.argv.includes("--apply");
 
@@ -39,32 +36,25 @@ try {
 }
 
 async function main() {
-  const emails = await listRegisteredUserEmails();
-  const invalid = emails.filter((email) => {
-    const normalized = normalizeEmail(email);
-    if (isAdminEmail(normalized)) return false;
-    return !isValidEmail(normalized);
-  });
+  const result = await purgeSuspiciousUserAccounts({ apply });
 
-  console.log(`Comptes total : ${emails.length}`);
-  console.log(`Comptes invalides : ${invalid.length}`);
-  if (invalid.length === 0) return;
+  console.log(`Comptes total : ${result.total}`);
+  console.log(`Comptes invalides : ${result.suspicious.length}`);
+  if (result.suspicious.length === 0) return;
 
-  for (const email of invalid) {
+  for (const email of result.suspicious) {
     console.log(apply ? `DELETE ${email}` : `WOULD DELETE ${email}`);
   }
 
   if (!apply) {
     console.log("\nDry-run uniquement. Relancez avec --apply pour supprimer.");
+    console.log(
+      "Sur le site déployé : Admin → Clients → « Supprimer les comptes suspects »."
+    );
     return;
   }
 
-  let removed = 0;
-  for (const email of invalid) {
-    const ok = await deleteRegisteredUser(email);
-    if (ok) removed += 1;
-  }
-  console.log(`\nSupprimés : ${removed}/${invalid.length}`);
+  console.log(`\nSupprimés : ${result.removed}/${result.suspicious.length}`);
 }
 
 main().catch((error) => {
