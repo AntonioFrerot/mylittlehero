@@ -3247,10 +3247,11 @@ select:disabled,
 }
 
 /* Ancres de page — évite que le header fixe masque le titre de section */
-#catalogue,
+#films-exemples,
 #comment-ca-marche,
 #themes {
-  scroll-margin-top: max(5.5rem, calc(4.5rem + env(safe-area-inset-top, 0px)));
+  scroll-margin-top: max(3.5rem, calc(3rem + env(safe-area-inset-top, 0px)));
+  scroll-margin-bottom: 2rem;
 }
 
 .cinema-gradient {
@@ -3761,35 +3762,35 @@ select:disabled,
     z-index: 1;
   }
 
-  #catalogue {
+  #films-exemples {
     position: relative;
     z-index: 1;
     overflow: visible;
     margin-top: calc(-1 * var(--hero-catalogue-handoff-overlap) - 0.5cm);
   }
 
-  #catalogue .catalogue-video-content [role="tablist"] {
+  #films-exemples .catalogue-video-content [role="tablist"] {
     margin-top: calc(0.25rem + 0.5cm);
   }
 
-  #catalogue .catalogue-video-backdrop {
+  #films-exemples .catalogue-video-backdrop {
     top: var(--catalogue-video-offset-top);
     height: var(--catalogue-video-visible-height);
     overflow: hidden;
     background: transparent;
   }
 
-  #catalogue .catalogue-video-backdrop > .hero-overlay-tint {
+  #films-exemples .catalogue-video-backdrop > .hero-overlay-tint {
     opacity: 0.5;
     -webkit-mask-image: none;
     mask-image: none;
   }
 
-  #catalogue .catalogue-handoff-bridge {
+  #films-exemples .catalogue-handoff-bridge {
     display: none;
   }
 
-  #catalogue .catalogue-handoff-bridge-bottom {
+  #films-exemples .catalogue-handoff-bridge-bottom {
     top: calc(
       var(--catalogue-video-offset-top) + var(--catalogue-video-visible-height) -
         var(--catalogue-edge-fade-bottom)
@@ -3797,7 +3798,7 @@ select:disabled,
     height: var(--catalogue-edge-fade-bottom);
   }
 
-  #catalogue .catalogue-video-backdrop > video {
+  #films-exemples .catalogue-video-backdrop > video {
     top: calc(-1 * var(--catalogue-video-crop));
     bottom: auto;
     height: calc(100% + 2 * var(--catalogue-video-crop));
@@ -3941,12 +3942,12 @@ select:disabled,
       );
   }
 
-  #catalogue {
+  #films-exemples {
     position: relative;
     z-index: 1;
   }
 
-  #catalogue .catalogue-handoff-bridge {
+  #films-exemples .catalogue-handoff-bridge {
     top: calc(-1 * var(--catalogue-handoff-overlap));
     height: var(--catalogue-handoff-fade);
     background: linear-gradient(
@@ -3963,17 +3964,17 @@ select:disabled,
     );
   }
 
-  #catalogue .catalogue-video-backdrop {
+  #films-exemples .catalogue-video-backdrop {
     top: calc(-1 * var(--catalogue-handoff-overlap));
     bottom: 0;
     height: auto;
   }
 
-  #catalogue .catalogue-video-backdrop > .hero-overlay-tint {
+  #films-exemples .catalogue-video-backdrop > .hero-overlay-tint {
     display: none;
   }
 
-  #catalogue .catalogue-video-overlay {
+  #films-exemples .catalogue-video-overlay {
     display: block;
     background:
       radial-gradient(
@@ -3985,7 +3986,7 @@ select:disabled,
       rgba(5, 7, 15, var(--catalogue-video-overlay-opacity));
   }
 
-  #catalogue .catalogue-video-backdrop > video {
+  #films-exemples .catalogue-video-backdrop > video {
     transform-origin: top center;
     -webkit-mask-image: none;
     mask-image: none;
@@ -4002,12 +4003,12 @@ select:disabled,
     padding-top: 0;
   }
 
-  #catalogue .catalogue-video-fade-top {
+  #films-exemples .catalogue-video-fade-top {
     display: none;
   }
 
-  #catalogue .catalogue-handoff-bridge-bottom,
-  #catalogue .catalogue-video-fade-bottom {
+  #films-exemples .catalogue-handoff-bridge-bottom,
+  #films-exemples .catalogue-video-fade-bottom {
     display: none;
   }
 }

@@ -46,7 +46,7 @@ export async function Hero() {
         <div className="hero-actions">
           <CreerSonFilmButton variant="primary" glow="full" className="w-full sm:w-auto" />
           <Button
-            href="/#catalogue"
+            href="/#films-exemples"
             variant="secondary"
             className="hero-examples-button w-full border-white/25 bg-transparent sm:w-auto"
           >

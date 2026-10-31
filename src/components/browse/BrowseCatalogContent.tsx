@@ -23,7 +23,7 @@ export async function BrowseCatalogContent() {
         lead={t("browse.heroLead")}
         createHref={createHref}
         createLabel={t("browse.createFilm")}
-        examplesHref="/#catalogue"
+        examplesHref="/#films-exemples"
         examplesLabel={t("browse.heroExamples")}
         backHomeLabel={t("browse.backHome")}
         stepsTitle={t("browse.heroStepsTitle")}

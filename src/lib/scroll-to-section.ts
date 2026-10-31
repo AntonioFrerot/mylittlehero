@@ -1,9 +1,17 @@
+import { resolveHomeSectionId } from "@/lib/navigation/home-sections";
+
 const PENDING_HOME_SECTION_SCROLL_KEY = "mylh:pendingHomeSectionScroll";
+export const HOME_SECTION_SCROLL_EVENT = "mylh:home-section-scroll";
+
+export type HomeSectionScrollDetail = { id: string };
 
 /** Mémorise la section cible avant navigation client vers l'accueil (hash parfois perdu). */
 export function setPendingHomeSectionScroll(id: string) {
   try {
-    sessionStorage.setItem(PENDING_HOME_SECTION_SCROLL_KEY, id);
+    sessionStorage.setItem(
+      PENDING_HOME_SECTION_SCROLL_KEY,
+      resolveHomeSectionId(id)
+    );
   } catch {
     // sessionStorage indisponible
   }
@@ -11,7 +19,8 @@ export function setPendingHomeSectionScroll(id: string) {
 
 export function peekPendingHomeSectionScroll(): string | null {
   try {
-    return sessionStorage.getItem(PENDING_HOME_SECTION_SCROLL_KEY);
+    const id = sessionStorage.getItem(PENDING_HOME_SECTION_SCROLL_KEY);
+    return id ? resolveHomeSectionId(id) : null;
   } catch {
     return null;
   }
@@ -21,7 +30,7 @@ export function consumePendingHomeSectionScroll(): string | null {
   try {
     const id = sessionStorage.getItem(PENDING_HOME_SECTION_SCROLL_KEY);
     if (id) sessionStorage.removeItem(PENDING_HOME_SECTION_SCROLL_KEY);
-    return id;
+    return id ? resolveHomeSectionId(id) : null;
   } catch {
     return null;
   }
@@ -35,13 +44,35 @@ export function clearPendingHomeSectionScroll() {
   }
 }
 
-/** Défilement fiable vers une section (ancre), même si le hash est déjà dans l’URL. */
-export function scrollToSection(id: string, behavior: ScrollBehavior = "smooth") {
-  const el = document.getElementById(id);
+export function dispatchHomeSectionScrollRequest(id: string) {
+  if (typeof window === "undefined") return;
+  const resolvedId = resolveHomeSectionId(id);
+  window.dispatchEvent(
+    new CustomEvent<HomeSectionScrollDetail>(HOME_SECTION_SCROLL_EVENT, {
+      detail: { id: resolvedId },
+    })
+  );
+}
+
+function resolveTargetSectionId(preferredId?: string | null): string | null {
+  const fromHash = window.location.hash.replace(/^#/, "");
+  const raw = preferredId || fromHash || peekPendingHomeSectionScroll();
+  if (!raw) return null;
+  return resolveHomeSectionId(raw);
+}
+
+/** Défilement fiable vers une section (ancre). */
+export function scrollToSection(
+  id: string,
+  behavior: ScrollBehavior = "smooth",
+  block: ScrollLogicalPosition = "center"
+) {
+  const resolvedId = resolveHomeSectionId(id);
+  const el = document.getElementById(resolvedId);
   if (!el) return false;
 
-  el.scrollIntoView({ behavior, block: "start" });
-  const hash = `#${id}`;
+  el.scrollIntoView({ behavior, block, inline: "nearest" });
+  const hash = `#${resolvedId}`;
   if (window.location.hash !== hash) {
     window.history.replaceState(
       null,
@@ -61,7 +92,24 @@ export function scrollToLocationHash(behavior: ScrollBehavior = "smooth") {
 type ScrollWhenReadyOptions = {
   onSuccess?: () => void;
   maxDurationMs?: number;
+  block?: ScrollLogicalPosition;
+  /** Re-scroll après navigation Next (scroll-to-top par défaut). */
+  reassertDelaysMs?: number[];
 };
+
+const DEFAULT_REASSERT_MS = [0, 80, 200, 450, 900, 1500];
+
+function scheduleScrollReassertions(
+  id: string,
+  block: ScrollLogicalPosition,
+  delaysMs: number[]
+) {
+  for (const delay of delaysMs) {
+    window.setTimeout(() => {
+      scrollToSection(id, "auto", block);
+    }, delay);
+  }
+}
 
 /** Après fermeture du menu mobile (body en position fixed). */
 export function scheduleScrollToSectionAfterUnlock(
@@ -91,7 +139,10 @@ export function scrollToSectionWhenReady(
   behavior: ScrollBehavior = "smooth",
   options?: ScrollWhenReadyOptions
 ): () => void {
-  const maxDurationMs = options?.maxDurationMs ?? 12_000;
+  const resolvedId = resolveHomeSectionId(id);
+  const maxDurationMs = options?.maxDurationMs ?? 15_000;
+  const block = options?.block ?? "center";
+  const reassertDelaysMs = options?.reassertDelaysMs ?? DEFAULT_REASSERT_MS;
   let finished = false;
   let raf = 0;
   let timeoutId = 0;
@@ -105,13 +156,16 @@ export function scrollToSectionWhenReady(
     if (timeoutId) window.clearTimeout(timeoutId);
     observer?.disconnect();
     observer = null;
-    if (success) options?.onSuccess?.();
+    if (success) {
+      options?.onSuccess?.();
+      scheduleScrollReassertions(resolvedId, block, reassertDelaysMs);
+    }
   };
 
   const attempt = (): boolean => {
     const scrollBehavior = attempts === 0 ? behavior : "auto";
     attempts += 1;
-    if (scrollToSection(id, scrollBehavior)) {
+    if (scrollToSection(resolvedId, scrollBehavior, block)) {
       finish(true);
       return true;
     }
@@ -140,4 +194,14 @@ export function scrollToSectionWhenReady(
   timeoutId = window.setTimeout(() => finish(false), maxDurationMs);
 
   return () => finish(false);
+}
+
+/** Scroll vers section accueil (pending, hash ou id explicite). */
+export function runPendingHomeSectionScroll(preferredId?: string | null): () => void {
+  const id = resolveTargetSectionId(preferredId);
+  if (!id) return () => {};
+
+  return scrollToSectionWhenReady(id, "smooth", {
+    onSuccess: () => clearPendingHomeSectionScroll(),
+  });
 }

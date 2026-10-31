@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ComponentPropsWithoutRef, MouseEvent } from "react";
+import { resolveHomeSectionId } from "@/lib/navigation/home-sections";
 import {
+  dispatchHomeSectionScrollRequest,
   scheduleScrollToSectionAfterUnlock,
   setPendingHomeSectionScroll,
 } from "@/lib/scroll-to-section";
@@ -40,21 +42,29 @@ export function HashLink({ href, onClick, ...props }: HashLinkProps) {
 
     const targetPath = normalizePath(parsed.path);
     const currentPath = normalizePath(pathname || "/");
+    const sectionId = resolveHomeSectionId(parsed.id);
 
     if (targetPath === currentPath) {
       event.preventDefault();
-      scheduleScrollToSectionAfterUnlock(parsed.id);
+      scheduleScrollToSectionAfterUnlock(sectionId);
       return;
     }
 
     event.preventDefault();
     if (targetPath === "/") {
-      setPendingHomeSectionScroll(parsed.id);
-      router.push(`/#${parsed.id}`);
+      setPendingHomeSectionScroll(sectionId);
+      router.push("/", { scroll: false });
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          dispatchHomeSectionScrollRequest(sectionId);
+        });
+      });
       return;
     }
-    router.push(`${targetPath}#${parsed.id}`);
+    router.push(`${targetPath}#${parsed.id}`, { scroll: false });
   };
 
-  return <Link href={href} onClick={handleClick} {...props} />;
+  return (
+    <Link href={href} scroll={false} onClick={handleClick} {...props} />
+  );
 }

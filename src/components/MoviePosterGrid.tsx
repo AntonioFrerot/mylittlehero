@@ -69,7 +69,7 @@ export async function MoviePosterGrid() {
 
   return (
     <section
-      id="catalogue"
+      id="films-exemples"
       className="relative max-md:overflow-visible overflow-hidden bg-[var(--catalogue-bg)] max-md:pb-6 pb-14 pt-0 max-md:mt-0 md:-mt-[var(--catalogue-handoff-overlap)] md:overflow-visible md:bg-transparent md:py-20"
     >
       <div

@@ -3,9 +3,9 @@
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import {
-  clearPendingHomeSectionScroll,
-  peekPendingHomeSectionScroll,
-  scrollToSectionWhenReady,
+  HOME_SECTION_SCROLL_EVENT,
+  type HomeSectionScrollDetail,
+  runPendingHomeSectionScroll,
 } from "@/lib/scroll-to-section";
 
 /** Scroll vers l’ancre après navigation client (ex. menu depuis /catalogue). */
@@ -20,12 +20,8 @@ export function HashScrollHandler() {
     let innerFrame = 0;
 
     const run = () => {
-      const fromHash = window.location.hash.replace(/^#/, "");
-      const id = fromHash || peekPendingHomeSectionScroll() || "";
-      if (!id) return;
-      cancelScroll = scrollToSectionWhenReady(id, "smooth", {
-        onSuccess: () => clearPendingHomeSectionScroll(),
-      });
+      cancelScroll?.();
+      cancelScroll = runPendingHomeSectionScroll();
     };
 
     outerFrame = requestAnimationFrame(() => {
@@ -40,14 +36,22 @@ export function HashScrollHandler() {
   }, [pathname]);
 
   useEffect(() => {
+    function handleScrollRequest(event: Event) {
+      const detail = (event as CustomEvent<HomeSectionScrollDetail>).detail;
+      runPendingHomeSectionScroll(detail?.id);
+    }
+
+    window.addEventListener(HOME_SECTION_SCROLL_EVENT, handleScrollRequest);
+    return () => {
+      window.removeEventListener(HOME_SECTION_SCROLL_EVENT, handleScrollRequest);
+    };
+  }, []);
+
+  useEffect(() => {
     if (normalizePath(pathname || "/") !== "/") return;
 
     function handleHashChange() {
-      const id = window.location.hash.replace(/^#/, "");
-      if (!id) return;
-      scrollToSectionWhenReady(id, "smooth", {
-        onSuccess: () => clearPendingHomeSectionScroll(),
-      });
+      runPendingHomeSectionScroll();
     }
 
     window.addEventListener("hashchange", handleHashChange);

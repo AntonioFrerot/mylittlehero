@@ -61,7 +61,7 @@ export default async function ExampleFilmPage({ params }: PageProps) {
     <>      <main className="min-h-screen bg-cinema-black pb-16 safe-top-offset">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
           <HashLink
-            href="/#catalogue"
+            href="/#films-exemples"
             className="text-sm text-cream/50 transition-colors hover:text-gold-light"
           >
             {t("examples.backToCatalogue")}
