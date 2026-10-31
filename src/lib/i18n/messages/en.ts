@@ -80,6 +80,7 @@ export const en = {
     howStep3Title: "Receive the film",
     howStep3Desc:
       "Your film is delivered within 8 hours, ready to watch together.",
+    howStep3Cta: "View my catalogue →",
     themesEyebrow: "Worlds",
     themesTitle: "Available themes",
     themesSubtitle:

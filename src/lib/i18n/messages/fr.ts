@@ -79,7 +79,8 @@ export const fr = {
     howStep2Cta: "Créer son film →",
     howStep3Title: "Réception du film",
     howStep3Desc:
-      "Le film est disponible dans votre espace après un délai maximum de 24 heures, prêt à être regardé.",
+      "Le film est disponible dans votre espace et catalogue après un délai maximum de 24 heures, prêt à être regardé.",
+    howStep3Cta: "Voir mon catalogue →",
     themesEyebrow: "Univers",
     themesTitle: "Thèmes disponibles",
     themesSubtitle:

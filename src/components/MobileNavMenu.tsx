@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import type { MouseEvent } from "react";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { MobileAuthLinks } from "@/components/auth/HeaderAuth";
@@ -11,7 +10,6 @@ import {
   isSiteNavLinkActive,
   SITE_NAV_LINKS,
 } from "@/lib/navigation/site-nav";
-import { scrollToSection } from "@/lib/scroll-to-section";
 
 type MobileNavMenuProps = {
   onNavigate: () => void;
@@ -44,26 +42,6 @@ export function MobileNavMenu({ onNavigate }: MobileNavMenuProps) {
     return () => window.removeEventListener("hashchange", syncHash);
   }, []);
 
-  const handleLinkClick =
-    (href: string) => (event: MouseEvent<HTMLAnchorElement>) => {
-      onNavigate();
-
-      const hashIndex = href.indexOf("#");
-      if (hashIndex === -1) return;
-
-      const targetPath = href.slice(0, hashIndex) || "/";
-      const targetId = href.slice(hashIndex + 1);
-      if (!targetId) return;
-
-      if (
-        (pathname || "/") === "/" &&
-        (targetPath === "" || targetPath === "/")
-      ) {
-        event.preventDefault();
-        setTimeout(() => scrollToSection(targetId, "smooth"), 0);
-      }
-    };
-
   return (
     <>
       <ul className="mobile-nav-list">
@@ -81,7 +59,7 @@ export function MobileNavMenu({ onNavigate }: MobileNavMenuProps) {
                 href={link.href}
                 className={`mobile-nav-link${active ? " mobile-nav-link--active" : ""}`}
                 aria-current={active ? "page" : undefined}
-                onClick={handleLinkClick(link.href)}
+                onClick={onNavigate}
               >
                 <span>{t(link.key)}</span>
                 <NavChevron />

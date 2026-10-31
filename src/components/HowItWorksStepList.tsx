@@ -29,6 +29,7 @@ const STEP_KEYS: Record<
   3: {
     title: "home.howStep3Title",
     description: "home.howStep3Desc",
+    cta: "home.howStep3Cta",
   },
 };
 
@@ -81,6 +82,9 @@ function getStepHref(
   }
   if (step === 2) {
     return isLoggedIn ? createFilmHref : CREER_FILM_CONNEXION_REDIRECT;
+  }
+  if (step === 3) {
+    return "/catalogue";
   }
   return undefined;
 }

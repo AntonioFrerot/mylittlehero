@@ -2,17 +2,34 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { scrollToLocationHash } from "@/lib/scroll-to-section";
+import {
+  clearPendingHomeSectionScroll,
+  consumePendingHomeSectionScroll,
+  scrollToSectionWhenReady,
+} from "@/lib/scroll-to-section";
 
-/** Scroll vers l’ancre après navigation client (ex. retour depuis une page film). */
+/** Scroll vers l’ancre après navigation client (ex. menu depuis /catalogue). */
 export function HashScrollHandler() {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!window.location.hash) return;
-    const timer = window.setTimeout(() => scrollToLocationHash(), 0);
-    return () => window.clearTimeout(timer);
+    if (normalizePath(pathname || "/") !== "/") return;
+
+    const fromHash = window.location.hash.replace(/^#/, "");
+    if (fromHash) {
+      clearPendingHomeSectionScroll();
+    }
+    const id = fromHash || consumePendingHomeSectionScroll() || "";
+    if (!id) return;
+
+    const cancel = scrollToSectionWhenReady(id);
+    return cancel;
   }, [pathname]);
 
   return null;
+}
+
+function normalizePath(path: string) {
+  if (!path || path === "/") return "/";
+  return path.replace(/\/$/, "") || "/";
 }
