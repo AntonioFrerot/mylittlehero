@@ -316,6 +316,9 @@ export const fr = {
     clientsEmptyTrashConfirm:
       "Supprimer définitivement tous les comptes de la corbeille (films, personnages, crédits) ? Cette action est irréversible.",
     clientsTrashedAt: "Mis à la corbeille le {date}",
+    clientsRestore: "Restaurer le compte",
+    clientsRestorePending: "Restauration…",
+    clientsRestoreError: "Impossible de restaurer ce compte.",
     clientsPurgeButton: "Supprimer les comptes suspects",
     clientsPurgePending: "Analyse…",
     clientsPurgeNone: "Aucun compte suspect détecté avec les règles actuelles.",

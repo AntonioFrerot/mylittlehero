@@ -313,6 +313,9 @@ export const en = {
     clientsEmptyTrashConfirm:
       "Permanently delete all accounts in trash (films, characters, credits)? This cannot be undone.",
     clientsTrashedAt: "Moved to trash on {date}",
+    clientsRestore: "Restore account",
+    clientsRestorePending: "Restoring…",
+    clientsRestoreError: "Could not restore this account.",
     clientsPurgeButton: "Remove suspicious accounts",
     clientsPurgePending: "Scanning…",
     clientsPurgeNone: "No suspicious accounts found with the current rules.",

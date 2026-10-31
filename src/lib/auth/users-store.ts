@@ -454,6 +454,33 @@ export async function trashUserAccount(email: string): Promise<boolean> {
   return true;
 }
 
+export async function restoreUserAccount(email: string): Promise<boolean> {
+  const normalized = normalizeEmail(email);
+  if (!normalized || isAdminEmail(normalized)) return false;
+
+  if (isDatabaseEnabled()) {
+    await ensureSchema();
+    const db = getSql();
+    const rows = await db<{ email: string }[]>`
+      UPDATE users
+      SET deleted_at = NULL
+      WHERE email = ${normalized} AND deleted_at IS NOT NULL
+      RETURNING email
+    `;
+    return rows.length > 0;
+  }
+
+  const users = await readUsersFile();
+  const index = users.findIndex(
+    (user) => normalizeEmail(user.email) === normalized && user.deletedAt
+  );
+  if (index === -1) return false;
+  const { deletedAt: _removed, ...rest } = users[index]!;
+  users[index] = rest;
+  await writeUsersFile(users);
+  return true;
+}
+
 export async function emptyUserAccountTrash(): Promise<number> {
   const trashed = await listRegisteredUserEmails("trash");
   let removed = 0;

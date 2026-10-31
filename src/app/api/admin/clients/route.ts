@@ -7,6 +7,7 @@ import { requireAdminApi } from "@/lib/admin/require-admin-api";
 import { isAdminEmail } from "@/lib/auth/is-admin";
 import {
   emptyUserAccountTrash,
+  restoreUserAccount,
   trashUserAccount,
 } from "@/lib/auth/users-store";
 import { normalizeEmail } from "@/lib/db/normalize-email";
@@ -59,6 +60,25 @@ export async function POST(request: Request) {
   if (action === "emptyTrash") {
     const removed = await emptyUserAccountTrash();
     return NextResponse.json({ ok: true, removed });
+  }
+
+  if (action === "restore") {
+    const emailRaw =
+      typeof body === "object" && body !== null && "email" in body
+        ? String((body as { email: unknown }).email)
+        : "";
+    const email = normalizeEmail(emailRaw);
+    if (!email) {
+      return NextResponse.json({ error: "missing_email" }, { status: 400 });
+    }
+    if (isAdminEmail(email)) {
+      return NextResponse.json({ error: "cannot_restore_admin" }, { status: 403 });
+    }
+    const ok = await restoreUserAccount(email);
+    if (!ok) {
+      return NextResponse.json({ error: "not_found" }, { status: 404 });
+    }
+    return NextResponse.json({ ok: true, email });
   }
 
   if (action === "trash") {

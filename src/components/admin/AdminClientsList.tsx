@@ -208,6 +208,45 @@ function ClientDetailsPanel({
   );
 }
 
+function RestoreClientButton({
+  email,
+  onDone,
+}: {
+  email: string;
+  onDone?: () => void;
+}) {
+  const { t } = useLocale();
+  const [pending, setPending] = useState(false);
+
+  async function handleRestore() {
+    setPending(true);
+    try {
+      const response = await fetch("/api/admin/clients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "restore", email }),
+      });
+      if (!response.ok) throw new Error("restore_failed");
+      onDone?.();
+    } catch {
+      window.alert(t("admin.clientsRestoreError"));
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      disabled={pending}
+      onClick={() => void handleRestore()}
+      className={BTN_3D_COMPACT_SECONDARY}
+    >
+      {pending ? t("admin.clientsRestorePending") : t("admin.clientsRestore")}
+    </button>
+  );
+}
+
 function TrashClientButton({
   email,
   onDone,
@@ -374,6 +413,11 @@ export function AdminClientsList({
     onClientsChanged?.();
   }
 
+  async function handleTrashChanged() {
+    await Promise.all([loadPanel("trash"), loadPanel("inbox")]);
+    onClientsChanged?.();
+  }
+
   async function handleEmptyTrash() {
     if (trash.length === 0) return;
     if (!window.confirm(t("admin.clientsEmptyTrashConfirm"))) return;
@@ -507,7 +551,12 @@ export function AdminClientsList({
                         email={client.email}
                         onDone={() => void handleInboxChanged()}
                       />
-                    ) : null}
+                    ) : (
+                      <RestoreClientButton
+                        email={client.email}
+                        onDone={() => void handleTrashChanged()}
+                      />
+                    )}
                   </div>
                 </div>
 
