@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ComponentPropsWithoutRef, MouseEvent } from "react";
 import {
-  scrollToSection,
+  scheduleScrollToSectionAfterUnlock,
   setPendingHomeSectionScroll,
 } from "@/lib/scroll-to-section";
 
@@ -43,13 +43,15 @@ export function HashLink({ href, onClick, ...props }: HashLinkProps) {
 
     if (targetPath === currentPath) {
       event.preventDefault();
-      scrollToSection(parsed.id);
+      scheduleScrollToSectionAfterUnlock(parsed.id);
       return;
     }
 
     event.preventDefault();
     if (targetPath === "/") {
       setPendingHomeSectionScroll(parsed.id);
+      router.push(`/#${parsed.id}`);
+      return;
     }
     router.push(`${targetPath}#${parsed.id}`);
   };

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { HashLink } from "@/components/ui/HashLink";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { HeaderAuth } from "@/components/auth/HeaderAuth";
 import { MobileNavMenu } from "@/components/MobileNavMenu";
@@ -25,8 +25,14 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrollLockY, setScrollLockY] = useState(0);
+  const skipMenuScrollRestoreRef = useRef(false);
 
   const closeMenu = () => setMenuOpen(false);
+
+  const closeMenuAfterNavLink = () => {
+    skipMenuScrollRestoreRef.current = true;
+    setMenuOpen(false);
+  };
 
   useEffect(() => {
     let ticking = false;
@@ -75,7 +81,11 @@ export function Header() {
       document.body.style.right = "";
       document.body.style.width = "";
       document.documentElement.style.overflow = "";
-      if (scrollLockY) window.scrollTo(0, scrollLockY);
+      const shouldRestoreScroll = !skipMenuScrollRestoreRef.current;
+      skipMenuScrollRestoreRef.current = false;
+      if (shouldRestoreScroll && scrollLockY) {
+        window.scrollTo(0, scrollLockY);
+      }
     }
 
     return () => {
@@ -211,7 +221,6 @@ export function Header() {
             role="presentation"
             aria-label={t("nav.closeMenu")}
             onPointerDown={closeMenu}
-            onTouchMove={closeMenu}
             onWheel={closeMenu}
           />
 
@@ -223,7 +232,7 @@ export function Header() {
             onWheel={(e) => e.stopPropagation()}
           >
             <nav aria-label="Navigation mobile">
-              <MobileNavMenu onNavigate={closeMenu} />
+              <MobileNavMenu onNavigate={closeMenuAfterNavLink} />
             </nav>
           </div>
         </div>

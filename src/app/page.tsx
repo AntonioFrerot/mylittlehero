@@ -4,6 +4,7 @@ import { Hero } from "@/components/Hero";
 import { HowItWorks } from "@/components/HowItWorks";
 import { MoviePosterGrid } from "@/components/MoviePosterGrid";
 import { ParentTrustSection } from "@/components/ParentTrustSection";
+import { HomeSectionScrollOnArrival } from "@/components/HomeSectionScrollOnArrival";
 import { ThemeSection } from "@/components/ThemeSection";
 
 export const revalidate = 300;
@@ -17,6 +18,7 @@ export default function Home() {
         <HowItWorks />
         <ThemeSection />
         <ParentTrustSection />
+        <HomeSectionScrollOnArrival />
       </main>
       <CTAFooter />
       <HomeAdminButton />

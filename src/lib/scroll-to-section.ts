@@ -9,6 +9,14 @@ export function setPendingHomeSectionScroll(id: string) {
   }
 }
 
+export function peekPendingHomeSectionScroll(): string | null {
+  try {
+    return sessionStorage.getItem(PENDING_HOME_SECTION_SCROLL_KEY);
+  } catch {
+    return null;
+  }
+}
+
 export function consumePendingHomeSectionScroll(): string | null {
   try {
     const id = sessionStorage.getItem(PENDING_HOME_SECTION_SCROLL_KEY);
@@ -50,28 +58,86 @@ export function scrollToLocationHash(behavior: ScrollBehavior = "smooth") {
   return scrollToSection(id, behavior);
 }
 
-/** Attend que la section soit dans le DOM (navigation client vers une autre page). */
+type ScrollWhenReadyOptions = {
+  onSuccess?: () => void;
+  maxDurationMs?: number;
+};
+
+/** Après fermeture du menu mobile (body en position fixed). */
+export function scheduleScrollToSectionAfterUnlock(
+  id: string,
+  behavior: ScrollBehavior = "smooth"
+): () => void {
+  let innerCancel: (() => void) | undefined;
+  let outerFrame = 0;
+  let innerFrame = 0;
+
+  outerFrame = requestAnimationFrame(() => {
+    innerFrame = requestAnimationFrame(() => {
+      innerCancel = scrollToSectionWhenReady(id, behavior);
+    });
+  });
+
+  return () => {
+    if (outerFrame) cancelAnimationFrame(outerFrame);
+    if (innerFrame) cancelAnimationFrame(innerFrame);
+    innerCancel?.();
+  };
+}
+
+/** Attend que la section soit dans le DOM (navigation client, contenu RSC en streaming). */
 export function scrollToSectionWhenReady(
   id: string,
   behavior: ScrollBehavior = "smooth",
-  maxAttempts = 60
+  options?: ScrollWhenReadyOptions
 ): () => void {
+  const maxDurationMs = options?.maxDurationMs ?? 12_000;
+  let finished = false;
+  let raf = 0;
+  let timeoutId = 0;
+  let observer: MutationObserver | null = null;
   let attempts = 0;
-  let frame = 0;
+
+  const finish = (success: boolean) => {
+    if (finished) return;
+    finished = true;
+    if (raf) cancelAnimationFrame(raf);
+    if (timeoutId) window.clearTimeout(timeoutId);
+    observer?.disconnect();
+    observer = null;
+    if (success) options?.onSuccess?.();
+  };
+
+  const attempt = (): boolean => {
+    const scrollBehavior = attempts === 0 ? behavior : "auto";
+    attempts += 1;
+    if (scrollToSection(id, scrollBehavior)) {
+      finish(true);
+      return true;
+    }
+    return false;
+  };
+
+  if (attempt()) {
+    return () => finish(false);
+  }
 
   const tick = () => {
-    const scrollBehavior = attempts === 0 ? behavior : "auto";
-    if (scrollToSection(id, scrollBehavior)) return;
-
-    attempts += 1;
-    if (attempts < maxAttempts) {
-      frame = requestAnimationFrame(tick);
+    if (finished) return;
+    if (!attempt()) {
+      raf = requestAnimationFrame(tick);
     }
   };
 
-  frame = requestAnimationFrame(tick);
+  raf = requestAnimationFrame(tick);
 
-  return () => {
-    if (frame) cancelAnimationFrame(frame);
-  };
+  observer = new MutationObserver(() => {
+    if (finished) return;
+    attempt();
+  });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+
+  timeoutId = window.setTimeout(() => finish(false), maxDurationMs);
+
+  return () => finish(false);
 }
