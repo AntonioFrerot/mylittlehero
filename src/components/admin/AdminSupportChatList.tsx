@@ -1,4 +1,5 @@
 import type { AdminSupportChatClient } from "@/lib/support-chat/conversation-public";
+import type { SupportChatMessageRole } from "@/lib/support-chat/message-types";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { createTranslator } from "@/lib/i18n/translator";
 
@@ -21,21 +22,35 @@ function formatDate(value: string, locale: LocaleCode): string {
 function MessageBubble({
   role,
   content,
+  staffLabel,
 }: {
-  role: "user" | "assistant";
+  role: SupportChatMessageRole;
   content: string;
+  staffLabel: string;
 }) {
+  const isUser = role === "user";
+  const isStaff = role === "staff";
+
   return (
-    <div className={`flex ${role === "user" ? "justify-end" : "justify-start"}`}>
-      <p
-        className={`max-w-[90%] whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
-          role === "user"
-            ? "rounded-br-md bg-gradient-to-r from-gold-dark via-gold to-gold-light text-cinema-black"
-            : "rounded-bl-md border border-white/10 bg-cinema-night text-cream/90"
-        }`}
-      >
-        {content}
-      </p>
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+      <div className="max-w-[90%]">
+        {isStaff ? (
+          <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-gold-light/80">
+            {staffLabel}
+          </p>
+        ) : null}
+        <p
+          className={`whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+            isUser
+              ? "rounded-br-md bg-gradient-to-r from-gold-dark via-gold to-gold-light text-cinema-black"
+              : isStaff
+                ? "rounded-bl-md border border-gold/35 bg-gold/10 text-cream"
+                : "rounded-bl-md border border-white/10 bg-cinema-night text-cream/90"
+          }`}
+        >
+          {content}
+        </p>
+      </div>
     </div>
   );
 }
@@ -110,6 +125,7 @@ export function AdminSupportChatList({ clients, locale }: AdminSupportChatListPr
                           key={`${conversation.id}-${index}`}
                           role={message.role}
                           content={message.content}
+                          staffLabel={t("admin.supportLiveStaffLabel")}
                         />
                       ))}
                     </div>
