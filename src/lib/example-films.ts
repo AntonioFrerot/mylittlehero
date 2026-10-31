@@ -59,11 +59,11 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     tagline: "Un héros électrique au cœur de la grande ville",
     posterSrc: SUPER_LEO_POSTER_SRC,
     videoPosterSrc: SUPER_LEO_VIDEO_POSTER_SRC,
-    videoComingSoon: true,
+    videoSrc: "https://www.youtube.com/watch?v=b9_xcliYdIg",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "realistic",
     themes: ["fantastique"],
-    durationLabel: "10 MIN",
+    durationLabel: "5 MIN",
   },
   "leo-carte-pirates": {
     slug: "leo-carte-pirates",

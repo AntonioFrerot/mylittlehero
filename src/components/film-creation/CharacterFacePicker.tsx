@@ -80,7 +80,17 @@ export function CharacterFacePicker({
   missingPhoto,
 }: CharacterFacePickerProps) {
   const { t } = useLocale();
-  const [selectedId, setSelectedId] = useState("");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const mainCharacterId = selectedIds[0] ?? "";
+
+  const toggleCharacter = useCallback((characterId: string) => {
+    setSelectedIds((current) => {
+      if (current.includes(characterId)) {
+        return current.filter((id) => id !== characterId);
+      }
+      return [...current, characterId];
+    });
+  }, []);
   const trackRef = useRef<HTMLDivElement>(null);
   const [scrollNav, setScrollNav] = useState<ScrollNavState>({
     canScrollLeft: false,
@@ -132,8 +142,8 @@ export function CharacterFacePicker({
     <div className="space-y-4">
       <p className="text-sm text-cream/50">{t("filmCreation.form.characterHint")}</p>
 
-      {selectedId ? (
-        <input type="hidden" name="mainCharacter" value={selectedId} />
+      {mainCharacterId ? (
+        <input type="hidden" name="mainCharacter" value={mainCharacterId} />
       ) : null}
 
       <div className="character-face-picker">
@@ -142,12 +152,13 @@ export function CharacterFacePicker({
             <div
               ref={trackRef}
               className="character-face-picker-rail__track scrollbar-hide"
-              role="radiogroup"
+              role="group"
               aria-label={t("filmCreation.form.characterAria")}
             >
               {eligible.map((character) => {
                 const meta = formatMeta(character);
-                const isSelected = selectedId === character.id;
+                const isSelected = selectedIds.includes(character.id);
+                const isMain = mainCharacterId === character.id;
 
                 return (
                   <label
@@ -157,17 +168,18 @@ export function CharacterFacePicker({
                     }`}
                   >
                     <input
-                      type="radio"
+                      type="checkbox"
                       name="characters"
                       value={character.id}
                       checked={isSelected}
-                      onChange={() => setSelectedId(character.id)}
+                      onChange={() => toggleCharacter(character.id)}
                       className="peer sr-only"
-                      required
                     />
                     {isSelected ? (
                       <span className="character-face-picker__selected-tag">
-                        {t("filmCreation.form.selectedCharacterBadge")}
+                        {isMain
+                          ? t("filmCreation.form.mainCharacterBadge")
+                          : t("filmCreation.form.selectedCharacterBadge")}
                       </span>
                     ) : null}
                     <div className="character-face-picker__card-body">

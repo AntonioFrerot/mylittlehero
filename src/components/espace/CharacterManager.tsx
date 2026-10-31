@@ -22,6 +22,10 @@ import {
 import { formatCharacterAge } from "@/lib/characters/format";
 import type { Character } from "@/lib/characters/types";
 import {
+  CHARACTER_AUDIO_MAX_BYTES,
+  CHARACTER_PHOTO_MAX_BYTES,
+} from "@/lib/characters/upload-limits";
+import {
   CHARACTER_AVATAR_IMAGE_QUALITY,
   isBlobPreviewPhoto,
 } from "@/lib/characters/user-photo";
@@ -67,6 +71,7 @@ export function CharacterManager({
   const [characters, setCharacters] = useState(initialCharacters);
   const [editing, setEditing] = useState<Character | null>(null);
   const [formResetKey, setFormResetKey] = useState(0);
+  const [clientError, setClientError] = useState<string | null>(null);
   const [state, formAction, pending] = useActionState(upsertCharacter, initialState);
 
   useEffect(() => {
@@ -124,7 +129,7 @@ export function CharacterManager({
             <h2 className="font-display text-xl font-semibold text-cream md:text-2xl">
               {t("space.charactersTitle")}
             </h2>
-            <p className="mt-2 max-w-xl text-sm text-cream/60 md:text-base">
+            <p className="mt-2 max-w-xl whitespace-pre-line text-sm text-cream/60 md:text-base">
               {t("space.charactersDesc")}
             </p>
           </div>
@@ -246,6 +251,26 @@ export function CharacterManager({
           action={formAction}
           encType="multipart/form-data"
           className="mt-6 flex flex-col gap-4"
+          onSubmit={(event) => {
+            setClientError(null);
+            const form = event.currentTarget;
+            const photoInput = form.elements.namedItem("photo");
+            const audioInput = form.elements.namedItem("audio");
+            const photoFile =
+              photoInput instanceof HTMLInputElement ? photoInput.files?.[0] : undefined;
+            const audioFile =
+              audioInput instanceof HTMLInputElement ? audioInput.files?.[0] : undefined;
+
+            if (photoFile && photoFile.size > CHARACTER_PHOTO_MAX_BYTES) {
+              event.preventDefault();
+              setClientError(t("characters.errors.photoTooLarge"));
+              return;
+            }
+            if (audioFile && audioFile.size > CHARACTER_AUDIO_MAX_BYTES) {
+              event.preventDefault();
+              setClientError(t("characters.errors.audioTooLarge"));
+            }
+          }}
         >
           {editing && <input type="hidden" name="id" value={editing.id} />}
 
@@ -303,9 +328,9 @@ export function CharacterManager({
             />
           </label>
 
-          {state.error && (
+          {(clientError || state.error) && (
             <p className="rounded-lg border border-red-500/30 bg-red-950/40 px-3 py-2 text-sm text-red-200">
-              {state.error}
+              {clientError ?? state.error}
             </p>
           )}
           {state.success && state.mode === "updated" && (

@@ -1,6 +1,6 @@
 export const fr = {
   meta: {
-    title: "Films personnalisés pour enfants",
+    title: "Films et séries personnalisés pour enfants",
     description:
       "Créez un film personnalisé où votre enfant devient le héros d'une aventure cinématographique magique.",
     monEspaceTitle: "Mon espace",
@@ -51,12 +51,11 @@ export const fr = {
     admin: "Admin",
   },
   home: {
-    heroBadge: "Films personnalisés",
+    heroBadge: "Films et séries personnalisés",
     heroTitleBefore: "Votre enfant devient le",
     heroTitleHighlight: "héros",
     heroTitleAfter: "de son propre film",
-    heroLead:
-      "Offrez à votre enfant son propre film personnalisé !",
+    heroLead: "Un tout nouveau film unique à chaque fois !",
     heroSub:
       "Configurez un film en quelques clics ou personnalisez entièrement l'histoire selon vos envies, jusqu'aux moindres détails.",
     heroExamples: "Voir les exemples",
@@ -106,7 +105,7 @@ export const fr = {
     ctaTitle: "Prêt à lui faire vivre ce moment ?",
     ctaText:
       "Un clic, et c'est parti. Imaginez la lumière qui baisse, le générique qui s'affiche, lui au centre de chaque scène. Plus que quelques minutes vous séparent de ce frisson de cinéma, celui qu'on partage quand on a tout imaginé soi-même.",
-    footerTagline: "Films personnalisés",
+    footerTagline: "Films et séries personnalisés",
     footerPrivacy: "Confidentialité",
     footerTerms: "CGV",
     footerLegal: "Mentions légales",
@@ -464,15 +463,15 @@ export const fr = {
     hello: "Bonjour, {name}",
     profile: "Profil",
     characters: "Personnages",
-    films: "Mes films",
+    films: "Mes films et séries",
     profileTitle: "Profil",
     profileDesc:
       "Modifiez votre prénom, votre mot de passe, la langue et la formule associée à votre compte.",
     charactersTitle: "Personnages",
     charactersDesc:
-      "Renseignez le prénom, l'âge, la taille et vos préférences pour chaque personnage de vos histoires. Ajoutez une photo du visage et un échantillon vocal pour chaque personnage. Pour un rendu optimal de votre film, veillez à transmettre des éléments de qualité : visage bien cadré et correctement éclairé, voix claire et sans bruit de fond.",
-    filmsTitle: "Mes films",
-    filmsDesc: "Retrouvez ici tous les films que vous avez créés.",
+      "🔒 VOS DONNÉES RESTENT PRIVÉES : AUCUNE PHOTO NI INFORMATION PERSONNELLE N'EST REVENDUE OU PARTAGÉE AVEC DES TIERS.\n\nPour un résultat de qualité, veillez à transmettre des éléments de qualité : visage bien cadré et correctement éclairé, voix claire et sans bruit de fond.",
+    filmsTitle: "Mes films et séries",
+    filmsDesc: "Retrouvez ici tous les films et séries que vous avez créés.",
     browseCatalog: "Accéder au catalogue",
     createFilm: "Créer son film",
     noFilms: "Aucun film pour l'instant",
@@ -667,12 +666,12 @@ export const fr = {
   },
   browse: {
     backHome: "← Retour à l'accueil",
-    eyebrow: "Films personnalisés",
+    eyebrow: "Films et séries personnalisés",
     title: "Catalogue",
     subtitle:
       "Parcourez les univers et créez le film de votre enfant, rangé par thème.",
     heroLead:
-      "Votre bibliothèque de films sur mesure : chaque rangée correspond à un univers narratif, prête à accueillir vos créations.",
+      "Votre bibliothèque sur mesure. Retrouvez tous vos films et séries ici.",
     heroExamples: "Voir les films d'exemple",
     heroStepsTitle: "Comment utiliser le catalogue\u00a0?",
     heroStep1Title: "Choisissez un univers",
@@ -859,6 +858,7 @@ export const fr = {
       subscriptionsTitle: "Abonnements",
       subscriptionsLead: "Choisissez l'abonnement qui vous correspond.",
     },
+    buyUnitLink: "Je veux acheter à l'unité",
     premiumYearly: {
       filmDuration: "48 x 5 minutes de film",
     },
@@ -1088,7 +1088,7 @@ export const fr = {
       themesSelectedCount: "{count} thèmes sélectionnés",
       characterLegend: "Quel personnage ?",
       characterHint:
-        "Sélectionnez le personnage principal de l'histoire.",
+        "Sélectionnez un ou plusieurs personnages. Le premier choisi est le héros principal ; les autres sont des personnages secondaires.",
       characterAria: "Personnages du film",
       characterScrollLeftAria: "Voir les personnages précédents",
       characterScrollRightAria: "Voir les personnages suivants",
@@ -1157,7 +1157,7 @@ export const fr = {
       loginRequired: "Connectez-vous pour créer votre film.",
       noCharacters: "Ajoutez au moins un personnage dans Mon espace avant de créer un film.",
       selectCharacter:
-        "Sélectionnez un personnage pour cette histoire.",
+        "Sélectionnez au moins un personnage pour cette histoire.",
       photoRequired: "Ajoutez une photo du visage pour : {names}.",
       audioRequired: "Ajoutez un échantillon vocal pour : {names}.",
       styleRequired: "Choisissez un style de film.",
@@ -1268,6 +1268,8 @@ export const fr = {
       tailleMin: "La taille doit être d'au moins {min} cm.",
       tailleMax: "La taille ne peut pas dépasser {max} cm.",
       photoRequired: "Ajoutez une photo du visage du personnage.",
+      photoTooLarge: "La photo ne doit pas dépasser 5 Mo. Choisissez une image plus légère.",
+      audioTooLarge: "L'audio ne doit pas dépasser 2 Mo.",
       audioRequired: "Ajoutez un échantillon vocal (3 à 15 secondes).",
       audioDuration: "L'audio doit durer entre 3 et 15 secondes.",
       audioTooShort: "L'audio doit durer au moins {min} secondes.",
@@ -1317,7 +1319,7 @@ export const fr = {
         title: "Super Léo",
         tagline: "Un héros électrique au cœur de la grande ville",
         synopsis:
-          "Résumé : Dans une métropole assombrie par l'orage, Léo endosse une armure dorée et affronte la foudre pour protéger ceux qu'il aime. Entre éclairs et courage, il découvre que le vrai super-pouvoir, c'est croire en soi.",
+          "Résumé : Léo, un garçon de 9 ans solitaire et souvent embêté à l'école, découvre un mystérieux bracelet bleu. Après cela sa vie va complètement changer.",
       },
       leoPirates: {
         title: "Le Signal des Bonbons",

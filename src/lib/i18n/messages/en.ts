@@ -851,6 +851,7 @@ export const en = {
       subscriptionsTitle: "Subscriptions",
       subscriptionsLead: "Choose the subscription that suits you.",
     },
+    buyUnitLink: "I want to buy individual tickets",
     premiumYearly: {
       filmDuration: "48 x 5-minute films",
     },
@@ -1079,7 +1080,8 @@ export const en = {
       themesValidate: "Confirm",
       themesSelectedCount: "{count} themes selected",
       characterLegend: "Which character?",
-      characterHint: "Select the main character for the story.",
+      characterHint:
+        "Select one or more characters. The first one you pick is the main hero; the others are supporting characters.",
       characterAria: "Film characters",
       characterScrollLeftAria: "Show previous characters",
       characterScrollRightAria: "Show next characters",
@@ -1146,7 +1148,7 @@ export const en = {
     errors: {
       loginRequired: "Log in to create your film.",
       noCharacters: "Add at least one character in My account before creating a film.",
-      selectCharacter: "Select a character for this story.",
+      selectCharacter: "Select at least one character for this story.",
       photoRequired: "Add a face photo for: {names}.",
       audioRequired: "Add a voice sample for: {names}.",
       styleRequired: "Choose a film style.",
@@ -1257,6 +1259,8 @@ export const en = {
       tailleMin: "Height must be at least {min} cm.",
       tailleMax: "Height cannot exceed {max} cm.",
       photoRequired: "Add a face photo for the character.",
+      photoTooLarge: "The photo must not exceed 5 MB. Choose a smaller image.",
+      audioTooLarge: "The audio must not exceed 2 MB.",
       audioRequired: "Add a voice sample (3 to 15 seconds).",
       audioDuration: "Audio must be between 3 and 15 seconds long.",
       audioTooShort: "Audio must be at least {min} seconds long.",

@@ -38,6 +38,15 @@ export const LEO_LOST_PLANE_VIDEO_POSTER_SRC =
 /** Affiches réalistes des cinq films d'exemple du petit Léo (accueil + hero). */
 export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
   {
+    id: "super-leo",
+    title: "Super Léo",
+    seed: "super-leo",
+    src: SUPER_LEO_POSTER_SRC,
+    href: "/films/super-leo",
+    durationLabel: "5 MIN",
+    featured: true,
+  },
+  {
     id: "leo-pirates",
     title: "Candy Signal",
     seed: "leo-carte-pirates",
@@ -62,15 +71,6 @@ export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
     src: LEO_ET_NALA_POSTER_SRC,
     href: "/films/leo-et-nala",
     durationLabel: "5 MIN",
-    featured: true,
-  },
-  {
-    id: "super-leo",
-    title: "Super Léo",
-    seed: "super-leo",
-    src: SUPER_LEO_POSTER_SRC,
-    href: "/films/super-leo",
-    durationLabel: "10 MIN",
     featured: true,
   },
   {

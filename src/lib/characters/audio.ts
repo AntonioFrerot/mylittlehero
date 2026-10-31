@@ -11,7 +11,9 @@ export {
   isValidCharacterAudioDuration,
 } from "@/lib/characters/audio-constants";
 
-const MAX_BYTES = 2 * 1024 * 1024;
+import { CHARACTER_AUDIO_MAX_BYTES } from "@/lib/characters/upload-limits";
+
+const MAX_BYTES = CHARACTER_AUDIO_MAX_BYTES;
 
 const ALLOWED_TYPES = new Set([
   "audio/webm",

@@ -1,7 +1,7 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import {
   AbonnementsCatalogToggle,
@@ -33,11 +33,20 @@ export function AbonnementsCatalogSection({
   locale,
 }: AbonnementsCatalogSectionProps) {
   const { t } = useLocale();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const sectionParam = searchParams.get("section");
   const [tab, setTab] = useState<AbonnementsCatalogTab>(() =>
     tabFromSectionParam(sectionParam)
   );
+
+  const openTicketsTab = useCallback(() => {
+    setTab("tickets");
+    const ticketsUrl = `/abonnements?section=${ABONNEMENTS_TICKETS_SECTION}`;
+    if (sectionParam !== ABONNEMENTS_TICKETS_SECTION) {
+      router.push(ticketsUrl, { scroll: false });
+    }
+  }, [router, sectionParam]);
 
   useEffect(() => {
     setTab(tabFromSectionParam(sectionParam));
@@ -98,6 +107,15 @@ export function AbonnementsCatalogSection({
               />
             ))}
           </div>
+          <p className="abonnements-catalog__unit-purchase relative z-[2] mt-3 text-center md:mt-4">
+            <button
+              type="button"
+              onClick={openTicketsTab}
+              className="cursor-pointer text-sm font-medium text-gold-light underline decoration-gold/40 underline-offset-4 transition-colors hover:text-gold hover:decoration-gold/70 md:text-base"
+            >
+              {t("abonnementsPage.buyUnitLink")}
+            </button>
+          </p>
           <div className="abonnements-catalog__subscriptions-sample-grid grid gap-6 lg:grid-cols-6 lg:gap-8">
             <div className="abonnements-catalog__sample-slot abonnements-catalog__sample-slot--subscriptions-desktop">
               <AbonnementsSampleBlock offer={sampleOffer} locale={locale} />

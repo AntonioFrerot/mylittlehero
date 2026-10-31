@@ -5,7 +5,9 @@ import { isHostedProduction } from "@/lib/db/client";
 import { optimizeCharacterPhotoBuffer } from "@/lib/images/optimize-image";
 import { isBlobStorageEnabled } from "@/lib/storage/blob";
 
-const MAX_BYTES = 5 * 1024 * 1024;
+import { CHARACTER_PHOTO_MAX_BYTES } from "@/lib/characters/upload-limits";
+
+const MAX_BYTES = CHARACTER_PHOTO_MAX_BYTES;
 const ALLOWED_TYPES = new Set([
   "image/jpeg",
   "image/jpg",

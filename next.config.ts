@@ -42,8 +42,8 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      // Photos personnages jusqu'à 5 Mo (+ champs du formulaire)
-      bodySizeLimit: "6mb",
+      // Photo jusqu'à 5 Mo + audio jusqu'à 2 Mo (+ champs multipart)
+      bodySizeLimit: "10mb",
     },
   },
   turbopack: {

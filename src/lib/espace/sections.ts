@@ -20,5 +20,5 @@ export function parseEspaceSection(value: string | undefined): EspaceSection {
 export const ESPACE_SECTION_LABELS: Record<EspaceSection, string> = {
   profil: "Profil",
   personnages: "Personnages",
-  films: "Mes films",
+  films: "Mes films et séries",
 };
