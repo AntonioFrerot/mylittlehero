@@ -147,6 +147,8 @@ export const fr = {
     acceptTermsRequired:
       "Vous devez accepter les conditions d'utilisation et la politique de confidentialité pour créer un compte.",
     invalidEmail: "Indiquez une adresse e-mail valide.",
+    signupIpLimit:
+      "Trop de comptes créés depuis cette connexion. Contactez-nous si besoin.",
     emailAlreadyRegistered:
       "Un compte existe déjà avec cette adresse e-mail. Connectez-vous avec cet e-mail — un seul compte est autorisé par adresse.",
     signupUnavailable:
@@ -300,6 +302,12 @@ export const fr = {
     revokeJetonsCountLabel: "Nombre de jetons à retirer",
     revokeJetonsSubmit: "Retirer les jetons",
     revokeJetonsSubmitting: "Retrait en cours…",
+    clientsDeleteAccount: "Supprimer ce compte",
+    clientsDeleteConfirm:
+      "Supprimer définitivement le compte {email} ? Films, personnages et crédits associés seront effacés.",
+    clientsDeletePending: "Suppression…",
+    clientsDeleteError: "Impossible de supprimer ce compte.",
+    clientsDeleteDone: "Compte supprimé.",
     clientsPurgeButton: "Supprimer les comptes suspects",
     clientsPurgePending: "Analyse…",
     clientsPurgeNone: "Aucun compte suspect détecté avec les règles actuelles.",

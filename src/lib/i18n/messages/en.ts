@@ -146,6 +146,8 @@ export const en = {
     acceptTermsRequired:
       "You must accept the terms of use and privacy policy to create an account.",
     invalidEmail: "Enter a valid email address.",
+    signupIpLimit:
+      "Too many accounts were created from this connection. Contact us if you need help.",
     emailAlreadyRegistered:
       "An account already exists with this email. Log in with this email — only one account is allowed per address.",
     signupUnavailable:
@@ -297,6 +299,12 @@ export const en = {
     revokeJetonsCountLabel: "Number of tokens to remove",
     revokeJetonsSubmit: "Revoke tokens",
     revokeJetonsSubmitting: "Revoking…",
+    clientsDeleteAccount: "Delete this account",
+    clientsDeleteConfirm:
+      "Permanently delete account {email}? Associated films, characters and credits will be removed.",
+    clientsDeletePending: "Deleting…",
+    clientsDeleteError: "Could not delete this account.",
+    clientsDeleteDone: "Account deleted.",
     clientsPurgeButton: "Remove suspicious accounts",
     clientsPurgePending: "Scanning…",
     clientsPurgeNone: "No suspicious accounts found with the current rules.",

@@ -49,6 +49,14 @@ async function runSchema(): Promise<void> {
   `;
 
   await db`
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS signup_ip TEXT
+  `;
+
+  await db`
+    CREATE INDEX IF NOT EXISTS users_signup_ip_idx ON users (signup_ip)
+  `;
+
+  await db`
     CREATE TABLE IF NOT EXISTS characters (
       user_email TEXT NOT NULL REFERENCES users(email) ON DELETE CASCADE,
       id TEXT NOT NULL,

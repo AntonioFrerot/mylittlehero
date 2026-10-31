@@ -50,6 +50,17 @@ function looksLikeGarbageLocalPart(local: string): boolean {
   const dotCount = (local.match(/\./g) ?? []).length;
   const segments = local.split(".").filter(Boolean);
 
+  const singleLetterSegments = segments.filter(
+    (segment) => segment.length === 1 && /^[a-z]$/.test(segment)
+  ).length;
+  if (singleLetterSegments >= 3) return true;
+
+  if (segments.length >= 5) {
+    const averageLength =
+      segments.reduce((sum, segment) => sum + segment.length, 0) / segments.length;
+    if (averageLength < 3) return true;
+  }
+
   if (dotCount >= 2 && segments.length >= 3) {
     const humanSegments = segments.filter(localSegmentLooksHuman).length;
     if (humanSegments < 2) return true;

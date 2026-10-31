@@ -12,6 +12,7 @@ import { isValidEmail, normalizeEmail } from "@/lib/db/normalize-email";
 import { isAdminEmail } from "@/lib/auth/is-admin";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { DEFAULT_LOCALE } from "@/lib/i18n/locales";
+import { MAX_SIGNUPS_PER_IP } from "@/lib/auth/signup-limits";
 import { hashPassword, verifyPassword } from "./password";
 
 export type StoredUser = {
@@ -23,6 +24,7 @@ export type StoredUser = {
   locale?: LocaleCode;
   /** @deprecated use locale */
   filmLanguage?: LocaleCode;
+  signupIp?: string;
 };
 
 export type AccountDetails = {
@@ -112,12 +114,32 @@ export async function findUserByEmail(
 /** Dédupliqué par requête RSC (layout, Mon espace, etc.). */
 export const findUserByEmailForUser = cache(findUserByEmail);
 
-export type RegisterUserError = "invalid_email" | "email_exists" | "unavailable";
+export type RegisterUserError =
+  | "invalid_email"
+  | "email_exists"
+  | "ip_limit"
+  | "unavailable";
+
+async function countUsersRegisteredFromIp(signupIp: string): Promise<number> {
+  if (isDatabaseEnabled()) {
+    await ensureSchema();
+    const db = getSql();
+    const rows = await db<{ count: number }[]>`
+      SELECT COUNT(*)::int AS count
+      FROM users
+      WHERE signup_ip = ${signupIp}
+    `;
+    return rows[0]?.count ?? 0;
+  }
+  const users = await readUsersFile();
+  return users.filter((user) => user.signupIp === signupIp).length;
+}
 
 export async function registerUser(input: {
   email: string;
   password: string;
   name?: string;
+  signupIp?: string | null;
 }): Promise<{ ok: true } | { ok: false; error: RegisterUserError }> {
   if (isHostedProduction() && !isDatabaseEnabled()) {
     return { ok: false, error: "unavailable" };
@@ -126,6 +148,14 @@ export async function registerUser(input: {
   const email = normalizeEmail(input.email);
   if (!isValidEmail(email)) {
     return { ok: false, error: "invalid_email" };
+  }
+
+  const signupIp = input.signupIp?.trim().slice(0, 64) || null;
+  if (signupIp) {
+    const existingFromIp = await countUsersRegisteredFromIp(signupIp);
+    if (existingFromIp >= MAX_SIGNUPS_PER_IP) {
+      return { ok: false, error: "ip_limit" };
+    }
   }
 
   try {
@@ -141,8 +171,8 @@ export async function registerUser(input: {
       await ensureSchema();
       const db = getSql();
       const inserted = await db<{ email: string }[]>`
-        INSERT INTO users (email, name, password_hash, created_at)
-        VALUES (${email}, ${name ?? null}, ${passwordHash}, ${createdAt})
+        INSERT INTO users (email, name, password_hash, created_at, signup_ip)
+        VALUES (${email}, ${name ?? null}, ${passwordHash}, ${createdAt}, ${signupIp})
         ON CONFLICT (email) DO NOTHING
         RETURNING email
       `;
@@ -162,6 +192,7 @@ export async function registerUser(input: {
       name,
       passwordHash,
       createdAt,
+      ...(signupIp ? { signupIp } : {}),
     });
     await writeUsersFile(users);
     return { ok: true };

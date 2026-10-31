@@ -11,6 +11,7 @@ import {
 } from "./redirect-paths";
 import { isValidEmail, normalizeEmail } from "@/lib/db/normalize-email";
 import { getServerTranslator } from "@/lib/i18n/server";
+import { getRequestClientIp } from "@/lib/auth/request-ip";
 import { authenticateUser, registerUser } from "./users-store";
 
 const SESSION_MAX_AGE = 60 * 60 * 24 * 30;
@@ -33,11 +34,18 @@ function validateCredentials(
 }
 
 function registerErrorMessage(
-  error: "invalid_email" | "email_exists" | "unavailable",
-  t: (key: "auth.invalidEmail" | "auth.emailAlreadyRegistered" | "auth.signupUnavailable") => string
+  error: "invalid_email" | "email_exists" | "ip_limit" | "unavailable",
+  t: (
+    key:
+      | "auth.invalidEmail"
+      | "auth.emailAlreadyRegistered"
+      | "auth.signupIpLimit"
+      | "auth.signupUnavailable"
+  ) => string
 ): string {
   if (error === "email_exists") return t("auth.emailAlreadyRegistered");
   if (error === "invalid_email") return t("auth.invalidEmail");
+  if (error === "ip_limit") return t("auth.signupIpLimit");
   return t("auth.signupUnavailable");
 }
 
@@ -102,10 +110,12 @@ export async function signUp(
   }
 
   const name = formData.get("name");
+  const signupIp = await getRequestClientIp();
   const result = await registerUser({
     email: validated.email,
     password: validated.password,
     name: typeof name === "string" ? name : undefined,
+    signupIp,
   });
 
   if (!result.ok) {

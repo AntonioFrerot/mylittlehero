@@ -197,6 +197,50 @@ function ClientDetailsPanel({
   );
 }
 
+function DeleteClientButton({
+  email,
+  onDone,
+}: {
+  email: string;
+  onDone?: () => void;
+}) {
+  const { t } = useLocale();
+  const [pending, setPending] = useState(false);
+
+  async function handleDelete() {
+    if (
+      !window.confirm(t("admin.clientsDeleteConfirm", { email }))
+    ) {
+      return;
+    }
+    setPending(true);
+    try {
+      const response = await fetch("/api/admin/clients", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!response.ok) throw new Error("delete_failed");
+      onDone?.();
+    } catch {
+      window.alert(t("admin.clientsDeleteError"));
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      disabled={pending}
+      onClick={() => void handleDelete()}
+      className="shrink-0 rounded-xl border border-red-500/35 bg-red-950/40 px-3 py-1.5 text-xs font-medium text-red-100 transition-colors hover:bg-red-950/60 disabled:opacity-50"
+    >
+      {pending ? t("admin.clientsDeletePending") : t("admin.clientsDeleteAccount")}
+    </button>
+  );
+}
+
 function PurgeSuspiciousClientsButton({
   onDone,
 }: {
@@ -320,15 +364,21 @@ export function AdminClientsList({
                     </p>
                   </div>
 
-                  {onSelectEmail ? (
-                    <button
-                      type="button"
-                      onClick={() => onSelectEmail(client.email)}
-                      className="shrink-0 rounded-xl border border-gold/30 bg-gold/10 px-3 py-1.5 text-xs font-medium text-gold-light transition-colors hover:bg-gold/15"
-                    >
-                      {t("admin.clientsUseEmail")}
-                    </button>
-                  ) : null}
+                  <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+                    {onSelectEmail ? (
+                      <button
+                        type="button"
+                        onClick={() => onSelectEmail(client.email)}
+                        className="rounded-xl border border-gold/30 bg-gold/10 px-3 py-1.5 text-xs font-medium text-gold-light transition-colors hover:bg-gold/15"
+                      >
+                        {t("admin.clientsUseEmail")}
+                      </button>
+                    ) : null}
+                    <DeleteClientButton
+                      email={client.email}
+                      onDone={onClientsChanged}
+                    />
+                  </div>
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-2">
