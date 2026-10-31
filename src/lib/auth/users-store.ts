@@ -15,6 +15,8 @@ import { DEFAULT_LOCALE } from "@/lib/i18n/locales";
 import { MAX_SIGNUPS_PER_IP } from "@/lib/auth/signup-limits";
 import { hashPassword, verifyPassword } from "./password";
 
+export type UserAccountBox = "inbox" | "trash";
+
 export type StoredUser = {
   email: string;
   name?: string;
@@ -25,6 +27,7 @@ export type StoredUser = {
   /** @deprecated use locale */
   filmLanguage?: LocaleCode;
   signupIp?: string;
+  deletedAt?: string;
 };
 
 export type AccountDetails = {
@@ -44,6 +47,7 @@ function rowToUser(row: {
   created_at: Date;
   subscription_plan_id: string | null;
   locale: string | null;
+  deleted_at?: Date | string | null;
 }): StoredUser {
   return {
     email: row.email,
@@ -52,6 +56,14 @@ function rowToUser(row: {
     createdAt: row.created_at.toISOString(),
     subscriptionPlanId: row.subscription_plan_id ?? undefined,
     locale: (row.locale as LocaleCode | null) ?? undefined,
+    ...(row.deleted_at
+      ? {
+          deletedAt:
+            row.deleted_at instanceof Date
+              ? row.deleted_at.toISOString()
+              : String(row.deleted_at),
+        }
+      : {}),
   };
 }
 
@@ -85,9 +97,9 @@ async function findUserByEmailDb(
       locale: string | null;
     }[]
   >`
-    SELECT email, name, password_hash, created_at, subscription_plan_id, locale
+    SELECT email, name, password_hash, created_at, subscription_plan_id, locale, deleted_at
     FROM users
-    WHERE email = ${email}
+    WHERE email = ${email} AND deleted_at IS NULL
     LIMIT 1
   `;
   const row = rows[0];
@@ -98,7 +110,9 @@ async function findUserByEmailFile(
   email: string
 ): Promise<StoredUser | undefined> {
   const users = await readUsersFile();
-  return users.find((u) => normalizeEmail(u.email) === email);
+  return users.find(
+    (u) => normalizeEmail(u.email) === email && !u.deletedAt
+  );
 }
 
 export async function findUserByEmail(
@@ -127,7 +141,7 @@ async function countUsersRegisteredFromIp(signupIp: string): Promise<number> {
     const rows = await db<{ count: number }[]>`
       SELECT COUNT(*)::int AS count
       FROM users
-      WHERE signup_ip = ${signupIp}
+      WHERE signup_ip = ${signupIp} AND deleted_at IS NULL
     `;
     return rows[0]?.count ?? 0;
   }
@@ -412,8 +426,50 @@ async function deleteRegisteredUserFile(email: string): Promise<boolean> {
   return true;
 }
 
-/** Supprime un compte client (cascade Postgres sur films, personnages, etc.). */
+export async function trashUserAccount(email: string): Promise<boolean> {
+  const normalized = normalizeEmail(email);
+  if (!normalized || isAdminEmail(normalized)) return false;
+
+  const deletedAt = new Date().toISOString();
+
+  if (isDatabaseEnabled()) {
+    await ensureSchema();
+    const db = getSql();
+    const rows = await db<{ email: string }[]>`
+      UPDATE users
+      SET deleted_at = ${deletedAt}
+      WHERE email = ${normalized} AND deleted_at IS NULL
+      RETURNING email
+    `;
+    return rows.length > 0;
+  }
+
+  const users = await readUsersFile();
+  const index = users.findIndex(
+    (user) => normalizeEmail(user.email) === normalized && !user.deletedAt
+  );
+  if (index === -1) return false;
+  users[index] = { ...users[index]!, deletedAt };
+  await writeUsersFile(users);
+  return true;
+}
+
+export async function emptyUserAccountTrash(): Promise<number> {
+  const trashed = await listRegisteredUserEmails("trash");
+  let removed = 0;
+  for (const email of trashed) {
+    const ok = await deleteRegisteredUserHard(email);
+    if (ok) removed += 1;
+  }
+  return removed;
+}
+
+/** Suppression définitive (corbeille vidée ou maintenance). */
 export async function deleteRegisteredUser(email: string): Promise<boolean> {
+  return deleteRegisteredUserHard(email);
+}
+
+async function deleteRegisteredUserHard(email: string): Promise<boolean> {
   const normalized = normalizeEmail(email);
   if (!normalized || isAdminEmail(normalized)) return false;
 
@@ -423,15 +479,68 @@ export async function deleteRegisteredUser(email: string): Promise<boolean> {
   return deleteRegisteredUserFile(normalized);
 }
 
-export async function listRegisteredUserEmails(): Promise<string[]> {
+export async function listRegisteredUserEmails(
+  box: UserAccountBox = "inbox"
+): Promise<string[]> {
+  const users = await listStoredUsers(box);
+  return users.map((user) => user.email);
+}
+
+export async function listStoredUsers(
+  box: UserAccountBox = "inbox"
+): Promise<StoredUser[]> {
   if (isDatabaseEnabled()) {
     await ensureSchema();
     const db = getSql();
-    const rows = await db<{ email: string }[]>`
-      SELECT email FROM users ORDER BY created_at DESC
-    `;
-    return rows.map((row) => row.email);
+    const rows =
+      box === "trash"
+        ? await db<
+            {
+              email: string;
+              name: string | null;
+              password_hash: string;
+              created_at: Date;
+              subscription_plan_id: string | null;
+              locale: string | null;
+              deleted_at: Date | string | null;
+            }[]
+          >`
+            SELECT email, name, password_hash, created_at, subscription_plan_id, locale, deleted_at
+            FROM users
+            WHERE deleted_at IS NOT NULL
+            ORDER BY deleted_at DESC
+          `
+        : await db<
+            {
+              email: string;
+              name: string | null;
+              password_hash: string;
+              created_at: Date;
+              subscription_plan_id: string | null;
+              locale: string | null;
+              deleted_at: Date | string | null;
+            }[]
+          >`
+            SELECT email, name, password_hash, created_at, subscription_plan_id, locale, deleted_at
+            FROM users
+            WHERE deleted_at IS NULL
+            ORDER BY created_at DESC
+          `;
+    return rows.map(rowToUser);
   }
+
   const users = await readUsersFile();
-  return users.map((user) => user.email);
+  const filtered =
+    box === "trash"
+      ? users.filter((user) => Boolean(user.deletedAt))
+      : users.filter((user) => !user.deletedAt);
+  return filtered.sort(
+    (a, b) =>
+      new Date(
+        box === "trash" ? (b.deletedAt ?? b.createdAt) : b.createdAt
+      ).getTime() -
+      new Date(
+        box === "trash" ? (a.deletedAt ?? a.createdAt) : a.createdAt
+      ).getTime()
+  );
 }

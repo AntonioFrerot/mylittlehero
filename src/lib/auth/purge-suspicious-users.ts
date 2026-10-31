@@ -1,7 +1,7 @@
 import { isAdminEmail } from "@/lib/auth/is-admin";
 import {
-  deleteRegisteredUser,
   listRegisteredUserEmails,
+  trashUserAccount,
 } from "@/lib/auth/users-store";
 import { isValidEmail, normalizeEmail } from "@/lib/db/normalize-email";
 
@@ -29,7 +29,7 @@ export async function purgeSuspiciousUserAccounts(options?: {
 
   let removed = 0;
   for (const email of suspicious) {
-    const ok = await deleteRegisteredUser(email);
+    const ok = await trashUserAccount(email);
     if (ok) removed += 1;
   }
 

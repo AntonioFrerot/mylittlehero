@@ -302,18 +302,26 @@ export const fr = {
     revokeJetonsCountLabel: "Nombre de jetons à retirer",
     revokeJetonsSubmit: "Retirer les jetons",
     revokeJetonsSubmitting: "Retrait en cours…",
-    clientsDeleteAccount: "Supprimer ce compte",
-    clientsDeleteConfirm:
-      "Supprimer définitivement le compte {email} ? Films, personnages et crédits associés seront effacés.",
-    clientsDeletePending: "Suppression…",
-    clientsDeleteError: "Impossible de supprimer ce compte.",
-    clientsDeleteDone: "Compte supprimé.",
+    clientsSubNavLabel: "Boîtes comptes clients",
+    clientsInboxTab: "Comptes actifs",
+    clientsTrashTab: "Corbeille",
+    clientsMoveToTrash: "Mettre à la corbeille",
+    clientsTrashConfirm:
+      "Déplacer le compte {email} vers la corbeille ? Le client ne pourra plus se connecter, mais les données restent jusqu’à ce que vous vidiez la corbeille.",
+    clientsTrashPending: "Envoi…",
+    clientsTrashError: "Impossible de mettre à jour ce compte.",
+    clientsTrashEmpty: "La corbeille est vide.",
+    clientsEmptyTrash: "Vider la corbeille",
+    clientsEmptyTrashPending: "Suppression définitive…",
+    clientsEmptyTrashConfirm:
+      "Supprimer définitivement tous les comptes de la corbeille (films, personnages, crédits) ? Cette action est irréversible.",
+    clientsTrashedAt: "Mis à la corbeille le {date}",
     clientsPurgeButton: "Supprimer les comptes suspects",
     clientsPurgePending: "Analyse…",
     clientsPurgeNone: "Aucun compte suspect détecté avec les règles actuelles.",
     clientsPurgeConfirm:
       "Supprimer {count} compte(s) dont l’e-mail semble invalide ou généré par bot ? Cette action est irréversible.",
-    clientsPurgeDone: "{count} compte(s) suspect(s) supprimé(s).",
+    clientsPurgeDone: "{count} compte(s) suspect(s) déplacé(s) vers la corbeille.",
     clientsPurgeError: "Impossible de lancer le nettoyage. Réessayez.",
     clientsListTitle: "Comptes clients",
     clientsListLead:

@@ -299,18 +299,26 @@ export const en = {
     revokeJetonsCountLabel: "Number of tokens to remove",
     revokeJetonsSubmit: "Revoke tokens",
     revokeJetonsSubmitting: "Revoking…",
-    clientsDeleteAccount: "Delete this account",
-    clientsDeleteConfirm:
-      "Permanently delete account {email}? Associated films, characters and credits will be removed.",
-    clientsDeletePending: "Deleting…",
-    clientsDeleteError: "Could not delete this account.",
-    clientsDeleteDone: "Account deleted.",
+    clientsSubNavLabel: "Client account boxes",
+    clientsInboxTab: "Active accounts",
+    clientsTrashTab: "Trash",
+    clientsMoveToTrash: "Move to trash",
+    clientsTrashConfirm:
+      "Move account {email} to trash? The client cannot sign in anymore, but data stays until you empty trash.",
+    clientsTrashPending: "Moving…",
+    clientsTrashError: "Could not update this account.",
+    clientsTrashEmpty: "Trash is empty.",
+    clientsEmptyTrash: "Empty trash",
+    clientsEmptyTrashPending: "Permanently deleting…",
+    clientsEmptyTrashConfirm:
+      "Permanently delete all accounts in trash (films, characters, credits)? This cannot be undone.",
+    clientsTrashedAt: "Moved to trash on {date}",
     clientsPurgeButton: "Remove suspicious accounts",
     clientsPurgePending: "Scanning…",
     clientsPurgeNone: "No suspicious accounts found with the current rules.",
     clientsPurgeConfirm:
       "Delete {count} account(s) with invalid or bot-like emails? This cannot be undone.",
-    clientsPurgeDone: "Removed {count} suspicious account(s).",
+    clientsPurgeDone: "Moved {count} suspicious account(s) to trash.",
     clientsPurgeError: "Could not run cleanup. Please try again.",
     clientsListTitle: "Client accounts",
     clientsListLead:

@@ -1,7 +1,5 @@
 import "server-only";
 
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import {
   loadAllCharactersByEmail,
   loadAllFilmsByEmail,
@@ -11,9 +9,12 @@ import {
 } from "@/lib/admin/batch-loaders";
 import { isAdminEmail } from "@/lib/auth/is-admin";
 import { listCharacters } from "@/lib/characters/store";
-import type { StoredUser } from "@/lib/auth/users-store";
+import {
+  listStoredUsers,
+  type StoredUser,
+  type UserAccountBox,
+} from "@/lib/auth/users-store";
 import { listUserFilms } from "@/lib/film-creation/store";
-import { ensureSchema, getSql, isDatabaseEnabled } from "@/lib/db/client";
 import { normalizeEmail } from "@/lib/db/normalize-email";
 import { normalizeFilmStatus } from "@/lib/i18n/film-labels";
 import type { LocaleCode } from "@/lib/i18n/locales";
@@ -38,10 +39,13 @@ export type AdminClientFilm = {
   isSample?: boolean;
 };
 
+export type AdminClientAccountBox = "inbox" | "trash";
+
 export type AdminClientSummary = {
   email: string;
   name?: string;
   createdAt: string;
+  deletedAt?: string;
   locale: LocaleCode;
   subscriptionPlanId?: string;
   subscriptionPlanName?: string;
@@ -61,59 +65,10 @@ export type AdminClientDetails = {
 
 export type AdminClientEntry = AdminClientSummary & AdminClientDetails;
 
-function rowToUser(row: {
-  email: string;
-  name: string | null;
-  password_hash: string;
-  created_at: Date;
-  subscription_plan_id: string | null;
-  locale: string | null;
-}): StoredUser {
-  return {
-    email: row.email,
-    name: row.name ?? undefined,
-    passwordHash: row.password_hash,
-    createdAt: row.created_at.toISOString(),
-    subscriptionPlanId: row.subscription_plan_id ?? undefined,
-    locale: (row.locale as LocaleCode | null) ?? undefined,
-  };
-}
-
-export async function listRegisteredUsers(): Promise<StoredUser[]> {
-  if (isDatabaseEnabled()) {
-    await ensureSchema();
-    const db = getSql();
-    const rows = await db<
-      {
-        email: string;
-        name: string | null;
-        password_hash: string;
-        created_at: Date;
-        subscription_plan_id: string | null;
-        locale: string | null;
-      }[]
-    >`
-      SELECT email, name, password_hash, created_at, subscription_plan_id, locale
-      FROM users
-      ORDER BY created_at DESC
-    `;
-    return rows.map(rowToUser);
-  }
-
-  try {
-    const raw = await readFile(
-      path.join(process.cwd(), "data", "users.json"),
-      "utf8"
-    );
-    const parsed = JSON.parse(raw) as StoredUser[];
-    if (!Array.isArray(parsed)) return [];
-    return parsed.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  } catch {
-    return [];
-  }
+export async function listRegisteredUsers(
+  box: UserAccountBox = "inbox"
+): Promise<StoredUser[]> {
+  return listStoredUsers(box);
 }
 
 function buildClientSummary(
@@ -144,15 +99,17 @@ function buildClientSummary(
     filmsReadyCount,
     filmsInProgressCount: filmCount - filmsReadyCount,
     hasPurchased,
+    ...(user.deletedAt ? { deletedAt: user.deletedAt } : {}),
   };
 }
 
 export async function listAdminClientSummaries(
-  adminLocale: LocaleCode = "fr"
+  adminLocale: LocaleCode = "fr",
+  box: UserAccountBox = "inbox"
 ): Promise<AdminClientSummary[]> {
   const [users, filmsByEmail, charactersByEmail, ticketBalances, jetonBalances, purchased] =
     await Promise.all([
-      listRegisteredUsers(),
+      listRegisteredUsers(box),
       loadAllFilmsByEmail(),
       loadAllCharactersByEmail(),
       loadTicketBalancesByEmail(),
@@ -185,10 +142,17 @@ export async function listAdminClientSummaries(
     );
   }
 
-  return summaries.sort(
-    (a, b) =>
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  return summaries.sort((a, b) => {
+    const aTime =
+      box === "trash" && a.deletedAt
+        ? new Date(a.deletedAt).getTime()
+        : new Date(a.createdAt).getTime();
+    const bTime =
+      box === "trash" && b.deletedAt
+        ? new Date(b.deletedAt).getTime()
+        : new Date(b.createdAt).getTime();
+    return bTime - aTime;
+  });
 }
 
 export async function getAdminClientDetails(

@@ -1,15 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type {
   AdminClientDetails,
   AdminClientSummary,
 } from "@/lib/admin/clients";
+import { AdminSubNav } from "@/components/admin/AdminSubNav";
 import { translateFilmStatus } from "@/lib/i18n/film-labels";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { useLocale } from "@/components/LocaleProvider";
 import { BTN_3D_COMPACT_SECONDARY } from "@/lib/ui/button-3d-classes";
+
+type ClientsPanel = "inbox" | "trash";
 
 type AdminClientsListProps = {
   clients: AdminClientSummary[];
@@ -17,6 +20,14 @@ type AdminClientsListProps = {
   onSelectEmail?: (email: string) => void;
   onClientsChanged?: () => void;
 };
+
+async function fetchClientBox(box: ClientsPanel): Promise<AdminClientSummary[]> {
+  const response = await fetch(`/api/admin/clients?box=${box}`, {
+    cache: "no-store",
+  });
+  if (!response.ok) throw new Error("fetch_failed");
+  return (await response.json()) as AdminClientSummary[];
+}
 
 function formatDate(value: string, locale: LocaleCode): string {
   try {
@@ -197,7 +208,7 @@ function ClientDetailsPanel({
   );
 }
 
-function DeleteClientButton({
+function TrashClientButton({
   email,
   onDone,
 }: {
@@ -207,23 +218,21 @@ function DeleteClientButton({
   const { t } = useLocale();
   const [pending, setPending] = useState(false);
 
-  async function handleDelete() {
-    if (
-      !window.confirm(t("admin.clientsDeleteConfirm", { email }))
-    ) {
+  async function handleTrash() {
+    if (!window.confirm(t("admin.clientsTrashConfirm", { email }))) {
       return;
     }
     setPending(true);
     try {
       const response = await fetch("/api/admin/clients", {
-        method: "DELETE",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ action: "trash", email }),
       });
-      if (!response.ok) throw new Error("delete_failed");
+      if (!response.ok) throw new Error("trash_failed");
       onDone?.();
     } catch {
-      window.alert(t("admin.clientsDeleteError"));
+      window.alert(t("admin.clientsTrashError"));
     } finally {
       setPending(false);
     }
@@ -233,10 +242,10 @@ function DeleteClientButton({
     <button
       type="button"
       disabled={pending}
-      onClick={() => void handleDelete()}
-      className="shrink-0 rounded-xl border border-red-500/35 bg-red-950/40 px-3 py-1.5 text-xs font-medium text-red-100 transition-colors hover:bg-red-950/60 disabled:opacity-50"
+      onClick={() => void handleTrash()}
+      className={BTN_3D_COMPACT_SECONDARY}
     >
-      {pending ? t("admin.clientsDeletePending") : t("admin.clientsDeleteAccount")}
+      {pending ? t("admin.clientsTrashPending") : t("admin.clientsMoveToTrash")}
     </button>
   );
 }
@@ -315,12 +324,77 @@ function PurgeSuspiciousClientsButton({
 }
 
 export function AdminClientsList({
-  clients,
+  clients: initialInbox,
   locale,
   onSelectEmail,
   onClientsChanged,
 }: AdminClientsListProps) {
   const { t } = useLocale();
+  const [panel, setPanel] = useState<ClientsPanel>("inbox");
+  const [inbox, setInbox] = useState(initialInbox);
+  const [trash, setTrash] = useState<AdminClientSummary[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [emptyingTrash, setEmptyingTrash] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const activeClients = panel === "inbox" ? inbox : trash;
+
+  const loadPanel = useCallback(
+    async (target: ClientsPanel) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const rows = await fetchClientBox(target);
+        if (target === "inbox") {
+          setInbox(rows);
+        } else {
+          setTrash(rows);
+        }
+      } catch {
+        setError(t("admin.sectionLoadError"));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [t]
+  );
+
+  useEffect(() => {
+    setInbox(initialInbox);
+  }, [initialInbox]);
+
+  useEffect(() => {
+    if (panel === "trash" && trash.length === 0) {
+      void loadPanel("trash");
+    }
+  }, [panel, trash.length, loadPanel]);
+
+  async function handleInboxChanged() {
+    await loadPanel("inbox");
+    onClientsChanged?.();
+  }
+
+  async function handleEmptyTrash() {
+    if (trash.length === 0) return;
+    if (!window.confirm(t("admin.clientsEmptyTrashConfirm"))) return;
+
+    setEmptyingTrash(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/admin/clients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "emptyTrash" }),
+      });
+      if (!response.ok) throw new Error("empty_failed");
+      setTrash([]);
+      await handleInboxChanged();
+    } catch {
+      setError(t("admin.clientsTrashError"));
+    } finally {
+      setEmptyingTrash(false);
+    }
+  }
 
   return (
     <section className="space-y-4">
@@ -332,20 +406,70 @@ export function AdminClientsList({
           <p className="mt-1 text-sm text-cream/55">{t("admin.clientsListLead")}</p>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <PurgeSuspiciousClientsButton onDone={onClientsChanged} />
+          {panel === "inbox" ? (
+            <PurgeSuspiciousClientsButton onDone={() => void handleInboxChanged()} />
+          ) : null}
           <p className="text-sm text-cream/45">
-            {t("admin.clientsListCount", { count: clients.length })}
+            {t("admin.clientsListCount", { count: inbox.length })}
           </p>
         </div>
       </div>
 
-      {clients.length === 0 ? (
+      <AdminSubNav
+        items={[
+          {
+            id: "inbox",
+            label: t("admin.clientsInboxTab"),
+            badge: inbox.length,
+          },
+          {
+            id: "trash",
+            label: t("admin.clientsTrashTab"),
+            badge: trash.length,
+          },
+        ]}
+        active={panel}
+        onSelect={(next) => {
+          setPanel(next);
+          if (next === "trash") void loadPanel("trash");
+        }}
+        ariaLabel={t("admin.clientsSubNavLabel")}
+      />
+
+      {panel === "trash" && trash.length > 0 ? (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            disabled={emptyingTrash}
+            onClick={() => void handleEmptyTrash()}
+            className="rounded-lg border border-red-500/30 px-3 py-2 text-sm text-red-200/90 transition-colors hover:bg-red-950/35 disabled:opacity-50"
+          >
+            {emptyingTrash
+              ? t("admin.clientsEmptyTrashPending")
+              : t("admin.clientsEmptyTrash")}
+          </button>
+        </div>
+      ) : null}
+
+      {error ? (
+        <p className="rounded-lg border border-red-500/30 bg-red-950/40 px-3 py-2 text-sm text-red-200">
+          {error}
+        </p>
+      ) : null}
+
+      {loading ? (
         <p className="rounded-2xl border border-dashed border-white/15 bg-cinema-night/50 px-6 py-10 text-center text-sm text-cream/55">
-          {t("admin.clientsListEmpty")}
+          {t("admin.sectionLoading")}
+        </p>
+      ) : activeClients.length === 0 ? (
+        <p className="rounded-2xl border border-dashed border-white/15 bg-cinema-night/50 px-6 py-10 text-center text-sm text-cream/55">
+          {panel === "inbox"
+            ? t("admin.clientsListEmpty")
+            : t("admin.clientsTrashEmpty")}
         </p>
       ) : (
         <div className="space-y-4">
-          {clients.map((client) => (
+          {activeClients.map((client) => (
             <article
               key={client.email}
               className="overflow-hidden rounded-2xl border border-white/10 bg-cinema-night/50"
@@ -358,14 +482,18 @@ export function AdminClientsList({
                       <p className="text-sm text-cream/55">{client.name}</p>
                     ) : null}
                     <p className="mt-1 text-xs text-cream/45">
-                      {t("admin.clientsRegisteredAt", {
-                        date: formatDate(client.createdAt, locale),
-                      })}
+                      {panel === "trash" && client.deletedAt
+                        ? t("admin.clientsTrashedAt", {
+                            date: formatDate(client.deletedAt, locale),
+                          })
+                        : t("admin.clientsRegisteredAt", {
+                            date: formatDate(client.createdAt, locale),
+                          })}
                     </p>
                   </div>
 
                   <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-                    {onSelectEmail ? (
+                    {panel === "inbox" && onSelectEmail ? (
                       <button
                         type="button"
                         onClick={() => onSelectEmail(client.email)}
@@ -374,10 +502,12 @@ export function AdminClientsList({
                         {t("admin.clientsUseEmail")}
                       </button>
                     ) : null}
-                    <DeleteClientButton
-                      email={client.email}
-                      onDone={onClientsChanged}
-                    />
+                    {panel === "inbox" ? (
+                      <TrashClientButton
+                        email={client.email}
+                        onDone={() => void handleInboxChanged()}
+                      />
+                    ) : null}
                   </div>
                 </div>
 
