@@ -1,7 +1,6 @@
 "use client";
 
-import { AdminGrantJetonsForm } from "@/components/admin/AdminGrantJetonsForm";
-import { AdminGrantTicketsForm } from "@/components/admin/AdminGrantTicketsForm";
+import { AdminAdjustCreditsForm } from "@/components/admin/AdminAdjustCreditsForm";
 import { useLocale } from "@/components/LocaleProvider";
 
 type AdminCreditsPanelProps = {
@@ -19,10 +18,7 @@ export function AdminCreditsPanel({ grantEmail }: AdminCreditsPanelProps) {
         </p>
       ) : null}
 
-      <div className="admin-credits-panel__grid">
-        <AdminGrantTicketsForm key={`tickets-${grantEmail}`} defaultEmail={grantEmail} />
-        <AdminGrantJetonsForm key={`jetons-${grantEmail}`} defaultEmail={grantEmail} />
-      </div>
+      <AdminAdjustCreditsForm key={grantEmail} defaultEmail={grantEmail} />
     </div>
   );
 }

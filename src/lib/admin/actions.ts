@@ -99,6 +99,74 @@ export async function deliverFilmToClient(
   return { success: "Film livré au client." };
 }
 
+export type AdminAdjustCreditsState = {
+  error?: string;
+  success?: string;
+};
+
+export async function adjustAdminCredits(
+  _prev: AdminAdjustCreditsState,
+  formData: FormData
+): Promise<AdminAdjustCreditsState> {
+  const operationRaw = formData.get("operation");
+  const operation =
+    operationRaw === "grant" || operationRaw === "revoke" ? operationRaw : null;
+
+  const creditKinds = [
+    ...new Set(
+      formData
+        .getAll("creditKinds")
+        .filter((k): k is "tickets" | "jetons" => k === "tickets" || k === "jetons")
+    ),
+  ];
+
+  if (!operation) {
+    return { error: "Action invalide." };
+  }
+  if (creditKinds.length === 0) {
+    return { error: "Sélectionnez au moins un type : tickets et/ou jetons." };
+  }
+
+  const emailRaw = formData.get("email");
+  const amountRaw = formData.get("amount");
+  if (typeof emailRaw !== "string" || !emailRaw.trim().includes("@")) {
+    return { error: "Indiquez une adresse e-mail valide." };
+  }
+
+  const amount = Number(amountRaw);
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return { error: "Indiquez un nombre positif." };
+  }
+
+  const count = String(Math.floor(amount));
+  const successes: string[] = [];
+
+  for (const creditKind of creditKinds) {
+    const inner = new FormData();
+    inner.set("email", emailRaw.trim());
+    if (creditKind === "tickets") {
+      inner.set("tickets", count);
+      const result =
+        operation === "grant"
+          ? await grantTicketsToUser(_prev, inner)
+          : await revokeTicketsFromUser(_prev, inner);
+      if (result.error) return { error: result.error };
+      if (result.success) successes.push(result.success);
+      continue;
+    }
+
+    inner.set("jetons", count);
+    const result =
+      operation === "grant"
+        ? await grantJetonsToUser(_prev, inner)
+        : await revokeJetonsFromUser(_prev, inner);
+    if (result.error) return { error: result.error };
+    if (result.success) successes.push(result.success);
+  }
+
+  return successes.length > 0 ? { success: successes.join(" ") } : {};
+}
+
 export type AdminGrantTicketsState = {
   error?: string;
   success?: string;
