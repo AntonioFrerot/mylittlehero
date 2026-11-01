@@ -4,6 +4,7 @@ import { isAdminEmail } from "@/lib/auth/is-admin";
 import { isAuthorizedAnalyticsCollect } from "@/lib/analytics/collect-secret";
 import { parseVisitFromRequest, shouldTrackVisit } from "@/lib/analytics/parse-visit";
 import { isNoiseVisitPath, shouldRecordVisitEnvironment } from "@/lib/analytics/filter-visits";
+import { shouldSkipAnalyticsCollect } from "@/lib/analytics/excluded-traffic";
 import { hasArrivalByVisitorToday, recordSiteVisit } from "@/lib/analytics/store";
 import { NextResponse } from "next/server";
 
@@ -62,6 +63,10 @@ export async function POST(request: Request) {
   const session = await verifySessionToken(token ? decodeURIComponent(token) : undefined);
   if (session && isAdminEmail(session.email)) {
     return NextResponse.json({ ok: true, skipped: "admin" });
+  }
+
+  if (await shouldSkipAnalyticsCollect(request.headers, session?.email)) {
+    return NextResponse.json({ ok: true, skipped: "excluded_ip" });
   }
 
   if (await hasArrivalByVisitorToday(visitorId)) {

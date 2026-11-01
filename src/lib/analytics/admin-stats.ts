@@ -14,6 +14,8 @@ import {
   preparePageViewsForAnalytics,
   prepareUniqueVisitorsForAnalytics,
 } from "./filter-visits";
+import { buildAdminBusinessMetrics } from "./business-metrics";
+import { getAnalyticsExcludedIpSet } from "./excluded-traffic";
 import { listPurchasesBetween, type PurchaseRecord } from "./purchase-stats";
 import {
   buildVisitorSessions,
@@ -395,9 +397,13 @@ export async function buildAdminAnalyticsStats(
   period: AnalyticsPeriod,
   locale: string
 ): Promise<AdminAnalyticsStats> {
-  const pageViews = preparePageViewsForAnalytics(visits);
-  const uniqueVisits = prepareUniqueVisitorsForAnalytics(visits);
   const range = getPeriodRange(period);
+  const [excludedIps, business] = await Promise.all([
+    getAnalyticsExcludedIpSet(),
+    buildAdminBusinessMetrics(range.from, range.to),
+  ]);
+  const pageViews = preparePageViewsForAnalytics(visits, excludedIps);
+  const uniqueVisits = prepareUniqueVisitorsForAnalytics(visits, excludedIps);
   const uniqueVisitors = uniqueVisits.length;
   const totalPageViews = pageViews.length;
   const uniqueUsers = new Set(
@@ -475,6 +481,7 @@ export async function buildAdminAnalyticsStats(
       purchases,
       sessionMetrics.checkoutVisitors
     ),
+    business,
   };
 }
 

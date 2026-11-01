@@ -292,6 +292,9 @@ async function runSchema(): Promise<void> {
   await db`
     ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS utm_campaign TEXT
   `;
+  await db`
+    ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS client_ip TEXT
+  `;
 }
 
 export async function ensureSchema(): Promise<void> {

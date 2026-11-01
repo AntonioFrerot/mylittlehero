@@ -44,13 +44,19 @@ export function isLikelyLocalVisit(visit: SiteVisit): boolean {
   return false;
 }
 
-export function filterRealVisitorVisits(visits: SiteVisit[]): SiteVisit[] {
-  return visits.filter(
-    (visit) =>
-      !isAdminVisit(visit) &&
-      !isLikelyLocalVisit(visit) &&
-      !isNoiseVisitPath(visit.path)
-  );
+export function filterRealVisitorVisits(
+  visits: SiteVisit[],
+  excludedIps?: Set<string>
+): SiteVisit[] {
+  return visits.filter((visit) => {
+    if (isAdminVisit(visit)) return false;
+    if (isLikelyLocalVisit(visit)) return false;
+    if (isNoiseVisitPath(visit.path)) return false;
+    if (excludedIps && visit.clientIp?.trim() && excludedIps.has(visit.clientIp.trim())) {
+      return false;
+    }
+    return true;
+  });
 }
 
 /** Un seul enregistrement par visiteur (première visite de la période). */
@@ -69,12 +75,18 @@ export function dedupeVisitsByVisitor(visits: SiteVisit[]): SiteVisit[] {
   );
 }
 
-export function preparePageViewsForAnalytics(visits: SiteVisit[]): SiteVisit[] {
-  return filterRealVisitorVisits(visits);
+export function preparePageViewsForAnalytics(
+  visits: SiteVisit[],
+  excludedIps?: Set<string>
+): SiteVisit[] {
+  return filterRealVisitorVisits(visits, excludedIps);
 }
 
-export function prepareUniqueVisitorsForAnalytics(visits: SiteVisit[]): SiteVisit[] {
-  return dedupeVisitsByVisitor(filterRealVisitorVisits(visits));
+export function prepareUniqueVisitorsForAnalytics(
+  visits: SiteVisit[],
+  excludedIps?: Set<string>
+): SiteVisit[] {
+  return dedupeVisitsByVisitor(filterRealVisitorVisits(visits, excludedIps));
 }
 
 /** @deprecated Utiliser prepareUniqueVisitorsForAnalytics */

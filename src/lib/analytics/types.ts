@@ -21,6 +21,17 @@ export type SiteVisit = {
   utmSource?: string | null;
   utmMedium?: string | null;
   utmCampaign?: string | null;
+  clientIp?: string | null;
+};
+
+export type AdminBusinessMetrics = {
+  accountsCreated: number;
+  totalAccounts: number;
+  activeSubscriptions: number;
+  subscriptionCheckouts: number;
+  ticketPackPurchases: number;
+  totalPurchases: number;
+  uniquePayingCustomers: number;
 };
 
 export type AnalyticsBucket = {
@@ -102,4 +113,5 @@ export type AdminAnalyticsStats = {
   salesBySource: SalesBySourceRow[];
   recentVisits: RecentVisitRow[];
   funnel: ConversionFunnelStep[];
+  business: AdminBusinessMetrics;
 };

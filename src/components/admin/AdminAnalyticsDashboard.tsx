@@ -46,6 +46,15 @@ const EMPTY_STATS: AdminAnalyticsStats = {
   salesBySource: [],
   recentVisits: [],
   funnel: [],
+  business: {
+    accountsCreated: 0,
+    totalAccounts: 0,
+    activeSubscriptions: 0,
+    subscriptionCheckouts: 0,
+    ticketPackPurchases: 0,
+    totalPurchases: 0,
+    uniquePayingCustomers: 0,
+  },
 };
 
 const PERIODS: AnalyticsPeriod[] = ["day", "week", "month", "year"];
@@ -278,6 +287,50 @@ export function AdminAnalyticsDashboard({
           {error}
         </p>
       ) : null}
+
+      <div>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-cream/45">
+          {t("admin.analyticsBusinessTitle")}
+        </h3>
+        <p className="mt-1 text-xs text-cream/45">{t("admin.analyticsBusinessHint")}</p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            label={t("admin.analyticsAccountsCreated")}
+            value={formatNumber(stats.business.accountsCreated, locale)}
+            hint={t("admin.analyticsAccountsCreatedHint")}
+          />
+          <StatCard
+            label={t("admin.analyticsTotalAccounts")}
+            value={formatNumber(stats.business.totalAccounts, locale)}
+            hint={t("admin.analyticsTotalAccountsHint")}
+          />
+          <StatCard
+            label={t("admin.analyticsActiveSubscriptions")}
+            value={formatNumber(stats.business.activeSubscriptions, locale)}
+            hint={t("admin.analyticsActiveSubscriptionsHint")}
+          />
+          <StatCard
+            label={t("admin.analyticsUniquePayingCustomers")}
+            value={formatNumber(stats.business.uniquePayingCustomers, locale)}
+            hint={t("admin.analyticsUniquePayingCustomersHint")}
+          />
+          <StatCard
+            label={t("admin.analyticsSubscriptionCheckouts")}
+            value={formatNumber(stats.business.subscriptionCheckouts, locale)}
+            hint={t("admin.analyticsSubscriptionCheckoutsHint")}
+          />
+          <StatCard
+            label={t("admin.analyticsTicketPurchases")}
+            value={formatNumber(stats.business.ticketPackPurchases, locale)}
+            hint={t("admin.analyticsTicketPurchasesHint")}
+          />
+          <StatCard
+            label={t("admin.analyticsPurchases")}
+            value={formatNumber(stats.business.totalPurchases, locale)}
+            hint={t("admin.analyticsPurchasesHint")}
+          />
+        </div>
+      </div>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard

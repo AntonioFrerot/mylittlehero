@@ -51,6 +51,7 @@ function rowToVisit(row: {
   utm_source?: string | null;
   utm_medium?: string | null;
   utm_campaign?: string | null;
+  client_ip?: string | null;
 }): SiteVisit {
   return {
     id: row.id,
@@ -76,6 +77,7 @@ function rowToVisit(row: {
     utmSource: row.utm_source ?? null,
     utmMedium: row.utm_medium ?? null,
     utmCampaign: row.utm_campaign ?? null,
+    clientIp: row.client_ip ?? null,
   };
 }
 
@@ -94,7 +96,7 @@ export async function recordSiteVisit(input: RecordSiteVisitInput): Promise<Site
       INSERT INTO site_visits (
         id, visited_at, path, visitor_id, user_email, country, region, city,
         timezone, latitude, longitude, locale, device_type, browser, os, referer, user_agent,
-        utm_source, utm_medium, utm_campaign
+        utm_source, utm_medium, utm_campaign, client_ip
       )
       VALUES (
         ${entry.id},
@@ -116,7 +118,8 @@ export async function recordSiteVisit(input: RecordSiteVisitInput): Promise<Site
         ${entry.userAgent},
         ${entry.utmSource ?? null},
         ${entry.utmMedium ?? null},
-        ${entry.utmCampaign ?? null}
+        ${entry.utmCampaign ?? null},
+        ${entry.clientIp ?? null}
       )
     `;
     return entry;
@@ -186,12 +189,13 @@ export async function listSiteVisitsBetween(from: Date, to: Date): Promise<SiteV
         utm_source: string | null;
         utm_medium: string | null;
         utm_campaign: string | null;
+        client_ip: string | null;
       }[]
     >`
       SELECT
         id, visited_at, path, visitor_id, user_email, country, region, city,
         timezone, latitude, longitude, locale, device_type, browser, os, referer, user_agent,
-        utm_source, utm_medium, utm_campaign
+        utm_source, utm_medium, utm_campaign, client_ip
       FROM site_visits
       WHERE visited_at >= ${from.toISOString()}
         AND visited_at <= ${to.toISOString()}

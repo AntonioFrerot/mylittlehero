@@ -1,4 +1,5 @@
 import { parseLocale } from "@/lib/i18n/locales";
+import { parseClientIpFromHeaders } from "./client-ip";
 import type { SiteVisit } from "./types";
 
 export type ParsedVisitInput = {
@@ -129,5 +130,6 @@ export function parseVisitFromRequest(input: ParsedVisitInput): Omit<
     utmSource: utm.utmSource,
     utmMedium: utm.utmMedium,
     utmCampaign: utm.utmCampaign,
+    clientIp: parseClientIpFromHeaders(headers),
   };
 }
