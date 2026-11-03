@@ -14,9 +14,11 @@ import type { AbonnementsSampleOffer, TarifsSubscriptionPlan, TarifsTicketPlan }
 import type { LocaleCode } from "@/lib/i18n/locales";
 
 export const ABONNEMENTS_TICKETS_SECTION = "tickets";
+export const ABONNEMENTS_SUBSCRIPTIONS_SECTION = "subscriptions";
 
 function tabFromSectionParam(section: string | null): AbonnementsCatalogTab {
-  return section === ABONNEMENTS_TICKETS_SECTION ? "tickets" : "subscriptions";
+  if (section === ABONNEMENTS_SUBSCRIPTIONS_SECTION) return "subscriptions";
+  return "tickets";
 }
 
 type AbonnementsCatalogSectionProps = {
