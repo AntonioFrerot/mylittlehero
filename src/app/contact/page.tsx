@@ -1,18 +1,20 @@
 import { ContactForm } from "@/components/contact/ContactForm";
 import { CONTACT_EMAIL } from "@/lib/contact/constants";
 import { getSession } from "@/lib/auth/get-session";
-import { BRAND_NAME } from "@/lib/brand";
+import { buildFrenchShareMetadata } from "@/lib/i18n/metadata";
 import { getServerTranslator } from "@/lib/i18n/server";
+import { createTranslator } from "@/lib/i18n/translator";
 import { SURFACE_3D_PANEL_LG } from "@/lib/ui/button-3d-classes";
 import Link from "next/link";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getServerTranslator();
-  return {
-    title: `${t("meta.contactTitle")} — ${BRAND_NAME}`,
+  const t = createTranslator("fr");
+  return buildFrenchShareMetadata({
+    title: t("meta.contactTitle"),
     description: t("meta.contactDescription"),
-  };
+    path: "/contact",
+  });
 }
 
 export default async function ContactPage() {

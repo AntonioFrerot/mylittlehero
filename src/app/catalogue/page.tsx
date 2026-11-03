@@ -1,16 +1,17 @@
 import { BrowseCatalogContent } from "@/components/browse/BrowseCatalogContent";
-import { BRAND_NAME } from "@/lib/brand";
-import { getServerTranslator } from "@/lib/i18n/server";
+import { buildFrenchShareMetadata } from "@/lib/i18n/metadata";
+import { createTranslator } from "@/lib/i18n/translator";
 import type { Metadata } from "next";
 
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getServerTranslator();
-  return {
-    title: `${t("meta.browseTitle")} — ${BRAND_NAME}`,
+  const t = createTranslator("fr");
+  return buildFrenchShareMetadata({
+    title: t("meta.browseTitle"),
     description: t("meta.browseDescription"),
-  };
+    path: "/catalogue",
+  });
 }
 
 export default function CatalogueBrowsePage() {

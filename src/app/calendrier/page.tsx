@@ -1,17 +1,20 @@
 import { FilmCalendar } from "@/components/calendar/FilmCalendar";
 import { getMyFilmCalendarContext } from "@/lib/calendar/actions";
-import { BRAND_NAME } from "@/lib/brand";
+import { buildFrenchShareMetadata } from "@/lib/i18n/metadata";
 import { getServerTranslator } from "@/lib/i18n/server";
+import { createTranslator } from "@/lib/i18n/translator";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getServerTranslator();
-  return {
-    title: `${t("meta.calendarTitle")} — ${BRAND_NAME}`,
+  const t = createTranslator("fr");
+  return buildFrenchShareMetadata({
+    title: t("meta.calendarTitle"),
     description: t("meta.calendarDescription"),
-  };
+    path: "/calendrier",
+    robots: { index: false, follow: false },
+  });
 }
 
 export default async function CalendrierPage() {

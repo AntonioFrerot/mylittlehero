@@ -2,8 +2,9 @@ import { MonEspaceShell } from "@/components/espace/MonEspaceShell";
 import { DEFAULT_ESPACE_SECTION, parseEspaceSection } from "@/lib/espace/sections";
 import { getSession } from "@/lib/auth/get-session";
 import { loadMonEspacePageData } from "@/lib/espace/load-page";
+import { buildFrenchShareMetadata } from "@/lib/i18n/metadata";
 import { getServerTranslator } from "@/lib/i18n/server";
-import { BRAND_NAME } from "@/lib/brand";
+import { createTranslator } from "@/lib/i18n/translator";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -11,11 +12,13 @@ import Link from "next/link";
 export const revalidate = 30;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getServerTranslator();
-  return {
-    title: `${t("meta.monEspaceTitle")} — ${BRAND_NAME}`,
+  const t = createTranslator("fr");
+  return buildFrenchShareMetadata({
+    title: t("meta.monEspaceTitle"),
     description: t("meta.monEspaceDescription"),
-  };
+    path: "/mon-espace",
+    robots: { index: false, follow: false },
+  });
 }
 
 type PageProps = {

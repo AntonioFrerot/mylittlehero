@@ -21,7 +21,9 @@ import { getSession } from "@/lib/auth/get-session";
 import { getUserLocale } from "@/lib/auth/users-store";
 import { BRAND_NAME } from "@/lib/brand";
 import { normalizeFilmTheme } from "@/lib/i18n/film-labels";
+import { buildFrenchShareMetadata } from "@/lib/i18n/metadata";
 import { getServerTranslator } from "@/lib/i18n/server";
+import { createTranslator } from "@/lib/i18n/translator";
 import { attachStoryToFilm } from "@/lib/film-creation/catalog-films";
 import { POSTER_DIMENSIONS } from "@/lib/hero-posters";
 import type { Metadata } from "next";
@@ -37,13 +39,23 @@ type PageProps = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const session = await getSession();
-  if (!session) return { title: `Film — ${BRAND_NAME}` };
+  const tFr = createTranslator("fr");
+  if (!session) {
+    return buildFrenchShareMetadata({
+      title: "Film",
+      robots: { index: false, follow: false },
+    });
+  }
   const { id } = await params;
   const film = await getUserFilmByIdForUser(session.email, id);
-  if (!film) return { title: `Film — ${BRAND_NAME}` };
+  if (!film) {
+    return buildFrenchShareMetadata({
+      title: "Film",
+      robots: { index: false, follow: false },
+    });
+  }
 
   const userLocale = await getUserLocale(session.email);
-  const { t } = await getServerTranslator();
   const { manifest } = await attachStoryToFilm(session.email, film);
   const displayTitle = getFilmDisplayTitle(
     film,
@@ -51,11 +63,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     manifest?.generatedTitle
   );
 
-  const metaTitle = displayTitle || t("space.freeTrialFilmMetaTitle");
+  const metaTitle = displayTitle || tFr("space.freeTrialFilmMetaTitle");
 
-  return {
-    title: `${metaTitle} — ${BRAND_NAME}`,
-  };
+  return buildFrenchShareMetadata({
+    title: metaTitle,
+    path: `/mon-espace/films/${id}`,
+    robots: { index: false, follow: false },
+  });
 }
 
 export default async function UserFilmPage({ params }: PageProps) {

@@ -14,7 +14,7 @@ import { getJetonBalanceForUser } from "@/lib/purchases/jetons";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerLocale, getServerTranslator } from "@/lib/i18n/server";
 import { getMessages } from "@/lib/i18n/translator";
-import { getSiteUrl } from "@/lib/site-url";
+import { buildFrenchRootMetadata } from "@/lib/i18n/metadata";
 import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 
@@ -37,30 +37,7 @@ export const viewport: Viewport = {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { createTranslator } = await import("@/lib/i18n/translator");
-  const t = createTranslator("fr");
-  const title = `${BRAND_NAME} — ${t("meta.title")}`;
-  const description = t("meta.description");
-  const siteUrl = getSiteUrl();
-
-  return {
-    metadataBase: new URL(siteUrl),
-    title,
-    description,
-    openGraph: {
-      type: "website",
-      locale: "fr_FR",
-      url: siteUrl,
-      siteName: BRAND_NAME,
-      title,
-      description,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-    },
-  };
+  return buildFrenchRootMetadata();
 }
 
 export default async function RootLayout({

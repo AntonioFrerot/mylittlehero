@@ -1,16 +1,16 @@
 import { LegalDocumentPage } from "@/components/legal/LegalDocumentPage";
-import { BRAND_NAME } from "@/lib/brand";
+import { buildFrenchShareMetadata } from "@/lib/i18n/metadata";
 import { getLegalDocument } from "@/lib/legal/get-document";
 import { getServerTranslator } from "@/lib/i18n/server";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { locale } = await getServerTranslator();
-  const document = getLegalDocument("cgv", locale);
-  return {
-    title: `${document.title} — ${BRAND_NAME}`,
+  const document = getLegalDocument("cgv", "fr");
+  return buildFrenchShareMetadata({
+    title: document.title,
     description: document.description,
-  };
+    path: "/cgv",
+  });
 }
 
 export default async function CgvPage() {

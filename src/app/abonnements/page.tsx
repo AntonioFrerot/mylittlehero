@@ -1,14 +1,15 @@
 import { AbonnementsPageContent } from "@/components/tarifs/AbonnementsPageContent";
-import { BRAND_NAME } from "@/lib/brand";
-import { getServerTranslator } from "@/lib/i18n/server";
+import { buildFrenchShareMetadata } from "@/lib/i18n/metadata";
+import { createTranslator } from "@/lib/i18n/translator";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getServerTranslator();
-  return {
-    title: `${t("meta.abonnementsTitle")} — ${BRAND_NAME}`,
+  const t = createTranslator("fr");
+  return buildFrenchShareMetadata({
+    title: t("meta.abonnementsTitle"),
     description: t("meta.abonnementsDescription"),
-  };
+    path: "/abonnements",
+  });
 }
 
 export default function AbonnementsPage() {

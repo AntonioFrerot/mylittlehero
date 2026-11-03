@@ -16,7 +16,9 @@ import {
   translateExampleFilmTitle,
 } from "@/lib/i18n/example-film-labels";
 import { FilmMetaBadges } from "@/components/films/FilmMetaBadges";
-import { getServerLocale, getServerTranslator } from "@/lib/i18n/server";
+import { buildFrenchShareMetadata } from "@/lib/i18n/metadata";
+import { getServerTranslator } from "@/lib/i18n/server";
+import { createTranslator } from "@/lib/i18n/translator";
 import { BRAND_NAME } from "@/lib/brand";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -31,14 +33,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const film = getExampleFilm(slug);
   if (!film) return { title: `Film — ${BRAND_NAME}` };
 
-  const locale = await getServerLocale();
-  const filmTitle = translateExampleFilmTitle(slug, film.title, locale);
-  const { createTranslator } = await import("@/lib/i18n/translator");
+  const filmTitle = translateExampleFilmTitle(slug, film.title, "fr");
+  const t = createTranslator("fr");
 
-  return {
-    title: `${filmTitle} — ${BRAND_NAME}`,
-    description: createTranslator(locale)("examples.metaDescription"),
-  };
+  return buildFrenchShareMetadata({
+    title: filmTitle,
+    description: t("examples.metaDescription"),
+    path: `/films/${slug}`,
+  });
 }
 
 export default async function ExampleFilmPage({ params }: PageProps) {

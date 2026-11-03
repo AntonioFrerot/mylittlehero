@@ -1,16 +1,18 @@
 import { AdminShell } from "@/components/admin/AdminShell";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { findUserByEmail } from "@/lib/auth/users-store";
-import { BRAND_NAME } from "@/lib/brand";
+import { buildFrenchShareMetadata } from "@/lib/i18n/metadata";
 import { getServerTranslator } from "@/lib/i18n/server";
+import { createTranslator } from "@/lib/i18n/translator";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getServerTranslator();
-  return {
-    title: `${t("admin.pageTitle")} — ${BRAND_NAME}`,
+  const t = createTranslator("fr");
+  return buildFrenchShareMetadata({
+    title: t("admin.pageTitle"),
+    path: "/admin",
     robots: { index: false, follow: false },
-  };
+  });
 }
 
 export default async function AdminPage() {

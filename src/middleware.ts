@@ -15,15 +15,27 @@ import {
 
 const protectedPaths = ["/mon-espace", "/creer-film", "/calendrier", "/admin"];
 
-function applyLocaleCookie(request: NextRequest, response: NextResponse) {
+const localeCookieOptions = {
+  path: "/",
+  maxAge: 60 * 60 * 24 * 365,
+  sameSite: "lax" as const,
+};
+
+function applyLocaleCookie(
+  request: NextRequest,
+  response: NextResponse,
+  session: SessionUser | null
+) {
   const existingLocale = parseLocale(request.cookies.get(LOCALE_COOKIE)?.value);
+
+  if (!session && existingLocale && existingLocale !== DEFAULT_LOCALE) {
+    response.cookies.set(LOCALE_COOKIE, DEFAULT_LOCALE, localeCookieOptions);
+    return;
+  }
+
   if (existingLocale) return;
 
-  response.cookies.set(LOCALE_COOKIE, DEFAULT_LOCALE, {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 365,
-    sameSite: "lax",
-  });
+  response.cookies.set(LOCALE_COOKIE, DEFAULT_LOCALE, localeCookieOptions);
 }
 
 function maybeCanonicalHostRedirect(request: NextRequest): NextResponse | null {
@@ -36,7 +48,7 @@ function maybeCanonicalHostRedirect(request: NextRequest): NextResponse | null {
   url.protocol = "https:";
   url.host = CANONICAL_SITE_HOST;
   const response = NextResponse.redirect(url, 308);
-  applyLocaleCookie(request, response);
+  applyLocaleCookie(request, response, null);
   return response;
 }
 
@@ -57,7 +69,7 @@ function finalizeResponse(
   response: NextResponse,
   session: SessionUser | null = null
 ) {
-  applyLocaleCookie(request, response);
+  applyLocaleCookie(request, response, session);
 
   const pathname = request.nextUrl.pathname;
   const userAgent = request.headers.get("user-agent");
@@ -95,7 +107,7 @@ export async function middleware(request: NextRequest) {
     url.pathname = "/connexion";
     url.searchParams.set("redirect", pathname);
     const response = NextResponse.redirect(url);
-    applyLocaleCookie(request, response);
+    applyLocaleCookie(request, response, null);
     return response;
   }
 

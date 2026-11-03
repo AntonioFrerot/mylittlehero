@@ -1,14 +1,15 @@
 import { PurchasePageContent } from "@/components/pricing/PurchasePageContent";
-import { BRAND_NAME } from "@/lib/brand";
-import { getServerTranslator } from "@/lib/i18n/server";
+import { buildFrenchShareMetadata } from "@/lib/i18n/metadata";
+import { createTranslator } from "@/lib/i18n/translator";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getServerTranslator();
-  return {
-    title: `${t("meta.achatTitle")} — ${BRAND_NAME}`,
+  const t = createTranslator("fr");
+  return buildFrenchShareMetadata({
+    title: t("meta.achatTitle"),
     description: t("meta.achatDescription"),
-  };
+    path: "/achat",
+  });
 }
 
 export default function AchatPage() {

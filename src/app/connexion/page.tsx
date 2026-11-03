@@ -4,18 +4,20 @@ import {
   AUTH_REDIRECT_LOGIN_DEFAULT,
   isSafeRedirectPath,
 } from "@/lib/auth/redirect-paths";
-import { BRAND_NAME } from "@/lib/brand";
+import { buildFrenchShareMetadata } from "@/lib/i18n/metadata";
 import { getServerTranslator } from "@/lib/i18n/server";
+import { createTranslator } from "@/lib/i18n/translator";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getServerTranslator();
-  return {
-    title: `${t("auth.loginTitle")} — ${BRAND_NAME}`,
+  const t = createTranslator("fr");
+  return buildFrenchShareMetadata({
+    title: t("auth.loginTitle"),
     description: t("meta.connexionDescription"),
-  };
+    path: "/connexion",
+  });
 }
 
 type PageProps = {

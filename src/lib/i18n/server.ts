@@ -1,13 +1,7 @@
 import { cache } from "react";
-import { cookies } from "next/headers";
 import { getSession } from "@/lib/auth/get-session";
 import { findUserByEmailForUser } from "@/lib/auth/users-store";
-import {
-  DEFAULT_LOCALE,
-  LOCALE_COOKIE,
-  parseLocale,
-  type LocaleCode,
-} from "./locales";
+import { DEFAULT_LOCALE, type LocaleCode } from "./locales";
 
 function readUserLocale(
   user: { locale?: LocaleCode; filmLanguage?: LocaleCode } | undefined
@@ -22,10 +16,6 @@ export const getServerLocale = cache(async (): Promise<LocaleCode> => {
     const userLocale = readUserLocale(user);
     if (userLocale) return userLocale;
   }
-
-  const cookieStore = await cookies();
-  const fromCookie = parseLocale(cookieStore.get(LOCALE_COOKIE)?.value);
-  if (fromCookie) return fromCookie;
 
   return DEFAULT_LOCALE;
 });
