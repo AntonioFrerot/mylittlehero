@@ -7,11 +7,7 @@ import { VISITOR_COOKIE } from "@/lib/analytics/constants";
 import { shouldRecordVisitEnvironment } from "@/lib/analytics/filter-visits";
 import { shouldTrackVisit } from "@/lib/analytics/parse-visit";
 import type { SessionUser } from "@/lib/auth/session";
-import {
-  countryToLocale,
-  detectCountryFromHeaders,
-} from "@/lib/i18n/country-locale";
-import { LOCALE_COOKIE, parseLocale } from "@/lib/i18n/locales";
+import { DEFAULT_LOCALE, LOCALE_COOKIE, parseLocale } from "@/lib/i18n/locales";
 import {
   CANONICAL_SITE_HOST,
   isAlternateDeploymentHost,
@@ -23,9 +19,7 @@ function applyLocaleCookie(request: NextRequest, response: NextResponse) {
   const existingLocale = parseLocale(request.cookies.get(LOCALE_COOKIE)?.value);
   if (existingLocale) return;
 
-  const country = detectCountryFromHeaders(request.headers);
-  const locale = countryToLocale(country);
-  response.cookies.set(LOCALE_COOKIE, locale, {
+  response.cookies.set(LOCALE_COOKIE, DEFAULT_LOCALE, {
     path: "/",
     maxAge: 60 * 60 * 24 * 365,
     sameSite: "lax",

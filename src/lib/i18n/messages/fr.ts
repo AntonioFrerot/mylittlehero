@@ -57,7 +57,7 @@ export const fr = {
     heroTitleAfter: "de son propre film",
     heroLead: "Un tout nouveau film unique à chaque fois !",
     heroSub:
-      "Configurez un film en quelques clics ou personnalisez entièrement l'histoire selon vos envies, jusqu'aux moindres détails.",
+      "Inventez l'histoire qui donnera vie au film de votre enfant ou laissez l'IA faire le travail sans effort.",
     heroExamples: "Voir les exemples",
     catalogueEyebrow: "Le petit héros",
     catalogueTitleBefore: "Films d'exemple du",
@@ -105,7 +105,7 @@ export const fr = {
       "Les éléments que vous transmettez ne servent qu'à produire votre film : pas de revente à des tiers, pas de publicité ciblée. Vous consultez et supprimez tout depuis Mon espace, quand vous le souhaitez.",
     ctaTitle: "Prêt à lui faire vivre ce moment ?",
     ctaText:
-      "Un clic, et c'est parti. Imaginez la lumière qui baisse, le générique qui s'affiche, lui au centre de chaque scène. Plus que quelques minutes vous séparent de ce frisson de cinéma, celui qu'on partage quand on a tout imaginé soi-même.",
+      "Imaginez le générique qui s'affiche, lui au centre de chaque scène. Plus que quelques clics vous séparent de ce frisson de cinéma, celui qu'on partage quand on voit son enfant être le plus heureux du monde devant son film.",
     footerTagline: "Films et séries personnalisés",
     footerPrivacy: "Confidentialité",
     footerTerms: "CGV",
