@@ -9,18 +9,13 @@ import { FILM_STYLES } from "@/lib/film-creation/types";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { getPurchasePlans } from "@/lib/i18n/purchase-catalog";
 import { getPricingPlans } from "@/lib/pricing";
-import {
-  FREE_FILM_DURATION_SECONDS,
-  TICKET_DURATION_SECONDS,
-} from "@/lib/purchases/ticket-rules";
+import { TICKET_DURATION_SECONDS } from "@/lib/purchases/ticket-rules";
 import type { SupportIntent } from "./analyze-question";
 import type { SupportUserContext } from "./types";
 
 const FILM_MIN_MINUTES = FILM_DURATION_MIN_SECONDS / 60;
 const FILM_MAX_MINUTES = FILM_DURATION_MAX_SECONDS / 60;
 const TICKET_MINUTES = TICKET_DURATION_SECONDS / 60;
-const FREE_TRIAL_SECONDS = FREE_FILM_DURATION_SECONDS;
-
 function resolveCatalogLocale(locale: LocaleCode): LocaleCode {
   return locale === "en" ? "en" : "fr";
 }
@@ -92,13 +87,12 @@ function buildUserContextBlock(
         `• Active subscription: ${userContext.hasActiveSubscription ? "yes" : "no"}${
           userContext.subscriptionPlanName ? ` (${userContext.subscriptionPlanName})` : ""
         }`,
-        `• Free 15-second trial still available: ${userContext.freeFilmAvailable ? "yes" : "no"}`,
         `• Characters: ${userContext.characterCount} total, ${userContext.charactersWithPhoto} with face photo`,
         `• Films created: ${userContext.filmCount}. Recent: ${filmsLine}`,
         userContext.creationCooldownActive
           ? `• Creation cooldown active: next film possible in ${userContext.creationCooldownRemaining} (24 h between creations).`
           : "• No creation cooldown — a new film can be started now (if tickets/subscription allow).",
-        "• Subscribers do not spend tickets on paid films; non-subscribers need tickets (except free trial).",
+        "• Subscribers do not spend tickets on paid films; non-subscribers need tickets.",
       ]
     : [
         "═══ CONTEXTE CLIENT CONNECTÉ (à utiliser si pertinent) ═══",
@@ -107,13 +101,12 @@ function buildUserContextBlock(
         `• Abonnement actif : ${userContext.hasActiveSubscription ? "oui" : "non"}${
           userContext.subscriptionPlanName ? ` (${userContext.subscriptionPlanName})` : ""
         }`,
-        `• Essai gratuit 15 s encore disponible : ${userContext.freeFilmAvailable ? "oui" : "non"}`,
         `• Personnages : ${userContext.characterCount} au total, ${userContext.charactersWithPhoto} avec photo du visage`,
         `• Films créés : ${userContext.filmCount}. Récents : ${filmsLine}`,
         userContext.creationCooldownActive
           ? `• Délai entre créations actif : prochain film possible dans ${userContext.creationCooldownRemaining} (24 h entre chaque création).`
           : "• Pas de délai entre créations en cours — un nouveau film peut être lancé (si tickets/abonnement le permettent).",
-        "• Les abonnés ne consomment pas de tickets pour les films payants ; sans abonnement, des tickets sont nécessaires (sauf essai gratuit).",
+        "• Les abonnés ne consomment pas de tickets pour les films payants ; sans abonnement, des tickets sont nécessaires.",
       ];
 
   return lines.join("\n");
@@ -143,9 +136,8 @@ ${buildUserContextBlock(userContext, locale)}
 
 ═══ ${isEn ? "JOURNEY" : "PARCOURS"} (${BRAND_NAME}) ═══
 ${stepsBlock()}
-• ${isEn ? "Free trial" : "Essai gratuit"} : « ${isEn ? "Try for free" : "Essayer gratuitement"} » → /connexion → /creer-film?essai=1 → unique ${FREE_TRIAL_SECONDS}s film (once per account).
 • ${isEn ? "Full creation" : "Création complète"} : Mon espace → ${isEn ? "Characters" : "Les personnages"} (face photo required) → /creer-film.
-• ${isEn ? "Film form" : "Formulaire film"} : graphic style (${FILM_STYLES.join(", ")}), one or more themes, main character, duration ${FILM_MIN_MINUTES}–${FILM_MAX_MINUTES} min (15 s steps) or ${FREE_TRIAL_SECONDS}s trial, preferences (avoid elements, story ideas).
+• ${isEn ? "Film form" : "Formulaire film"} : graphic style (${FILM_STYLES.join(", ")}), one or more themes, main character, duration ${FILM_MIN_MINUTES}–${FILM_MAX_MINUTES} min (5 min steps), preferences (avoid elements, story ideas). Optional 30 s sample with jetons when available.
 • ${isEn ? "Ready film" : "Film prêt"} : Mon espace → ${isEn ? "My films" : "Mes films"} → Watch / Share (YouTube unlisted link can be added by admin when delivered).
 • ${isEn ? "Theme catalogue" : "Catalogue d'univers"} : /catalogue
 • ${isEn ? "Account" : "Compte"} : /mon-espace (${isEn ? "Profile, Characters, My films, notifications bell" : "Profil, Personnages, Mes films, cloche notifications"})
@@ -158,8 +150,6 @@ ${themesBlock()}
 • ${isEn ? "Each film" : "Chaque film"} : ${isEn ? "max" : "durée max"} ${FILM_MAX_MINUTES} min. ${isEn ? "One-off /achat" : "Achats à l'unité /achat"} : 5 min (1 ticket) ${isEn ? "or" : "ou"} 10 min (2 tickets) ${isEn ? "per film" : "par film"}.
 • ${isEn ? "Tickets pay for separate films, not one longer film" : "Les tickets servent à créer plusieurs films séparés, pas à allonger un seul film"} : ${isEn ? "e.g. 10 tickets = 5 × 10 min films or 10 × 5 min films — never one 50 min film" : "ex. 10 tickets = 5 films de 10 min ou 10 films de 5 min — jamais un film de 50 min"}.
 • ${isEn ? "Subscription" : "Abonnement"} : ${FILM_MIN_MINUTES}–${FILM_MAX_MINUTES} min ${isEn ? "per film" : "par film"} (${isEn ? "Essentiel" : "Essentiel"} 2–5 min ; Premium/Unlimited 2–10 min). ${isEn ? "Subscribers do not spend tickets." : "Les abonnés ne consomment pas de tickets."}
-• ${isEn ? "Free trial" : "Essai gratuit"} : ${FREE_TRIAL_SECONDS} ${isEn ? "seconds" : "secondes"}, once per account.
-
 ═══ ${isEn ? "DELIVERY TIMES" : "DÉLAIS DE LIVRAISON"} ═══
 • ${isEn ? "General" : "Parcours général"} : up to 24 h max after order.
 • /creer : ~1 h processing per film minute chosen.
@@ -212,7 +202,7 @@ export function getIntentAnswer(
 
   switch (intent) {
     case "greeting":
-      return `Je suis l'assistant ${BRAND_NAME}. Je peux vous guider sur les tarifs (/creer et /achat), la création d'un film, les personnages, les délais ou l'essai gratuit.`;
+      return `Je suis l'assistant ${BRAND_NAME}. Je peux vous guider sur les tarifs (/abonnements et /achat), la création d'un film, les personnages ou les délais.`;
     case "thanks":
       return "Avec plaisir. Si une autre question vous vient — tarifs, personnages, délai, Mon espace — je suis là.";
     case "pricing":
@@ -220,7 +210,7 @@ export function getIntentAnswer(
     case "delivery":
       return `Votre film apparaît dans Mon espace → Mes films. Délai annoncé sur le site : jusqu'à 24 h maximum pour le parcours standard ; sur /creer, comptez environ 1 h de traitement par minute de film choisie ; sur /achat, les offres indiquent une livraison sous 24 h.`;
     case "howto":
-      return `En résumé : créez un compte → Mon espace → ajoutez vos personnages (photo du visage obligatoire) → /creer-film (style Animation/Réaliste/Manga, thèmes, durée ${FILM_MIN_MINUTES}–${FILM_MAX_MINUTES} min). Essai gratuit : ${FREE_TRIAL_SECONDS} s via « Essayer gratuitement ».`;
+      return `En résumé : créez un compte → Mon espace → ajoutez vos personnages (photo du visage obligatoire) → /creer-film (style Animation/Réaliste/Manga, thèmes, durée ${FILM_MIN_MINUTES}–${FILM_MAX_MINUTES} min). Tarifs : /abonnements ou /achat.`;
     case "characters":
       return context.mentionsPhoto
         ? "Chaque personnage nécessite une photo du visage claire, un prénom et une taille en cm (âge optionnel). Gérez-les dans Mon espace → Les personnages ; sans photo, la création de film est bloquée."
@@ -230,7 +220,7 @@ export function getIntentAnswer(
     case "tickets":
       return `Les tickets servent à payer la durée d'un film à chaque création : 1 ticket = 5 min, 2 tickets = 10 min (durée max par film). Ils ne se cumulent pas sur un seul film : avec 10 tickets vous pouvez créer 5 films de 10 minutes (ou 10 films de 5 min), pas un film de 50 minutes. Les tickets sont débités à chaque nouvelle création, selon la durée choisie pour ce film.`;
     case "trial":
-      return `Cliquez sur « Essayer gratuitement » (accueil ou /creer) : créez un compte ou connectez-vous, puis accédez à /creer-film?essai=1 pour un film unique de ${FREE_TRIAL_SECONDS} secondes (une fois par compte).`;
+      return "L'essai gratuit de 15 secondes n'est plus proposé. Pour tester le service, consultez /abonnements (tickets ou abonnements) ou l'échantillon 30 s avec jetons lors de la création de film si vous en avez.";
     case "privacy":
       return `${trustPoints[2]?.description ?? "Vos éléments servent uniquement à produire votre film."} Pour une demande précise (conservation, suppression), écrivez-nous via /contact.`;
     case "example":

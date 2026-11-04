@@ -47,7 +47,6 @@ export default async function CreerFilmPage() {
   const ticketBalance = ticketSummary?.balance ?? 0;
   const jetonBalance = ticketSummary?.jetonBalance ?? 0;
   const hasActiveSubscription = ticketSummary?.hasActiveSubscription ?? false;
-  const freeFilmAvailable = ticketSummary?.freeFilmAvailable ?? false;
   const showNoCreditsNotice = shouldShowNoCreditsNotice({
     balance: ticketBalance,
     jetonBalance,
@@ -88,7 +87,6 @@ export default async function CreerFilmPage() {
               ticketBalance={ticketBalance}
               jetonBalance={jetonBalance}
               hasActiveSubscription={hasActiveSubscription}
-              freeFilmAvailable={freeFilmAvailable}
               cooldownEndsAt={creationCooldown.endsAt}
               registrationDate={registrationDate}
               occupiedScheduleDates={occupiedScheduleDates}

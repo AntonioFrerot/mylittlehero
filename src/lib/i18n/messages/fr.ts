@@ -7,10 +7,10 @@ export const fr = {
     monEspaceDescription:
       "Gérez votre profil, vos personnages et vos films créés.",
     connexionDescription:
-      "Connectez-vous ou créez un compte pour lancer votre essai gratuit.",
+      "Connectez-vous ou créez un compte pour créer le film de votre enfant.",
     creerTitle: "Créer son film — Offres",
     creerDescription:
-      "Choisissez votre formule ou essayez gratuitement un film personnalisé de 15 secondes.",
+      "Choisissez votre formule pour créer des films personnalisés.",
     tarifsTitle: "Tarifs — Abonnements",
     tarifsDescription:
       "Découvrez nos formules d'abonnement pour créer des films personnalisés.",
@@ -1290,7 +1290,7 @@ export const fr = {
       cooldownActive:
         "Vous devez attendre 24 h après votre dernière création avant d'en lancer une nouvelle.",
       scheduleNotAllowed:
-        "La programmation n'est pas disponible pour les essais gratuits ou les échantillons.",
+        "La programmation n'est pas disponible pour les échantillons.",
       subscriptionGrantScheduleRequired:
         "Avec 0 ticket, programmez votre film de 5 minutes à la date de votre prochain crédit abonnement.",
       subscriptionGrantDurationOnly:

@@ -1,5 +1,4 @@
 import { CheckoutLauncher } from "@/components/pricing/CheckoutLauncher";
-import { FreeTrialBanner } from "@/components/pricing/FreeTrialBanner";
 import { PurchaseCard } from "@/components/pricing/PurchaseCard";
 import { PurchaseMobileOffers } from "@/components/pricing/PurchaseMobileOffers";
 import { getPurchasePlans } from "@/lib/i18n/purchase-catalog";
@@ -48,11 +47,7 @@ export async function PurchasePageContent() {
           </p>
         </div>
 
-        <div className="mt-8 md:mt-10">
-          <FreeTrialBanner />
-        </div>
-
-        <section id="offres-achat" className="mt-6 md:mt-12 lg:mt-14">
+        <section id="offres-achat" className="mt-8 md:mt-10 lg:mt-14">
           <PurchaseMobileOffers plans={mobilePlans} locale={locale} />
           <div className="purchase-page__grid purchase-page__grid--desktop">
             {desktopPlans.map((plan) => (

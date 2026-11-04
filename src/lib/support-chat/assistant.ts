@@ -87,8 +87,8 @@ async function getOpenAiReply(
 
 function emptyQuestionReply(locale: "fr" | "en"): string {
   return locale === "en"
-    ? "Hello! Ask about pricing, film creation, characters, delivery times, or the free trial — I'll answer using MyLittleHero's official information."
-    : "Bonjour ! Décrivez votre question — tarifs, délai, photos, création du film, essai gratuit — et je vous répondrai à partir des infos officielles MyLittleHero.";
+    ? "Hello! Ask about pricing, film creation, characters, or delivery times — I'll answer using MyLittleHero's official information."
+    : "Bonjour ! Décrivez votre question — tarifs, délai, photos, création du film — et je vous répondrai à partir des infos officielles MyLittleHero.";
 }
 
 export async function generateSupportReply(

@@ -1,6 +1,4 @@
-import { cache } from "react";
 import type { UserFilm } from "./types";
-import { listUserFilmsForUser } from "./store";
 import {
   FREE_FILM_DURATION_SECONDS,
   isFreeTrialFilmDuration,
@@ -19,12 +17,10 @@ export function hasUserUsedFreeFilm(
   );
 }
 
-async function isFreeFilmAvailable(email: string): Promise<boolean> {
-  const films = await listUserFilmsForUser(email);
-  return !hasUserUsedFreeFilm(films);
+/** Essai gratuit 15 s retiré — toujours indisponible pour les nouvelles créations. */
+export async function isFreeFilmAvailableForEmail(_email: string): Promise<boolean> {
+  return false;
 }
-
-export const isFreeFilmAvailableForEmail = cache(isFreeFilmAvailable);
 
 export function isFreeFilmDuration(durationSeconds: number): boolean {
   return isFreeTrialFilmDuration(durationSeconds);

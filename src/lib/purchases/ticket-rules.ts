@@ -3,7 +3,7 @@ import type { PurchasePlanId, JetonPurchasePlanId } from "@/lib/i18n/purchase-ca
 /** 1 ticket = 5 minutes de film. */
 export const TICKET_DURATION_SECONDS = 5 * 60;
 
-/** Durée du film gratuit unique (essai). */
+/** Durée legacy des anciens essais gratuits (plus proposés à la création). */
 export const FREE_FILM_DURATION_SECONDS = 15;
 
 /** Durée d'un échantillon payant (jeton). */
@@ -70,11 +70,7 @@ export function isSampleFilmDuration(durationSeconds: number): boolean {
 }
 
 export function isAllowedFilmDuration(durationSeconds: number): boolean {
-  return (
-    isPaidFilmDuration(durationSeconds) ||
-    isFreeTrialFilmDuration(durationSeconds) ||
-    isSampleFilmDuration(durationSeconds)
-  );
+  return isPaidFilmDuration(durationSeconds) || isSampleFilmDuration(durationSeconds);
 }
 
 export function formatTicketCostLabel(

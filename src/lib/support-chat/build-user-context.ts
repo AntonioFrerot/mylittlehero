@@ -7,7 +7,6 @@ import {
   getFilmCreationCooldownState,
   getLatestFilmCreatedAt,
 } from "@/lib/film-creation/creation-cooldown";
-import { isFreeFilmAvailableForEmail } from "@/lib/film-creation/free-film";
 import { listUserFilms } from "@/lib/film-creation/store";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { findPricingPlanById } from "@/lib/pricing";
@@ -21,12 +20,11 @@ export async function buildSupportUserContext(
   const session = await getSession();
   if (!session) return null;
 
-  const [user, balance, characters, films, freeFilmAvailable] = await Promise.all([
+  const [user, balance, characters, films] = await Promise.all([
     findUserByEmail(session.email),
     getTicketBalance(session.email),
     listCharacters(session.email),
     listUserFilms(session.email),
-    isFreeFilmAvailableForEmail(session.email),
   ]);
 
   const cooldown = isAdminEmail(session.email)
@@ -43,7 +41,6 @@ export async function buildSupportUserContext(
       subscriptionPlanId: user?.subscriptionPlanId,
     }),
     subscriptionPlanName: plan?.name,
-    freeFilmAvailable,
     characterCount: characters.length,
     charactersWithPhoto: characters.filter((character) => Boolean(character.photoSrc))
       .length,

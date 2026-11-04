@@ -1,4 +1,3 @@
-import { FreeTrialBanner } from "@/components/pricing/FreeTrialBanner";
 import { PricingCard } from "@/components/pricing/PricingCard";
 import { PricingMobileTierCard } from "@/components/pricing/PricingMobileTierCard";
 import { getServerTranslator } from "@/lib/i18n/server";
@@ -38,11 +37,7 @@ export async function PricingPageContent() {
           </p>
         </div>
 
-        <div className="mt-8 md:mt-10">
-          <FreeTrialBanner />
-        </div>
-
-        <section id="offres" className="mt-6 md:mt-12 lg:mt-14">
+        <section id="offres" className="mt-8 md:mt-10 lg:mt-14">
           <div className="flex w-full flex-col gap-8 pt-1 lg:hidden">
             <PricingMobileTierCard
               monthlyPlan={standardMonthly}

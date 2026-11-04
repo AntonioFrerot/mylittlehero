@@ -14,7 +14,6 @@ export type SupportUserContext = {
   ticketBalance: number;
   hasActiveSubscription: boolean;
   subscriptionPlanName?: string;
-  freeFilmAvailable: boolean;
   characterCount: number;
   charactersWithPhoto: number;
   filmCount: number;

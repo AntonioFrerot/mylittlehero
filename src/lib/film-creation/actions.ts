@@ -24,7 +24,6 @@ import { findUserByEmail } from "@/lib/auth/users-store";
 import {
   getTicketsRequiredForDuration,
   isAllowedFilmDuration,
-  isFreeTrialFilmDuration,
   isPaidFilmDuration,
   isSampleFilmDuration,
   JETONS_REQUIRED_FOR_SAMPLE,
@@ -45,7 +44,7 @@ import {
   listUserFilms,
   updateUserFilm,
 } from "./store";
-import { hasUserUsedFreeFilm, isUserFreeTrialFilm } from "./free-film";
+import { isUserFreeTrialFilm } from "./free-film";
 import {
   getFilmCreationCooldownState,
   getLatestFilmCreatedAt,
@@ -103,7 +102,7 @@ function parseDuration(value: unknown): number | null {
   if (typeof value !== "string" || !value.trim()) return null;
   const seconds = Number(value);
   if (!Number.isFinite(seconds)) return null;
-  if (isFreeTrialFilmDuration(seconds) || isSampleFilmDuration(seconds)) return seconds;
+  if (isSampleFilmDuration(seconds)) return seconds;
   if (!isValidFilmDurationSeconds(seconds)) return null;
   return seconds;
 }
@@ -256,14 +255,7 @@ export async function saveFilmCreation(
     }
   }
 
-  const isFreeFilm = isFreeTrialFilmDuration(durationSeconds);
   const isSampleFilm = isSampleFilmDuration(durationSeconds);
-
-  if (isFreeFilm) {
-    if (hasUserUsedFreeFilm(existingFilms)) {
-      return { error: t("filmCreation.errors.freeFilmAlreadyUsed") };
-    }
-  }
 
   const [user, filmLanguage] = await Promise.all([
     findUserByEmail(session.email),
@@ -291,7 +283,7 @@ export async function saveFilmCreation(
   }
 
   if (scheduledDate) {
-    if (isFreeFilm || isSampleFilm) {
+    if (isSampleFilm) {
       return { error: t("filmCreation.errors.scheduleNotAllowed") };
     }
     if (!user?.createdAt) {
@@ -335,7 +327,7 @@ export async function saveFilmCreation(
     if (!spendResult.ok) {
       return { error: t("filmCreation.errors.insufficientJetons") };
     }
-  } else if (!isFreeFilm) {
+  } else {
     if (!isPaidFilmDuration(durationSeconds)) {
       return { error: t("filmCreation.errors.durationRequired") };
     }
@@ -355,11 +347,10 @@ export async function saveFilmCreation(
 
   const film: UserFilm = {
     id: filmId,
-    title: isFreeFilm || isSampleFilm ? "" : buildLocalizedFilmTitle(themes, locale),
+    title: isSampleFilm ? "" : buildLocalizedFilmTitle(themes, locale),
     style,
     themes,
     durationSeconds,
-    ...(isFreeFilm ? { isFreeTrial: true } : {}),
     ...(isSampleFilm ? { isSample: true } : {}),
     characters: selectedCharacters,
     language: filmLanguage,
@@ -383,22 +374,6 @@ export async function saveFilmCreation(
     }
   }
 
-  if (isFreeFilm) {
-    try {
-      const { notifyAdminsFreeTrialCreated } = await import(
-        "@/lib/notifications/notify-admins-free-trial-created"
-      );
-      await notifyAdminsFreeTrialCreated(session.email, film);
-    } catch (error) {
-      console.error("Free trial admin notification failed", {
-        email: session.email,
-        filmId: film.id,
-        error,
-      });
-    }
-    revalidatePath("/admin");
-  }
-
   if (isSampleFilm) {
     try {
       await provisionStoryWorkspace(session.email, film);
@@ -410,7 +385,7 @@ export async function saveFilmCreation(
         error,
       });
     }
-  } else if (!isFreeFilm) {
+  } else {
     try {
       await provisionStoryWorkspace(session.email, film);
       scheduleStoryGeneration(session.email, film);
@@ -433,7 +408,6 @@ export async function saveFilmCreation(
 
   let redirectUrl = "/mon-espace?section=films";
   if (
-    !isFreeFilm &&
     !isSampleFilm &&
     !hasActiveSubscription &&
     ticketsRequired > 0

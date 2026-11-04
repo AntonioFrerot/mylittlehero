@@ -1,10 +1,7 @@
 import { ExampleFilmHeroSpotlight } from "@/components/films/ExampleFilmHeroSpotlight";
 import { ExampleFilmMedia } from "@/components/films/ExampleFilmMedia";
-import { FreeTrialIntentLink } from "@/components/film-creation/FreeTrialIntentLink";
 import { HashLink } from "@/components/ui/HashLink";
 import { getSession } from "@/lib/auth/get-session";
-import { isFreeFilmAvailableForEmail } from "@/lib/film-creation/free-film";
-import { buildCreerFilmFreeTrialHref } from "@/lib/film-creation/free-trial-intent";
 import { getExampleFilm } from "@/lib/example-films";
 import { POSTER_DIMENSIONS } from "@/lib/hero-posters";
 import {
@@ -49,11 +46,7 @@ export default async function ExampleFilmPage({ params }: PageProps) {
   if (!film) notFound();
 
   const { locale, t } = await getServerTranslator();
-  const session = await getSession();
-  const showFreeTrialCta = session
-    ? await isFreeFilmAvailableForEmail(session.email)
-    : true;
-  const freeTrialHref = buildCreerFilmFreeTrialHref(Boolean(session));
+  await getSession();
 
   const filmTitle = translateExampleFilmTitle(slug, film.title, locale);
   const filmTagline = translateExampleFilmTagline(slug, film.tagline, locale);
@@ -116,17 +109,6 @@ export default async function ExampleFilmPage({ params }: PageProps) {
               </div>
             </aside>
           </div>
-
-          {showFreeTrialCta ? (
-            <div className="mt-6 sm:mt-8">
-              <FreeTrialIntentLink
-                href={freeTrialHref}
-                className="w-full sm:w-auto"
-              >
-                {t("examples.tryFree")}
-              </FreeTrialIntentLink>
-            </div>
-          ) : null}
 
           <div className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-cinema-surface shadow-glow-gold-subtle">
             <ExampleFilmMedia

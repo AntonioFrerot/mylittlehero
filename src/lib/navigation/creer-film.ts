@@ -9,7 +9,6 @@ export type CreateFilmEligibility = {
   balance: number;
   jetonBalance: number;
   hasActiveSubscription: boolean;
-  freeFilmAvailable: boolean;
 };
 
 export function getCreerSonFilmHref(isLoggedIn: boolean): string {
@@ -19,7 +18,6 @@ export function getCreerSonFilmHref(isLoggedIn: boolean): string {
 export function canCreateFilm(summary: CreateFilmEligibility): boolean {
   return (
     summary.hasActiveSubscription ||
-    summary.freeFilmAvailable ||
     summary.balance > 0 ||
     summary.jetonBalance > 0
   );

@@ -12,7 +12,6 @@ import { useTicketBalance } from "@/hooks/use-ticket-balance";
 import {
   getTicketsRequiredForDuration,
   PAID_FILM_DURATION_MIN_SECONDS,
-  isFreeTrialFilmDuration,
   isSampleFilmDuration,
   JETONS_REQUIRED_FOR_SAMPLE,
 } from "@/lib/purchases/ticket-rules";
@@ -34,7 +33,7 @@ import { CharacterFacePicker } from "@/components/film-creation/CharacterFacePic
 import { FilmCreationCooldown } from "@/components/film-creation/FilmCreationCooldown";
 import { ScheduleFilmModal } from "@/components/film-creation/ScheduleFilmModal";
 import { FilmThemePicker } from "@/components/film-creation/FilmThemePicker";
-import { FilmDurationPickerWithIntent } from "@/components/film-creation/FilmDurationPickerWithIntent";
+import { FilmDurationPicker } from "@/components/film-creation/FilmDurationPicker";
 import { YesNoTextField } from "@/components/film-creation/YesNoTextField";
 import { TicketCountPill } from "@/components/tickets/TicketCountPill";
 import { JetonCountPill } from "@/components/tickets/JetonCountPill";
@@ -66,7 +65,6 @@ type FilmCreationFormProps = {
   ticketBalance: number;
   jetonBalance: number;
   hasActiveSubscription: boolean;
-  freeFilmAvailable: boolean;
   cooldownEndsAt?: string | null;
   registrationDate: string;
   occupiedScheduleDates?: string[];
@@ -79,7 +77,6 @@ export function FilmCreationForm({
   ticketBalance,
   jetonBalance,
   hasActiveSubscription,
-  freeFilmAvailable,
   cooldownEndsAt = null,
   registrationDate,
   occupiedScheduleDates = [],
@@ -121,16 +118,14 @@ export function FilmCreationForm({
   const { balance: liveBalance } = useTicketBalance();
   const effectiveTicketBalance = liveBalance ?? ticketBalance;
 
-  const isFreeFilm =
-    durationSeconds != null && isFreeTrialFilmDuration(durationSeconds);
   const isSampleFilm =
     durationSeconds != null && isSampleFilmDuration(durationSeconds);
 
   useEffect(() => {
-    if (isFreeFilm || isSampleFilm) {
+    if (isSampleFilm) {
       setScheduleModalOpen(false);
     }
-  }, [isFreeFilm, isSampleFilm]);
+  }, [isSampleFilm]);
 
   const subscriptionGrantActive = subscriptionGrantSchedule.active;
 
@@ -234,13 +229,12 @@ export function FilmCreationForm({
 
   const ticketsRequired =
     durationSeconds != null
-      ? isFreeFilm || isSampleFilm
+      ? isSampleFilm
         ? 0
         : getTicketsRequiredForDuration(durationSeconds)
       : 0;
   const insufficientTickets =
     durationSeconds != null &&
-    !isFreeFilm &&
     !isSampleFilm &&
     !hasActiveSubscription &&
     effectiveTicketBalance < ticketsRequired;
@@ -248,13 +242,11 @@ export function FilmCreationForm({
     isSampleFilm && jetonBalance < JETONS_REQUIRED_FOR_SAMPLE;
   const showPaidTicketBadge =
     durationSeconds != null &&
-    !isFreeFilm &&
     !isSampleFilm &&
     ticketsRequired > 0 &&
     effectiveTicketBalance > 0;
   const showCreateCostBadge =
-    showPaidTicketBadge ||
-    (durationSeconds != null && (isSampleFilm || isFreeFilm));
+    showPaidTicketBadge || (durationSeconds != null && isSampleFilm);
 
   function ticketCostLabel(count: number): string {
     return count === 1
@@ -354,7 +346,6 @@ export function FilmCreationForm({
 
   const showScheduleAsPrimaryCta =
     !cooldownActive &&
-    !isFreeFilm &&
     !isSampleFilm &&
     subscriptionGrantActive &&
     subscriptionGrantSchedule.canScheduleMore;
@@ -362,7 +353,6 @@ export function FilmCreationForm({
   const canShowScheduleLink =
     !showScheduleAsPrimaryCta &&
     !cooldownActive &&
-    !isFreeFilm &&
     !isSampleFilm &&
     (!hasActiveSubscription || effectiveTicketBalance > 0);
 
@@ -431,10 +421,9 @@ export function FilmCreationForm({
         )}
       </fieldset>
 
-      <FilmDurationPickerWithIntent
+      <FilmDurationPicker
         value={durationSeconds}
         onChange={setDurationSeconds}
-        freeFilmAvailable={freeFilmAvailable}
         jetonBalance={jetonBalance}
         ticketBalance={effectiveTicketBalance}
         hasActiveSubscription={hasActiveSubscription}
@@ -544,10 +533,6 @@ export function FilmCreationForm({
                       size="onPrimary"
                       label={jetonCostLabel(JETONS_REQUIRED_FOR_SAMPLE)}
                     />
-                  </span>
-                ) : durationSeconds != null && isFreeFilm ? (
-                  <span className="film-create-submit__cost film-create-submit__cost--free">
-                    {t("filmCreation.form.durationFreeBadge")}
                   </span>
                 ) : null}
               </>

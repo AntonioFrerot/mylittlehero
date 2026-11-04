@@ -13,7 +13,6 @@ import {
 } from "@/lib/brand";
 import { formatFilmDurationSeconds } from "@/lib/film-creation/duration";
 import {
-  FREE_FILM_DURATION_SECONDS,
   getMaxAffordablePaidStepIndex,
   getTicketsRequiredForDuration,
   isPaidFilmDuration,
@@ -28,8 +27,6 @@ import { InsufficientTicketsModal } from "@/components/film-creation/Insufficien
 type FilmDurationPickerProps = {
   value: number | null;
   onChange: (seconds: number) => void;
-  freeFilmAvailable?: boolean;
-  freeTrialIntent?: boolean;
   jetonBalance?: number;
   ticketBalance?: number;
   hasActiveSubscription?: boolean;
@@ -39,8 +36,6 @@ type FilmDurationPickerProps = {
 export function FilmDurationPicker({
   value,
   onChange,
-  freeFilmAvailable = false,
-  freeTrialIntent = false,
   jetonBalance = 0,
   ticketBalance = 0,
   hasActiveSubscription = false,
@@ -195,7 +190,6 @@ export function FilmDurationPicker({
   } as CSSProperties;
 
   const showDurationSlider = jetonBalance <= 0 || sampleJetonChoice === "no";
-  const hasExtraOptions = freeFilmAvailable && freeTrialIntent;
 
   return (
     <fieldset className="film-creation-form__themes">
@@ -378,45 +372,6 @@ export function FilmDurationPicker({
           </div>
         )}
 
-        {hasExtraOptions ? (
-          <>
-            <div className="duration-panel__divider" aria-hidden />
-            <div className="duration-extra-options">
-              {freeFilmAvailable && freeTrialIntent ? (
-                <label
-                  className={`btn-3d btn-3d--soft duration-extra-option ${
-                    value === FREE_FILM_DURATION_SECONDS
-                      ? "duration-extra-option--active"
-                      : ""
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="durationChoice"
-                    value={FREE_FILM_DURATION_SECONDS}
-                    checked={value === FREE_FILM_DURATION_SECONDS}
-                    onChange={() => selectDuration(FREE_FILM_DURATION_SECONDS)}
-                    className="sr-only"
-                  />
-                  <span className="duration-extra-option__text">
-                    <span className="duration-extra-option__title">
-                      {formatFilmDurationSeconds(
-                        FREE_FILM_DURATION_SECONDS,
-                        displayLocale
-                      )}
-                    </span>
-                    <span className="duration-extra-option__hint">
-                      {t("filmCreation.form.durationFreeOnce")}
-                    </span>
-                  </span>
-                  <span className="duration-extra-option__badge duration-extra-option__badge--free">
-                    {t("filmCreation.form.durationFreeBadge")}
-                  </span>
-                </label>
-              ) : null}
-            </div>
-          </>
-        ) : null}
       </div>
 
       <InsufficientTicketsModal

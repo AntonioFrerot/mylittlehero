@@ -37,7 +37,7 @@ function closingForIntent(intent: SupportIntent): string {
       return "Si vous voulez, précisez ce qui vous inquiète le plus (stockage, partage, suppression).";
     case "howto":
     case "trial":
-      return "Vous pouvez commencer par « Essayer gratuitement » ou /creer-film après connexion.";
+      return "Consultez les tarifs sur /abonnements ou /achat, puis créez votre film sur /creer-film après connexion.";
     case "delivery":
       return "Votre film apparaîtra dans Mon espace → Mes films dès qu’il sera prêt.";
     case "catalogue":

@@ -289,7 +289,6 @@ function buildCgv(pub: LegalPublisher): LegalDocument {
             items: [
               "Achats à l'unité (films de durée déterminée, packs de films) crédités en tickets (1 ticket = 5 minutes de film).",
               "Abonnements mensuels ou annuels donnant accès à un quota de films selon la formule choisie.",
-              "Un essai gratuit limité par compte, selon les conditions affichées sur le Site au moment de l'utilisation.",
             ],
           },
           `Les caractéristiques essentielles, durées, quotas et prix des offres sont présentées sur les pages /achat et /creer avant toute commande. Les visuels et exemples de films ne constituent pas une reproduction contractuelle du rendu final, qui dépend des éléments fournis par le client et des traitements automatisés.`,
@@ -429,9 +428,8 @@ function buildCgu(pub: LegalPublisher): LegalDocument {
         ],
       },
       {
-        title: "7. Essai gratuit et offres promotionnelles",
+        title: "7. Offres promotionnelles",
         body: [
-          `Un essai gratuit peut être proposé dans la limite d'un usage par compte et selon les paramètres techniques affichés sur le Site (durée, fonctionnalités). Nous pouvons modifier ou retirer l'essai gratuit à tout moment.`,
           `Les offres promotionnelles sont soumises à leurs conditions spécifiques et ne sont pas cumulables sauf mention contraire.`,
         ],
       },

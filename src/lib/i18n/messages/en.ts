@@ -7,10 +7,10 @@ export const en = {
     monEspaceDescription:
       "Manage your profile, characters and created films.",
     connexionDescription:
-      "Log in or create an account to start your free trial.",
+      "Log in or create an account to create your child's film.",
     creerTitle: "Create a film — Plans",
     creerDescription:
-      "Choose your plan or try a free 2-minute personalised film.",
+      "Choose your plan to create personalised films.",
     tarifsTitle: "Pricing — Subscriptions",
     tarifsDescription:
       "Explore our subscription plans for personalised films.",
@@ -1278,7 +1278,7 @@ export const en = {
       cooldownActive:
         "You must wait 24 hours after your last creation before starting a new one.",
       scheduleNotAllowed:
-        "Scheduling is not available for free trials or samples.",
+        "Scheduling is not available for samples.",
       subscriptionGrantScheduleRequired:
         "With 0 tickets, schedule your 5-minute film for your next subscription credit date.",
       subscriptionGrantDurationOnly:
