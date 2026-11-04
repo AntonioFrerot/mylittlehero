@@ -105,7 +105,7 @@ export const fr = {
       "Les éléments que vous transmettez ne servent qu'à produire votre film : pas de revente à des tiers, pas de publicité ciblée. Vous consultez et supprimez tout depuis Mon espace, quand vous le souhaitez.",
     ctaTitle: "Prêt à lui faire vivre ce moment ?",
     ctaText:
-      "Imaginez le générique qui s'affiche, lui au centre de chaque scène. Plus que quelques clics vous séparent de ce frisson de cinéma, celui qu'on partage quand on voit son enfant être le plus heureux du monde devant son film.",
+      "Imaginez le générique qui s'affiche, lui au centre de chaque scène. Plus que quelques clics vous séparent de ce frisson de cinéma, celui qu'on partage quand on voit son enfant devenir le plus heureux du monde devant son film.",
     footerTagline: "Films et séries personnalisés",
     footerPrivacy: "Confidentialité",
     footerTerms: "CGV",
@@ -977,6 +977,7 @@ export const fr = {
       subscriptionsLead: "Choisissez l'abonnement qui vous correspond.",
     },
     buyUnitLink: "Je veux acheter à l'unité",
+    viewSubscriptionsLink: "Voir les abonnements",
     premiumYearly: {
       filmDuration: "48 x 5 minutes de film",
     },

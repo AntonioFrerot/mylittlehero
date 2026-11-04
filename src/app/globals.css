@@ -872,6 +872,17 @@ select:disabled,
   row-gap: 1.5rem;
 }
 
+.abonnements-catalog__tickets-panel {
+  width: 100%;
+}
+
+.abonnements-catalog__unit-purchase--centered {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+}
+
 @media (min-width: 1024px) {
   .abonnements-catalog__tickets-stack {
     grid-template-columns: repeat(6, minmax(0, 1fr));

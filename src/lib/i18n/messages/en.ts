@@ -967,6 +967,7 @@ export const en = {
       subscriptionsLead: "Choose the subscription that suits you.",
     },
     buyUnitLink: "I want to buy individual tickets",
+    viewSubscriptionsLink: "View subscriptions",
     premiumYearly: {
       filmDuration: "48 x 5-minute films",
     },

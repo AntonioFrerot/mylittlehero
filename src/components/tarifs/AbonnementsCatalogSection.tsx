@@ -50,6 +50,14 @@ export function AbonnementsCatalogSection({
     }
   }, [router, sectionParam]);
 
+  const openSubscriptionsTab = useCallback(() => {
+    setTab("subscriptions");
+    const subscriptionsUrl = `/abonnements?section=${ABONNEMENTS_SUBSCRIPTIONS_SECTION}`;
+    if (sectionParam !== ABONNEMENTS_SUBSCRIPTIONS_SECTION) {
+      router.push(subscriptionsUrl, { scroll: false });
+    }
+  }, [router, sectionParam]);
+
   useEffect(() => {
     setTab(tabFromSectionParam(sectionParam));
   }, [sectionParam]);
@@ -86,15 +94,26 @@ export function AbonnementsCatalogSection({
       </div>
 
       {tab === "tickets" ? (
-        <div key="tickets" className="abonnements-catalog__tickets-stack">
-          <div className="tarifs-tickets__grid abonnements-catalog__tickets-grid grid gap-6 sm:grid-cols-2 lg:grid-cols-6 lg:gap-8">
-            {ticketPlans.map((plan) => (
-              <TarifsTicketCard key={plan.id} plan={plan} locale={locale} goldCheckout />
-            ))}
-            <div className="abonnements-catalog__sample-slot">
-              <AbonnementsSampleBlock offer={sampleOffer} locale={locale} />
+        <div key="tickets" className="abonnements-catalog__tickets-panel">
+          <div className="abonnements-catalog__tickets-stack">
+            <div className="tarifs-tickets__grid abonnements-catalog__tickets-grid grid gap-6 sm:grid-cols-2 lg:grid-cols-6 lg:gap-8">
+              {ticketPlans.map((plan) => (
+                <TarifsTicketCard key={plan.id} plan={plan} locale={locale} goldCheckout />
+              ))}
+              <div className="abonnements-catalog__sample-slot">
+                <AbonnementsSampleBlock offer={sampleOffer} locale={locale} />
+              </div>
             </div>
           </div>
+          <p className="abonnements-catalog__unit-purchase abonnements-catalog__unit-purchase--centered relative z-[2] mt-3 md:mt-4">
+            <button
+              type="button"
+              onClick={openSubscriptionsTab}
+              className="cursor-pointer text-sm font-medium text-gold-light underline decoration-gold/40 underline-offset-4 transition-colors hover:text-gold hover:decoration-gold/70 md:text-base"
+            >
+              {t("abonnementsPage.viewSubscriptionsLink")}
+            </button>
+          </p>
         </div>
       ) : (
         <div key="subscriptions" className="abonnements-catalog__subscriptions-stack">
@@ -109,7 +128,7 @@ export function AbonnementsCatalogSection({
               />
             ))}
           </div>
-          <p className="abonnements-catalog__unit-purchase relative z-[2] mt-3 text-center md:mt-4">
+          <p className="abonnements-catalog__unit-purchase abonnements-catalog__unit-purchase--centered relative z-[2] mt-3 md:mt-4">
             <button
               type="button"
               onClick={openTicketsTab}
