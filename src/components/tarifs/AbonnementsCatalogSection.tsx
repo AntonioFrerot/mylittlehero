@@ -15,6 +15,14 @@ import type { LocaleCode } from "@/lib/i18n/locales";
 
 export const ABONNEMENTS_TICKETS_SECTION = "tickets";
 export const ABONNEMENTS_SUBSCRIPTIONS_SECTION = "subscriptions";
+const ABONNEMENTS_CATALOG_TOP_ID = "abonnements-catalog";
+
+function scrollToCatalogTop(behavior: ScrollBehavior = "smooth") {
+  document.getElementById(ABONNEMENTS_CATALOG_TOP_ID)?.scrollIntoView({
+    behavior,
+    block: "start",
+  });
+}
 
 function tabFromSectionParam(section: string | null): AbonnementsCatalogTab {
   if (section === ABONNEMENTS_SUBSCRIPTIONS_SECTION) return "subscriptions";
@@ -48,6 +56,7 @@ export function AbonnementsCatalogSection({
     if (sectionParam !== ABONNEMENTS_TICKETS_SECTION) {
       router.push(ticketsUrl, { scroll: false });
     }
+    requestAnimationFrame(() => scrollToCatalogTop());
   }, [router, sectionParam]);
 
   const openSubscriptionsTab = useCallback(() => {
@@ -56,6 +65,7 @@ export function AbonnementsCatalogSection({
     if (sectionParam !== ABONNEMENTS_SUBSCRIPTIONS_SECTION) {
       router.push(subscriptionsUrl, { scroll: false });
     }
+    requestAnimationFrame(() => scrollToCatalogTop());
   }, [router, sectionParam]);
 
   useEffect(() => {
@@ -72,7 +82,7 @@ export function AbonnementsCatalogSection({
 
   return (
     <section
-      id={tab === "tickets" ? "abonnements-tickets" : undefined}
+      id={ABONNEMENTS_CATALOG_TOP_ID}
       className="tarifs-page__section abonnements-catalog scroll-mt-28"
     >
       <div className="tarifs-subscriptions__header">
@@ -94,7 +104,7 @@ export function AbonnementsCatalogSection({
       </div>
 
       {tab === "tickets" ? (
-        <div key="tickets" className="abonnements-catalog__tickets-panel">
+        <div key="tickets" id="abonnements-tickets" className="abonnements-catalog__tickets-panel">
           <div className="abonnements-catalog__tickets-stack">
             <div className="tarifs-tickets__grid abonnements-catalog__tickets-grid grid gap-6 sm:grid-cols-2 lg:grid-cols-6 lg:gap-8">
               {ticketPlans.map((plan) => (
