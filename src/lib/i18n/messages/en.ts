@@ -1351,6 +1351,8 @@ export const en = {
     deleteConfirmCancel: "Cancel",
     formEditTitle: "Edit character",
     formAddTitle: "Add character",
+    cancelEdit: "Cancel",
+    viewOtherCharacters: "View other characters",
     prenom: "First name:",
     age: "Age:",
     taille: "Height (cm):",

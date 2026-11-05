@@ -1363,6 +1363,8 @@ export const fr = {
     deleteConfirmCancel: "Annuler",
     formEditTitle: "Modifier le personnage",
     formAddTitle: "Ajouter un personnage",
+    cancelEdit: "Annuler",
+    viewOtherCharacters: "Voir les autres personnages",
     prenom: "Prénom :",
     age: "Âge :",
     taille: "Taille (en cm) :",

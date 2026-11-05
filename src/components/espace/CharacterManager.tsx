@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   BTN_3D_COMPACT_SECONDARY,
   BTN_3D_PRIMARY_ACTION,
+  BTN_3D_SECONDARY_ACTION,
   SURFACE_3D_PANEL,
   SURFACE_3D_PANEL_LG,
 } from "@/lib/ui/button-3d-classes";
@@ -62,6 +63,31 @@ function formatMeta(character: Character): string {
   return parts.join(" · ");
 }
 
+const CHARACTERS_COLLAPSE_MOBILE_MAX_INDEX = 0;
+const CHARACTERS_COLLAPSE_DESKTOP_COUNT = 7;
+
+function characterListItemCollapseClass(
+  index: number,
+  total: number,
+  expanded: boolean
+): string {
+  if (expanded || total < 2) return "";
+
+  if (total >= 8) {
+    if (index >= CHARACTERS_COLLAPSE_DESKTOP_COUNT) return "hidden";
+    if (index > CHARACTERS_COLLAPSE_MOBILE_MAX_INDEX) return "hidden lg:block";
+    return "";
+  }
+
+  if (index > CHARACTERS_COLLAPSE_MOBILE_MAX_INDEX) return "hidden lg:block";
+  return "";
+}
+
+function shouldOfferCharacterListExpand(total: number, expanded: boolean): boolean {
+  if (expanded || total < 2) return false;
+  return true;
+}
+
 export function CharacterManager({
   initialCharacters,
   createFilmHref,
@@ -75,11 +101,18 @@ export function CharacterManager({
   const [clientError, setClientError] = useState<string | null>(null);
   const [characterToDelete, setCharacterToDelete] = useState<Character | null>(null);
   const [deletePending, setDeletePending] = useState(false);
+  const [charactersListExpanded, setCharactersListExpanded] = useState(false);
   const [state, formAction, pending] = useActionState(upsertCharacter, initialState);
 
   useEffect(() => {
     setCharacters(initialCharacters);
   }, [initialCharacters]);
+
+  useEffect(() => {
+    if (characters.length < 2) {
+      setCharactersListExpanded(false);
+    }
+  }, [characters.length]);
 
   useEffect(() => {
     if (!state.character) return;
@@ -104,6 +137,11 @@ export function CharacterManager({
   }, [state.character, state.mode, router]);
 
   const startEdit = (character: Character) => setEditing(character);
+
+  const cancelEdit = () => {
+    setEditing(null);
+    setClientError(null);
+  };
 
   const confirmDeleteCharacter = async () => {
     if (!characterToDelete || deletePending) return;
@@ -158,14 +196,20 @@ export function CharacterManager({
           </div>
         ) : (
           <ul className="flex flex-col gap-3">
-            {characters.map((character) => {
+            {characters.map((character, index) => {
               const meta = formatMeta(character);
+              const collapseClass = characterListItemCollapseClass(
+                index,
+                characters.length,
+                charactersListExpanded
+              );
+
               return (
                 <li
                   key={character.id}
                   className={`${SURFACE_3D_PANEL_LG} p-4 ${
                     editing?.id === character.id ? "!border-gold/45" : ""
-                  }`}
+                  } ${collapseClass}`}
                 >
                   <div className="flex items-start gap-3">
                     <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-white/10 bg-cinema-black">
@@ -234,6 +278,23 @@ export function CharacterManager({
                 </li>
               );
             })}
+            {shouldOfferCharacterListExpand(
+              characters.length,
+              charactersListExpanded
+            ) ? (
+              <li
+                className={`list-none ${characters.length >= 8 ? "" : "lg:hidden"}`}
+              >
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="hero-examples-button w-full border-white/25 bg-transparent lg:w-auto"
+                  onClick={() => setCharactersListExpanded(true)}
+                >
+                  {t("characters.viewOtherCharacters")}
+                </Button>
+              </li>
+            ) : null}
           </ul>
         )}
       </div>
@@ -242,9 +303,31 @@ export function CharacterManager({
         ref={formSectionRef}
         className={`${SURFACE_3D_PANEL} scroll-mt-24 rounded-2xl p-6 md:p-8`}
       >
-        <h2 className="font-display text-xl font-semibold text-cream">
-          {editing ? t("characters.formEditTitle") : t("characters.formAddTitle")}
-        </h2>
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="min-w-0 font-display text-xl font-semibold text-cream">
+            {editing ? t("characters.formEditTitle") : t("characters.formAddTitle")}
+          </h2>
+          {editing ? (
+            <button
+              type="button"
+              onClick={cancelEdit}
+              className={`${BTN_3D_SECONDARY_ACTION} shrink-0 border-gold/35 !px-4 !py-2.5 text-sm font-semibold text-gold-light shadow-[0_0_22px_rgba(232,197,71,0.14)] hover:border-gold/55 hover:bg-gold/10 hover:text-gold`}
+            >
+              <svg
+                aria-hidden
+                className="h-4 w-4 shrink-0 opacity-90"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.25"
+                strokeLinecap="round"
+              >
+                <path d="M18 6 6 18M6 6l12 12" />
+              </svg>
+              {t("characters.cancelEdit")}
+            </button>
+          ) : null}
+        </div>
 
         <form
           key={editing?.id ?? `new-${formResetKey}`}
