@@ -559,7 +559,7 @@ export const en = {
     profileDesc:
       "Update your first name, password, language and plan linked to your account.",
     charactersTitle: "Characters",
-    charactersPrivacyBadge: "🛡️ SECURE DATA",
+    charactersPrivacyBadge: "🔒 SECURE DATA",
     charactersDesc:
       "For the best possible result, please provide high-quality materials: a well-framed, well-lit face and a clear voice recording without background noise.",
     filmsTitle: "My films",

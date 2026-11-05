@@ -567,7 +567,7 @@ export const fr = {
     profileDesc:
       "Modifiez votre prénom, votre mot de passe, la langue et la formule associée à votre compte.",
     charactersTitle: "Personnages",
-    charactersPrivacyBadge: "🛡️ DONNÉES SÉCURISÉES",
+    charactersPrivacyBadge: "🔒 DONNÉES SÉCURISÉES",
     charactersDesc:
       "Pour un résultat de qualité, veillez à transmettre des éléments de qualité : visage bien cadré et correctement éclairé, voix claire et sans bruit de fond.",
     filmsTitle: "Mes films et séries",
