@@ -188,7 +188,7 @@ export function AccountInformationsForm({
                 const next = parseLocale(event.target.value);
                 if (next) setSelectedLocale(next);
               }}
-              className={inputClass}
+              className={`${inputClass} account-locale-select`}
             >
               {LOCALES.map((language) => (
                 <option key={language.code} value={language.code}>

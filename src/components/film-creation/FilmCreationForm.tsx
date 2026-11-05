@@ -43,6 +43,7 @@ import {
 } from "@/lib/ui/button-3d-classes";
 import type { Character } from "@/lib/characters/types";
 import type { SubscriptionGrantScheduleContext } from "@/lib/purchases/subscription-scheduling-types";
+import { ABONNEMENTS_PRICING_PATH } from "@/lib/navigation/subscription-pricing";
 
 const initialState: FilmCreationFormState = {};
 
@@ -145,7 +146,7 @@ export function FilmCreationForm({
   useEffect(() => {
     const draft = readFilmCreationDraft(draftStorageKey);
     if (draft) {
-      setSelectedThemes(draft.themes);
+      setSelectedThemes(draft.themes.slice(0, 1));
       setSelectedCharacterIds(draft.characterIds);
       if (draft.durationSeconds != null && !subscriptionGrantActive) {
         setDurationSeconds(draft.durationSeconds);
@@ -338,7 +339,11 @@ export function FilmCreationForm({
     }
   }
 
+  const insufficientTicketsMessage = t("filmCreation.errors.insufficientTickets");
   const insufficientJetonsMessage = t("filmCreation.errors.insufficientJetons");
+  const displayedFormError = clientError ?? state.error ?? null;
+  const showInsufficientTicketsError =
+    displayedFormError === insufficientTicketsMessage;
   const showJetonPurchaseCta =
     insufficientJetons ||
     clientError === insufficientJetonsMessage ||
@@ -466,10 +471,22 @@ export function FilmCreationForm({
             {t("filmCreation.errors.samplePurchaseCta")}
           </Link>
         </div>
-      ) : (clientError || state.error) ? (
-        <p className="rounded-lg border border-red-500/30 bg-red-950/40 px-3 py-2 text-sm text-red-200">
-          {clientError ?? state.error}
-        </p>
+      ) : displayedFormError ? (
+        showInsufficientTicketsError ? (
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-lg border border-red-500/30 bg-red-950/40 px-3 py-2 text-sm text-red-200">
+            <p className="min-w-0 flex-1">{displayedFormError}</p>
+            <Link
+              href={ABONNEMENTS_PRICING_PATH}
+              className="shrink-0 font-medium text-gold-light underline decoration-gold/40 underline-offset-4 transition-colors hover:text-gold hover:decoration-gold/70"
+            >
+              {t("filmCreation.errors.purchaseCta")}
+            </Link>
+          </div>
+        ) : (
+          <p className="rounded-lg border border-red-500/30 bg-red-950/40 px-3 py-2 text-sm text-red-200">
+            {displayedFormError}
+          </p>
+        )
       ) : null}
 
       <div className="film-create-submit-wrap">

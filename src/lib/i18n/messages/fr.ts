@@ -1199,10 +1199,10 @@ export const fr = {
       styleLegend: "Quel style graphique ?",
       styleHint:
         "Sélectionnez le style graphique qui sera utilisé pour l'ensemble du film : l'univers visuel, les couleurs et le rendu des personnages.",
-      themesLegend: "Quels thèmes ?",
+      themesLegend: "Quel thème ?",
       themesHint:
-        "Cochez le ou les thèmes qui guideront la création de l'histoire.",
-      themesChoose: "Choisir les thèmes...",
+        "Choisissez le thème qui guidera la création de l'histoire.",
+      themesChoose: "Choisir un thème...",
       themesValidate: "Valider",
       themesSelectedCount: "{count} thèmes sélectionnés",
       characterLegend: "Quel personnage ?",
@@ -1355,6 +1355,11 @@ export const fr = {
     missingPhoto: "Photo manquante — modifiez ce personnage",
     edit: "Modifier",
     delete: "Supprimer",
+    deleteConfirmTitle: "Supprimer ce personnage ?",
+    deleteConfirmMessage:
+      "« {name} » sera définitivement supprimé, avec sa photo et son échantillon vocal. Cette action est irréversible.",
+    deleteConfirmButton: "Supprimer",
+    deleteConfirmCancel: "Annuler",
     formEditTitle: "Modifier le personnage",
     formAddTitle: "Ajouter un personnage",
     prenom: "Prénom :",

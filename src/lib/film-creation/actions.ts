@@ -71,13 +71,14 @@ export type FilmCreationFormState = {
 const DEFAULT_FILM_STYLE: FilmStyle = "realistic";
 
 function normalizeSelectedThemes(themes: FilmTheme[]): FilmThemeId[] {
-  return [
+  const unique = [
     ...new Set(
       themes
         .map((theme) => normalizeFilmTheme(String(theme)))
         .filter((theme): theme is FilmThemeId => theme != null)
     ),
   ];
+  return unique.slice(0, 1);
 }
 
 function parseThemes(formData: FormData): FilmTheme[] {

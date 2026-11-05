@@ -1189,10 +1189,10 @@ export const en = {
       styleLegend: "Which graphic style?",
       styleHint:
         "This is the graphic style used throughout the film: the visual world, colours and how characters are rendered.",
-      themesLegend: "Which themes?",
+      themesLegend: "Which theme?",
       themesHint:
-        "These themes guide how your story is created. You can select several to blend different worlds.",
-      themesChoose: "Choose one or more themes…",
+        "Choose the theme that will guide how your story is created.",
+      themesChoose: "Choose a theme…",
       themesValidate: "Confirm",
       themesSelectedCount: "{count} themes selected",
       characterLegend: "Which character?",
@@ -1343,6 +1343,11 @@ export const en = {
     missingPhoto: "Missing photo — edit this character",
     edit: "Edit",
     delete: "Delete",
+    deleteConfirmTitle: "Delete this character?",
+    deleteConfirmMessage:
+      "“{name}” will be permanently deleted, including their photo and voice sample. This cannot be undone.",
+    deleteConfirmButton: "Delete",
+    deleteConfirmCancel: "Cancel",
     formEditTitle: "Edit character",
     formAddTitle: "Add character",
     prenom: "First name:",

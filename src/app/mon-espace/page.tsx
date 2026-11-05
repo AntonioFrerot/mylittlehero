@@ -49,24 +49,26 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
             <div className="mon-espace-hero__glow mon-espace-hero__glow--violet" />
           </div>
 
-          <div className="mon-espace-hero__shell mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
+          <div className="mon-espace-hero__shell mx-auto max-w-6xl px-4 sm:px-6 md:px-8 lg:max-w-[85rem]">
             <div className="mon-espace-hero__top">
               <Link href="/" className="mon-espace-hero__back">
                 {t("space.backHome")}
               </Link>
             </div>
 
-            <header className="mon-espace-hero__header">
-              <h1 id="mon-espace-title" className="mon-espace-hero__title">
-                <span className="mon-espace-hero__title-before">
-                  {t("space.heroTitleBefore")}
-                </span>
-                <span className="mon-espace-hero__title-accent">
-                  {t("space.heroTitleAccent")}
-                </span>
-              </h1>
-              <p className="mon-espace-hero__lead">{t("space.heroLead")}</p>
-            </header>
+            <div className="mon-espace-hero__layout">
+              <header className="mon-espace-hero__header">
+                <h1 id="mon-espace-title" className="mon-espace-hero__title">
+                  <span className="mon-espace-hero__title-before">
+                    {t("space.heroTitleBefore")}
+                  </span>
+                  <span className="mon-espace-hero__title-accent">
+                    {t("space.heroTitleAccent")}
+                  </span>
+                </h1>
+              </header>
+              <p className="mon-espace-hero__lead lg:hidden">{t("space.heroLead")}</p>
+            </div>
           </div>
         </section>
 

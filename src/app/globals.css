@@ -3529,6 +3529,54 @@ select:disabled,
   }
 }
 
+@media (min-width: 1024px) {
+  .mon-espace-hero__shell {
+    padding-top: 0.5rem;
+    padding-bottom: 1.35rem;
+  }
+
+  .mon-espace-hero__top {
+    text-align: left;
+  }
+
+  .mon-espace-hero__layout {
+    margin-top: 0.65rem;
+  }
+
+  .mon-espace-hero__header {
+    margin-top: 0;
+    text-align: left;
+  }
+
+  .mon-espace-hero__title {
+    font-size: clamp(2.15rem, 3.2vw, 3.15rem);
+    white-space: normal;
+  }
+
+  .mon-espace-hero__lead {
+    margin: 0;
+    max-width: none;
+    text-align: left;
+    font-size: 1.02rem;
+    line-height: 1.5;
+  }
+
+  .mon-espace-content {
+    margin-top: 0.25rem;
+  }
+
+  .account-locale-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: rgba(10, 12, 18, 0.6);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(244%2C240%2C232%2C0.62)' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.125rem center;
+    background-size: 1rem;
+    padding-right: 2.85rem;
+  }
+}
+
 .hero-title {
   font-family: var(--font-display), serif;
   font-size: clamp(1.25rem, 6.2vw, 3.75rem);

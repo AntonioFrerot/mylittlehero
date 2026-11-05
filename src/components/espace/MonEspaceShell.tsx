@@ -44,19 +44,19 @@ export function MonEspaceShell({ initialSection, data }: MonEspaceShellProps) {
   }
 
   return (
-    <div className="mon-espace-content mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
-      <div className="mt-2 grid gap-6 sm:mt-4 lg:grid-cols-[220px_1fr] lg:gap-10">
+    <div className="mon-espace-content mx-auto max-w-6xl px-4 sm:px-6 md:px-8 lg:max-w-[85rem]">
+      <div className="mt-2 grid gap-6 sm:mt-4 lg:grid-cols-[minmax(200px,240px)_minmax(0,1fr)] lg:gap-x-10 lg:gap-y-6">
         <MonEspaceNav active={section} onSectionChange={navigateToSection} />
 
         <div className="min-w-0">
           {section === "profil" ? (
             <>
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                <div>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between lg:items-center lg:gap-8">
+                <div className="min-w-0 flex-1">
                   <h2 className="font-display text-xl font-semibold text-cream md:text-2xl">
                     {t("space.profileTitle")}
                   </h2>
-                  <p className="mt-2 max-w-xl text-sm text-cream/60 md:text-base">
+                  <p className="mt-2 max-w-xl text-sm text-cream/60 md:text-base lg:max-w-3xl">
                     {t("space.profileDesc")}
                   </p>
                 </div>
@@ -68,7 +68,7 @@ export function MonEspaceShell({ initialSection, data }: MonEspaceShellProps) {
                   {t("space.createFilm")}
                 </Button>
               </div>
-              <div className="mt-8">
+              <div className="mt-8 lg:mt-6">
                 {account ? (
                   <AccountInformationsForm account={account} />
                 ) : (
@@ -85,16 +85,16 @@ export function MonEspaceShell({ initialSection, data }: MonEspaceShellProps) {
             />
           ) : (
             <>
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                <div>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between lg:items-center lg:gap-8">
+                <div className="min-w-0 flex-1">
                   <h2 className="font-display text-xl font-semibold text-cream md:text-2xl">
                     {t("space.filmsTitle")}
                   </h2>
-                  <p className="mt-2 max-w-xl text-sm text-cream/60 md:text-base">
+                  <p className="mt-2 max-w-xl text-sm text-cream/60 md:text-base lg:max-w-3xl">
                     {t("space.filmsDesc")}
                   </p>
                 </div>
-                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
                   <Button
                     href="/catalogue"
                     variant="secondary"
@@ -111,7 +111,7 @@ export function MonEspaceShell({ initialSection, data }: MonEspaceShellProps) {
                   </Button>
                 </div>
               </div>
-              <div className="mt-8">
+              <div className="mt-8 lg:mt-6">
                 <MesFilmsList films={films} createFilmHref={createFilmHref} />
               </div>
             </>

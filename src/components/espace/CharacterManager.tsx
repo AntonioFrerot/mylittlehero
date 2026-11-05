@@ -11,6 +11,7 @@ import {
 } from "@/lib/ui/button-3d-classes";
 import { useLocale } from "@/components/LocaleProvider";
 import { Button } from "@/components/ui/Button";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { RequiredFieldLabel } from "@/components/ui/RequiredFieldLabel";
 import { CharacterPhotoUpload } from "@/components/espace/CharacterPhotoUpload";
 import dynamic from "next/dynamic";
@@ -72,6 +73,8 @@ export function CharacterManager({
   const [editing, setEditing] = useState<Character | null>(null);
   const [formResetKey, setFormResetKey] = useState(0);
   const [clientError, setClientError] = useState<string | null>(null);
+  const [characterToDelete, setCharacterToDelete] = useState<Character | null>(null);
+  const [deletePending, setDeletePending] = useState(false);
   const [state, formAction, pending] = useActionState(upsertCharacter, initialState);
 
   useEffect(() => {
@@ -100,60 +103,52 @@ export function CharacterManager({
     router.refresh();
   }, [state.character, state.mode, router]);
 
-  const scrollToForm = () => {
-    requestAnimationFrame(() => {
-      formSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  };
-
-  const startNew = () => {
-    setEditing(null);
-    scrollToForm();
-  };
   const startEdit = (character: Character) => setEditing(character);
 
-  const handleDelete = async (id: string) => {
+  const confirmDeleteCharacter = async () => {
+    if (!characterToDelete || deletePending) return;
+
+    setDeletePending(true);
+    const id = characterToDelete.id;
     const result = await removeCharacter(id);
-    if (!result.error) {
-      setCharacters((list) => list.filter((c) => c.id !== id));
-      if (editing?.id === id) setEditing(null);
-      router.refresh();
+    setDeletePending(false);
+
+    if (result.error) {
+      setClientError(result.error);
+      setCharacterToDelete(null);
+      return;
     }
+
+    setCharacters((list) => list.filter((c) => c.id !== id));
+    if (editing?.id === id) setEditing(null);
+    setCharacterToDelete(null);
+    router.refresh();
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 className="font-display text-xl font-semibold text-cream md:text-2xl">
-              {t("space.charactersTitle")}
-            </h2>
-            <p className="mt-2 max-w-xl whitespace-pre-line text-sm text-cream/60 md:text-base">
-              {t("space.charactersDesc")}
-            </p>
-          </div>
-          <Button
-            href={createFilmHref}
-            variant="primary"
-            className="w-full !text-sm shrink-0 sm:w-auto"
-          >
-            {t("space.createFilm")}
-          </Button>
+    <div className="space-y-8 lg:space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between lg:items-center lg:gap-8">
+        <div className="min-w-0 flex-1">
+          <h2 className="font-display text-xl font-semibold text-cream md:text-2xl">
+            {t("space.charactersTitle")}
+          </h2>
+          <p className="mt-2 max-w-xl whitespace-pre-line text-sm text-cream/60 md:text-base lg:max-w-none">
+            {t("space.charactersDesc")}
+          </p>
         </div>
-        <button
-          type="button"
-          onClick={startNew}
-          className="mt-4 w-fit cursor-pointer text-sm text-gold-light transition-colors hover:text-gold"
+        <Button
+          href={createFilmHref}
+          variant="primary"
+          className="w-full !text-sm shrink-0 sm:w-auto lg:justify-self-end"
         >
-          {t("characters.addNew")}
-        </button>
+          {t("space.createFilm")}
+        </Button>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:gap-10">
+      <div className="grid gap-8 lg:grid-cols-[minmax(300px,40%)_minmax(0,60%)] lg:items-start lg:gap-8 xl:gap-10">
       <div>
         {characters.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/15 bg-cinema-night/40 p-8 text-center">
+          <div className="hidden rounded-2xl border border-dashed border-white/15 bg-cinema-night/40 p-8 text-center md:block">
             <p className="text-cream/50">{t("characters.empty")}</p>
           </div>
         ) : (
@@ -222,7 +217,7 @@ export function CharacterManager({
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleDelete(character.id)}
+                            onClick={() => setCharacterToDelete(character)}
                             className="rounded-lg border border-red-500/20 px-3 py-1.5 text-xs text-red-300/90 hover:bg-red-950/30"
                           >
                             {t("characters.delete")}
@@ -355,6 +350,25 @@ export function CharacterManager({
         </form>
       </div>
       </div>
+
+      <ConfirmDialog
+        open={characterToDelete != null}
+        title={t("characters.deleteConfirmTitle")}
+        message={
+          characterToDelete
+            ? t("characters.deleteConfirmMessage", {
+                name: characterToDelete.prenom,
+              })
+            : ""
+        }
+        confirmLabel={t("characters.deleteConfirmButton")}
+        cancelLabel={t("characters.deleteConfirmCancel")}
+        pending={deletePending}
+        onClose={() => {
+          if (!deletePending) setCharacterToDelete(null);
+        }}
+        onConfirm={() => void confirmDeleteCharacter()}
+      />
     </div>
   );
 }

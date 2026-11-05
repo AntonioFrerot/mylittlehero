@@ -330,7 +330,7 @@ export function HeaderNotificationBell({ className = "" }: HeaderNotificationBel
 
             <div className="notification-bell__panel-foot">
               <Link
-                href="/mon-espace?section=films"
+                href="/catalogue"
                 className="notification-bell__foot-link"
                 onClick={() => setOpen(false)}
               >

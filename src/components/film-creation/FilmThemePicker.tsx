@@ -64,22 +64,15 @@ export function FilmThemePicker({
     setOpen(false);
   }
 
-  function toggleTheme(theme: string) {
-    setSelected(
-      selected.includes(theme)
-        ? selected.filter((id) => id !== theme)
-        : [...selected, theme]
-    );
+  function selectTheme(theme: string) {
+    setSelected(selected[0] === theme ? [] : [theme]);
   }
 
   function triggerLabel(): string {
     if (selected.length === 0) {
       return t("filmCreation.form.themesChoose");
     }
-    if (selected.length === 1) {
-      return t(themeLabelKey(selected[0] as (typeof FILM_THEMES)[number]));
-    }
-    return t("filmCreation.form.themesSelectedCount", { count: selected.length });
+    return t(themeLabelKey(selected[0] as (typeof FILM_THEMES)[number]));
   }
 
   useEffect(() => {
@@ -203,7 +196,7 @@ export function FilmThemePicker({
                 id={listId}
                 className="film-theme-dropdown__panel"
                 role="listbox"
-                aria-multiselectable="true"
+                aria-multiselectable="false"
                 aria-label={t("filmCreation.form.themesLegend")}
               >
                 {FILM_THEMES.map((theme) => {
@@ -213,7 +206,7 @@ export function FilmThemePicker({
                       <button
                         type="button"
                         className={`film-theme-dropdown__option${isSelected ? " film-theme-dropdown__option--selected" : ""}`}
-                        onClick={() => toggleTheme(theme)}
+                        onClick={() => selectTheme(theme)}
                       >
                         <span
                           className={`film-theme-dropdown__check${isSelected ? " film-theme-dropdown__check--on" : ""}`}
@@ -250,12 +243,12 @@ export function FilmThemePicker({
         return (
           <label key={theme} className={SURFACE_3D_CARD}>
             <input
-              type="checkbox"
+              type="radio"
               name="themes"
               value={theme}
               checked={isSelected}
-              onChange={() => toggleTheme(theme)}
-              className="h-4 w-4 shrink-0 rounded border-white/20 bg-cinema-black text-gold accent-gold"
+              onChange={() => selectTheme(theme)}
+              className="h-4 w-4 shrink-0 border-white/20 bg-cinema-black text-gold accent-gold"
             />
             <span className="text-sm text-cream/85">{t(themeLabelKey(theme))}</span>
           </label>
