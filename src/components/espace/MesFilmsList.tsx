@@ -111,16 +111,19 @@ export function MesFilmsList({ films, createFilmHref }: MesFilmsListProps) {
 
   if (films.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-white/15 bg-cinema-night/40 p-10 text-center">
-        <p className="font-display text-lg text-cream/70">{t("space.noFilms")}</p>
-        <p className="mx-auto mt-2 max-w-md text-sm text-cream/50">
-          {t("space.noFilmsHint")}
-        </p>
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button href="/catalogue" variant="secondary" className="!text-sm">
-            {t("space.browseCatalog")}
-          </Button>
-          <Button href={createFilmHref} variant="primary" className="!text-sm">
+      <div className="rounded-2xl border border-dashed border-white/15 bg-cinema-night/40 px-6 py-9 sm:px-10 sm:py-11 md:py-12">
+        <div className="mx-auto flex w-full max-w-md flex-col items-center gap-4 text-center sm:gap-5">
+          <p className="font-display text-lg font-semibold leading-snug text-cream/80 md:text-xl">
+            {t("space.noFilms")}
+          </p>
+          <p className="text-sm leading-relaxed text-cream/50 md:text-[0.9375rem]">
+            {t("space.noFilmsHint")}
+          </p>
+          <Button
+            href={createFilmHref}
+            variant="primary"
+            className="mt-1 w-full !text-sm sm:mt-0 sm:w-auto"
+          >
             {t("space.createFilm")}
           </Button>
         </div>

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { Button } from "@/components/ui/Button";
 import { ManageSubscriptionButton } from "@/components/espace/ManageSubscriptionButton";
+import { ABONNEMENTS_SUBSCRIPTIONS_PATH } from "@/lib/navigation/subscription-pricing";
 import { isCommitmentSubscriptionPlan } from "@/lib/stripe/subscription-commitment";
 
 type SubscriptionStatus = {
@@ -65,7 +66,7 @@ export function SubscriptionProfileBlock({
           {t("space.noSubscription")}
         </p>
         <Button
-          href="/abonnements"
+          href={ABONNEMENTS_SUBSCRIPTIONS_PATH}
           variant="secondary"
           className="subscription-profile-block__cta w-full !text-sm sm:w-auto"
         >

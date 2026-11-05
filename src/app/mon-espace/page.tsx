@@ -67,7 +67,6 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
                   </span>
                 </h1>
               </header>
-              <p className="mon-espace-hero__lead lg:hidden">{t("space.heroLead")}</p>
             </div>
           </div>
         </section>

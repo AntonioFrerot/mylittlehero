@@ -1,5 +1,10 @@
 export const ABONNEMENTS_PRICING_PATH = "/abonnements" as const;
 
+export const ABONNEMENTS_SUBSCRIPTIONS_SECTION = "subscriptions" as const;
+
+export const ABONNEMENTS_SUBSCRIPTIONS_PATH =
+  `${ABONNEMENTS_PRICING_PATH}?section=${ABONNEMENTS_SUBSCRIPTIONS_SECTION}` as const;
+
 export const TARIFS_PRICING_PATHS = [ABONNEMENTS_PRICING_PATH] as const;
 
 export type TarifsPricingPath = (typeof TARIFS_PRICING_PATHS)[number];
