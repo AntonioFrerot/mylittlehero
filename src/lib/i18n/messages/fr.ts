@@ -567,8 +567,9 @@ export const fr = {
     profileDesc:
       "Modifiez votre prénom, votre mot de passe, la langue et la formule associée à votre compte.",
     charactersTitle: "Personnages",
+    charactersPrivacyBadge: "🔒 VOS DONNÉES SONT PROTÉGÉES",
     charactersDesc:
-      "🔒 VOS DONNÉES RESTENT PRIVÉES : AUCUNE PHOTO NI INFORMATION PERSONNELLE N'EST REVENDUE OU PARTAGÉE AVEC DES TIERS.\n\nPour un résultat de qualité, veillez à transmettre des éléments de qualité : visage bien cadré et correctement éclairé, voix claire et sans bruit de fond.",
+      "Pour un résultat de qualité, veillez à transmettre des éléments de qualité : visage bien cadré et correctement éclairé, voix claire et sans bruit de fond.",
     filmsTitle: "Mes films et séries",
     filmsDesc: "Retrouvez ici tous les films et séries que vous avez créés.",
     browseCatalog: "Accéder au catalogue",

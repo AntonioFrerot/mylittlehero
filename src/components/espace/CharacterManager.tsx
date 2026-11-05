@@ -126,13 +126,18 @@ export function CharacterManager({
   };
 
   return (
-    <div className="space-y-8 lg:space-y-6">
+    <div className="space-y-4 md:space-y-8 lg:space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between lg:items-center lg:gap-8">
         <div className="min-w-0 flex-1">
-          <h2 className="font-display text-xl font-semibold text-cream md:text-2xl">
-            {t("space.charactersTitle")}
-          </h2>
-          <p className="mt-2 max-w-xl whitespace-pre-line text-sm text-cream/60 md:text-base lg:max-w-none">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <h2 className="font-display text-xl font-semibold text-cream md:text-2xl">
+              {t("space.charactersTitle")}
+            </h2>
+            <span className="inline-flex w-fit max-w-full shrink-0 items-center rounded-full border border-emerald-400/25 bg-emerald-950/40 px-3 py-1 text-[0.68rem] font-semibold leading-snug text-emerald-100/95 sm:text-xs">
+              {t("space.charactersPrivacyBadge")}
+            </span>
+          </div>
+          <p className="mt-2 max-w-xl text-sm text-cream/60 md:text-base lg:max-w-none">
             {t("space.charactersDesc")}
           </p>
         </div>
@@ -145,7 +150,7 @@ export function CharacterManager({
         </Button>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(300px,40%)_minmax(0,60%)] lg:items-start lg:gap-8 xl:gap-10">
+      <div className="grid gap-4 md:gap-8 lg:grid-cols-[minmax(300px,40%)_minmax(0,60%)] lg:items-start lg:gap-8 xl:gap-10">
       <div>
         {characters.length === 0 ? (
           <div className="hidden rounded-2xl border border-dashed border-white/15 bg-cinema-night/40 p-8 text-center md:block">

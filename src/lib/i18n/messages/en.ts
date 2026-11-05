@@ -559,8 +559,9 @@ export const en = {
     profileDesc:
       "Update your first name, password, language and plan linked to your account.",
     charactersTitle: "Characters",
+    charactersPrivacyBadge: "🔒 YOUR DATA IS PROTECTED",
     charactersDesc:
-      "Enter the first name, age, height and preferences for each character in your stories. Add a face photo and a voice sample for each character. For the best possible result, please provide high-quality materials: a well-framed, well-lit face and a clear voice recording without background noise.",
+      "For the best possible result, please provide high-quality materials: a well-framed, well-lit face and a clear voice recording without background noise.",
     filmsTitle: "My films",
     filmsDesc: "Find all the films you have created here.",
     browseCatalog: "Browse the catalogue",
