@@ -1,10 +1,10 @@
 import type { FilmStyleId } from "@/lib/i18n/film-labels";
 
-export const FILM_CREATION_STYLES = ["realistic", "animation"] as const satisfies readonly FilmStyleId[];
+export const FILM_CREATION_STYLES = ["animation", "realistic"] as const satisfies readonly FilmStyleId[];
 
 export type FilmCreationStyle = (typeof FILM_CREATION_STYLES)[number];
 
-export const DEFAULT_FILM_CREATION_STYLE: FilmCreationStyle = "realistic";
+export const DEFAULT_FILM_CREATION_STYLE: FilmCreationStyle = "animation";
 
 /** Remplacez ces fichiers dans `public/film-creation/` (même nom sans .svg ou en .jpg/.webp). */
 export const FILM_STYLE_PREVIEW_SRC: Record<FilmCreationStyle, string> = {
