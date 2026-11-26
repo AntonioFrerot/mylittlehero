@@ -228,19 +228,22 @@ async function migrateLegacyFilmCredits(userEmail: string): Promise<void> {
 
 const migrateLegacyFilmCreditsForUser = cache(migrateLegacyFilmCredits);
 
-export async function getTicketBalance(userEmail: string): Promise<number> {
-  if (isHostedProduction() && !isDatabaseEnabled()) {
-    return 0;
-  }
+export type GetTicketBalanceOptions = {
+  /** false = lecture ledger uniquement (header, layout). Défaut true. */
+  syncSubscriptionGrants?: boolean;
+};
 
+export async function syncUserSubscriptionTicketGrants(
+  userEmail: string
+): Promise<void> {
   const email = normalizeEmail(userEmail);
-  await migrateLegacyFilmCreditsForUser(email);
-
   const { syncSubscriptionPeriodicGrants } = await import(
     "@/lib/purchases/subscription-ticket-grants"
   );
   await syncSubscriptionPeriodicGrants(email);
+}
 
+async function sumTicketBalanceFromStore(email: string): Promise<number> {
   if (isDatabaseEnabled()) {
     await ensureSchema();
     const db = getSql();
@@ -258,8 +261,34 @@ export async function getTicketBalance(userEmail: string): Promise<number> {
     .reduce((sum, entry) => sum + entry.delta, 0);
 }
 
-/** Dédupliqué par requête RSC (layout + Mon espace). */
-export const getTicketBalanceForUser = cache(getTicketBalance);
+export async function getTicketBalance(
+  userEmail: string,
+  options?: GetTicketBalanceOptions
+): Promise<number> {
+  if (isHostedProduction() && !isDatabaseEnabled()) {
+    return 0;
+  }
+
+  const email = normalizeEmail(userEmail);
+  await migrateLegacyFilmCreditsForUser(email);
+
+  const shouldSync = options?.syncSubscriptionGrants !== false;
+  if (shouldSync) {
+    await syncUserSubscriptionTicketGrants(email);
+  }
+
+  return sumTicketBalanceFromStore(email);
+}
+
+/** Dédupliqué par requête RSC (pages métier, API). */
+export const getTicketBalanceForUser = cache((userEmail: string) =>
+  getTicketBalance(userEmail)
+);
+
+/** Solde header / layout sans sync abonnement (léger). */
+export const getTicketBalanceForDisplay = cache((userEmail: string) =>
+  getTicketBalance(userEmail, { syncSubscriptionGrants: false })
+);
 
 export async function grantTicketsFromPurchase(input: {
   userEmail: string;

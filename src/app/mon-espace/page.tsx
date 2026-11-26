@@ -2,6 +2,7 @@ import { MonEspaceShell } from "@/components/espace/MonEspaceShell";
 import { DEFAULT_ESPACE_SECTION, parseEspaceSection } from "@/lib/espace/sections";
 import { getSession } from "@/lib/auth/get-session";
 import { loadMonEspacePageData } from "@/lib/espace/load-page";
+import { syncUserSubscriptionTicketGrants } from "@/lib/purchases/tickets";
 import { buildFrenchShareMetadata } from "@/lib/i18n/metadata";
 import { getServerTranslator } from "@/lib/i18n/server";
 import { createTranslator } from "@/lib/i18n/translator";
@@ -35,9 +36,10 @@ export default async function MonEspacePage({ searchParams }: PageProps) {
 
   const params = await searchParams;
   const section = parseEspaceSection(params.section ?? DEFAULT_ESPACE_SECTION);
+  await syncUserSubscriptionTicketGrants(session.email);
   const [{ t }, pageData] = await Promise.all([
     getServerTranslator(),
-    loadMonEspacePageData(session.email),
+    loadMonEspacePageData(session.email, section),
   ]);
 
   return (

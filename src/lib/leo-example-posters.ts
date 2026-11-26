@@ -18,10 +18,10 @@ export type HeroPosterAsset = {
 export type LeoExamplePoster = HeroPosterAsset;
 
 /** Bump ?v= when replacing a poster file (cache navigateur / Next.js Image). */
-export const LEO_ET_NALA_POSTER_SRC = "/posters/leo-et-nala.png?v=3";
+export const LEO_ET_NALA_POSTER_SRC = "/posters/leo-et-nala.jpg?v=4";
 export const LEO_ET_NALA_VIDEO_POSTER_SRC =
-  "/posters/leo-et-nala-video-poster.png?v=2";
-export const SUPER_LEO_POSTER_SRC = "/posters/super-leo.png?v=2";
+  "/posters/leo-et-nala-video-poster.jpg?v=3";
+export const SUPER_LEO_POSTER_SRC = "/posters/super-leo.jpg?v=3";
 /** Affiche floutée « ? » en attente de livraison admin (page mon-espace). */
 export const FILM_POSTER_AWAITING_PREVIEW_SRC =
   "/posters/film-poster-awaiting-preview.jpg?v=1";
@@ -29,10 +29,10 @@ export const FILM_POSTER_AWAITING_PREVIEW_SRC =
 export const FILM_IN_CREATION_PREVIEW_SRC =
   "/posters/film-in-creation-preview.jpg?v=1";
 export const SUPER_LEO_VIDEO_POSTER_SRC =
-  "/posters/super-leo-video-poster.png?v=2";
-export const LEO_ICE_MOON_POSTER_SRC = "/posters/leo-ice-moon.png?v=1";
+  "/posters/super-leo-video-poster.jpg?v=3";
+export const LEO_ICE_MOON_POSTER_SRC = "/posters/leo-ice-moon.jpg?v=2";
 export const LEO_ICE_MOON_VIDEO_POSTER_SRC =
-  "/posters/leo-ice-moon-video-poster.png?v=1";
+  "/posters/leo-ice-moon-video-poster.jpg?v=2";
 export const LEO_LOST_PLANE_POSTER_SRC = "/posters/leo-lost-plane.jpg?v=3";
 export const LEO_LOST_PLANE_VIDEO_POSTER_SRC =
   "/posters/leo-lost-plane-video-poster.jpg?v=2";
@@ -63,7 +63,7 @@ export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
     id: "leo-pirates",
     title: "Candy Signal",
     seed: "leo-carte-pirates",
-    src: "/posters/candy-signal.png",
+    src: "/posters/candy-signal.jpg",
     href: "/films/leo-carte-pirates",
     durationLabel: "10 MIN",
     featured: true,

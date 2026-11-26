@@ -38,6 +38,16 @@ const nextConfig: NextConfig = {
         destination: "/posters/film-in-creation-preview.jpg",
         permanent: true,
       },
+      {
+        source: "/posters/:name.png",
+        destination: "/posters/:name.jpg",
+        permanent: true,
+      },
+      {
+        source: "/examples/leo-photo.png",
+        destination: "/examples/leo-photo.jpg",
+        permanent: true,
+      },
     ];
   },
   experimental: {
@@ -51,7 +61,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
-    qualities: [65, 70, 75, 90, 92],
+    qualities: [32, 40, 50, 65, 70, 75, 90, 92],
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       {

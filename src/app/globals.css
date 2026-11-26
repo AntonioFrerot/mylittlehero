@@ -3910,6 +3910,15 @@ select:disabled,
     align-items: center;
     text-align: center;
   }
+
+  #films-exemples[data-locale="en"] .catalogue-video-title__en-line {
+    display: inline-block;
+    max-width: 100%;
+    font-size: clamp(1.4875rem, 6.09vw, 1.8375rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
 }
 
 .catalogue-video-content {

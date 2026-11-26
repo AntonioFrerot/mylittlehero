@@ -10,7 +10,9 @@
     "start": "next start",
     "lint": "eslint",
     "story:retry": "npx --yes tsx scripts/retry-story.mjs",
-    "optimize-images": "node scripts/optimize-public-images.mjs"
+    "optimize-images": "node scripts/optimize-public-images.mjs",
+    "convert-posters-jpg": "node scripts/convert-posters-png-to-jpg.mjs",
+    "compress-catalogue-mobile-video": "node scripts/compress-catalogue-mobile-video.mjs"
   },
   "dependencies": {
     "@vercel/blob": "^2.4.0",

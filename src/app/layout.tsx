@@ -9,7 +9,7 @@ import { SupportChatLazy } from "@/components/support/SupportChatLazy";
 import { WelcomeSampleOfferRoot } from "@/components/espace/WelcomeSampleOfferRoot";
 import { getSession } from "@/lib/auth/get-session";
 import { isAdminEmail } from "@/lib/auth/is-admin";
-import { getTicketBalanceForUser } from "@/lib/purchases/tickets";
+import { getTicketBalanceForDisplay } from "@/lib/purchases/tickets";
 import { getJetonBalanceForUser } from "@/lib/purchases/jetons";
 import { BRAND_NAME } from "@/lib/brand";
 import { getServerLocale, getServerTranslator } from "@/lib/i18n/server";
@@ -47,10 +47,12 @@ export default async function RootLayout({
 }>) {
   const [locale, session] = await Promise.all([getServerLocale(), getSession()]);
   const initialIsAdmin = session ? isAdminEmail(session.email) : false;
-  const initialBalance = session ? await getTicketBalanceForUser(session.email) : null;
-  const initialJetonBalance = session
-    ? await getJetonBalanceForUser(session.email)
-    : null;
+  const [initialBalance, initialJetonBalance] = session
+    ? await Promise.all([
+        getTicketBalanceForDisplay(session.email),
+        getJetonBalanceForUser(session.email),
+      ])
+    : [null, null];
 
   return (
     <html

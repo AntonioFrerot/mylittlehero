@@ -811,6 +811,7 @@ export const fr = {
     staffLabel: "Équipe MyLittleHero",
   },
   common: {
+    loading: "Chargement…",
     thankYou: "Merci !",
     yes: "Oui",
     no: "Non",

@@ -20,7 +20,7 @@ export const EXAMPLE_FILM_SLUGS = [
 
 export type ExampleFilmSlug = (typeof EXAMPLE_FILM_SLUGS)[number];
 
-export const LEO_HERO_PHOTO_SRC = "/examples/leo-photo.png";
+export const LEO_HERO_PHOTO_SRC = "/examples/leo-photo.jpg";
 
 export type ExampleFilmStyle = "animation" | "realistic" | "manga";
 
@@ -69,8 +69,8 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     slug: "leo-carte-pirates",
     title: "Candy Signal",
     tagline: "Un billet de 10 dollars, un robot rouge et une mission très sucrée",
-    posterSrc: "/posters/candy-signal.png",
-    videoPosterSrc: "/posters/candy-signal-video-poster.png",
+    posterSrc: "/posters/candy-signal.jpg",
+    videoPosterSrc: "/posters/candy-signal-video-poster.jpg",
     videoSrc: "https://www.youtube.com/watch?v=2tCE_kQNM68",
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "realistic",

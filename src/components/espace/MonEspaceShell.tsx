@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AccountInformationsForm } from "@/components/espace/AccountInformationsForm";
 import { CharacterManager } from "@/components/espace/CharacterManager";
 import { MesFilmsList } from "@/components/espace/MesFilmsList";
@@ -8,6 +8,7 @@ import { MonEspaceNav } from "@/components/espace/MonEspaceNav";
 import { Button } from "@/components/ui/Button";
 import { useLocale } from "@/components/LocaleProvider";
 import type { MonEspacePageData } from "@/lib/espace/load-page";
+import { fetchMonEspaceSection } from "@/lib/espace/load-section";
 import {
   monEspaceSectionPath,
   parseEspaceSection,
@@ -22,7 +23,13 @@ type MonEspaceShellProps = {
 export function MonEspaceShell({ initialSection, data }: MonEspaceShellProps) {
   const { t } = useLocale();
   const [section, setSection] = useState(initialSection);
-  const { createFilmHref, account, characters, films } = data;
+  const [account, setAccount] = useState(data.account);
+  const [characters, setCharacters] = useState(data.characters);
+  const [films, setFilms] = useState(data.films);
+  const [sectionLoading, setSectionLoading] = useState<EspaceSection | null>(
+    null
+  );
+  const { createFilmHref } = data;
 
   useEffect(() => {
     setSection(initialSection);
@@ -38,10 +45,40 @@ export function MonEspaceShell({ initialSection, data }: MonEspaceShellProps) {
     return () => window.removeEventListener("popstate", syncSectionFromUrl);
   }, []);
 
+  const ensureSectionData = useCallback(
+    async (target: EspaceSection) => {
+      if (target === "profil" && account) return;
+      if (target === "personnages" && characters) return;
+      if (target === "films" && films) return;
+
+      setSectionLoading(target);
+      try {
+        const result = await fetchMonEspaceSection(target);
+        if (!result.ok) return;
+        if (result.data.section === "profil") {
+          setAccount(result.data.account);
+        } else if (result.data.section === "personnages") {
+          setCharacters(result.data.characters);
+        } else {
+          setFilms(result.data.films);
+        }
+      } finally {
+        setSectionLoading(null);
+      }
+    },
+    [account, characters, films]
+  );
+
+  useEffect(() => {
+    void ensureSectionData(section);
+  }, [section, ensureSectionData]);
+
   function navigateToSection(next: EspaceSection) {
     setSection(next);
     window.history.replaceState(null, "", monEspaceSectionPath(next));
   }
+
+  const loadingThisSection = sectionLoading === section;
 
   return (
     <div className="mon-espace-content mx-auto max-w-6xl px-4 sm:px-6 md:px-8 lg:max-w-[85rem]">
@@ -49,7 +86,13 @@ export function MonEspaceShell({ initialSection, data }: MonEspaceShellProps) {
         <MonEspaceNav active={section} onSectionChange={navigateToSection} />
 
         <div className="min-w-0">
-          {section === "profil" ? (
+          {loadingThisSection ? (
+            <p className="py-12 text-center text-sm text-cream/55" aria-live="polite">
+              {t("common.loading")}
+            </p>
+          ) : null}
+
+          {!loadingThisSection && section === "profil" ? (
             <>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between lg:items-center lg:gap-8">
                 <div className="min-w-0 flex-1">
@@ -78,12 +121,16 @@ export function MonEspaceShell({ initialSection, data }: MonEspaceShellProps) {
                 )}
               </div>
             </>
-          ) : section === "personnages" ? (
+          ) : null}
+
+          {!loadingThisSection && section === "personnages" ? (
             <CharacterManager
-              initialCharacters={characters}
+              initialCharacters={characters ?? []}
               createFilmHref={createFilmHref}
             />
-          ) : (
+          ) : null}
+
+          {!loadingThisSection && section === "films" ? (
             <>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between lg:items-center lg:gap-8">
                 <div className="min-w-0 flex-1">
@@ -112,10 +159,14 @@ export function MonEspaceShell({ initialSection, data }: MonEspaceShellProps) {
                 </div>
               </div>
               <div className="mt-8 lg:mt-6">
-                <MesFilmsList films={films} createFilmHref={createFilmHref} />
+                {films ? (
+                  <MesFilmsList films={films} createFilmHref={createFilmHref} />
+                ) : (
+                  <p className="text-sm text-cream/55">{t("space.accountLoadError")}</p>
+                )}
               </div>
             </>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

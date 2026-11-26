@@ -60,7 +60,7 @@ export const en = {
       "Set up your movie in a few clicks or fully customise the story to your wishes, down to the smallest detail.",
     heroExamples: "See examples",
     catalogueEyebrow: "The little hero",
-    catalogueTitleBefore: "Example movies starring",
+    catalogueTitleBefore: "Movies starring",
     catalogueTitleHighlight: "little Leo",
     catalogueSubtitle:
       "Five movies in different worlds, created from a single photo of Leo",
@@ -802,6 +802,7 @@ export const en = {
     staffLabel: "MyLittleHero team",
   },
   common: {
+    loading: "Loading…",
     thankYou: "Thank you!",
     yes: "Yes",
     no: "No",

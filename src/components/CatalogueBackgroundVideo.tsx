@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useRef } from "react";
 
 const DESKTOP_BACKGROUND_VIDEO_SRC = "/videos/leo-et-nala.mp4";
-const DESKTOP_BACKGROUND_VIDEO_VERSION = "3";
+const DESKTOP_BACKGROUND_VIDEO_VERSION = "4";
 const MOBILE_BACKGROUND_VIDEO_SRC = "/videos/leo-et-nala-mobile.mp4";
-const MOBILE_BACKGROUND_VIDEO_VERSION = "4";
+const MOBILE_BACKGROUND_VIDEO_VERSION = "6";
 
 export function CatalogueBackgroundVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -49,13 +49,14 @@ export function CatalogueBackgroundVideo() {
       aria-hidden
     >
       <source
+        src={`${DESKTOP_BACKGROUND_VIDEO_SRC}?v=${DESKTOP_BACKGROUND_VIDEO_VERSION}`}
+        type="video/mp4"
+        media="(min-width: 768px)"
+      />
+      <source
         src={`${MOBILE_BACKGROUND_VIDEO_SRC}?v=${MOBILE_BACKGROUND_VIDEO_VERSION}`}
         type="video/mp4"
         media="(max-width: 767px)"
-      />
-      <source
-        src={`${DESKTOP_BACKGROUND_VIDEO_SRC}?v=${DESKTOP_BACKGROUND_VIDEO_VERSION}`}
-        type="video/mp4"
       />
     </video>
   );

@@ -87,6 +87,7 @@ export async function MoviePosterGrid() {
   return (
     <section
       id="films-exemples"
+      data-locale={locale}
       className="relative max-md:overflow-visible overflow-hidden bg-[var(--catalogue-bg)] max-md:pb-6 pb-14 pt-0 max-md:mt-0 md:-mt-[var(--catalogue-handoff-overlap)] md:overflow-visible md:bg-transparent md:py-20"
     >
       <div
@@ -112,11 +113,28 @@ export async function MoviePosterGrid() {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-light/80">
           {t("home.catalogueEyebrow")}
         </p>
-        <h2 className="font-display mt-3 text-2xl font-bold text-cream md:text-3xl lg:text-4xl">
-          {t("home.catalogueTitleBefore")}{" "}
-          <span className="bg-gradient-to-r from-gold-light via-gold to-gold-dark bg-clip-text text-transparent">
-            {t("home.catalogueTitleHighlight")}
-          </span>
+        <h2
+          className={
+            locale === "en"
+              ? "catalogue-video-title catalogue-video-title--en font-display mt-3 max-md:mt-2 font-bold text-cream text-2xl md:text-3xl lg:text-4xl"
+              : "catalogue-video-title font-display mt-3 text-2xl font-bold text-cream md:text-3xl lg:text-4xl"
+          }
+        >
+          {locale === "en" ? (
+            <span className="catalogue-video-title__en-line">
+              {t("home.catalogueTitleBefore")}{" "}
+              <span className="bg-gradient-to-r from-gold-light via-gold to-gold-dark bg-clip-text text-transparent">
+                {t("home.catalogueTitleHighlight")}
+              </span>
+            </span>
+          ) : (
+            <>
+              {t("home.catalogueTitleBefore")}{" "}
+              <span className="bg-gradient-to-r from-gold-light via-gold to-gold-dark bg-clip-text text-transparent">
+                {t("home.catalogueTitleHighlight")}
+              </span>
+            </>
+          )}
         </h2>
         <p className="mt-3 text-sm text-cream/55 md:text-base">
           {t("home.catalogueSubtitle")}
