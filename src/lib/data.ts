@@ -1,3 +1,4 @@
+import { FILM_THEMES } from "@/lib/film-creation/types";
 import { LEO_EXAMPLE_POSTERS } from "@/lib/leo-example-posters";
 
 export type MoviePoster = {
@@ -46,71 +47,53 @@ export const howItWorksSteps = [
   },
 ] as const;
 
-export const themes = [
-  {
-    id: "aventure",
+/** Même liste que le formulaire création de film (`FILM_THEMES`). */
+const themePresentation = {
+  aventure: {
     name: "Aventure",
     description: "Quêtes épiques, exploration et frissons positifs",
     gradient:
       "bg-gradient-to-br from-amber-950/95 via-amber-800/55 to-cinema-night",
   },
-  {
-    id: "comedie",
+  comedie: {
     name: "Comédie",
     description: "Rires, complicité et situations cocasses",
     gradient:
       "bg-gradient-to-br from-rose-950/95 via-orange-800/50 to-cinema-night",
   },
-  {
-    id: "fantastique",
+  fantastique: {
     name: "Fantastique",
     description: "Magie, créatures et mondes enchantés",
     gradient:
       "bg-gradient-to-br from-purple-950/95 via-fuchsia-800/50 to-cinema-night",
   },
-  {
-    id: "scifi",
+  scifi: {
     name: "Science-fiction",
     description: "Vaisseaux, planètes et inventions futuristes",
     gradient:
       "bg-gradient-to-br from-indigo-950/95 via-violet-900/55 to-cinema-night",
   },
-  {
-    id: "animation",
-    name: "Animation",
-    description: "Univers colorés, aventures animées et personnages expressifs",
-    gradient:
-      "bg-gradient-to-br from-orange-950/95 via-amber-800/50 to-cinema-night",
-  },
-  {
-    id: "educatif",
+  educatif: {
     name: "Éducatif",
     description: "Découvertes ludiques et curiosité éveillée",
     gradient:
       "bg-gradient-to-br from-sky-950/95 via-cyan-800/50 to-cinema-night",
   },
-  {
-    id: "musical",
-    name: "Musical",
-    description: "Chansons, rythmes et joie partagée",
-    gradient:
-      "bg-gradient-to-br from-rose-950/95 via-pink-800/50 to-cinema-night",
-  },
-  {
-    id: "morale",
+  morale: {
     name: "Morale",
     description: "Valeurs, courage et belles leçons de vie",
     gradient:
       "bg-gradient-to-br from-emerald-950/95 via-teal-800/50 to-cinema-night",
   },
-  {
-    id: "mystere",
-    name: "Mystère",
-    description: "Indices à découvrir et suspense doux",
-    gradient:
-      "bg-gradient-to-br from-slate-950/95 via-purple-950/55 to-cinema-night",
-  },
-] as const;
+} as const satisfies Record<
+  (typeof FILM_THEMES)[number],
+  { name: string; description: string; gradient: string }
+>;
+
+export const themes = FILM_THEMES.map((id) => ({
+  id,
+  ...themePresentation[id],
+}));
 
 export const trustPoints = [
   {

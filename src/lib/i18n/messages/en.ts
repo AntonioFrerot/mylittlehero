@@ -1,6 +1,6 @@
 export const en = {
   meta: {
-    title: "Personalised movies for children",
+    title: "Personalised movies and series for children",
     description:
       "Create a personalised movie where your child becomes the hero of a magical cinematic adventure.",
     monEspaceTitle: "My account",
@@ -8,7 +8,7 @@ export const en = {
       "Manage your profile, characters and created movies.",
     connexionDescription:
       "Log in or create an account to create your child's movie.",
-    creerTitle: "Create a movie — Plans",
+    creerTitle: "Create their movie — Plans",
     creerDescription:
       "Choose your plan to create personalised movies.",
     tarifsTitle: "Pricing — Subscriptions",
@@ -17,7 +17,7 @@ export const en = {
     abonnementsTitle: "Subscriptions",
     abonnementsDescription:
       "Explore our subscription plans for personalised movies.",
-    achatTitle: "Purchase — Test offers",
+    achatTitle: "Pricing — Test offers",
     achatDescription:
       "One-off offers to test new personalised movie packages.",
     browseTitle: "Catalogue",
@@ -40,46 +40,46 @@ export const en = {
     calendar: "Calendar",
     contact: "Contact",
     pricing: "Pricing",
-    purchase: "Purchase",
+    purchase: "Pricing",
     login: "Log in",
     signup: "Create account",
     mySpace: "My account",
     logout: "Log out",
-    createFilm: "Create your movie",
+    createFilm: "Create their movie",
     openMenu: "Open menu",
     closeMenu: "Close menu",
     admin: "Admin",
   },
   home: {
-    heroBadge: "Personalised movies",
+    heroBadge: "Personalised movies and series",
     heroTitleBefore: "Your child becomes the",
     heroTitleHighlight: "hero",
     heroTitleAfter: "of their own movie",
-    heroLead: "Give your child their very own personalised movie!",
+    heroLead: "A brand-new unique movie every time!",
     heroSub:
-      "Set up your movie in a few clicks or fully customise the story to your wishes, down to the smallest detail.",
+      "Write the story that brings your child's movie to life, or let AI do the work effortlessly.",
     heroExamples: "See examples",
     catalogueEyebrow: "The little hero",
     catalogueTitleBefore: "Movies starring",
     catalogueTitleHighlight: "little Leo",
     catalogueSubtitle:
-      "Five movies in different worlds, created from a single photo of Leo",
+      "Five movies from different worlds, all starring Leo—the beloved character at the heart of his family.",
     posterAlt: "Poster — {title}",
     howEyebrow: "Simple as a dream",
     howTitle: "How does it work?",
     howSubtitle:
-      "Three steps to give your child an adventure where they are the star.",
+      "Three steps to give your child an adventure where they are the protagonist.",
     howStep1Title: "Create an account",
     howStep1Desc:
       "Sign up in seconds to access your space and start your first movie.",
     howStep1Cta: "Log in or create an account →",
-    howStep2Title: "Create a movie",
+    howStep2Title: "Create their movie",
     howStep2Desc:
       "Set up your movie quickly or customise the story 100% down to the smallest detail.",
-    howStep2Cta: "Create a movie →",
+    howStep2Cta: "Create their movie →",
     howStep3Title: "Receive the movie",
     howStep3Desc:
-      "Your movie is delivered within 8 hours, ready to watch together.",
+      "Your movie appears in your account and catalogue within 24 hours at most, ready to watch.",
     howStep3Cta: "View my catalogue →",
     themesEyebrow: "Worlds",
     themesTitle: "Available themes",
@@ -87,7 +87,7 @@ export const en = {
       "Each world is designed to delight, with elegance and emotion, without excess.",
     themesPrev: "Previous themes",
     themesNext: "Next themes",
-    trustEyebrow: "For parents",
+    trustEyebrow: "FOR THE FAMILY",
     trustTitle: "Wonderful moments to share together",
     trustText:
       "Picture their surprise as they discover themselves as the hero on screen, their laughter, that look seeking yours to share the pride. Each movie is a new adventure to live together, today, this weekend or whenever you feel like it, without waiting for a special occasion.",
@@ -105,8 +105,8 @@ export const en = {
       "What you share is used only to produce your movie: no resale to third parties, no targeted ads. View and delete everything from My account whenever you wish.",
     ctaTitle: "Ready to give them that moment?",
     ctaText:
-      "One click and you're off. Picture the lights dimming, the opening credits rolling, them at the centre of every scene. You're only minutes away from that cinema thrill you share when you've imagined it all yourself.",
-    footerTagline: "Personalised movies",
+      "Picture the credits rolling, with them at the centre of every scene. Just a few more clicks stand between you and that cinema thrill—the one you share when you watch your child become the happiest kid in the world in front of their movie.",
+    footerTagline: "Personalised movies and series",
     footerPrivacy: "Privacy",
     footerTerms: "Terms of sale",
     footerLegal: "Legal notice",
@@ -525,12 +525,12 @@ export const en = {
     unreadCount: "{count} unread",
     loading: "Loading…",
     empty: "No notifications yet.",
-    viewFilms: "View my movies",
+    viewFilms: "View my movies and series",
     filmReadyTitle: "Your movie « {title} » is available",
-    filmReadyBody: "Watch it now in My movies.",
+    filmReadyBody: "Watch it now in My movies and series.",
     filmValidateReminderTitle: "Approve the story for « {title} »",
     filmValidateReminderBody:
-      "Your screenplay is ready. Approve it in My movies to start creating your movie.",
+      "Your screenplay is ready. Approve it in My movies and series to start creating your movie.",
     ticketBalanceUpdatedTitle: "{count} ticket(s) added to your account",
     ticketBalanceUpdatedBody: "Your new balance is shown in the header.",
     ticketBalanceRevokedTitle: "{count} ticket(s) removed from your account",
@@ -550,11 +550,11 @@ export const en = {
     eyebrow: "My account",
     heroTitleBefore: "My ",
     heroTitleAccent: "account",
-    heroLead: "Your profile, characters and movies.",
+    heroLead: "Your profile, characters, and movies and series.",
     hello: "Hello, {name}",
     profile: "Profile",
     characters: "Characters",
-    films: "My movies",
+    films: "My movies and series",
     profileTitle: "Profile",
     profileDesc:
       "Update your first name, password, language and plan linked to your account.",
@@ -562,10 +562,10 @@ export const en = {
     charactersPrivacyBadge: "🔒 SECURE DATA",
     charactersDesc:
       "For the best possible result, please provide high-quality materials: a well-framed, well-lit face and a clear voice recording without background noise.",
-    filmsTitle: "My movies",
-    filmsDesc: "Find all the movies you have created here.",
-    browseCatalog: "Browse the catalogue",
-    createFilm: "Create your movie",
+    filmsTitle: "My movies and series",
+    filmsDesc: "Find every movie and series you have created here.",
+    browseCatalog: "Open the catalogue",
+    createFilm: "Create their movie",
     noFilms: "No movies yet",
     noFilmsHint:
       "Your created movies will appear here once you start a creation.",
@@ -757,24 +757,24 @@ export const en = {
   },
   browse: {
     backHome: "← Back to home",
-    eyebrow: "Personalised movies",
+    eyebrow: "Personalised movies and series",
     title: "Catalogue",
     subtitle:
-      "Browse story universes and create your child's movie, organised by theme.",
+      "Browse the universes and create your child's movie, organised by theme.",
     heroLead:
-      "Your library of bespoke movies, organised like a streaming platform: each row is a story universe, ready to hold your creations.",
-    heroExamples: "See example movies",
+      "Your bespoke library. Find all your movies and series here.",
+    heroExamples: "See sample movies",
     heroStepsTitle: "How to use the catalogue?",
     heroStep1Title: "Choose a universe",
     heroStep1Text:
       "Browse rows by theme and find the mood that fits your child.",
-    heroStep2Title: "Create your movie",
+    heroStep2Title: "Create their movie",
     heroStep2Text:
       "Style, characters, duration and preferences — all set in the guided flow.",
     heroStep3Title: "Find it here",
     heroStep3Text:
       "When it's ready, your movie appears in the chosen theme row, ready to watch.",
-    createFilm: "Create your movie",
+    createFilm: "Create their movie",
     themeEmptyTitle: "No {theme} movies yet",
     themeEmptyHint:
       "Movies you create in the {theme} universe will appear here. Start a new creation to begin.",
@@ -1184,20 +1184,20 @@ export const en = {
     },
   },
   filmCreation: {
-    backToFilms: "← My movies",
+    backToFilms: "← My movies and series",
     eyebrow: "New movie",
-    title: "Create your movie",
+    title: "Creating your movie",
     greeting: "Hello {name} — describe the movie you imagine for your little hero.",
     manageCharacters: "Manage my characters",
     hint: "Remember to add the heroes of your story before creating the movie.",
     form: {
       styleLegend: "Which graphic style?",
       styleHint:
-        "This is the graphic style used throughout the movie: the visual world, colours and how characters are rendered.",
+        "Select the graphic style that will be used for the entire movie.",
       stylePreviewAlt: "Preview of the {style} style",
       themesLegend: "Which theme?",
       themesHint:
-        "Choose the theme that will guide how your story is created.",
+        "Select the theme that will guide the creation of the story.",
       themesChoose: "Choose a theme…",
       themesValidate: "Confirm",
       themesSelectedCount: "{count} themes selected",
@@ -1228,7 +1228,7 @@ export const en = {
       oneJeton: "1 token",
       jetonsCount: "{count} tokens",
       durationFreeBadge: "Free",
-      durationFreeOnce: "One-time offer per account",
+      durationFreeOnce: "Try a short free sample",
       durationSampleNote: "Paid sample to preview the result",
       durationSampleQuestion: "Would you like to use your 30-second sample?",
       durationSampleYesHint: "1 token will be used for this sample.",
@@ -1237,12 +1237,13 @@ export const en = {
       avoidHint: "Monsters, spiders, stressful situations, etc.",
       storyQuestion: "Would you like to write part of the story?",
       storyPlaceholder: "E.g. a beach at sunset, meeting a lion cub…",
-      storyHint: "Settings, encounters, key moments you imagine.",
-      submit: "Create movie",
-      submitOneTicket: "Create movie · 1 ticket",
-      submitTickets: "Create movie · {count} tickets",
+      storyHint:
+        "Please avoid sensitive, dangerous or unsuitable content so we can create your movie.",
+      submit: "Create their movie",
+      submitOneTicket: "Create their movie · 1 ticket",
+      submitTickets: "Create their movie · {count} tickets",
       pending: "Creating…",
-      viewFilms: "View my movies",
+      viewFilms: "View my movies and series",
       cooldownTimerLabel: "Next creation available in",
     },
     styles: {
@@ -1414,16 +1415,16 @@ export const en = {
     audioLocaleFr: "Movie in French",
     audioLocaleEn: "Movie in English",
     newBadge: "New",
-    newReleaseHeadline: "Sample movie created with the latest version of the site",
+    newReleaseHeadline: "Sample movie created with the current version of the site",
     newReleaseNotice:
-      "This example was produced recently on MyLittleHero. It reflects the current quality of our personalized movies.",
+      "This example was produced recently on MyLittleHero. It shows the current quality of our personalised movies.",
     playVideo: "Play video — {title}",
     videoComingSoon: "Coming soon...",
     qualityHint: {
       title: "Better quality",
       titleLine1: "Better",
       titleLine2: "quality",
-      message: "For better quality, click on the logo ⚙️",
+      message: "For better quality, tap the ⚙️ icon",
       dismiss: "Got it",
     },
     leoPhotoAlt: "Leo, the child this movie was made for",
@@ -1445,11 +1446,11 @@ export const en = {
         title: "Super Leo",
         tagline: "An electric hero in the heart of the big city",
         synopsis:
-          "Summary: In a storm-darkened metropolis, Leo dons a golden suit and faces the lightning to protect those he loves. Between flashes of light and courage, he learns that the real superpower is believing in yourself.",
+          "Summary: Leo, a lonely 9-year-old boy who is often picked on at school, discovers a mysterious blue bracelet. After that, his life is about to change completely.",
       },
       leoPirates: {
         title: "Candy Signal",
-        durationLabel: "10 MIN",
+        durationLabel: "10 min",
         tagline: "A ten-dollar bill, a red robot, and a very sweet mission",
         synopsis:
           "Summary: In a quiet little town, Leo, a lonely 9-year-old boy, believes he's living the perfect day after finding ten dollars to buy plenty of candy. But that night, a mysterious robot from space appears near his home with a strange mission: find candy. An unexpected adventure is about to change Leo's life.",

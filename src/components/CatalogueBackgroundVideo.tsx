@@ -7,6 +7,18 @@ const DESKTOP_BACKGROUND_VIDEO_VERSION = "4";
 const MOBILE_BACKGROUND_VIDEO_SRC = "/videos/leo-et-nala-mobile.mp4";
 const MOBILE_BACKGROUND_VIDEO_VERSION = "6";
 
+const MOBILE_VIDEO_MQ = "(max-width: 767px)";
+
+function pickCatalogueVideoSrc(): string {
+  if (typeof window === "undefined") {
+    return `${DESKTOP_BACKGROUND_VIDEO_SRC}?v=${DESKTOP_BACKGROUND_VIDEO_VERSION}`;
+  }
+  const mobile = window.matchMedia(MOBILE_VIDEO_MQ).matches;
+  return mobile
+    ? `${MOBILE_BACKGROUND_VIDEO_SRC}?v=${MOBILE_BACKGROUND_VIDEO_VERSION}`
+    : `${DESKTOP_BACKGROUND_VIDEO_SRC}?v=${DESKTOP_BACKGROUND_VIDEO_VERSION}`;
+}
+
 export function CatalogueBackgroundVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -22,6 +34,19 @@ export function CatalogueBackgroundVideo() {
     const video = videoRef.current;
     if (!video) return;
 
+    const src = pickCatalogueVideoSrc();
+    if (video.src !== new URL(src, window.location.origin).href) {
+      video.src = src;
+      video.load();
+    }
+
+    const onReady = () => {
+      tryPlay();
+    };
+
+    video.addEventListener("loadeddata", onReady);
+    video.addEventListener("canplay", onReady);
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
@@ -34,7 +59,28 @@ export function CatalogueBackgroundVideo() {
     );
 
     observer.observe(video);
-    return () => observer.disconnect();
+
+    // Safari iOS : parfois aucun autoplay tant qu'il n'y a pas eu de geste utilisateur.
+    const unlockOnGesture = () => {
+      tryPlay();
+    };
+    document.addEventListener("touchstart", unlockOnGesture, {
+      passive: true,
+      once: true,
+    });
+    document.addEventListener("click", unlockOnGesture, { once: true });
+
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      tryPlay();
+    }
+
+    return () => {
+      observer.disconnect();
+      video.removeEventListener("loadeddata", onReady);
+      video.removeEventListener("canplay", onReady);
+      document.removeEventListener("touchstart", unlockOnGesture);
+      document.removeEventListener("click", unlockOnGesture);
+    };
   }, [tryPlay]);
 
   return (
@@ -44,20 +90,9 @@ export function CatalogueBackgroundVideo() {
       muted
       loop
       playsInline
-      preload="none"
+      preload="metadata"
       disablePictureInPicture
       aria-hidden
-    >
-      <source
-        src={`${DESKTOP_BACKGROUND_VIDEO_SRC}?v=${DESKTOP_BACKGROUND_VIDEO_VERSION}`}
-        type="video/mp4"
-        media="(min-width: 768px)"
-      />
-      <source
-        src={`${MOBILE_BACKGROUND_VIDEO_SRC}?v=${MOBILE_BACKGROUND_VIDEO_VERSION}`}
-        type="video/mp4"
-        media="(max-width: 767px)"
-      />
-    </video>
+    />
   );
 }
