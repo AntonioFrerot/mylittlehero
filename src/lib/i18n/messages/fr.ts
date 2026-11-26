@@ -1461,7 +1461,7 @@ export const fr = {
       },
       leoPirates: {
         title: "Le Signal des Bonbons",
-        durationLabel: "9 min",
+        durationLabel: "10 min",
         tagline:
           "Un billet de 10 dollars, un robot rouge et une mission très sucrée",
         synopsis:

@@ -6200,24 +6200,50 @@ select:disabled,
 
 .film-style-picker__visual {
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   width: 100%;
   background: rgba(0, 0, 0, 0.35);
 }
 
+.film-style-picker__visual img {
+  z-index: 0;
+}
+
 .film-style-picker__label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
   display: block;
-  padding: 0.65rem 0.5rem 0.75rem;
+  margin: 0;
+  padding: 1.25rem 0.5rem 0.65rem;
   text-align: center;
   font-family: var(--font-display), Georgia, serif;
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.25;
-  color: var(--cream);
+  color: #fff8ef;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 7, 6, 0) 0%,
+    rgba(8, 7, 6, 0.55) 35%,
+    rgba(8, 7, 6, 0.88) 100%
+  );
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.9),
+    0 2px 8px rgba(0, 0, 0, 0.75);
 }
 
 .film-style-picker__card--selected .film-style-picker__label {
   color: var(--gold-light);
+  background: linear-gradient(
+    180deg,
+    rgba(8, 7, 6, 0) 0%,
+    rgba(32, 24, 8, 0.6) 35%,
+    rgba(32, 24, 8, 0.92) 100%
+  );
 }
 
 @media (max-width: 639px) {
@@ -6227,7 +6253,7 @@ select:disabled,
 
   .film-style-picker__label {
     font-size: 0.9375rem;
-    padding: 0.55rem 0.35rem 0.65rem;
+    padding: 1.1rem 0.35rem 0.55rem;
   }
 }
 

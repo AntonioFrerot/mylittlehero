@@ -58,8 +58,8 @@ export function FilmStylePicker({
                 className="object-cover"
                 sizes="(max-width: 639px) 48vw, 280px"
               />
+              <span className="film-style-picker__label">{label}</span>
             </div>
-            <span className="film-style-picker__label">{label}</span>
           </label>
         );
       })}
