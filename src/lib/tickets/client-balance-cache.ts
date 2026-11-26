@@ -1,4 +1,5 @@
 const STORAGE_PREFIX = "mylittlehero:ticket-balance:";
+const JETON_STORAGE_PREFIX = "mylittlehero:jeton-balance:";
 
 function storageKey(email: string): string {
   return `${STORAGE_PREFIX}${email.trim().toLowerCase()}`;
@@ -32,9 +33,37 @@ export function clearCachedTicketBalance(email: string): void {
 
   try {
     sessionStorage.removeItem(storageKey(email));
+    sessionStorage.removeItem(jetonStorageKey(email));
     sessionStorage.removeItem(`${STORAGE_PREFIX}notif:${email.trim().toLowerCase()}`);
   } catch {
     // Ignore storage errors.
+  }
+}
+
+function jetonStorageKey(email: string): string {
+  return `${JETON_STORAGE_PREFIX}${email.trim().toLowerCase()}`;
+}
+
+export function readCachedJetonBalance(email: string): number | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw = sessionStorage.getItem(jetonStorageKey(email));
+    if (raw === null) return null;
+    const balance = Number(raw);
+    return Number.isFinite(balance) ? balance : null;
+  } catch {
+    return null;
+  }
+}
+
+export function writeCachedJetonBalance(email: string, balance: number): void {
+  if (typeof window === "undefined") return;
+
+  try {
+    sessionStorage.setItem(jetonStorageKey(email), String(balance));
+  } catch {
+    // Ignore quota / private mode errors.
   }
 }
 

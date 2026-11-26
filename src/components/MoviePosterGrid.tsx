@@ -15,6 +15,9 @@ import {
 } from "@/lib/film-meta-badges";
 import { getServerTranslator } from "@/lib/i18n/server";
 
+const POSTER_CAROUSEL_WIDTH = "152px";
+const POSTER_CAROUSEL_QUALITY = 62;
+
 function PosterCard({
   title,
   src,
@@ -25,6 +28,7 @@ function PosterCard({
   audioLocaleLabel,
   isNew,
   newBadgeLabel,
+  layout = "grid",
 }: {
   title: string;
   src: string;
@@ -35,6 +39,8 @@ function PosterCard({
   audioLocaleLabel: string;
   isNew?: boolean;
   newBadgeLabel?: string;
+  /** Carrousel mobile (`9.5rem`) : images plus légères ; grille desktop inchangée. */
+  layout?: "carousel" | "grid";
 }) {
   const poster = (
     <div className="poster-card relative overflow-hidden rounded-2xl bg-cinema-surface shadow-poster ring-1 ring-gold/25 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-poster-hover group-hover:ring-gold/55">
@@ -43,7 +49,12 @@ function PosterCard({
           src={src}
           alt={posterAlt}
           fill
-          sizes="(max-width: 640px) 32vw, (max-width: 1024px) 28vw, 220px"
+          sizes={
+            layout === "carousel"
+              ? POSTER_CAROUSEL_WIDTH
+              : "(max-width: 1024px) 28vw, 220px"
+          }
+          quality={layout === "carousel" ? POSTER_CAROUSEL_QUALITY : undefined}
           className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         />
         {durationLabel && (
@@ -159,6 +170,7 @@ export async function MoviePosterGrid() {
                 key={movie.id}
                 title={title}
                 src={movie.src}
+                layout="carousel"
                 durationLabel={
                   movie.durationLabel
                     ? translateExamplePosterDuration(

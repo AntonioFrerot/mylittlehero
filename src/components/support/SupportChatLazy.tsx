@@ -1,8 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { WelcomeSampleOfferBubble } from "@/components/espace/WelcomeSampleOfferBubble";
+import { useLocale } from "@/components/LocaleProvider";
 import { BTN_3D_FAB } from "@/lib/ui/button-3d-classes";
 
 const SupportChatWidget = dynamic(
@@ -12,6 +13,52 @@ const SupportChatWidget = dynamic(
     ),
   { ssr: false }
 );
+
+const DEFER_MS = 2_500;
+const IDLE_TIMEOUT_MS = 3_000;
+
+function useDeferSupportChatUi(): boolean {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (ready) return;
+
+    let cancelled = false;
+    const unlock = () => {
+      if (!cancelled) setReady(true);
+    };
+
+    let idleHandle: number | undefined;
+    let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+
+    if (typeof window.requestIdleCallback === "function") {
+      idleHandle = window.requestIdleCallback(unlock, {
+        timeout: IDLE_TIMEOUT_MS,
+      });
+    } else {
+      timeoutHandle = setTimeout(unlock, DEFER_MS);
+    }
+
+    window.addEventListener("scroll", unlock, { passive: true, once: true });
+    window.addEventListener("touchstart", unlock, { passive: true, once: true });
+    window.addEventListener("pointerdown", unlock, { once: true });
+
+    return () => {
+      cancelled = true;
+      if (idleHandle !== undefined && typeof window.cancelIdleCallback === "function") {
+        window.cancelIdleCallback(idleHandle);
+      }
+      if (timeoutHandle !== undefined) {
+        clearTimeout(timeoutHandle);
+      }
+      window.removeEventListener("scroll", unlock);
+      window.removeEventListener("touchstart", unlock);
+      window.removeEventListener("pointerdown", unlock);
+    };
+  }, [ready]);
+
+  return ready;
+}
 
 function ChatIcon({ className }: { className?: string }) {
   return (
@@ -33,7 +80,13 @@ function ChatIcon({ className }: { className?: string }) {
 }
 
 export function SupportChatLazy() {
+  const { t } = useLocale();
+  const deferReady = useDeferSupportChatUi();
   const [widgetRequested, setWidgetRequested] = useState(false);
+
+  if (!deferReady) {
+    return null;
+  }
 
   if (!widgetRequested) {
     return (
@@ -41,13 +94,13 @@ export function SupportChatLazy() {
         <div className="pointer-events-auto flex flex-col items-end gap-2">
           <WelcomeSampleOfferBubble />
           <button
-          type="button"
-          onClick={() => setWidgetRequested(true)}
-          className={`pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full border shadow-lg transition-all ${BTN_3D_FAB}`}
-          aria-label="Ouvrir l'assistant"
-        >
-          <ChatIcon className="h-6 w-6" />
-        </button>
+            type="button"
+            onClick={() => setWidgetRequested(true)}
+            className={`pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full border shadow-lg transition-all ${BTN_3D_FAB}`}
+            aria-label={t("supportWidget.openFabAria")}
+          >
+            <ChatIcon className="h-6 w-6" />
+          </button>
         </div>
       </div>
     );

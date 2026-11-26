@@ -13,6 +13,9 @@ import {
 import type { SessionUser } from "@/lib/auth/session";
 import {
   clearCachedTicketBalance,
+  readCachedJetonBalance,
+  readCachedTicketBalance,
+  writeCachedJetonBalance,
   writeCachedTicketBalance,
 } from "@/lib/tickets/client-balance-cache";
 
@@ -44,7 +47,8 @@ function readInitialBalance(
   initialBalance: number | null | undefined
 ): number | null {
   if (!initialUser) return null;
-  return typeof initialBalance === "number" ? initialBalance : null;
+  if (typeof initialBalance === "number") return initialBalance;
+  return readCachedTicketBalance(initialUser.email);
 }
 
 function readInitialBalanceLoaded(
@@ -52,7 +56,8 @@ function readInitialBalanceLoaded(
   initialBalance: number | null | undefined
 ): boolean {
   if (!initialUser) return true;
-  return typeof initialBalance === "number";
+  if (typeof initialBalance === "number") return true;
+  return readCachedTicketBalance(initialUser.email) !== null;
 }
 
 function readInitialJetonBalance(
@@ -60,7 +65,8 @@ function readInitialJetonBalance(
   initialJetonBalance: number | null | undefined
 ): number | null {
   if (!initialUser) return null;
-  return typeof initialJetonBalance === "number" ? initialJetonBalance : null;
+  if (typeof initialJetonBalance === "number") return initialJetonBalance;
+  return readCachedJetonBalance(initialUser.email);
 }
 
 function readInitialJetonBalanceLoaded(
@@ -68,7 +74,8 @@ function readInitialJetonBalanceLoaded(
   initialJetonBalance: number | null | undefined
 ): boolean {
   if (!initialUser) return true;
-  return typeof initialJetonBalance === "number";
+  if (typeof initialJetonBalance === "number") return true;
+  return readCachedJetonBalance(initialUser.email) !== null;
 }
 
 export function AuthProvider({
@@ -93,6 +100,7 @@ export function AuthProvider({
   );
   const [isAdmin, setIsAdmin] = useState(initialIsAdmin);
   const userEmailRef = useRef<string | null>(initialUser?.email ?? null);
+  const balanceSyncEmailRef = useRef<string | null>(null);
 
   const persistTicketBalance = useCallback((nextBalance: number) => {
     const email = userEmailRef.current;
@@ -149,6 +157,7 @@ export function AuthProvider({
       const nextBalance = typeof data.balance === "number" ? data.balance : 0;
       setJetonBalance(nextBalance);
       setJetonBalanceLoaded(true);
+      writeCachedJetonBalance(email, nextBalance);
     } catch {
       setJetonBalance((current) => current ?? 0);
       setJetonBalanceLoaded(true);
@@ -201,24 +210,42 @@ export function AuthProvider({
       setJetonBalance(null);
       setBalanceLoaded(true);
       setJetonBalanceLoaded(true);
-    }
-  }, [initialUser, initialIsAdmin]);
-
-  useEffect(() => {
-    if (!initialUser?.email || balanceLoaded) {
       return;
     }
 
-    void refreshTicketBalance();
-  }, [initialUser?.email, balanceLoaded, refreshTicketBalance]);
-
-  useEffect(() => {
-    if (!initialUser?.email || jetonBalanceLoaded) {
-      return;
+    if (typeof initialBalance === "number") {
+      setBalance(initialBalance);
+      setBalanceLoaded(true);
     }
 
-    void refreshJetonBalance();
-  }, [initialUser?.email, jetonBalanceLoaded, refreshJetonBalance]);
+    if (typeof initialJetonBalance === "number") {
+      setJetonBalance(initialJetonBalance);
+      setJetonBalanceLoaded(true);
+    }
+  }, [initialUser, initialIsAdmin, initialBalance, initialJetonBalance]);
+
+  useEffect(() => {
+    const email = initialUser?.email;
+    if (!email) {
+      balanceSyncEmailRef.current = null;
+      return;
+    }
+    if (balanceSyncEmailRef.current === email) return;
+    balanceSyncEmailRef.current = email;
+
+    if (typeof initialBalance !== "number") {
+      void refreshTicketBalance();
+    }
+    if (typeof initialJetonBalance !== "number") {
+      void refreshJetonBalance();
+    }
+  }, [
+    initialUser?.email,
+    initialBalance,
+    initialJetonBalance,
+    refreshTicketBalance,
+    refreshJetonBalance,
+  ]);
 
   useEffect(() => {
     if (!initialUser?.email) return;

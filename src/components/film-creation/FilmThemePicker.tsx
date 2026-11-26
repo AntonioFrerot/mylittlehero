@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { FILM_THEMES } from "@/lib/film-creation/types";
-import { BTN_FILM_THEME_VALIDATE, SURFACE_3D_CARD, SURFACE_3D_FORM_CONTROL } from "@/lib/ui/button-3d-classes";
+import { SURFACE_3D_CARD, SURFACE_3D_FORM_CONTROL } from "@/lib/ui/button-3d-classes";
 import type { TranslationKey } from "@/lib/i18n/translator";
 
 const MOBILE_THEMES_MQ = "(max-width: 639px)";
@@ -206,7 +206,10 @@ export function FilmThemePicker({
                       <button
                         type="button"
                         className={`film-theme-dropdown__option${isSelected ? " film-theme-dropdown__option--selected" : ""}`}
-                        onClick={() => selectTheme(theme)}
+                        onClick={() => {
+                          selectTheme(theme);
+                          closePanel();
+                        }}
                       >
                         <span
                           className={`film-theme-dropdown__check${isSelected ? " film-theme-dropdown__check--on" : ""}`}
@@ -220,15 +223,6 @@ export function FilmThemePicker({
                   );
                 })}
               </ul>
-              <div className="film-theme-dropdown__footer">
-                <button
-                  type="button"
-                  className={BTN_FILM_THEME_VALIDATE}
-                  onClick={closePanel}
-                >
-                  {t("filmCreation.form.themesValidate")}
-                </button>
-              </div>
             </div>
           ) : null}
         </div>
