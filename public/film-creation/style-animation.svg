@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="320" viewBox="0 0 480 320" role="img" aria-label="Aperçu style animation">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2a1f14"/>
+      <stop offset="50%" stop-color="#4a3520"/>
+      <stop offset="100%" stop-color="#141018"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="320" fill="url(#bg)" rx="20"/>
+  <rect x="24" y="24" width="432" height="272" fill="none" stroke="rgba(232,197,71,0.25)" stroke-width="2" rx="14" stroke-dasharray="8 6"/>
+  <text x="240" y="168" text-anchor="middle" fill="rgba(244,240,232,0.42)" font-family="system-ui,sans-serif" font-size="15" font-weight="600">Image style Animation</text>
+</svg>

@@ -790,6 +790,8 @@ export const fr = {
     rowAria: "Univers {theme}",
   },
   supportWidget: {
+    welcome:
+      "Bonjour ! Posez-moi toutes vos questions ici, je suis là pour vous aider.",
     title: "Assistant MyLittleHero",
     subtitleBot: "Analyse votre question et y répond sur mesure",
     subtitleHuman: "Un conseiller peut répondre en direct",
@@ -997,6 +999,7 @@ export const fr = {
     welcomeEyebrow: "Échantillon de 30 secondes",
     welcomeTitleLine1: "Parfait pour tester sans",
     welcomeTitleLine2: "se ruiner !",
+    duration: "1 jeton = 30 secondes de film",
     buyCta: "Acheter 1 jeton",
     ctaHint: "Paiement sécurisé par carte bancaire (Stripe).",
     close: "Fermer",
@@ -1023,7 +1026,7 @@ export const fr = {
         name: "Découverte",
         subtitle: "Parfait pour une première aventure",
         eyebrow: "Entrée en douceur",
-        perMinuteRate: "1 min = 12 €",
+        perMinuteRate: "1 min = 12 $",
         durationShort: "5 min",
         durationPeek: "5 minutes",
         features: {
@@ -1036,7 +1039,7 @@ export const fr = {
         name: "Aventure",
         subtitle: "Une histoire plus riche et immersive",
         eyebrow: "Le choix équilibré",
-        perMinuteRate: "1 min = 10 €",
+        perMinuteRate: "1 min = 10 $",
         durationShort: "10 min",
         durationPeek: "10 minutes",
         features: {
@@ -1049,7 +1052,7 @@ export const fr = {
         name: "Famille",
         subtitle: "Trois films pour multiplier les moments magiques",
         eyebrow: "Meilleure valeur",
-        perMinuteRate: "1 min = 6,67 €",
+        perMinuteRate: "1 min = 6,67 $",
         durationShort: "10 min",
         durationPeek: "10 minutes",
         promoLabel: "2 achetés + 1 OFFERT",
@@ -1199,16 +1202,17 @@ export const fr = {
     form: {
       styleLegend: "Quel style graphique ?",
       styleHint:
-        "Sélectionnez le style graphique qui sera utilisé pour l'ensemble du film : l'univers visuel, les couleurs et le rendu des personnages.",
+        "Sélectionnez le style graphique qui sera utilisé pour l'ensemble du film.",
+      stylePreviewAlt: "Aperçu du style {style}",
       themesLegend: "Quel thème ?",
       themesHint:
-        "Choisissez le thème qui guidera la création de l'histoire.",
+        "Sélectionnez le thème qui guidera la création de l'histoire.",
       themesChoose: "Choisir un thème...",
       themesValidate: "Valider",
       themesSelectedCount: "{count} thèmes sélectionnés",
       characterLegend: "Quel personnage ?",
       characterHint:
-        "Sélectionnez un ou plusieurs personnages. Le premier choisi est le héros principal ; les autres sont des personnages secondaires.",
+        "Sélectionnez un ou plusieurs personnages. Le premier choisi est le personnage principal.",
       characterAria: "Personnages du film",
       characterScrollLeftAria: "Voir les personnages précédents",
       characterScrollRightAria: "Voir les personnages suivants",
@@ -1418,6 +1422,13 @@ export const fr = {
     eyebrow: "Film d'exemple",
     tryFree: "Essayer gratuitement",
     posterAlt: "Affiche — {title}",
+    audioLocaleFr: "Film en français",
+    audioLocaleEn: "Film en anglais",
+    newBadge: "Nouveau",
+    newReleaseHeadline:
+      "Film d'exemple créé avec la version actuelle du site",
+    newReleaseNotice:
+      "Cet exemple a été produit récemment sur MyLittleHero. Il illustre le niveau de qualité actuel de nos films personnalisés.",
     playVideo: "Lire la vidéo — {title}",
     videoComingSoon: "Bientôt disponible...",
     qualityHint: {
@@ -1457,14 +1468,14 @@ export const fr = {
           "Résumé : Dans une petite ville tranquille, Léo, un garçon solitaire de 9 ans, croit vivre la journée parfaite après avoir trouvé 10 dollars pour acheter plein de bonbons. Mais durant la nuit, un mystérieux robot venu de l'espace apparaît près de chez lui avec une étrange mission : trouver des bonbons. Une aventure inattendue va alors changer la vie de Léo.",
       },
       leoLostPlane: {
-        title: "Léo et l'avion perdu",
+        title: "The Wet Rat",
         tagline: "Une nouvelle école. Un nouvel ami. Une aventure inoubliable.",
         synopsis:
-          "Résumé : Pour sa toute première journée à l'école, Léo a peur et se sent seul. Mais après avoir noué une amitié et perdu un avion en papier dans une forêt mystérieuse, il découvre que le courage, ce n'est pas l'absence de peur, c'est avancer ensemble.",
+          "Résumé : Victime de harcèlement et incompris par ses parents, Léo décide de fuguer. Mais un succès inattendu sur les réseaux sociaux va bouleverser sa vie.",
       },
       leoEtoiles: {
         title: "Léo et la lune de glace",
-        durationLabel: "3 min",
+        durationLabel: "5 min",
         intro: "Voici un exemple de film de science-fiction pour Léo :",
         tagline: "Une expédition gelée au-delà des étoiles",
         synopsis:

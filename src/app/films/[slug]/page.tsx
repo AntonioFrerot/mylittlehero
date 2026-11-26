@@ -12,7 +12,15 @@ import {
   translateExampleFilmTagline,
   translateExampleFilmTitle,
 } from "@/lib/i18n/example-film-labels";
+import { ExampleFilmLanguageFlag } from "@/components/films/ExampleFilmLanguageFlag";
+import { ExampleFilmNewReleaseNotice } from "@/components/films/ExampleFilmNewReleaseNotice";
 import { FilmMetaBadges } from "@/components/films/FilmMetaBadges";
+import { getExampleFilmAudioLocale } from "@/lib/example-film-audio-locale";
+import { isExampleFilmNew } from "@/lib/example-film-new";
+import {
+  filmDurationPosterBadgeClassName,
+  filmNewPosterBadgeClassName,
+} from "@/lib/film-meta-badges";
 import { buildFrenchShareMetadata } from "@/lib/i18n/metadata";
 import { getServerTranslator } from "@/lib/i18n/server";
 import { createTranslator } from "@/lib/i18n/translator";
@@ -51,6 +59,17 @@ export default async function ExampleFilmPage({ params }: PageProps) {
   const filmTitle = translateExampleFilmTitle(slug, film.title, locale);
   const filmTagline = translateExampleFilmTagline(slug, film.tagline, locale);
   const primaryTheme = film.themes[0];
+  const audioLocale = getExampleFilmAudioLocale(slug);
+  const audioLocaleLabel =
+    audioLocale === "fr"
+      ? t("examples.audioLocaleFr")
+      : t("examples.audioLocaleEn");
+  const showNewBadge = isExampleFilmNew(slug);
+  const durationLabel = translateExampleFilmDuration(
+    slug,
+    film.durationLabel,
+    locale
+  );
 
   return (
     <>      <main className="min-h-screen bg-cinema-black pb-16 safe-top-offset">
@@ -62,26 +81,22 @@ export default async function ExampleFilmPage({ params }: PageProps) {
             {t("examples.backToCatalogue")}
           </HashLink>
 
-          <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-gold-light/90">
-            {t("examples.eyebrow")}
-          </p>
+          <div className="example-film-page__eyebrow-row mt-6 flex flex-wrap items-center gap-2">
+            <p className="text-xs font-semibold uppercase tracking-widest text-gold-light/90">
+              {t("examples.eyebrow")}
+            </p>
+            <FilmMetaBadges
+              className="example-film-page__eyebrow-themes"
+              themes={film.themes}
+              locale={locale}
+            />
+          </div>
           <h1 className="font-display mt-2 text-2xl font-bold leading-tight text-cream sm:text-3xl md:text-4xl lg:text-5xl">
             {filmTitle}
           </h1>
           <p className="mt-2 max-w-2xl text-base leading-relaxed text-cream/75 sm:text-lg">
             {filmTagline}
           </p>
-
-          <FilmMetaBadges
-            className="mt-4"
-            themes={film.themes}
-            durationLabel={translateExampleFilmDuration(
-              slug,
-              film.durationLabel,
-              locale
-            )}
-            locale={locale}
-          />
 
           <div className="mt-8 flex flex-col gap-6 sm:gap-8 lg:relative lg:gap-0">
             <ExampleFilmHeroSpotlight
@@ -106,11 +121,33 @@ export default async function ExampleFilmPage({ params }: PageProps) {
                   className="object-cover object-center"
                   priority
                 />
+                <span className={filmDurationPosterBadgeClassName()}>
+                  {durationLabel}
+                </span>
+                <ExampleFilmLanguageFlag
+                  locale={audioLocale}
+                  label={audioLocaleLabel}
+                />
+                {showNewBadge ? (
+                  <span className={filmNewPosterBadgeClassName()}>
+                    {t("examples.newBadge")}
+                  </span>
+                ) : null}
               </div>
             </aside>
           </div>
 
-          <div className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-cinema-surface shadow-glow-gold-subtle">
+          {showNewBadge ? (
+            <ExampleFilmNewReleaseNotice
+              badgeLabel={t("examples.newBadge")}
+              headline={t("examples.newReleaseHeadline")}
+              message={t("examples.newReleaseNotice")}
+            />
+          ) : null}
+
+          <div
+            className={`overflow-hidden rounded-2xl border border-white/10 bg-cinema-surface shadow-glow-gold-subtle ${showNewBadge ? "mt-4" : "mt-10"}`}
+          >
             <ExampleFilmMedia
               film={film}
               title={filmTitle}

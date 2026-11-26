@@ -1,5 +1,6 @@
 import type { PricingPlanId } from "./pricing-catalog";
 import type { PurchasePlanId, TarifsTicketPlanId } from "./purchase-catalog";
+import { formatSiteMoney } from "./format-money";
 import type { LocaleCode } from "./locales";
 import { createTranslator } from "./translator";
 import type { TranslationKey } from "./translator";
@@ -206,7 +207,7 @@ function formatPerFilmUnit(
   t: ReturnType<typeof createTranslator>
 ): string {
   return t("tarifsPage.perFilmUnit", {
-    amount: formatMoney(unitPrice, locale),
+    amount: formatSiteMoney(unitPrice, locale),
   });
 }
 
@@ -295,16 +296,6 @@ const ABONNEMENTS_TICKET_OVERRIDES: Partial<
   "ticket-10": { price: 399.99, perFilmUnit: 39.99 },
 };
 
-function formatMoney(amount: number, locale: LocaleCode): string {
-  const tag = locale === "fr" ? "fr-FR" : "en-GB";
-  return (
-    amount.toLocaleString(tag, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }) + " €"
-  );
-}
-
 function buildSavingsLabel(
   compareMonthly: number,
   yearlyPrice: number,
@@ -315,7 +306,7 @@ function buildSavingsLabel(
   const saved = annualIfMonthly - yearlyPrice;
   const percent = Math.round((saved / annualIfMonthly) * 100);
   return t("tarifsPage.savingsLabel", {
-    amount: formatMoney(saved, locale),
+    amount: formatSiteMoney(saved, locale),
     percent,
   });
 }
@@ -368,7 +359,7 @@ export function getTarifsSubscriptionPlans(
       filmsLabel: t(config.filmsLabel),
       quotaHighlight: config.quotaHighlight,
       tagline: config.tagline ? t(config.tagline) : undefined,
-      price: formatMoney(config.price, locale),
+      price: formatSiteMoney(config.price, locale),
       priceValue: config.price,
       period: t(
         config.billing === "yearly"
@@ -377,7 +368,7 @@ export function getTarifsSubscriptionPlans(
       ),
       monthlyEquivalent: config.monthlyEquivalent
         ? t("tarifsPage.monthlyEquivalent", {
-            amount: formatMoney(config.monthlyEquivalent, locale),
+            amount: formatSiteMoney(config.monthlyEquivalent, locale),
           })
         : undefined,
       perFilmPrice: formatPerFilmUnit(
@@ -393,8 +384,8 @@ export function getTarifsSubscriptionPlans(
       yearlyBreakdown:
         config.compareMonthly && config.monthlyEquivalent && config.billing === "yearly"
           ? {
-              monthlyPrice: formatMoney(config.monthlyEquivalent, locale),
-              compareMonthlyPrice: formatMoney(config.compareMonthly, locale),
+              monthlyPrice: formatSiteMoney(config.monthlyEquivalent, locale),
+              compareMonthlyPrice: formatSiteMoney(config.compareMonthly, locale),
               savingsPercent: Math.round(
                 ((config.compareMonthly - config.monthlyEquivalent) /
                   config.compareMonthly) *
@@ -424,7 +415,7 @@ export function getTarifsTicketPlans(
           ? t("tarifsPage.tickets.countOne")
           : t("tarifsPage.tickets.countMany", { count: config.ticketCount }),
       ticketCount: config.ticketCount,
-      price: formatMoney(config.price, locale),
+      price: formatSiteMoney(config.price, locale),
       priceValue: config.price,
       perFilmPrice: formatPerFilmUnit(
         config.perFilmUnit ?? config.price / config.ticketCount,
@@ -477,7 +468,7 @@ export function getAbonnementsSampleOffer(locale: LocaleCode): AbonnementsSample
   return {
     id: "jeton-1",
     stripePlanId: "jeton-1",
-    price: formatMoney(priceValue, locale),
+    price: formatSiteMoney(priceValue, locale),
     priceValue,
   };
 }

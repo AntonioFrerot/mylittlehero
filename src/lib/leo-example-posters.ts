@@ -11,6 +11,8 @@ export type HeroPosterAsset = {
   durationLabel?: string;
   href?: string;
   featured?: boolean;
+  /** Pastille « New » sur l’affiche (films d’exemple). */
+  isNew?: boolean;
 };
 
 export type LeoExamplePoster = HeroPosterAsset;
@@ -31,12 +33,22 @@ export const SUPER_LEO_VIDEO_POSTER_SRC =
 export const LEO_ICE_MOON_POSTER_SRC = "/posters/leo-ice-moon.png?v=1";
 export const LEO_ICE_MOON_VIDEO_POSTER_SRC =
   "/posters/leo-ice-moon-video-poster.png?v=1";
-export const LEO_LOST_PLANE_POSTER_SRC = "/posters/leo-lost-plane.png?v=2";
+export const LEO_LOST_PLANE_POSTER_SRC = "/posters/leo-lost-plane.jpg?v=3";
 export const LEO_LOST_PLANE_VIDEO_POSTER_SRC =
-  "/posters/leo-lost-plane-video-poster.png?v=1";
+  "/posters/leo-lost-plane-video-poster.jpg?v=2";
 
 /** Affiches réalistes des cinq films d'exemple du petit Léo (accueil + hero). */
 export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
+  {
+    id: "leo-lost-plane",
+    title: "The Wet Rat",
+    seed: "leo-lost-plane",
+    src: LEO_LOST_PLANE_POSTER_SRC,
+    href: "/films/leo-lost-plane",
+    durationLabel: "5 MIN",
+    featured: true,
+    isNew: true,
+  },
   {
     id: "super-leo",
     title: "Super Léo",
@@ -45,6 +57,7 @@ export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
     href: "/films/super-leo",
     durationLabel: "5 MIN",
     featured: true,
+    isNew: true,
   },
   {
     id: "leo-pirates",
@@ -61,7 +74,7 @@ export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
     seed: "leo-ice-moon",
     src: LEO_ICE_MOON_POSTER_SRC,
     href: "/films/leo-ice-moon",
-    durationLabel: "3 MIN",
+    durationLabel: "5 MIN",
     featured: true,
   },
   {
@@ -70,15 +83,6 @@ export const LEO_EXAMPLE_POSTERS: LeoExamplePoster[] = [
     seed: "leo-et-nala",
     src: LEO_ET_NALA_POSTER_SRC,
     href: "/films/leo-et-nala",
-    durationLabel: "5 MIN",
-    featured: true,
-  },
-  {
-    id: "leo-lost-plane",
-    title: "Leo and the Lost Plane",
-    seed: "leo-lost-plane",
-    src: LEO_LOST_PLANE_POSTER_SRC,
-    href: "/films/leo-lost-plane",
     durationLabel: "5 MIN",
     featured: true,
   },

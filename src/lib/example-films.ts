@@ -79,7 +79,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
   },
   "leo-lost-plane": {
     slug: "leo-lost-plane",
-    title: "Leo and the Lost Plane",
+    title: "The Wet Rat",
     tagline: "Une nouvelle école. Un nouvel ami. Une aventure inoubliable.",
     posterSrc: LEO_LOST_PLANE_POSTER_SRC,
     videoPosterSrc: LEO_LOST_PLANE_VIDEO_POSTER_SRC,
@@ -87,7 +87,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     videoComingSoon: true,
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "animation",
-    themes: ["animation"],
+    themes: ["morale"],
     durationLabel: "5 MIN",
   },
   "leo-ice-moon": {
@@ -100,7 +100,7 @@ export const exampleFilms: Record<ExampleFilmSlug, ExampleFilm> = {
     heroPhotoSrc: LEO_HERO_PHOTO_SRC,
     style: "manga",
     themes: ["aventure", "scifi"],
-    durationLabel: "3 MIN",
+    durationLabel: "5 MIN",
   },
 };
 

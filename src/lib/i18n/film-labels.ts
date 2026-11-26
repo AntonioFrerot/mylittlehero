@@ -39,6 +39,8 @@ const LEGACY_THEME_TO_ID: Record<string, FilmThemeId> = {
   Fantasy: "fantastique",
   "Science-fiction": "scifi",
   "Science fiction": "scifi",
+  "Sci-Fi": "scifi",
+  "Sci-fi": "scifi",
   Apprentissage: "educatif",
   Learning: "educatif",
   Éducatif: "educatif",

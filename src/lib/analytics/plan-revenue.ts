@@ -1,5 +1,8 @@
-/** Montants TTC affichés sur le site (EUR), alignés sur les catalogues Stripe. */
-const PLAN_REVENUE_EUR: Record<string, number> = {
+import { formatSiteMoney } from "@/lib/i18n/format-money";
+import type { LocaleCode } from "@/lib/i18n/locales";
+
+/** Montants TTC affichés sur le site (USD), alignés sur les catalogues Stripe. */
+const PLAN_REVENUE_USD: Record<string, number> = {
   "film-5min": 59.99,
   "film-10min": 99.99,
   "pack-3films": 199.99,
@@ -14,15 +17,11 @@ const PLAN_REVENUE_EUR: Record<string, number> = {
 };
 
 export function getPlanRevenueEur(planId: string): number {
-  return PLAN_REVENUE_EUR[planId] ?? 0;
+  return PLAN_REVENUE_USD[planId] ?? 0;
 }
 
+/** @deprecated Nom historique — montants en USD. */
 export function formatRevenueEur(amount: number, locale: string): string {
-  const tag = locale === "en" ? "en-GB" : "fr-FR";
-  return (
-    amount.toLocaleString(tag, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }) + " €"
-  );
+  const code: LocaleCode = locale === "en" ? "en" : "fr";
+  return formatSiteMoney(amount, code);
 }

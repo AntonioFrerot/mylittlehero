@@ -32,7 +32,12 @@ import {
 import { CharacterFacePicker } from "@/components/film-creation/CharacterFacePicker";
 import { FilmCreationCooldown } from "@/components/film-creation/FilmCreationCooldown";
 import { ScheduleFilmModal } from "@/components/film-creation/ScheduleFilmModal";
+import { FilmStylePicker } from "@/components/film-creation/FilmStylePicker";
 import { FilmThemePicker } from "@/components/film-creation/FilmThemePicker";
+import {
+  DEFAULT_FILM_CREATION_STYLE,
+  type FilmCreationStyle,
+} from "@/lib/film-creation/style-picker";
 import { FilmDurationPicker } from "@/components/film-creation/FilmDurationPicker";
 import { YesNoTextField } from "@/components/film-creation/YesNoTextField";
 import { TicketCountPill } from "@/components/tickets/TicketCountPill";
@@ -88,6 +93,7 @@ export function FilmCreationForm({
   const formRef = useRef<HTMLFormElement>(null);
   const scheduledDateInputRef = useRef<HTMLInputElement>(null);
   const draftPayloadRef = useRef<FilmCreationFormDraftPayload>({
+    style: DEFAULT_FILM_CREATION_STYLE,
     themes: [],
     characterIds: [],
     durationSeconds: PAID_FILM_DURATION_MIN_SECONDS,
@@ -97,6 +103,9 @@ export function FilmCreationForm({
     additionalInfo: "",
   });
   const [persistEnabled, setPersistEnabled] = useState(false);
+  const [selectedStyle, setSelectedStyle] = useState<FilmCreationStyle>(
+    DEFAULT_FILM_CREATION_STYLE
+  );
   const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
   const [selectedCharacterIds, setSelectedCharacterIds] = useState<string[]>([]);
   const [durationSeconds, setDurationSeconds] = useState<number | null>(
@@ -146,6 +155,7 @@ export function FilmCreationForm({
   useEffect(() => {
     const draft = readFilmCreationDraft(draftStorageKey);
     if (draft) {
+      setSelectedStyle(draft.style);
       setSelectedThemes(draft.themes.slice(0, 1));
       setSelectedCharacterIds(draft.characterIds);
       if (draft.durationSeconds != null && !subscriptionGrantActive) {
@@ -163,6 +173,7 @@ export function FilmCreationForm({
 
   useEffect(() => {
     draftPayloadRef.current = {
+      style: selectedStyle,
       themes: selectedThemes,
       characterIds: selectedCharacterIds,
       durationSeconds,
@@ -172,6 +183,7 @@ export function FilmCreationForm({
       additionalInfo: storyText,
     };
   }, [
+    selectedStyle,
     selectedThemes,
     selectedCharacterIds,
     durationSeconds,
@@ -187,6 +199,7 @@ export function FilmCreationForm({
   }, [
     persistEnabled,
     draftStorageKey,
+    selectedStyle,
     selectedThemes,
     selectedCharacterIds,
     durationSeconds,
@@ -266,6 +279,10 @@ export function FilmCreationForm({
     options?: { forSchedule?: boolean }
   ): string | null {
     const formData = new FormData(form);
+    const styleRaw = formData.get("style");
+    if (typeof styleRaw !== "string" || !styleRaw.trim()) {
+      return t("filmCreation.errors.styleRequired");
+    }
     if (formData.getAll("themes").length === 0) {
       return t("filmCreation.errors.themesRequired");
     }
@@ -370,6 +387,17 @@ export function FilmCreationForm({
       className="film-creation-form flex flex-col gap-8 sm:gap-10"
     >
       <input ref={scheduledDateInputRef} type="hidden" name="scheduledDate" defaultValue="" />
+      <fieldset className="film-creation-form__styles">
+        <legend className="font-display text-lg font-semibold text-cream md:text-xl">
+          {t("filmCreation.form.styleLegend")}
+        </legend>
+        <p className="text-sm text-cream/50">{t("filmCreation.form.styleHint")}</p>
+        <FilmStylePicker
+          selectedStyle={selectedStyle}
+          onSelectedStyleChange={setSelectedStyle}
+        />
+      </fieldset>
+
       <fieldset className="film-creation-form__themes">
         <legend className="font-display text-lg font-semibold text-cream md:text-xl">
           {t("filmCreation.form.themesLegend")}

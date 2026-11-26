@@ -8,11 +8,12 @@ export type MoviePoster = {
   durationLabel?: string;
   href?: string;
   featured?: boolean;
+  isNew?: boolean;
 };
 
 /** Cinq films d'exemple du petit Léo (section accueil, ordre fixe). */
 export const leoExampleFilms: MoviePoster[] = LEO_EXAMPLE_POSTERS.map(
-  ({ id, title, seed, src, durationLabel, href, featured }) => ({
+  ({ id, title, seed, src, durationLabel, href, featured, isNew }) => ({
     id,
     title,
     seed,
@@ -20,6 +21,7 @@ export const leoExampleFilms: MoviePoster[] = LEO_EXAMPLE_POSTERS.map(
     durationLabel,
     href,
     featured,
+    isNew,
   })
 );
 

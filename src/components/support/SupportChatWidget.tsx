@@ -10,7 +10,6 @@ import {
   BTN_3D_FAB,
   BTN_3D_ICON,
 } from "@/lib/ui/button-3d-classes";
-import { SUPPORT_WELCOME_MESSAGE } from "@/lib/support-chat/welcome-message";
 
 type UiMessage = {
   id: string;
@@ -73,25 +72,22 @@ function getOrCreateConversationId(): string {
   return id;
 }
 
-function createWelcomeMessage(): UiMessage {
+function createWelcomeMessage(content: string): UiMessage {
   return {
     id: "welcome",
     role: "assistant",
-    content: SUPPORT_WELCOME_MESSAGE,
+    content,
   };
 }
 
 export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boolean }) {
   const { locale, t } = useLocale();
+  const welcomeText = t("supportWidget.welcome");
   const [open, setOpen] = useState(initialOpen);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
-  const [messages, setMessages] = useState<UiMessage[]>([
-    {
-      id: "welcome",
-      role: "assistant",
-      content: SUPPORT_WELCOME_MESSAGE,
-    },
+  const [messages, setMessages] = useState<UiMessage[]>(() => [
+    createWelcomeMessage(welcomeText),
   ]);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -105,6 +101,17 @@ export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boole
 
   const hasUserMessages = messages.some((message) => message.role === "user");
   const canEndChat = hasUserMessages && !chatEnded && !endingChat;
+
+  useEffect(() => {
+    if (hasUserMessages) return;
+    setMessages((prev) => {
+      const welcome = prev.find((message) => message.id === "welcome");
+      if (welcome?.content === welcomeText) return prev;
+      return prev.map((message) =>
+        message.id === "welcome" ? { ...message, content: welcomeText } : message
+      );
+    });
+  }, [welcomeText, hasUserMessages]);
 
   useEffect(() => {
     if (!open) return;
@@ -250,7 +257,7 @@ export function SupportChatWidget({ initialOpen = false }: { initialOpen?: boole
 
     const startingNewChat = chatEnded || !peekConversationId();
     const history = startingNewChat
-      ? [createWelcomeMessage(), userMessage]
+      ? [createWelcomeMessage(welcomeText), userMessage]
       : [...messages, userMessage];
 
     if (startingNewChat) {

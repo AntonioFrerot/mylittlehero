@@ -218,7 +218,7 @@ async function runSchema(): Promise<void> {
       id TEXT PRIMARY KEY,
       user_email TEXT,
       user_name TEXT,
-      locale TEXT NOT NULL DEFAULT 'fr',
+      locale TEXT NOT NULL DEFAULT 'en',
       messages JSONB NOT NULL DEFAULT '[]'::jsonb,
       created_at TIMESTAMPTZ NOT NULL,
       updated_at TIMESTAMPTZ NOT NULL

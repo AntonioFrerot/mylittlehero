@@ -49,13 +49,15 @@ import {
   getFilmCreationCooldownState,
   getLatestFilmCreatedAt,
 } from "./creation-cooldown";
-import type {
-  FilmCharacterRef,
-  FilmStyle,
-  FilmTheme,
-  UserFilm,
-  UserFilmUpdatePatch,
-  UserFilmWithStory,
+import { isFilmCreationStyle } from "./style-picker";
+import {
+  FILM_THEMES,
+  type FilmCharacterRef,
+  type FilmStyle,
+  type FilmTheme,
+  type UserFilm,
+  type UserFilmUpdatePatch,
+  type UserFilmWithStory,
 } from "./types";
 import {
   isValidFilmDurationSeconds,
@@ -68,14 +70,19 @@ export type FilmCreationFormState = {
   success?: string;
 };
 
-const DEFAULT_FILM_STYLE: FilmStyle = "realistic";
+const CREATABLE_FILM_THEME_SET = new Set<string>(
+  FILM_THEMES as readonly string[]
+);
 
 function normalizeSelectedThemes(themes: FilmTheme[]): FilmThemeId[] {
   const unique = [
     ...new Set(
       themes
         .map((theme) => normalizeFilmTheme(String(theme)))
-        .filter((theme): theme is FilmThemeId => theme != null)
+        .filter(
+          (theme): theme is FilmThemeId =>
+            theme != null && CREATABLE_FILM_THEME_SET.has(theme)
+        )
     ),
   ];
   return unique.slice(0, 1);
@@ -85,7 +92,9 @@ function parseThemes(formData: FormData): FilmTheme[] {
   const selected = formData.getAll("themes");
   return selected.filter(
     (theme): theme is FilmTheme =>
-      typeof theme === "string" && isFilmThemeId(theme)
+      typeof theme === "string" &&
+      CREATABLE_FILM_THEME_SET.has(theme) &&
+      isFilmThemeId(theme)
   );
 }
 
@@ -183,7 +192,11 @@ export async function saveFilmCreation(
     return { error: t("filmCreation.errors.loginRequired") };
   }
 
-  const style = DEFAULT_FILM_STYLE;
+  const styleRaw = formData.get("style");
+  if (typeof styleRaw !== "string" || !isFilmCreationStyle(styleRaw)) {
+    return { error: t("filmCreation.errors.styleRequired") };
+  }
+  const style = styleRaw;
   const durationSeconds = parseDuration(formData.get("duration"));
   const themes = normalizeSelectedThemes(parseThemes(formData));
   const characterIds = formData

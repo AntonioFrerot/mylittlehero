@@ -9,7 +9,7 @@ export const LOCALES = [
 
 export type LocaleCode = (typeof LOCALES)[number]["code"];
 
-export const DEFAULT_LOCALE: LocaleCode = "fr";
+export const DEFAULT_LOCALE: LocaleCode = "en";
 
 export const LOCALE_COOKIE = "mlh_locale";
 
@@ -26,7 +26,7 @@ export function parseLocale(value: unknown): LocaleCode | null {
 
 export function getLocaleLabel(
   code: LocaleCode | undefined,
-  displayLocale: LocaleCode = "fr"
+  displayLocale: LocaleCode = "en"
 ): string {
   const match = LOCALES.find((locale) => locale.code === code);
   if (!match) return LOCALES[0].nativeLabel;

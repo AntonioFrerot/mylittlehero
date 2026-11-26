@@ -221,14 +221,18 @@ export function WelcomeSampleOfferModal({
               className="welcome-sample-offer-modal__title font-display"
             >
               {t("welcomeSampleOffer.welcomeTitleLine1")}
-              <br />
-              {t("welcomeSampleOffer.welcomeTitleLine2")}
+              {t("welcomeSampleOffer.welcomeTitleLine2") ? (
+                <>
+                  <br />
+                  {t("welcomeSampleOffer.welcomeTitleLine2")}
+                </>
+              ) : null}
             </h2>
           </div>
 
           <div className="welcome-sample-offer-modal__offer-card">
             <p className="welcome-sample-offer-modal__offer-label">
-              {t("abonnementsPage.sampleBlock.duration")}
+              {t("welcomeSampleOffer.duration")}
             </p>
             <div className="welcome-sample-offer-modal__price-row">
               <span className="welcome-sample-offer-modal__price font-display">{offer.price}</span>

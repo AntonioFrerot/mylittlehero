@@ -1,3 +1,4 @@
+import { formatSiteMoney } from "./format-money";
 import type { LocaleCode } from "./locales";
 import { createTranslator } from "./translator";
 import type { TranslationKey } from "./translator";
@@ -87,16 +88,6 @@ const PLAN_KEYS: Record<
   },
 };
 
-function formatMoney(amount: number, locale: LocaleCode): string {
-  const tag = locale === "fr" ? "fr-FR" : "en-GB";
-  return (
-    amount.toLocaleString(tag, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }) + " €"
-  );
-}
-
 function buildYearlySavings(
   monthlyPrice: number,
   yearlyPrice: number,
@@ -107,7 +98,7 @@ function buildYearlySavings(
   const saved = annualIfMonthly - yearlyPrice;
   const percent = Math.round((saved / annualIfMonthly) * 100);
   return t("pricing.savingsLabel", {
-    amount: formatMoney(saved, locale),
+    amount: formatSiteMoney(saved, locale),
     percent,
   });
 }
@@ -127,7 +118,7 @@ export function getPricingPlans(locale: LocaleCode): PricingPlan[] {
     return {
       id,
       name: t(config.name),
-      price: formatMoney(config.price, locale),
+      price: formatSiteMoney(config.price, locale),
       period: t(
         config.billing === "yearly"
           ? "pricing.periodYearly"

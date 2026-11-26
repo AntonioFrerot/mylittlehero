@@ -27,6 +27,16 @@ export function filmDurationPosterBadgeClassName(): string {
   return "film-duration-surface absolute left-3 top-3 z-[1] rounded-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide";
 }
 
+/** Pastille langue (films d'exemple) — cercle en haut à droite, même famille visuelle que la durée. */
+export function filmLanguagePosterBadgeClassName(): string {
+  return "film-duration-surface example-film-lang-flag absolute right-3 top-3 z-[1]";
+}
+
+/** Pastille « New » sur affiche film d'exemple. */
+export function filmNewPosterBadgeClassName(): string {
+  return "film-new-poster-badge absolute left-3 bottom-3 z-[1] rounded-md px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider";
+}
+
 const STATUS_BADGE_BASE = "surface-3d--status";
 
 /** Pastille statut film (Mon espace). */

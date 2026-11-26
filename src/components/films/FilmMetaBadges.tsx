@@ -9,7 +9,8 @@ import type { LocaleCode } from "@/lib/i18n/locales";
 type FilmMetaBadgesProps = {
   className?: string;
   themes: FilmThemeId[];
-  durationLabel: string;
+  /** Si absent, la durée n’est pas affichée ici (ex. sur l’affiche). */
+  durationLabel?: string;
   locale: LocaleCode;
 };
 
@@ -26,7 +27,9 @@ export function FilmMetaBadges({
           {translateFilmTheme(theme, locale)}
         </span>
       ))}
-      <span className={filmDurationBadgeClassName()}>{durationLabel}</span>
+      {durationLabel ? (
+        <span className={filmDurationBadgeClassName()}>{durationLabel}</span>
+      ) : null}
     </div>
   );
 }

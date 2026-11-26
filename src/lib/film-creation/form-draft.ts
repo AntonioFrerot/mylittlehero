@@ -1,3 +1,8 @@
+import {
+  DEFAULT_FILM_CREATION_STYLE,
+  isFilmCreationStyle,
+  type FilmCreationStyle,
+} from "@/lib/film-creation/style-picker";
 import { FILM_THEMES } from "@/lib/film-creation/types";
 import { isAllowedFilmDuration } from "@/lib/purchases/ticket-rules";
 
@@ -7,6 +12,7 @@ const STORAGE_KEY_PREFIX = "mylittlehero-film-creation-draft:";
 export type YesNoChoice = "yes" | "no";
 
 export type FilmCreationFormDraftPayload = {
+  style: FilmCreationStyle;
   themes: string[];
   characterIds: string[];
   durationSeconds: number | null;
@@ -35,6 +41,11 @@ function parseDraft(raw: unknown): FilmCreationFormDraft | null {
   const o = raw as Record<string, unknown>;
   if (o.v !== DRAFT_VERSION) return null;
 
+  const style =
+    typeof o.style === "string" && isFilmCreationStyle(o.style)
+      ? o.style
+      : DEFAULT_FILM_CREATION_STYLE;
+
   const themes = Array.isArray(o.themes)
     ? o.themes.filter((t): t is string => typeof t === "string" && VALID_THEME_SET.has(t))
     : [];
@@ -55,6 +66,7 @@ function parseDraft(raw: unknown): FilmCreationFormDraft | null {
 
   return {
     v: DRAFT_VERSION,
+    style,
     themes,
     characterIds,
     durationSeconds,

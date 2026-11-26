@@ -7,7 +7,12 @@ import {
   translateExamplePosterDuration,
   translateExamplePosterTitle,
 } from "@/lib/i18n/example-film-labels";
-import { filmDurationPosterBadgeClassName } from "@/lib/film-meta-badges";
+import { ExampleFilmLanguageFlag } from "@/components/films/ExampleFilmLanguageFlag";
+import { getExampleFilmAudioLocale } from "@/lib/example-film-audio-locale";
+import {
+  filmDurationPosterBadgeClassName,
+  filmNewPosterBadgeClassName,
+} from "@/lib/film-meta-badges";
 import { getServerTranslator } from "@/lib/i18n/server";
 
 function PosterCard({
@@ -16,12 +21,20 @@ function PosterCard({
   durationLabel,
   href,
   posterAlt,
+  audioLocale,
+  audioLocaleLabel,
+  isNew,
+  newBadgeLabel,
 }: {
   title: string;
   src: string;
   durationLabel?: string;
   href?: string;
   posterAlt: string;
+  audioLocale: ReturnType<typeof getExampleFilmAudioLocale>;
+  audioLocaleLabel: string;
+  isNew?: boolean;
+  newBadgeLabel?: string;
 }) {
   const poster = (
     <div className="poster-card relative overflow-hidden rounded-2xl bg-cinema-surface shadow-poster ring-1 ring-gold/25 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-poster-hover group-hover:ring-gold/55">
@@ -38,6 +51,10 @@ function PosterCard({
             {durationLabel}
           </span>
         )}
+        <ExampleFilmLanguageFlag locale={audioLocale} label={audioLocaleLabel} />
+        {isNew && newBadgeLabel ? (
+          <span className={filmNewPosterBadgeClassName()}>{newBadgeLabel}</span>
+        ) : null}
       </div>
     </div>
   );
@@ -114,6 +131,11 @@ export async function MoviePosterGrid() {
               movie.title,
               locale
             );
+            const audioLocale = getExampleFilmAudioLocale(movie.seed);
+            const audioLocaleLabel =
+              audioLocale === "fr"
+                ? t("examples.audioLocaleFr")
+                : t("examples.audioLocaleEn");
             return (
               <PosterCard
                 key={movie.id}
@@ -130,6 +152,10 @@ export async function MoviePosterGrid() {
                 }
                 href={movie.href}
                 posterAlt={t("home.posterAlt", { title })}
+                audioLocale={audioLocale}
+                audioLocaleLabel={audioLocaleLabel}
+                isNew={movie.isNew}
+                newBadgeLabel={movie.isNew ? t("examples.newBadge") : undefined}
               />
             );
           })}
@@ -142,6 +168,11 @@ export async function MoviePosterGrid() {
               movie.title,
               locale
             );
+            const audioLocale = getExampleFilmAudioLocale(movie.seed);
+            const audioLocaleLabel =
+              audioLocale === "fr"
+                ? t("examples.audioLocaleFr")
+                : t("examples.audioLocaleEn");
             return (
               <PosterCard
                 key={movie.id}
@@ -158,6 +189,10 @@ export async function MoviePosterGrid() {
                 }
                 href={movie.href}
                 posterAlt={t("home.posterAlt", { title })}
+                audioLocale={audioLocale}
+                audioLocaleLabel={audioLocaleLabel}
+                isNew={movie.isNew}
+                newBadgeLabel={movie.isNew ? t("examples.newBadge") : undefined}
               />
             );
           })}

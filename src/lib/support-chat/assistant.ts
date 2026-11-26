@@ -1,6 +1,7 @@
 import { createChatCompletion } from "@/lib/openai/chat-completion";
 import type { LocaleCode } from "@/lib/i18n/locales";
 import { composePersonalizedReply } from "./compose-reply";
+import { detectReplyLocale } from "./detect-message-locale";
 import { buildSupportChatSystemPrompt } from "./site-knowledge";
 import type { ChatMessage, GenerateSupportReplyOptions } from "./types";
 
@@ -16,7 +17,7 @@ function getSupportChatModel(): string {
   );
 }
 
-function resolveLocale(locale?: LocaleCode): "fr" | "en" {
+function resolveSiteLocale(locale?: LocaleCode): LocaleCode {
   return locale === "en" ? "en" : "fr";
 }
 
@@ -29,10 +30,10 @@ function buildPersonalizationRules(locale: "fr" | "en"): string {
 - For short follow-ups ("and the price?", "what about photos?"), use conversation history.
 - Link to the right pages: /creer (subscriptions), /achat (one-off), /creer-film (form), /catalogue, /mon-espace, /contact.
 - Never mention an 8-hour delivery time: the site states up to 24 h max (standard), ~1 h per film minute on /creer, 24 h on /achat.
-- If the user is logged in, use their account context when relevant (tickets, films, cooldown).
-- Tickets are per film creation (1 ticket = 5 min, max 10 min/film). Never suggest stacking tickets into one longer film (e.g. 10 tickets ≠ one 50 min film; they mean 5 × 10 min films or 10 × 5 min films).
+- If the user is logged in, use their account context when relevant (tickets, movies, cooldown).
+- Tickets are per movie creation (1 ticket = 5 min, max 10 min/movie). Never suggest stacking tickets into one longer movie (e.g. 10 tickets ≠ one 50 min movie; they mean 5 × 10 min movies or 10 × 5 min movies).
 - End with one helpful next step, not a list of every topic.
-- Reply in English, 2 to 6 sentences unless more detail is truly needed.`;
+- Always reply in English, 2 to 6 sentences unless more detail is truly needed.`;
   }
 
   return `Règles de personnalisation (obligatoires) :
@@ -45,14 +46,15 @@ function buildPersonalizationRules(locale: "fr" | "en"): string {
 - Si le client est connecté, exploite son contexte compte (tickets, films, délai entre créations) quand c'est pertinent.
 - Les tickets servent à chaque création de film (1 ticket = 5 min, max 10 min par film). Ne suggérez jamais de cumuler les tickets sur un seul film (ex. 10 tickets ≠ un film de 50 min ; plutôt 5 films de 10 min ou 10 films de 5 min).
 - Propose une seule suite utile à la fin (pas une liste de tous les sujets possibles).
-- Réponds en français, 2 à 6 phrases sauf besoin réel de plus de détails.`;
+- Réponds toujours en français, 2 à 6 phrases sauf besoin réel de plus de détails.`;
 }
 
 function buildAiMessages(
   messages: ChatMessage[],
-  options: GenerateSupportReplyOptions
+  options: GenerateSupportReplyOptions,
+  replyLocale: "fr" | "en"
 ): { role: "system" | "user" | "assistant"; content: string }[] {
-  const locale = resolveLocale(options.locale);
+  const locale = replyLocale;
   const lastUser = [...messages].reverse().find((message) => message.role === "user");
 
   const systemContent = `${buildSupportChatSystemPrompt(locale, options.userContext)}\n\n${buildPersonalizationRules(locale)}${
@@ -74,11 +76,12 @@ function buildAiMessages(
 
 async function getOpenAiReply(
   messages: ChatMessage[],
-  options: GenerateSupportReplyOptions
+  options: GenerateSupportReplyOptions,
+  replyLocale: "fr" | "en"
 ): Promise<string | null> {
   if (!process.env.OPENAI_API_KEY?.trim()) return null;
 
-  return createChatCompletion(buildAiMessages(messages, options), {
+  return createChatCompletion(buildAiMessages(messages, options, replyLocale), {
     model: getSupportChatModel(),
     temperature: 0.55,
     maxTokens: 650,
@@ -87,7 +90,7 @@ async function getOpenAiReply(
 
 function emptyQuestionReply(locale: "fr" | "en"): string {
   return locale === "en"
-    ? "Hello! Ask about pricing, film creation, characters, or delivery times — I'll answer using MyLittleHero's official information."
+    ? "Hello! Ask about pricing, movie creation, characters, or delivery times — I'll answer using MyLittleHero's official information."
     : "Bonjour ! Décrivez votre question — tarifs, délai, photos, création du film — et je vous répondrai à partir des infos officielles MyLittleHero.";
 }
 
@@ -95,15 +98,16 @@ export async function generateSupportReply(
   messages: ChatMessage[],
   options: GenerateSupportReplyOptions = {}
 ): Promise<{ reply: string; source: "ai" | "local" }> {
-  const locale = resolveLocale(options.locale);
+  const siteLocale = resolveSiteLocale(options.locale);
+  const replyLocale = detectReplyLocale(messages, siteLocale);
   const lastUser = [...messages].reverse().find((message) => message.role === "user");
 
   if (!lastUser?.content.trim()) {
-    return { reply: emptyQuestionReply(locale), source: "local" };
+    return { reply: emptyQuestionReply(replyLocale), source: "local" };
   }
 
   try {
-    const aiReply = await getOpenAiReply(messages, options);
+    const aiReply = await getOpenAiReply(messages, options, replyLocale);
     if (aiReply) {
       return { reply: aiReply, source: "ai" };
     }
@@ -112,7 +116,7 @@ export async function generateSupportReply(
   }
 
   return {
-    reply: composePersonalizedReply(lastUser.content, messages),
+    reply: composePersonalizedReply(lastUser.content, messages, replyLocale),
     source: "local",
   };
 }

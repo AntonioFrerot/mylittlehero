@@ -52,7 +52,7 @@ function buildConfidentialite(pub: LegalPublisher): LegalDocument {
       {
         title: "2. Data we collect",
         body: [
-          `Account data (email, hashed password, optional name, language), child-related data you provide as legal guardian (name, age, height, face photo, optional notes), film creation preferences, order and subscription data, contact form messages, and technical logs.`,
+          `Account data (email, hashed password, optional name, language), child-related data you provide as legal guardian (name, age, height, face photo, optional notes), movie creation preferences, order and subscription data, contact form messages, and technical logs.`,
           `We do not sell your data or use it for targeted advertising.`,
         ],
       },
@@ -94,13 +94,13 @@ function buildCgv(pub: LegalPublisher): LegalDocument {
       {
         title: "1. Scope",
         body: [
-          `These terms govern sales of digital personalized films offered on ${pub.siteUrl} by ${pub.companyName}. Prices are shown in euros (EUR) including VAT where applicable.`,
+          `These terms govern sales of digital personalized movies offered on ${pub.siteUrl} by ${pub.companyName}. Prices are shown in US dollars (USD); taxes may apply depending on your location.`,
         ],
       },
       {
         title: "2. Products",
         body: [
-          `One-off purchases (ticket-based film credits) and monthly/yearly subscriptions as described on /achat and /creer. Delivery is digital via your customer account.`,
+          `One-off purchases (ticket-based movie credits) and monthly/yearly subscriptions as described on /achat and /creer. Delivery is digital via your customer account.`,
         ],
       },
       {
@@ -153,13 +153,13 @@ function buildCgu(pub: LegalPublisher): LegalDocument {
       {
         title: "3. Intellectual property",
         body: [
-          `You retain rights in content you upload and grant us a license to produce and deliver your film. Delivered films are for personal, non-commercial family use unless otherwise agreed in writing.`,
+          `You retain rights in content you upload and grant us a license to produce and deliver your movie. Delivered movies are for personal, non-commercial family use unless otherwise agreed in writing.`,
         ],
       },
       {
         title: "4. AI-generated content",
         body: [
-          `Parts of the story may be generated automatically. Results may vary. Please review films before showing them to children and report technical issues to ${pub.contactEmail}.`,
+          `Parts of the story may be generated automatically. Results may vary. Please review movies before showing them to children and report technical issues to ${pub.contactEmail}.`,
         ],
       },
       {

@@ -28,13 +28,11 @@ export const FILM_THEMES = [
   "comedie",
   "fantastique",
   "scifi",
-  "animation",
   "educatif",
-  "musical",
   "morale",
-  "mystere",
-] as const;
-export type FilmTheme = FilmThemeId;
+] as const satisfies readonly FilmThemeId[];
+
+export type FilmTheme = (typeof FILM_THEMES)[number];
 
 export { formatFilmDurationSeconds as formatFilmDuration } from "./duration";
 export {

@@ -63,7 +63,7 @@ const THEME_INTRO_EN: Partial<Record<FilmThemeId, string>> = {
   aventure: "Here is an example of an animated film for Leo:",
   comedie: "Here is an example of a comedy film for Leo:",
   fantastique: "Here is an example of a fantasy film for Leo:",
-  scifi: "Here is an example of a science-fiction film for Leo:",
+  scifi: "Here is an example of a sci-fi movie for Leo:",
   educatif: "Here is an example of an educational film for Leo:",
   morale: "Here is an example of a film for Leo:",
   mystere: "Here is an example of a mystery film for Leo:",

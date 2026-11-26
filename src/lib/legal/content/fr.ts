@@ -297,7 +297,7 @@ function buildCgv(pub: LegalPublisher): LegalDocument {
       {
         title: "4. Prix",
         body: [
-          `Les prix sont indiqués en euros (€), toutes taxes comprises (TTC), pour les clients situés en France, sauf mention contraire.`,
+          `Les prix sont indiqués en dollars américains (USD) ; des taxes peuvent s'appliquer selon votre localisation, sauf mention contraire.`,
           `${pub.companyName} se réserve le droit de modifier ses tarifs à l'avenir ; le prix applicable est celui affiché au moment de la validation de la commande sur Stripe Checkout.`,
           `Aucun frais de livraison physique n'est facturé : la livraison est exclusivement numérique.`,
         ],

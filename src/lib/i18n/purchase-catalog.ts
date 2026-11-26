@@ -1,3 +1,4 @@
+import { formatSiteMoney } from "./format-money";
 import type { LocaleCode } from "./locales";
 import { createTranslator } from "./translator";
 import type { TranslationKey } from "./translator";
@@ -87,16 +88,6 @@ const PLAN_CONFIG: Record<
   },
 };
 
-function formatMoney(amount: number, locale: LocaleCode): string {
-  const tag = locale === "fr" ? "fr-FR" : "en-GB";
-  return (
-    amount.toLocaleString(tag, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }) + " €"
-  );
-}
-
 export function getPurchasePlans(locale: LocaleCode): PurchasePlan[] {
   const t = createTranslator(locale);
 
@@ -109,7 +100,7 @@ export function getPurchasePlans(locale: LocaleCode): PurchasePlan[] {
       eyebrow: t(config.eyebrow),
       durationShort: t(config.durationShort),
       filmCount: config.filmCount,
-      price: formatMoney(config.price, locale),
+      price: formatSiteMoney(config.price, locale),
       priceValue: config.price,
       features: config.features.map((key) => t(key)),
       highlighted: config.highlighted,

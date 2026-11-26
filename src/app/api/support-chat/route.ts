@@ -6,7 +6,7 @@ import {
 } from "@/lib/support-chat/store";
 import type { ChatMessage } from "@/lib/support-chat/types";
 import { getSession } from "@/lib/auth/get-session";
-import { parseLocale } from "@/lib/i18n/locales";
+import { DEFAULT_LOCALE, parseLocale } from "@/lib/i18n/locales";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const locale = parseLocale((body as { locale?: unknown }).locale) ?? "fr";
+  const locale = parseLocale((body as { locale?: unknown }).locale) ?? DEFAULT_LOCALE;
   const conversationId =
     typeof (body as { conversationId?: unknown }).conversationId === "string"
       ? (body as { conversationId: string }).conversationId.trim().slice(0, 64)

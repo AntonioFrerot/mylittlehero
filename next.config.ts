@@ -73,6 +73,7 @@ const nextConfig: NextConfig = {
       { pathname: "/uploads/**" },
       { pathname: "/brand/**" },
       { pathname: "/images/**" },
+      { pathname: "/film-creation/**" },
     ],
   },
   async headers() {
@@ -97,6 +98,15 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/brand/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/film-creation/:path*",
         headers: [
           {
             key: "Cache-Control",
